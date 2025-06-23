@@ -25,6 +25,14 @@
             android:name=".TaskDetailActivity"
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CategoryManagerActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

@@ -3,9 +3,14 @@ package com.example.todolist;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,11 +38,21 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private TaskAdapter completedTasksAdapter;
     private FloatingActionButton fabAdd;
     private MaterialButton btnAll, btnWork, btnPersonal;
+    private ImageView btnMenu;
+    
+    // Search components
+    private LinearLayout layoutFilterTabs;
+    private LinearLayout layoutSearch;
+    private EditText editSearch;
+    private ImageView btnCancelSearch;
     
     private TodoDatabase database;
     private List<TodoTask> allTasks;
     private List<TodoTask> incompleteTasks;
     private List<TodoTask> completedTasks;
+    private List<TodoTask> filteredIncompleteTasks;
+    private List<TodoTask> filteredCompletedTasks;
+    private boolean isSearchMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         allTasks = new ArrayList<>();
         incompleteTasks = new ArrayList<>();
         completedTasks = new ArrayList<>();
+        filteredIncompleteTasks = new ArrayList<>();
+        filteredCompletedTasks = new ArrayList<>();
     }
 
     private void initViews() {
@@ -65,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnAll = findViewById(R.id.btn_all);
         btnWork = findViewById(R.id.btn_work);
         btnPersonal = findViewById(R.id.btn_personal);
+        btnMenu = findViewById(R.id.btn_menu);
+        
+        // Search components
+        layoutFilterTabs = findViewById(R.id.layout_filter_tabs);
+        layoutSearch = findViewById(R.id.layout_search);
+        editSearch = findViewById(R.id.edit_search);
+        btnCancelSearch = findViewById(R.id.btn_cancel_search);
     }
 
     private void setupRecyclerViews() {
@@ -115,6 +139,24 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnAll.setOnClickListener(v -> filterTasks("all"));
         btnWork.setOnClickListener(v -> filterTasks("work"));
         btnPersonal.setOnClickListener(v -> filterTasks("personal"));
+        
+        btnMenu.setOnClickListener(v -> showPopupMenu(v));
+        
+        // Search listeners
+        btnCancelSearch.setOnClickListener(v -> exitSearchMode());
+        
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                performSearch(s.toString());
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void showAddTaskDialog() {
@@ -201,6 +243,64 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         }
     }
+    
+    private void enterSearchMode() {
+        isSearchMode = true;
+        layoutFilterTabs.setVisibility(View.GONE);
+        layoutSearch.setVisibility(View.VISIBLE);
+        editSearch.requestFocus();
+        
+        // Initialize filtered lists with all tasks
+        filteredIncompleteTasks.clear();
+        filteredCompletedTasks.clear();
+        filteredIncompleteTasks.addAll(incompleteTasks);
+        filteredCompletedTasks.addAll(completedTasks);
+    }
+    
+    private void exitSearchMode() {
+        isSearchMode = false;
+        layoutFilterTabs.setVisibility(View.VISIBLE);
+        layoutSearch.setVisibility(View.GONE);
+        editSearch.setText("");
+        
+        // Restore original lists
+        incompleteTasksAdapter.updateTasks(incompleteTasks);
+        completedTasksAdapter.updateTasks(completedTasks);
+    }
+    
+    private void performSearch(String query) {
+        if (!isSearchMode) return;
+        
+        filteredIncompleteTasks.clear();
+        filteredCompletedTasks.clear();
+        
+        if (query.trim().isEmpty()) {
+            // Show all tasks if search is empty
+            filteredIncompleteTasks.addAll(incompleteTasks);
+            filteredCompletedTasks.addAll(completedTasks);
+        } else {
+            // Filter tasks based on query
+            String lowerQuery = query.toLowerCase().trim();
+            
+            for (TodoTask task : incompleteTasks) {
+                if (task.getTitle().toLowerCase().contains(lowerQuery) ||
+                    (task.getDescription() != null && task.getDescription().toLowerCase().contains(lowerQuery))) {
+                    filteredIncompleteTasks.add(task);
+                }
+            }
+            
+            for (TodoTask task : completedTasks) {
+                if (task.getTitle().toLowerCase().contains(lowerQuery) ||
+                    (task.getDescription() != null && task.getDescription().toLowerCase().contains(lowerQuery))) {
+                    filteredCompletedTasks.add(task);
+                }
+            }
+        }
+        
+        // Update adapters with filtered results
+        incompleteTasksAdapter.updateTasks(filteredIncompleteTasks);
+        completedTasksAdapter.updateTasks(filteredCompletedTasks);
+    }
 
     private void filterTasks(String filter) {
         // Update button states
@@ -283,5 +383,23 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
+    }
+    
+    private void showPopupMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.main_menu, popup.getMenu());
+        
+        popup.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.menu_category_manager) {
+                startActivity(new Intent(this, CategoryManagerActivity.class));
+                return true;
+            } else if (item.getItemId() == R.id.menu_search) {
+                enterSearchMode();
+                return true;
+            }
+            return false;
+        });
+        
+        popup.show();
     }
 }

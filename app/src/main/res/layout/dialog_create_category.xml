@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="24dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tạo danh mục mới"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Input field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/edit_category_name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Nhập tại đây"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:background="@android:drawable/edit_text"
+                android:paddingHorizontal="12dp"
+                android:maxLength="50"/>
+
+        </LinearLayout>
+
+        <!-- Character count -->
+        <TextView
+            android:id="@+id/tv_char_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0/50"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="end"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Hủy"
+                android:textSize="14sp"
+                android:textColor="#4285F4"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Lưu"
+                android:textSize="14sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:background="?android:attr/selectableItemBackground"/>        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
