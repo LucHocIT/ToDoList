@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     // Search components
     private LinearLayout layoutFilterTabs;
     private LinearLayout layoutSearch;
+    private LinearLayout layoutCategoriesContainer;
     private EditText editSearch;
     private ImageView btnCancelSearch;
     
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         initViews();
         setupRecyclerViews();
         setupClickListeners();
+        loadCategories();
         loadTasks();
     }
     
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         // Search components
         layoutFilterTabs = findViewById(R.id.layout_filter_tabs);
         layoutSearch = findViewById(R.id.layout_search);
+        layoutCategoriesContainer = findViewById(R.id.layout_categories_container);
         editSearch = findViewById(R.id.edit_search);
         btnCancelSearch = findViewById(R.id.btn_cancel_search);
     }
@@ -157,6 +160,46 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+    
+    private void loadCategories() {
+        // TODO: Load categories from database later
+        // For now, we can add some sample categories if needed
+        addDynamicCategory("Học tập", "#9C27B0");
+        addDynamicCategory("Sức khỏe", "#4CAF50");
+        addDynamicCategory("Gia đình", "#FF5722");
+        addDynamicCategory("Du lịch", "#2196F3");
+    }
+    
+    private void addDynamicCategory(String categoryName, String color) {
+        MaterialButton categoryButton = new MaterialButton(this);
+        categoryButton.setText(categoryName);
+        categoryButton.setTextSize(14);
+        categoryButton.setMinWidth(getDp(100));
+        categoryButton.setPadding(getDp(16), 0, getDp(16), 0);
+        
+        // Set default style (unselected)
+        categoryButton.setTextColor(getColor(R.color.text_gray));
+        categoryButton.setBackgroundTintList(getColorStateList(R.color.light_gray));
+        
+        // Set layout params
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                getDp(40)
+        );
+        params.setMarginEnd(getDp(12));
+        categoryButton.setLayoutParams(params);
+        
+        // Set click listener
+        categoryButton.setOnClickListener(v -> filterTasks(categoryName.toLowerCase()));
+        
+        // Add to container
+        layoutCategoriesContainer.addView(categoryButton);
+    }
+    
+    private int getDp(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private void showAddTaskDialog() {

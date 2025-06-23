@@ -22,45 +22,71 @@
             android:layout_marginTop="16dp"
             android:background="@android:color/white">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_all"
-                style="@style/Widget.Material3.Button.TextButton"
+            <!-- Scrollable categories container -->
+            <HorizontalScrollView
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="12dp"
-                android:text="Tất cả"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#4285F4"
-                android:textSize="14sp"
-                android:minWidth="100dp"/>
+                android:scrollbars="none"
+                android:fadingEdge="horizontal"
+                android:fadingEdgeLength="24dp"
+                android:requiresFadingEdge="horizontal"
+                android:layout_marginEnd="8dp"
+                android:clipToPadding="false"
+                android:paddingEnd="8dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_work"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="12dp"
-                android:text="Công việc"
-                android:textColor="#666666"
-                android:backgroundTint="#E8E8E8"
-                android:textSize="14sp"
-                android:minWidth="100dp"/>
+                <LinearLayout
+                    android:id="@+id/layout_categories_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_personal"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:text="Cá nhân"
-                android:textColor="#666666"
-                android:backgroundTint="#E8E8E8"
-                android:textSize="14sp"
-                android:minWidth="100dp"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_all"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="Tất cả"
+                        android:textColor="@android:color/white"
+                        android:backgroundTint="#4285F4"
+                        android:textSize="14sp"
+                        android:minWidth="100dp"
+                        android:paddingHorizontal="16dp"/>
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_work"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="Công việc"
+                        android:textColor="#666666"
+                        android:backgroundTint="#E8E8E8"
+                        android:textSize="14sp"
+                        android:minWidth="100dp"
+                        android:paddingHorizontal="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_personal"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="12dp"
+                        android:text="Cá nhân"
+                        android:textColor="#666666"
+                        android:backgroundTint="#E8E8E8"
+                        android:textSize="14sp"
+                        android:minWidth="100dp"
+                        android:paddingHorizontal="16dp"/>
+
+                    <!-- Add more categories dynamically here -->
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Fixed menu button -->
             <ImageView
                 android:id="@+id/btn_menu"
                 android:layout_width="40dp"
@@ -68,8 +94,7 @@
                 android:src="@drawable/ic_more_vert"
                 android:contentDescription="Menu"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"
-                android:layout_marginStart="8dp"/>
+                android:padding="8dp"/>
 
         </LinearLayout>
 
