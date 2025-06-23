@@ -1,48 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="1dp">
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    android:background="@android:color/white">
 
-    <!-- Category color indicator -->
-    <View
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="#4285F4"
-        android:layout_marginEnd="16dp"/>
-
-    <!-- Category name -->
-    <TextView
-        android:id="@+id/tv_category_name"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Cá nhân"
-        android:textSize="16sp"
-        android:textColor="#333333"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
-    <!-- Task count -->
-    <TextView
-        android:id="@+id/tv_task_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:textSize="16sp"
-        android:textColor="#666666"
-        android:layout_marginEnd="16dp"/>
+        <!-- Category icon (circular background) -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/circle_background"
+            android:layout_marginEnd="16dp">
 
-    <!-- Menu button -->
-    <ImageView
-        android:id="@+id/btn_category_menu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_more_vert"
-        android:contentDescription="Menu"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:padding="4dp"/>
+            <ImageView
+                android:id="@+id/img_category_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_category_work"
+                android:tint="@android:color/white"/>
 
-</LinearLayout>
+        </FrameLayout>
+
+        <!-- Category info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cá nhân"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_task_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 nhiệm vụ"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+        <!-- Menu button -->
+        <ImageView
+            android:id="@+id/btn_category_menu"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Menu"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Drag handle -->
+        <ImageView
+            android:id="@+id/img_drag_handle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_drag_handle"
+            android:tint="#999999"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

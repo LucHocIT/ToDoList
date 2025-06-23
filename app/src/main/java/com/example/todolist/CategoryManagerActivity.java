@@ -6,59 +6,104 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class CategoryManagerActivity extends AppCompatActivity {
+import com.example.todolist.adapter.CategoryAdapter;
+import com.example.todolist.model.Category;
 
-    private LinearLayout layoutCategories;
-    private LinearLayout btnCreateNew;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    @Override
+public class CategoryManagerActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener {
+
+    private RecyclerView recyclerCategories;
+    private CategoryAdapter categoryAdapter;
+    private List<Category> categories;    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_manager);
 
         initViews();
-        setupClickListeners();
+        setupRecyclerView();
         loadCategories();
     }
 
     private void initViews() {
         ImageView btnBack = findViewById(R.id.btn_back);
-        layoutCategories = findViewById(R.id.layout_categories);
-        btnCreateNew = findViewById(R.id.btn_create_new);
+        recyclerCategories = findViewById(R.id.recycler_categories);
+        categories = new ArrayList<>();
 
         btnBack.setOnClickListener(v -> finish());
     }
 
-    private void setupClickListeners() {
-        btnCreateNew.setOnClickListener(v -> showCreateCategoryDialog());
-    }
-
-    private void loadCategories() {
-        // Add default categories
-        addCategoryItem("Cá nhân", 0);
-        addCategoryItem("Công việc", 0);
-        addCategoryItem("Yêu thích", 0);
-    }
-
-    private void addCategoryItem(String name, int count) {
-        View categoryView = LayoutInflater.from(this).inflate(R.layout.item_category, null);
+    private void setupRecyclerView() {
+        recyclerCategories.setLayoutManager(new LinearLayoutManager(this));
+        categoryAdapter = new CategoryAdapter(categories, this);
+        recyclerCategories.setAdapter(categoryAdapter);
         
-        TextView tvCategoryName = categoryView.findViewById(R.id.tv_category_name);
-        TextView tvTaskCount = categoryView.findViewById(R.id.tv_task_count);
-        ImageView btnMenu = categoryView.findViewById(R.id.btn_category_menu);
+        // Add ItemTouchHelper for drag & drop
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, 
+                                @NonNull RecyclerView.ViewHolder viewHolder, 
+                                @NonNull RecyclerView.ViewHolder target) {
+                
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+                
+                // Don't allow moving the "Add new" item
+                if (fromPosition == categories.size() - 1 || toPosition == categories.size() - 1) {
+                    return false;
+                }
+                
+                Collections.swap(categories, fromPosition, toPosition);
+                categoryAdapter.notifyItemMoved(fromPosition, toPosition);
+                return true;
+            }
+            
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // Not used
+            }
+        });
+        
+        itemTouchHelper.attachToRecyclerView(recyclerCategories);
+    }    private void loadCategories() {
+        // Add default categories
+        categories.add(new Category("Cá nhân", 0, "#4285F4"));
+        categories.add(new Category("Công việc", 0, "#FF9800"));
+        categories.add(new Category("Yêu thích", 0, "#F44336"));
+        
+        // Add "Create new" item at the end
+        categories.add(new Category("", -1, "")); // Special item for "Add new"
+        
+        categoryAdapter.notifyDataSetChanged();
+    }
 
-        tvCategoryName.setText(name);
-        tvTaskCount.setText(String.valueOf(count));
+    @Override
+    public void onCategoryClick(Category category) {
+        if (category.getTaskCount() == -1) {
+            // This is the "Add new" item
+            showCreateCategoryDialog();
+        } else {
+            // Regular category click
+            Toast.makeText(this, "Clicked: " + category.getName(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        btnMenu.setOnClickListener(v -> showCategoryMenu(name));
-
-        layoutCategories.addView(categoryView);
+    @Override
+    public void onCategoryMenuClick(Category category) {
+        showCategoryMenu(category.getName());
     }
 
     private void showCreateCategoryDialog() {
@@ -92,11 +137,12 @@ public class CategoryManagerActivity extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
-        btnSave.setOnClickListener(v -> {
+          btnSave.setOnClickListener(v -> {
             String categoryName = editCategoryName.getText().toString().trim();
             if (!categoryName.isEmpty()) {
-                addCategoryItem(categoryName, 0);
+                // Insert before the "Add new" item
+                categories.add(categories.size() - 1, new Category(categoryName, 0, "#4285F4"));
+                categoryAdapter.notifyItemInserted(categories.size() - 2);
                 dialog.dismiss();
                 Toast.makeText(this, "Đã tạo danh mục mới", Toast.LENGTH_SHORT).show();
             } else {
