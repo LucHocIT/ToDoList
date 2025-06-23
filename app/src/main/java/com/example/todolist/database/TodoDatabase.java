@@ -6,19 +6,22 @@ import androidx.room.RoomDatabase;
 import android.content.Context;
 
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.model.Category;
 
-@Database(entities = {TodoTask.class}, version = 1, exportSchema = false)
+@Database(entities = {TodoTask.class, Category.class}, version = 2, exportSchema = false)
 public abstract class TodoDatabase extends RoomDatabase {
     
     private static TodoDatabase instance;
     
     public abstract TodoDao todoDao();
+    public abstract CategoryDao categoryDao();
     
     public static synchronized TodoDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     TodoDatabase.class, "todo_database")
                     .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration() // For version upgrade
                     .build();
         }
         return instance;

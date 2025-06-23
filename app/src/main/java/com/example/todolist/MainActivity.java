@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.model.Category;
 import com.example.todolist.util.SwipeToRevealHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private List<TodoTask> completedTasks;
     private List<TodoTask> filteredIncompleteTasks;
     private List<TodoTask> filteredCompletedTasks;
+    private List<Category> categories;
     private boolean isSearchMode = false;
 
     @Override
@@ -68,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         loadTasks();
     }
     
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload categories when returning from CategoryManager
+        loadCategories();
+    }
+    
     private void initDatabase() {
         database = TodoDatabase.getInstance(this);
         allTasks = new ArrayList<>();
@@ -75,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         completedTasks = new ArrayList<>();
         filteredIncompleteTasks = new ArrayList<>();
         filteredCompletedTasks = new ArrayList<>();
+        categories = new ArrayList<>();
     }
 
     private void initViews() {
@@ -163,17 +173,67 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
     
     private void loadCategories() {
-        // TODO: Load categories from database later
-        // For now, we can add some sample categories if needed
-        addDynamicCategory("Học tập", "#9C27B0");
-        addDynamicCategory("Sức khỏe", "#4CAF50");
-        addDynamicCategory("Gia đình", "#FF5722");
-        addDynamicCategory("Du lịch", "#2196F3");
+        new Thread(() -> {
+            // Load categories from database
+            categories = database.categoryDao().getAllCategories();
+            
+            // If no categories exist, create default ones
+            if (categories.isEmpty()) {
+                createDefaultCategories();
+                categories = database.categoryDao().getAllCategories();
+            }
+            
+            runOnUiThread(() -> {
+                // Clear existing dynamic categories (keep the 3 default buttons)
+                clearDynamicCategories();
+                
+                // Add categories from database (skip default ones that are already in layout)
+                for (Category category : categories) {
+                    if (!isDefaultCategory(category.getName())) {
+                        addDynamicCategoryButton(category);
+                    }
+                }
+            });
+        }).start();
     }
     
-    private void addDynamicCategory(String categoryName, String color) {
+    private void createDefaultCategories() {
+        // Create default categories
+        Category allCategory = new Category("Tất cả", "#4285F4", 0, true);
+        Category workCategory = new Category("Công việc", "#FF9800", 1, true);
+        Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
+        
+        database.categoryDao().insertCategory(allCategory);
+        database.categoryDao().insertCategory(workCategory);
+        database.categoryDao().insertCategory(personalCategory);
+        
+        // Add some additional sample categories
+        Category studyCategory = new Category("Học tập", "#2196F3", 3, false);
+        Category healthCategory = new Category("Sức khỏe", "#4CAF50", 4, false);
+        Category familyCategory = new Category("Gia đình", "#FF5722", 5, false);
+        
+        database.categoryDao().insertCategory(studyCategory);
+        database.categoryDao().insertCategory(healthCategory);
+        database.categoryDao().insertCategory(familyCategory);
+    }
+    
+    private boolean isDefaultCategory(String categoryName) {
+        return categoryName.equals("Tất cả") || 
+               categoryName.equals("Công việc") || 
+               categoryName.equals("Cá nhân");
+    }
+    
+    private void clearDynamicCategories() {
+        // Remove all views after the 3rd child (default categories + dynamic ones)
+        int childCount = layoutCategoriesContainer.getChildCount();
+        if (childCount > 3) {
+            layoutCategoriesContainer.removeViews(3, childCount - 3);
+        }
+    }
+    
+    private void addDynamicCategoryButton(Category category) {
         MaterialButton categoryButton = new MaterialButton(this);
-        categoryButton.setText(categoryName);
+        categoryButton.setText(category.getName());
         categoryButton.setTextSize(14);
         categoryButton.setMinWidth(getDp(100));
         categoryButton.setPadding(getDp(16), 0, getDp(16), 0);
@@ -191,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         categoryButton.setLayoutParams(params);
         
         // Set click listener
-        categoryButton.setOnClickListener(v -> filterTasks(categoryName.toLowerCase()));
+        categoryButton.setOnClickListener(v -> filterTasks(category.getName().toLowerCase()));
         
         // Add to container
         layoutCategoriesContainer.addView(categoryButton);

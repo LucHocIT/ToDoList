@@ -16,17 +16,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.adapter.CategoryAdapter;
+import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CategoryManagerActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener {
-
-    private RecyclerView recyclerCategories;
+public class CategoryManagerActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener {    private RecyclerView recyclerCategories;
     private CategoryAdapter categoryAdapter;
-    private List<Category> categories;    @Override
+    private List<Category> categories;
+    private TodoDatabase database;@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_manager);
@@ -34,12 +34,11 @@ public class CategoryManagerActivity extends AppCompatActivity implements Catego
         initViews();
         setupRecyclerView();
         loadCategories();
-    }
-
-    private void initViews() {
+    }    private void initViews() {
         ImageView btnBack = findViewById(R.id.btn_back);
         recyclerCategories = findViewById(R.id.recycler_categories);
         categories = new ArrayList<>();
+        database = TodoDatabase.getInstance(this);
 
         btnBack.setOnClickListener(v -> finish());
     }
@@ -79,20 +78,26 @@ public class CategoryManagerActivity extends AppCompatActivity implements Catego
         
         itemTouchHelper.attachToRecyclerView(recyclerCategories);
     }    private void loadCategories() {
-        // Add default categories
-        categories.add(new Category("Cá nhân", 0, "#4285F4"));
-        categories.add(new Category("Công việc", 0, "#FF9800"));
-        categories.add(new Category("Yêu thích", 0, "#F44336"));
-        
-        // Add "Create new" item at the end
-        categories.add(new Category("", -1, "")); // Special item for "Add new"
-        
-        categoryAdapter.notifyDataSetChanged();
-    }
-
-    @Override
+        new Thread(() -> {
+            // Load categories from database
+            List<Category> dbCategories = database.categoryDao().getAllCategories();
+            
+            runOnUiThread(() -> {
+                categories.clear();
+                categories.addAll(dbCategories);
+                
+                // Add "Create new" item at the end
+                Category addNewItem = new Category();
+                addNewItem.setName("");
+                addNewItem.setId(-1); // Special ID for "Add new" item
+                categories.add(addNewItem);
+                
+                categoryAdapter.notifyDataSetChanged();
+            });
+        }).start();
+    }    @Override
     public void onCategoryClick(Category category) {
-        if (category.getTaskCount() == -1) {
+        if (category.getId() == -1) {
             // This is the "Add new" item
             showCreateCategoryDialog();
         } else {
@@ -136,15 +141,25 @@ public class CategoryManagerActivity extends AppCompatActivity implements Catego
             public void afterTextChanged(android.text.Editable s) {}
         });
 
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-          btnSave.setOnClickListener(v -> {
+        btnCancel.setOnClickListener(v -> dialog.dismiss());        btnSave.setOnClickListener(v -> {
             String categoryName = editCategoryName.getText().toString().trim();
             if (!categoryName.isEmpty()) {
-                // Insert before the "Add new" item
-                categories.add(categories.size() - 1, new Category(categoryName, 0, "#4285F4"));
-                categoryAdapter.notifyItemInserted(categories.size() - 2);
-                dialog.dismiss();
-                Toast.makeText(this, "Đã tạo danh mục mới", Toast.LENGTH_SHORT).show();
+                // Save to database
+                new Thread(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    newCategory.setColor("#4285F4");
+                    newCategory.setSortOrder(categories.size() - 1); // -1 because last item is "Add new"
+                    newCategory.setDefault(false);
+                    
+                    database.categoryDao().insertCategory(newCategory);
+                    
+                    runOnUiThread(() -> {
+                        loadCategories(); // Reload categories
+                        dialog.dismiss();
+                        Toast.makeText(this, "Đã tạo danh mục mới", Toast.LENGTH_SHORT).show();
+                    });
+                }).start();
             } else {
                 Toast.makeText(this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
             }

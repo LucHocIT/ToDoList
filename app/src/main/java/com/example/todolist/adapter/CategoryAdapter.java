@@ -32,11 +32,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public CategoryAdapter(List<Category> categories, OnCategoryClickListener listener) {
         this.categories = categories;
         this.listener = listener;
-    }
-
-    @Override
+    }    @Override
     public int getItemViewType(int position) {
-        return categories.get(position).getTaskCount() == -1 ? TYPE_ADD_NEW : TYPE_CATEGORY;
+        return categories.get(position).getId() == -1 ? TYPE_ADD_NEW : TYPE_CATEGORY;
     }
 
     @NonNull
@@ -82,11 +80,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             btnCategoryMenu = itemView.findViewById(R.id.btn_category_menu);
             imgDragHandle = itemView.findViewById(R.id.img_drag_handle);
             iconBackground = (FrameLayout) imgCategoryIcon.getParent();
-        }
-
-        public void bind(Category category) {
+        }        public void bind(Category category) {
             tvCategoryName.setText(category.getName());
-            tvTaskCount.setText(category.getTaskCount() + " nhiệm vụ");
+            tvTaskCount.setText("0 nhiệm vụ"); // TODO: Calculate real task count
             
             // Set background color
             try {
