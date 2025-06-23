@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@drawable/dialog_background"
+    android:elevation="8dp"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+        <!-- Title input -->
+    <EditText
+        android:id="@+id/edit_task_title"
+        android:layout_width="match_parent"
+        android:layout_height="142dp"
+        android:layout_marginBottom="16dp"
+        android:background="#E8F4FD"
+        android:gravity="top"
+        android:hint="Nhập nhiệm vụ mới tại đây..."
+        android:minLines="3"
+        android:padding="16dp"
+        android:textColor="#333333"
+        android:textColorHint="#999999"
+        android:textSize="16sp" />
+
+        <!-- Icons row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:layout_marginBottom="24dp">
+
+            <!-- Calendar icon -->
+            <ImageView
+                android:id="@+id/icon_calendar_dialog"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendar"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+            <!-- Time icon -->
+            <ImageView
+                android:id="@+id/icon_time_dialog"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_time"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+            <!-- Share icon -->
+            <ImageView
+                android:id="@+id/icon_share_dialog"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_share"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+        </LinearLayout>
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Hủy"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <TextView
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Lưu"
+                android:textSize="14sp"
+                android:textColor="#4285F4"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
+
+        </LinearLayout></LinearLayout>

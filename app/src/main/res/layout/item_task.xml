@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:id="@+id/task_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="#F0F8FF">
+
+        <!-- Checkbox -->
+        <CheckBox
+            android:id="@+id/checkbox_complete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="12dp"
+            android:button="@drawable/checkbox_selector"/>
+
+        <!-- Task content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chúc ngủ ngon, đã đến giờ đi ngủ"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:textStyle="normal"/>
+
+            <TextView
+                android:id="@+id/text_task_datetime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="05-25 22:00"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
+
+        <!-- Notification icon -->
+        <ImageView
+            android:id="@+id/icon_notification"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_notification"
+            android:layout_marginStart="8dp"
+            android:visibility="visible"/>
+
+        <!-- Flag icon for importance -->
+        <ImageView
+            android:id="@+id/icon_flag"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_flag"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <!-- Swipe action buttons background -->
+    <LinearLayout
+        android:id="@+id/swipe_actions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:visibility="gone">
+
+        <!-- Star button -->
+        <LinearLayout
+            android:id="@+id/btn_star"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#4285F4"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_star"
+                android:tint="@android:color/white"/>
+
+        </LinearLayout>
+
+        <!-- Calendar button -->
+        <LinearLayout
+            android:id="@+id/btn_calendar"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#4285F4"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendar"
+                android:tint="@android:color/white"/>
+
+        </LinearLayout>
+
+        <!-- Delete button -->
+        <LinearLayout
+            android:id="@+id/btn_delete"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#F44336"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete"
+                android:tint="@android:color/white"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
