@@ -24,6 +24,9 @@ public interface TodoDao {
     @Query("SELECT * FROM todo_tasks WHERE isImportant = 1")
     List<TodoTask> getImportantTasks();
     
+    @Query("SELECT * FROM todo_tasks WHERE id = :id")
+    TodoTask getTaskById(int id);
+    
     @Insert
     void insertTask(TodoTask task);
     

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <!-- Header with back button and title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Đi ngủ sớm"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:layout_marginEnd="28dp" />
+
+    </LinearLayout>
+
+    <!-- Main content container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Sleep icon and text -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <!-- Moon and ZZZ icon -->
+            <RelativeLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Moon background -->
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_moon"
+                    android:tint="#FFA726" />
+
+                <!-- Face on moon -->
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_sleep_face"
+                    android:tint="#9C27B0" />
+
+                <!-- ZZZ text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Z\nZ\nZ"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFA726"
+                    android:lineSpacingExtra="-4dp" />
+
+            </RelativeLayout>
+
+            <!-- Description text -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Một giấc ngủ đều đặn có thể khuyến khích cơ thể bạn học hỏi những gì sắp xảy ra vào ngày hôm sau và chuẩn bị cho bạn thần một cách thích hợp."
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:paddingHorizontal="24dp" />
+
+        </LinearLayout>
+
+        <!-- Memory reminder section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cụm từ nhắc nhở"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/text_reminder_phrase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chúc ngủ ngon, đã đến giờ đi ngủ"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:padding="12dp"
+                android:background="@drawable/rounded_background"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Repeat schedule section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lặp lại vào"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Days of week -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/day_sun"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="CN"
+                    android:textSize="12sp"
+                    android:textColor="#999999"
+                    android:gravity="center"
+                    android:background="@drawable/day_selector"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_mon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 2"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:background="@drawable/day_selected"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_tue"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 3"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:background="@drawable/day_selected"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_wed"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 4"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:background="@drawable/day_selected"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_thu"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 5"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:background="@drawable/day_selected"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_fri"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 6"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:background="@drawable/day_selected"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/day_sat"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="Th 7"
+                    android:textSize="12sp"
+                    android:textColor="#999999"
+                    android:gravity="center"
+                    android:background="@drawable/day_selector"
+                    android:layout_margin="4dp"
+                    android:clickable="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Reminder time section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nhắc nhở lúc"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/text_reminder_time"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:text="22:00"
+                    android:textSize="16sp"
+                    android:textColor="#333333"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:background="@drawable/rounded_background" />
+
+                <ImageView
+                    android:id="@+id/btn_add_time"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_add"
+                    android:background="@drawable/rounded_background"
+                    android:layout_marginStart="12dp"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:tint="#666666" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Save button -->
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Lưu"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_primary"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

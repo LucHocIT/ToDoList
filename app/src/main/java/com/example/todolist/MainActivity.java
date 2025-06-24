@@ -111,10 +111,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         recyclerIncompleteTasks.setAdapter(incompleteTasksAdapter);
         
         // Add swipe gesture for incomplete tasks
-        ItemTouchHelper incompleteHelper = new ItemTouchHelper(new SwipeToRevealHelper() {
+        SwipeToRevealHelper incompleteSwipeHelper = new SwipeToRevealHelper() {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                // Handle swipe completion if needed
+                // Handle swipe completion if needed - don't auto dismiss
             }
             
             @Override
@@ -137,8 +137,59 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     onTaskDelete(incompleteTasks.get(position));
                 }
             }
-        });
+        };
+        ItemTouchHelper incompleteHelper = new ItemTouchHelper(incompleteSwipeHelper);
         incompleteHelper.attachToRecyclerView(recyclerIncompleteTasks);
+        
+        // Add touch listener to handle action button clicks
+        recyclerIncompleteTasks.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull android.view.MotionEvent e) {
+                if (e.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    View child = rv.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null) {
+                        RecyclerView.ViewHolder viewHolder = rv.getChildViewHolder(child);
+                        // If item is swiped and user taps on action area, handle it
+                        if (child.getTranslationX() < 0) {
+                            boolean handled = incompleteSwipeHelper.handleActionClick(viewHolder, e.getX(), e.getY());
+                            if (handled) {
+                                return true; // Consume the touch event, don't close slideshow
+                            }
+                            // If click wasn't on action buttons but item is swiped, don't auto-close
+                            // Let user manually swipe back to close
+                        } else {
+                            // If user taps on a normal item, close any open swipe actions
+                            incompleteSwipeHelper.closeAllSwipeActions();
+                        }
+                    } else {
+                        // User tapped on empty area, close any open swipe actions
+                        incompleteSwipeHelper.closeAllSwipeActions();
+                    }
+                }
+                return false;
+            }
+            
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull android.view.MotionEvent e) {
+                // Handle touch events that were intercepted
+                if (e.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    View child = rv.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null) {
+                        RecyclerView.ViewHolder viewHolder = rv.getChildViewHolder(child);
+                        if (child.getTranslationX() < 0) {
+                            // Don't automatically close after handling action click
+                            incompleteSwipeHelper.handleActionClick(viewHolder, e.getX(), e.getY());
+                        }
+                    }
+                }
+            }
+            
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+        });
+        
+        // Set recycler view reference for swipe helper
+        incompleteSwipeHelper.setRecyclerView(recyclerIncompleteTasks);
 
         // Completed tasks RecyclerView
         recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
@@ -468,8 +519,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     @Override
     public void onTaskCalendar(TodoTask task) {
-        // Open calendar/date picker
-        Toast.makeText(this, "Mở lịch để chỉnh sửa ngày", Toast.LENGTH_SHORT).show();
+        // Open reminder activity
+        Intent intent = new Intent(this, ReminderActivity.class);
+        intent.putExtra("task_id", task.getId());
+        startActivity(intent);
     }
 
     @Override

@@ -54,18 +54,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.tasks = newTasks;
         notifyDataSetChanged();
     }
-    
-    class TaskViewHolder extends RecyclerView.ViewHolder {
+      class TaskViewHolder extends RecyclerView.ViewHolder {
         private CheckBox checkboxComplete;
         private TextView textTaskTitle;
         private TextView textTaskDateTime;
         private ImageView iconNotification;
         private ImageView iconFlag;
         private LinearLayout taskBackground;
-        private LinearLayout swipeActions;
-        private LinearLayout btnStar;
-        private LinearLayout btnCalendar;
-        private LinearLayout btnDelete;
         
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,13 +70,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             iconNotification = itemView.findViewById(R.id.icon_notification);
             iconFlag = itemView.findViewById(R.id.icon_flag);
             taskBackground = itemView.findViewById(R.id.task_background);
-            swipeActions = itemView.findViewById(R.id.swipe_actions);
-            btnStar = itemView.findViewById(R.id.btn_star);
-            btnCalendar = itemView.findViewById(R.id.btn_calendar);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
-        
-        public void bind(TodoTask task) {
+          public void bind(TodoTask task) {
             textTaskTitle.setText(task.getTitle());
             textTaskDateTime.setText(task.getDueDate() + " " + task.getDueTime());
             checkboxComplete.setChecked(task.isCompleted());
@@ -112,44 +102,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (listener != null) {
                     listener.onTaskComplete(task, isChecked);
                 }
-            });
-            
-            btnStar.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onTaskStar(task);
-                }
-                hideSwipeActions();
-            });
-            
-            btnCalendar.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onTaskCalendar(task);
-                }
-                hideSwipeActions();
-            });
-            
-            btnDelete.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onTaskDelete(task);
-                }
-                hideSwipeActions();
-            });
-            
-            // Setup swipe gesture (simplified - normally would use ItemTouchHelper)
-            taskBackground.setOnLongClickListener(v -> {
-                showSwipeActions();
-                return true;
-            });
-        }
-        
-        private void showSwipeActions() {
-            swipeActions.setVisibility(View.VISIBLE);
-            taskBackground.setVisibility(View.GONE);
-        }
-        
-        private void hideSwipeActions() {
-            swipeActions.setVisibility(View.GONE);
-            taskBackground.setVisibility(View.VISIBLE);
+            });            
+            // Reset item position on bind
+            itemView.setTranslationX(0);
         }
     }
 }

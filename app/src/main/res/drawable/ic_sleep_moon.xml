@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Moon -->
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M60,20C71.05,20 80,28.95 80,40C80,51.05 71.05,60 60,60C48.95,60 40,51.05 40,40C40,28.95 48.95,20 60,20Z"/>
+    
+    <!-- Moon face -->
+    <path
+        android:fillColor="#8E24AA"
+        android:pathData="M55,35C55,33.9 54.1,33 53,33C51.9,33 51,33.9 51,35C51,36.1 51.9,37 53,37C54.1,37 55,36.1 55,35Z"/>
+    
+    <path
+        android:fillColor="#8E24AA"
+        android:pathData="M69,35C69,33.9 68.1,33 67,33C65.9,33 65,33.9 65,35C65,36.1 65.9,37 67,37C68.1,37 69,36.1 69,35Z"/>
+    
+    <!-- Z letters for sleep -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M75,25L82,25L75,32L82,32L82,35L72,35L79,28L72,28L72,25Z"/>
+    
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M85,20L90,20L85,25L90,25L90,27L82,27L87,22L82,22L82,20Z"/>
+    
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M88,30L92,30L88,34L92,34L92,36L85,36L89,32L85,32L85,30Z"/>
+    
+</vector>
