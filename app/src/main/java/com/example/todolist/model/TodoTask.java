@@ -2,6 +2,7 @@ package com.example.todolist.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.Ignore;
 
 @Entity(tableName = "todo_tasks")
 public class TodoTask {
@@ -18,10 +19,13 @@ public class TodoTask {
     private String reminderType;
     private boolean hasReminder;
     private String attachments;
+    private String repeatType; // Không có, Hàng ngày, Hàng tuần, Hàng tháng
+    private boolean isRepeating;
     
     public TodoTask() {
     }
     
+    @Ignore
     public TodoTask(String title, String description, String dueDate, String dueTime) {
         this.title = title;
         this.description = description;
@@ -33,6 +37,8 @@ public class TodoTask {
         this.reminderType = "Thông báo";
         this.hasReminder = false;
         this.attachments = "";
+        this.repeatType = "Không có";
+        this.isRepeating = false;
     }
     
     // Getters
@@ -47,6 +53,8 @@ public class TodoTask {
     public String getReminderType() { return reminderType; }
     public boolean isHasReminder() { return hasReminder; }
     public String getAttachments() { return attachments; }
+    public String getRepeatType() { return repeatType; }
+    public boolean isRepeating() { return isRepeating; }
     
     // Setters
     public void setId(int id) { this.id = id; }
@@ -60,4 +68,6 @@ public class TodoTask {
     public void setReminderType(String reminderType) { this.reminderType = reminderType; }
     public void setHasReminder(boolean hasReminder) { this.hasReminder = hasReminder; }
     public void setAttachments(String attachments) { this.attachments = attachments; }
+    public void setRepeatType(String repeatType) { this.repeatType = repeatType; }
+    public void setRepeating(boolean repeating) { isRepeating = repeating; }
 }

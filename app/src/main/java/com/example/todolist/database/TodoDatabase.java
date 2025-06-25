@@ -9,7 +9,7 @@ import com.example.todolist.model.TodoTask;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Reminder;
 
-@Database(entities = {TodoTask.class, Category.class, Reminder.class}, version = 3, exportSchema = false)
+@Database(entities = {TodoTask.class, Category.class, Reminder.class}, version = 4, exportSchema = false)
 public abstract class TodoDatabase extends RoomDatabase {
     
     private static TodoDatabase instance;
