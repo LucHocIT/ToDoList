@@ -127,11 +127,6 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
             }
 
             @Override
-            public void onCalendarAction(TodoTask task) {
-                onTaskCalendar(task);
-            }
-
-            @Override
             public void onDeleteAction(TodoTask task) {
                 onTaskDelete(task);
             }
@@ -146,11 +141,6 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
             database.todoDao().updateTask(task);
             runOnUiThread(() -> searchAdapter.notifyDataSetChanged());
         }).start();
-    }
-
-    @Override
-    public void onTaskCalendar(TodoTask task) {
-        // Handle calendar action
     }
 
     @Override

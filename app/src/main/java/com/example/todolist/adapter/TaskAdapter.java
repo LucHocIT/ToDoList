@@ -23,7 +23,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         void onTaskComplete(TodoTask task, boolean isCompleted);
         void onTaskLongClick(TodoTask task);
         void onTaskStar(TodoTask task);
-        void onTaskCalendar(TodoTask task);
         void onTaskDelete(TodoTask task);
     }
     

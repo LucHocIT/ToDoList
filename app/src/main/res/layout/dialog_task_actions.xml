@@ -43,35 +43,6 @@
 
         </LinearLayout>
 
-        <!-- Calendar Action -->
-        <LinearLayout
-            android:id="@+id/layout_action_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="12dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_calendar"
-                android:tint="@color/primary_blue"
-                android:layout_marginEnd="12dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Lịch"
-                android:textSize="13sp"
-                android:textColor="@color/black" />
-
-        </LinearLayout>
-
         <!-- Delete Action -->
         <LinearLayout
             android:id="@+id/layout_action_delete"

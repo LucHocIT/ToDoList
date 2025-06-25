@@ -60,8 +60,11 @@ public class CategorySelectionAdapter extends RecyclerView.Adapter<CategorySelec
         holder.categoryColorIndicator.setBackground(colorDrawable);
         
         holder.itemView.setOnClickListener(v -> {
+            int clickedPosition = holder.getAdapterPosition();
+            if (clickedPosition == RecyclerView.NO_POSITION) return;
+            
             int previousSelected = selectedPosition;
-            selectedPosition = position;
+            selectedPosition = clickedPosition;
             
             // Update radio buttons
             notifyItemChanged(previousSelected);

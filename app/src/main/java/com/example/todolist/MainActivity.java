@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Locale;
+
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
@@ -423,18 +425,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             filteredCompletedTasks.addAll(completedTasks);
         } else {
             // Filter tasks based on query
-            String lowerQuery = query.toLowerCase().trim();
+            String lowerQuery = query.toLowerCase(Locale.getDefault()).trim();
             
             for (TodoTask task : incompleteTasks) {
-                if (task.getTitle().toLowerCase().contains(lowerQuery) ||
-                    (task.getDescription() != null && task.getDescription().toLowerCase().contains(lowerQuery))) {
+                if (task.getTitle().toLowerCase(Locale.getDefault()).contains(lowerQuery) ||
+                    (task.getDescription() != null && task.getDescription().toLowerCase(Locale.getDefault()).contains(lowerQuery))) {
                     filteredIncompleteTasks.add(task);
                 }
             }
             
             for (TodoTask task : completedTasks) {
-                if (task.getTitle().toLowerCase().contains(lowerQuery) ||
-                    (task.getDescription() != null && task.getDescription().toLowerCase().contains(lowerQuery))) {
+                if (task.getTitle().toLowerCase(Locale.getDefault()).contains(lowerQuery) ||
+                    (task.getDescription() != null && task.getDescription().toLowerCase(Locale.getDefault()).contains(lowerQuery))) {
                     filteredCompletedTasks.add(task);
                 }
             }
@@ -450,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         
         // Update button states
         resetFilterButtons();
-        switch (filter.toLowerCase()) {
+        switch (filter.toLowerCase(Locale.getDefault())) {
             case "all":
                 btnAll.setBackgroundTintList(getColorStateList(R.color.primary_blue));
                 btnAll.setTextColor(getColor(android.R.color.white));
@@ -587,11 +589,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
 
             @Override
-            public void onCalendarAction(TodoTask task) {
-                onTaskCalendar(task);
-            }
-
-            @Override
             public void onDeleteAction(TodoTask task) {
                 onTaskDelete(task);
             }
@@ -607,14 +604,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             runOnUiThread(this::loadTasks);
         }).start();
         Toast.makeText(this, task.isImportant() ? "Đã đánh dấu quan trọng" : "Đã bỏ đánh dấu quan trọng", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onTaskCalendar(TodoTask task) {
-        // Open reminder activity
-        Intent intent = new Intent(this, ReminderActivity.class);
-        intent.putExtra("task_id", task.getId());
-        startActivity(intent);
     }
 
     @Override
