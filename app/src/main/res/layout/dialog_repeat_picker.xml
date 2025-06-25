@@ -11,18 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <!-- Title -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Đặt làm tác vụ lặp lại"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="#212121"
             android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="32dp" />
 
         <!-- Toggle Switch -->
         <LinearLayout
@@ -37,8 +37,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Đặt làm tác vụ lặp lại"
-                android:textSize="16sp"
-                android:textColor="@color/black" />
+                android:textSize="18sp"
+                android:textColor="#212121" />
 
             <Switch
                 android:id="@+id/switch_repeat"
@@ -54,7 +54,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:layout_marginBottom="20dp">
 
             <!-- Option Buttons -->
             <LinearLayout
@@ -63,49 +64,61 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_hourly"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Giờ"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_outline"
-                    android:textColor="@color/text_gray"
-                    android:layout_marginEnd="4dp" />
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:backgroundTint="#F5F5F5"
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="24dp"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_daily"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="hàng ngày"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_outline"
-                    android:textColor="@color/text_gray"
-                    android:layout_marginHorizontal="4dp" />
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:backgroundTint="#F5F5F5"
+                    android:layout_marginHorizontal="4dp"
+                    app:cornerRadius="24dp"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_weekly"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Hàng tuần"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_outline"
-                    android:textColor="@color/text_gray"
-                    android:layout_marginHorizontal="4dp" />
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:backgroundTint="#F5F5F5"
+                    android:layout_marginHorizontal="4dp"
+                    app:cornerRadius="24dp"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_monthly"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
                     android:text="Hàng tháng"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_outline"
-                    android:textColor="@color/text_gray"
-                    android:layout_marginStart="4dp" />
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:backgroundTint="#F5F5F5"
+                    android:layout_marginStart="8dp"
+                    app:cornerRadius="24dp"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
             </LinearLayout>
 
@@ -116,29 +129,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:gravity="end">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_cancel_repeat"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="HỦY"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginEnd="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
-            <Button
+            <TextView
                 android:id="@+id/btn_confirm_repeat"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="XONG"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
         </LinearLayout>
 

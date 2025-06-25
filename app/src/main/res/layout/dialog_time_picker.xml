@@ -11,99 +11,283 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <!-- Title -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cài đặt thời gian"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="#212121"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- Time Display -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="24dp">
+        <!-- Clock Container -->
+        <RelativeLayout
+            android:id="@+id/clock_container"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp">
 
+            <!-- Clock Background Circle -->
+            <View
+                android:id="@+id/clock_circle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_background_light"/>
+
+            <!-- Hour Numbers positioned around circle -->
             <TextView
-                android:id="@+id/tv_hour"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:text="2"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
+                android:id="@+id/hour_12"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="12"
+                android:textSize="16sp"
+                android:textColor="#757575"
                 android:gravity="center"
-                android:background="@drawable/circle_background" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"/>
 
             <TextView
+                android:id="@+id/hour_1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="1"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="32dp"/>
+
+            <TextView
+                android:id="@+id/hour_2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="2"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/circle_blue"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="92dp"
+                android:layout_marginEnd="18dp"/>
+
+            <TextView
+                android:id="@+id/hour_3"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="3"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:id="@+id/hour_4"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="4"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="92dp"/>
+
+            <TextView
+                android:id="@+id/hour_5"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="5"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="52dp"/>
+
+            <TextView
+                android:id="@+id/hour_6"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="6"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/hour_7"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="7"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="52dp"/>
+
+            <TextView
+                android:id="@+id/hour_8"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="8"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginBottom="92dp"/>
+
+            <TextView
+                android:id="@+id/hour_9"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="9"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"/>
+
+            <TextView
+                android:id="@+id/hour_10"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="10"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="92dp"/>
+
+            <TextView
+                android:id="@+id/hour_11"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="11"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="52dp"/>
+
+            <!-- Clock Hands (Optional - can be added later) -->
+            
+            <!-- Time Display in Center -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=":"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:layout_marginHorizontal="8dp" />
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_minute"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:text="07"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_gray"
-                android:gravity="center"
-                android:background="@drawable/circle_background_gray" />
+                <TextView
+                    android:id="@+id/tv_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"/>
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    android:textColor="#757575"
+                    android:layout_marginHorizontal="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_minute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="07"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    android:textColor="#757575"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- Keyboard Icon -->
+        <ImageView
+            android:id="@+id/iv_keyboard"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_keyboard"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:padding="8dp"
+            android:background="@drawable/circle_background_light"
+            android:clickable="true"/>
 
         <!-- Quick Time Options -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="8dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_no_time"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="Không có thời gian"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginEnd="8dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginEnd="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_07_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="07:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginHorizontal="4dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginHorizontal="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_09_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="09:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginStart="8dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginStart="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
         </LinearLayout>
 
@@ -111,92 +295,121 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="8dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_10_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="10:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginEnd="4dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginEnd="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_12_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="12:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginHorizontal="4dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginHorizontal="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_14_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="14:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginHorizontal="4dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginStart="4dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_16_00"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_weight="1"
                 android:text="16:00"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginStart="4dp" />
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_18_00"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="18:00"
+                android:textSize="11sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginStart="8dp"
+                app:cornerRadius="18dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_18_00"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="18:00"
-            android:textSize="12sp"
-            android:background="@drawable/button_outline"
-            android:textColor="@color/text_gray"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp" />
 
         <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="end">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_cancel_time"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="HỦY"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginEnd="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
-            <Button
+            <TextView
                 android:id="@+id/btn_confirm_time"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="XONG"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
         </LinearLayout>
 

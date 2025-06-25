@@ -11,158 +11,263 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- Header -->
+        <!-- Calendar Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp"
+            android:paddingVertical="8dp">
+
+            <ImageView
+                android:id="@+id/btn_prev_month"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_chevron_left"
+                android:clickable="true"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
             <TextView
+                android:id="@+id/tv_month_year"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="THÁNG 6  2025"
-                android:textSize="16sp"
+                android:textSize="18sp"
+                android:textColor="#212121"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:gravity="center" />
-
-            <ImageView
-                android:id="@+id/btn_prev_month"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_left"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginEnd="8dp" />
+                android:gravity="center"/>
 
             <ImageView
                 android:id="@+id/btn_next_month"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_right"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_chevron_right"
                 android:clickable="true"
-                android:focusable="true" />
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
 
         <!-- Calendar Grid -->
-        <CalendarView
-            android:id="@+id/calendar_view"
+        <GridLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="wrap_content"
+            android:columnCount="7"
+            android:layout_marginBottom="4dp">
 
-        <!-- Quick Options -->
+            <!-- Days of week header -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="CN"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 2"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 3"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 4"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 5"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 6"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_columnWeight="1"
+                android:text="Th 7"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+        </GridLayout>
+
+        <!-- Calendar Days Container -->
+        <GridLayout
+            android:id="@+id/calendar_days_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="7"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Quick Select Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="8dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_no_reminder"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="Không hẹn hò"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginEnd="4dp" />
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginEnd="6dp"
+                app:cornerRadius="20dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_today"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="Hôm nay"
-                android:textSize="12sp"
-                android:background="@drawable/button_primary"
-                android:textColor="@color/white"
-                android:layout_marginHorizontal="4dp" />
-
-            <Button
-                android:id="@+id/btn_tomorrow"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:text="Ngày mai"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginHorizontal="4dp" />
-
-            <Button
-                android:id="@+id/btn_next_week"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:text="3 ngày sau"
-                android:textSize="12sp"
-                android:background="@drawable/button_outline"
-                android:textColor="@color/text_gray"
-                android:layout_marginStart="4dp" />
+                android:textSize="13sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4285F4"
+                android:layout_marginStart="6dp"
+                app:cornerRadius="20dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button"/>
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_weekend"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="Chủ nhật này"
-            android:textSize="12sp"
-            android:background="@drawable/button_outline"
-            android:textColor="@color/text_gray"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Time and Repeat Options -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tomorrow"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Ngày mai"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginEnd="6dp"
+                app:cornerRadius="20dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_next_week"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="3 ngày sau"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:backgroundTint="#F5F5F5"
+                android:layout_marginStart="6dp"
+                app:cornerRadius="20dp"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_weekend"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Chủ nhật này"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginBottom="20dp"
+            app:cornerRadius="20dp"
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <!-- Additional Options -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+            
             <!-- Time Option -->
             <LinearLayout
                 android:id="@+id/layout_time_option"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginBottom="16dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:paddingHorizontal="8dp">
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_time"
-                    android:tint="@color/text_gray"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="16dp"
+                    android:tint="#757575"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Thời gian"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
+                    android:textSize="16sp"
+                    android:textColor="#212121"/>
 
                 <TextView
                     android:id="@+id/tv_time_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Không"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_gray" />
+                    android:textSize="16sp"
+                    android:textColor="#757575"/>
 
             </LinearLayout>
 
@@ -170,36 +275,34 @@
             <LinearLayout
                 android:id="@+id/layout_reminder_option"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingHorizontal="8dp">
+                android:layout_marginBottom="16dp"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_notification"
-                    android:tint="@color/text_gray"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="16dp"
+                    android:tint="#757575"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Lời nhắc"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
+                    android:textSize="16sp"
+                    android:textColor="#212121"/>
 
                 <TextView
                     android:id="@+id/tv_reminder_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Không"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_gray" />
+                    android:textSize="16sp"
+                    android:textColor="#757575"/>
 
             </LinearLayout>
 
@@ -207,36 +310,35 @@
             <LinearLayout
                 android:id="@+id/layout_repeat_option"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:focusable="true"
-                android:paddingHorizontal="8dp">
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_repeat"
-                    android:tint="@color/text_gray"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="16dp"
+                    android:tint="#757575"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Lặp lại"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
+                    android:textSize="16sp"
+                    android:textColor="#212121"/>
 
                 <TextView
                     android:id="@+id/tv_repeat_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Không"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_gray" />
+                    android:textSize="16sp"
+                    android:textColor="#757575"/>
 
             </LinearLayout>
 
@@ -247,29 +349,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:gravity="end"
+            android:paddingTop="8dp">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_cancel_date"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="HỦY"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginEnd="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
-            <Button
+            <TextView
                 android:id="@+id/btn_confirm_date"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
                 android:text="XONG"
-                android:textSize="14sp"
-                android:textColor="@color/primary_blue"
-                android:background="@android:color/transparent"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"/>
 
         </LinearLayout>
 
