@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,10 +24,14 @@ import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.model.Category;
 import com.example.todolist.util.TaskActionsDialog;
+import com.example.todolist.util.TaskSortDialog;
+import com.example.todolist.util.SortType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskClickListener {
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private TaskAdapter incompleteTasksAdapter;
     private TaskAdapter completedTasksAdapter;
     private FloatingActionButton fabAdd;
-    private MaterialButton btnAll, btnWork, btnPersonal;
+    private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private ImageView btnMenu;
     
     // Search components
@@ -45,6 +50,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private LinearLayout layoutCategoriesContainer;
     private EditText editSearch;
     private ImageView btnCancelSearch;
+    
+    // Empty state
+    private View layoutEmptyState;
+    private TextView tvEmptyTitle;
+    
+    // Current filter
+    private String currentFilter = "all";
+    
+    // Current sort type
+    private SortType currentSortType = SortType.DATE_TIME;
     
     private TodoDatabase database;
     private List<TodoTask> allTasks;
@@ -92,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnAll = findViewById(R.id.btn_all);
         btnWork = findViewById(R.id.btn_work);
         btnPersonal = findViewById(R.id.btn_personal);
+        btnFavorite = findViewById(R.id.btn_favorite);
         btnMenu = findViewById(R.id.btn_menu);
         
         // Search components
@@ -100,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         layoutCategoriesContainer = findViewById(R.id.layout_categories_container);
         editSearch = findViewById(R.id.edit_search);
         btnCancelSearch = findViewById(R.id.btn_cancel_search);
+        
+        // Empty state
+        layoutEmptyState = findViewById(R.id.layout_empty_state);
+        tvEmptyTitle = findViewById(R.id.tv_empty_title);
     }
 
     private void setupRecyclerViews() {
@@ -118,8 +138,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         fabAdd.setOnClickListener(v -> showAddTaskDialog());
         
         btnAll.setOnClickListener(v -> filterTasks("all"));
-        btnWork.setOnClickListener(v -> filterTasks("work"));
-        btnPersonal.setOnClickListener(v -> filterTasks("personal"));
+        btnWork.setOnClickListener(v -> filterTasks("công việc"));
+        btnPersonal.setOnClickListener(v -> filterTasks("cá nhân"));
+        btnFavorite.setOnClickListener(v -> filterTasks("yêu thích"));
         
         btnMenu.setOnClickListener(v -> showPopupMenu(v));
         
@@ -152,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
             
             runOnUiThread(() -> {
-                // Clear existing dynamic categories (keep the 3 default buttons)
+                // Clear existing dynamic categories (keep the 4 default buttons: all, work, personal, favorite)
                 clearDynamicCategories();
                 
                 // Add categories from database (skip default ones that are already in layout)
@@ -165,37 +186,55 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         }).start();
     }
     
+    // Method to clear all data and start fresh (for testing)
+    private void clearAllDataAndReset() {
+        new Thread(() -> {
+            // Clear all categories and tasks
+            database.clearAllTables();
+            
+            // Recreate defaults
+            createDefaultCategories();
+            
+            runOnUiThread(() -> {
+                loadCategories();
+                loadTasks();
+            });
+        }).start();
+    }
+    
     private void createDefaultCategories() {
-        // Create default categories
-        Category allCategory = new Category("Tất cả", "#4285F4", 0, true);
-        Category workCategory = new Category("Công việc", "#FF9800", 1, true);
-        Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
+        // Check if default categories already exist to avoid duplicates
+        Category existingWork = database.categoryDao().getCategoryByName("Công việc");
+        Category existingPersonal = database.categoryDao().getCategoryByName("Cá nhân");
+        Category existingFavorite = database.categoryDao().getCategoryByName("Yêu thích");
         
-        database.categoryDao().insertCategory(allCategory);
-        database.categoryDao().insertCategory(workCategory);
-        database.categoryDao().insertCategory(personalCategory);
+        if (existingWork == null) {
+            Category workCategory = new Category("Công việc", "#FF9800", 1, true);
+            database.categoryDao().insertCategory(workCategory);
+        }
         
-        // Add some additional sample categories
-        Category studyCategory = new Category("Học tập", "#2196F3", 3, false);
-        Category healthCategory = new Category("Sức khỏe", "#4CAF50", 4, false);
-        Category familyCategory = new Category("Gia đình", "#FF5722", 5, false);
+        if (existingPersonal == null) {
+            Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
+            database.categoryDao().insertCategory(personalCategory);
+        }
         
-        database.categoryDao().insertCategory(studyCategory);
-        database.categoryDao().insertCategory(healthCategory);
-        database.categoryDao().insertCategory(familyCategory);
+        if (existingFavorite == null) {
+            Category favoriteCategory = new Category("Yêu thích", "#E91E63", 3, true);
+            database.categoryDao().insertCategory(favoriteCategory);
+        }
     }
     
     private boolean isDefaultCategory(String categoryName) {
-        return categoryName.equals("Tất cả") || 
-               categoryName.equals("Công việc") || 
-               categoryName.equals("Cá nhân");
+        return categoryName.equals("Công việc") || 
+               categoryName.equals("Cá nhân") ||
+               categoryName.equals("Yêu thích");
     }
     
     private void clearDynamicCategories() {
-        // Remove all views after the 3rd child (default categories + dynamic ones)
+        // Remove all views after the 4th child (all, work, personal, favorite + dynamic ones)
         int childCount = layoutCategoriesContainer.getChildCount();
-        if (childCount > 3) {
-            layoutCategoriesContainer.removeViews(3, childCount - 3);
+        if (childCount > 4) {
+            layoutCategoriesContainer.removeViews(4, childCount - 4);
         }
     }
     
@@ -219,7 +258,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         categoryButton.setLayoutParams(params);
         
         // Set click listener
-        categoryButton.setOnClickListener(v -> filterTasks(category.getName().toLowerCase()));
+        categoryButton.setOnClickListener(v -> {
+            filterTasks(category.getName());
+            // Highlight clicked button
+            resetFilterButtons();
+            categoryButton.setBackgroundTintList(getColorStateList(R.color.primary_blue));
+            categoryButton.setTextColor(getColor(android.R.color.white));
+        });
         
         // Add to container
         layoutCategoriesContainer.addView(categoryButton);
@@ -262,7 +307,14 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void createNewTask(String title) {
-        TodoTask newTask = new TodoTask(title, "", "2025/05/25", "22:00");
+        TodoTask newTask = new TodoTask(title, "", "2025/06/25", "12:00");
+        
+        // Set category based on current filter
+        if (!currentFilter.equalsIgnoreCase("all")) {
+            newTask.setCategory(currentFilter);
+        } else {
+            newTask.setCategory("Công việc"); // Default category
+        }
         
         // Add to database
         new Thread(() -> {
@@ -285,21 +337,41 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             
             runOnUiThread(() -> {
                 updateTaskLists();
-                incompleteTasksAdapter.updateTasks(incompleteTasks);
-                completedTasksAdapter.updateTasks(completedTasks);
+                // Apply current filter after loading tasks
+                filterTasks(currentFilter);
             });
         }).start();
     }
     
     private void addSampleData() {
-        TodoTask sampleTask = new TodoTask(
-            "Chúc ngủ ngon, đã đến giờ đi ngủ", 
+        // Add sample tasks for different categories
+        TodoTask workTask = new TodoTask(
+            "Hoàn thành báo cáo tháng", 
             "", 
             "2025/05/25", 
             "22:00"
         );
-        sampleTask.setHasReminder(true);
-        database.todoDao().insertTask(sampleTask);
+        workTask.setCategory("Công việc");
+        workTask.setHasReminder(true);
+        database.todoDao().insertTask(workTask);
+        
+        TodoTask personalTask = new TodoTask(
+            "Mua sắm thực phẩm cho tuần", 
+            "", 
+            "2025/05/26", 
+            "10:00"
+        );
+        personalTask.setCategory("Cá nhân");
+        database.todoDao().insertTask(personalTask);
+        
+        TodoTask favoriteTask = new TodoTask(
+            "Đọc sách yêu thích", 
+            "", 
+            "2025/05/26", 
+            "20:00"
+        );
+        favoriteTask.setCategory("Yêu thích");
+        database.todoDao().insertTask(favoriteTask);
     }
 
     private void updateTaskLists() {
@@ -374,25 +446,94 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void filterTasks(String filter) {
+        currentFilter = filter;
+        
         // Update button states
         resetFilterButtons();
-        switch (filter) {
+        switch (filter.toLowerCase()) {
             case "all":
                 btnAll.setBackgroundTintList(getColorStateList(R.color.primary_blue));
                 btnAll.setTextColor(getColor(android.R.color.white));
                 break;
-            case "work":
+            case "công việc":
                 btnWork.setBackgroundTintList(getColorStateList(R.color.primary_blue));
                 btnWork.setTextColor(getColor(android.R.color.white));
                 break;
-            case "personal":
+            case "cá nhân":
                 btnPersonal.setBackgroundTintList(getColorStateList(R.color.primary_blue));
                 btnPersonal.setTextColor(getColor(android.R.color.white));
                 break;
+            case "yêu thích":
+                btnFavorite.setBackgroundTintList(getColorStateList(R.color.primary_blue));
+                btnFavorite.setTextColor(getColor(android.R.color.white));
+                break;
+            default:
+                // For dynamic categories, find and highlight the button
+                highlightDynamicCategoryButton(filter);
+                break;
         }
         
-        // Filter logic would go here
-        loadTasks();
+        // Filter tasks by category
+        filteredIncompleteTasks.clear();
+        filteredCompletedTasks.clear();
+        
+        if (filter.equalsIgnoreCase("all")) {
+            // Show all tasks
+            filteredIncompleteTasks.addAll(incompleteTasks);
+            filteredCompletedTasks.addAll(completedTasks);
+        } else {
+            // Filter by specific category
+            for (TodoTask task : incompleteTasks) {
+                if (task.getCategory() != null && task.getCategory().equalsIgnoreCase(filter)) {
+                    filteredIncompleteTasks.add(task);
+                }
+            }
+            
+            for (TodoTask task : completedTasks) {
+                if (task.getCategory() != null && task.getCategory().equalsIgnoreCase(filter)) {
+                    filteredCompletedTasks.add(task);
+                }
+            }
+        }
+        
+        // Update adapters
+        incompleteTasksAdapter.updateTasks(filteredIncompleteTasks);
+        completedTasksAdapter.updateTasks(filteredCompletedTasks);
+        
+        // Apply current sorting
+        sortTasks();
+        
+        // Show/hide empty state
+        boolean hasAnyTasks = !filteredIncompleteTasks.isEmpty() || !filteredCompletedTasks.isEmpty();
+        if (hasAnyTasks) {
+            layoutEmptyState.setVisibility(View.GONE);
+            recyclerIncompleteTasks.setVisibility(View.VISIBLE);
+            recyclerCompletedTasks.setVisibility(View.VISIBLE);
+        } else {
+            layoutEmptyState.setVisibility(View.VISIBLE);
+            recyclerIncompleteTasks.setVisibility(View.GONE);
+            recyclerCompletedTasks.setVisibility(View.GONE);
+            if (filter.equalsIgnoreCase("all")) {
+                tvEmptyTitle.setText("Không có nhiệm vụ nào.");
+            } else {
+                tvEmptyTitle.setText("Không có nhiệm vụ nào trong danh mục \"" + filter + "\".");
+            }
+        }
+    }
+    
+    private void highlightDynamicCategoryButton(String categoryName) {
+        // Find and highlight the dynamic category button
+        for (int i = 4; i < layoutCategoriesContainer.getChildCount(); i++) {
+            View child = layoutCategoriesContainer.getChildAt(i);
+            if (child instanceof MaterialButton) {
+                MaterialButton button = (MaterialButton) child;
+                if (button.getText().toString().equalsIgnoreCase(categoryName)) {
+                    button.setBackgroundTintList(getColorStateList(R.color.primary_blue));
+                    button.setTextColor(getColor(android.R.color.white));
+                    break;
+                }
+            }
+        }
     }
 
     private void resetFilterButtons() {
@@ -405,6 +546,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnWork.setTextColor(textColor);
         btnPersonal.setBackgroundTintList(getColorStateList(R.color.light_gray));
         btnPersonal.setTextColor(textColor);
+        btnFavorite.setBackgroundTintList(getColorStateList(R.color.light_gray));
+        btnFavorite.setTextColor(textColor);
+        
+        // Reset dynamic category buttons
+        for (int i = 4; i < layoutCategoriesContainer.getChildCount(); i++) {
+            View child = layoutCategoriesContainer.getChildAt(i);
+            if (child instanceof MaterialButton) {
+                MaterialButton button = (MaterialButton) child;
+                button.setBackgroundTintList(getColorStateList(R.color.light_gray));
+                button.setTextColor(textColor);
+            }
+        }
     }
 
     // TaskAdapter.OnTaskClickListener implementation
@@ -491,10 +644,98 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             } else if (item.getItemId() == R.id.menu_search) {
                 enterSearchMode();
                 return true;
+            } else if (item.getItemId() == R.id.menu_sort_tasks) {
+                showSortDialog();
+                return true;
+            } else if (item.getItemId() == R.id.menu_reset_data) {
+                // Reset all data for testing
+                new AlertDialog.Builder(this)
+                    .setTitle("Reset dữ liệu")
+                    .setMessage("Bạn có chắc chắn muốn xóa tất cả dữ liệu và tạo lại từ đầu?")
+                    .setPositiveButton("Reset", (dialog, which) -> {
+                        clearAllDataAndReset();
+                        Toast.makeText(this, "Đã reset tất cả dữ liệu", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+                return true;
             }
             return false;
         });
         
         popup.show();
+    }
+    
+    private void showSortDialog() {
+        TaskSortDialog sortDialog = new TaskSortDialog(this, sortType -> {
+            currentSortType = sortType;
+            // Apply sorting to current tasks
+            sortTasks();
+            Toast.makeText(this, "Đã áp dụng sắp xếp: " + getSortTypeName(sortType), Toast.LENGTH_SHORT).show();
+        });
+        sortDialog.show();
+    }
+    
+    private String getSortTypeName(SortType sortType) {
+        switch (sortType) {
+            case DATE_TIME:
+                return "Ngày và giờ đến hạn";
+            case CREATION_TIME:
+                return "Thời gian tạo tác vụ";
+            case ALPHABETICAL:
+                return "Bảng chữ cái A-Z";
+            default:
+                return "Mặc định";
+        }
+    }
+    
+    private void sortTasks() {
+        // Sort incomplete tasks
+        sortTaskList(filteredIncompleteTasks, currentSortType);
+        sortTaskList(incompleteTasks, currentSortType);
+        
+        // Sort completed tasks
+        sortTaskList(filteredCompletedTasks, currentSortType);
+        sortTaskList(completedTasks, currentSortType);
+        
+        // Update adapters
+        incompleteTasksAdapter.updateTasks(filteredIncompleteTasks);
+        completedTasksAdapter.updateTasks(filteredCompletedTasks);
+    }
+    
+    private void sortTaskList(List<TodoTask> tasks, SortType sortType) {
+        switch (sortType) {
+            case DATE_TIME:
+                Collections.sort(tasks, new Comparator<TodoTask>() {
+                    @Override
+                    public int compare(TodoTask t1, TodoTask t2) {
+                        // Sort by date, then by time
+                        String dateTime1 = t1.getDueDate() + " " + t1.getDueTime();
+                        String dateTime2 = t2.getDueDate() + " " + t2.getDueTime();
+                        return dateTime1.compareTo(dateTime2);
+                    }
+                });
+                break;
+                
+            case CREATION_TIME:
+                Collections.sort(tasks, new Comparator<TodoTask>() {
+                    @Override
+                    public int compare(TodoTask t1, TodoTask t2) {
+                        // Sort by task ID (newer tasks have higher IDs)
+                        return Integer.compare(t1.getId(), t2.getId());
+                    }
+                });
+                break;
+                
+            case ALPHABETICAL:
+                Collections.sort(tasks, new Comparator<TodoTask>() {
+                    @Override
+                    public int compare(TodoTask t1, TodoTask t2) {
+                        // Sort alphabetically by title
+                        return t1.getTitle().compareToIgnoreCase(t2.getTitle());
+                    }
+                });
+                break;
+        }
     }
 }

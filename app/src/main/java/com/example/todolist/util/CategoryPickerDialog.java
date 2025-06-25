@@ -103,9 +103,9 @@ public class CategoryPickerDialog {
     
     private void addDefaultCategories() {
         categories.clear();
-        categories.add(new Category("Tất cả", "#4285F4", 0, true));
         categories.add(new Category("Công việc", "#FF9800", 1, true));
         categories.add(new Category("Cá nhân", "#9C27B0", 2, true));
+        categories.add(new Category("Yêu thích", "#E91E63", 3, true));
     }
     
     public void show() {

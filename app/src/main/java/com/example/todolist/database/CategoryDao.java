@@ -42,4 +42,7 @@ public interface CategoryDao {
 
     @Query("DELETE FROM categories WHERE isDefault = 0")
     void deleteUserCategories();
+    
+    @Query("DELETE FROM categories")
+    void deleteAllCategories();
 }

@@ -28,4 +28,11 @@ public abstract class TodoDatabase extends RoomDatabase {
         }
         return instance;
     }
+    
+    // Method to clear all data
+    public void clearAllTables() {
+        todoDao().deleteAllTasks();
+        categoryDao().deleteAllCategories();
+        // Don't clear reminders as they might be linked to tasks
+    }
 }

@@ -38,4 +38,7 @@ public interface TodoDao {
     
     @Query("DELETE FROM todo_tasks WHERE id = :taskId")
     void deleteTaskById(int taskId);
+    
+    @Query("DELETE FROM todo_tasks")
+    void deleteAllTasks();
 }
