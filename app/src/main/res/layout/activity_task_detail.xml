@@ -48,30 +48,22 @@
             android:orientation="vertical">
 
             <!-- Category dropdown -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@android:color/white"
-                android:padding="16dp"
                 android:layout_marginBottom="16dp"
-                android:clickable="true">
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Không có thể loại"
-                    android:textSize="16sp"
-                    android:textColor="#666666"/>
+                <Spinner
+                    android:id="@+id/spinner_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/transparent"
+                    android:dropDownWidth="match_parent"/>
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_expand_more"/>
-
-            </LinearLayout>            <!-- Task title -->
+            </androidx.cardview.widget.CardView>            <!-- Task title -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
