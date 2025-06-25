@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="0dp">
+
+    <!-- Calendar -->
+    <CalendarView
+        android:id="@+id/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_margin="16dp"/>
+
+    <!-- Time and reminder section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:paddingTop="0dp">
+
+        <!-- Time picker -->
+        <LinearLayout
+            android:id="@+id/layout_time_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_access_time"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thời gian"
+                android:textSize="16sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:id="@+id/text_selected_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Không"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+        </LinearLayout>
+
+        <!-- Reminder picker -->
+        <LinearLayout
+            android:id="@+id/layout_reminder_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_notifications"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lời nhắc"
+                android:textSize="16sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:id="@+id/text_selected_reminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Không"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+        </LinearLayout>
+
+        <!-- Repeat picker -->
+        <LinearLayout
+            android:id="@+id/layout_repeat_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_repeat"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lặp lại"
+                android:textSize="16sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:id="@+id/text_selected_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Không"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:padding="16dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HỦY"
+            android:textSize="14sp"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="12dp"
+            android:clickable="true"
+            android:layout_marginEnd="16dp"/>
+
+        <TextView
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XONG"
+            android:textSize="14sp"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="12dp"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+</LinearLayout>

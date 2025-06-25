@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.util.DateTimePickerDialog;
 import java.util.List;
 
 public class TaskDetailActivity extends AppCompatActivity {
@@ -24,6 +26,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView textTime;
     private TextView textReminderValue;
     private Spinner spinnerCategory;
+    private LinearLayout layoutDatePicker;
     private ImageView btnBack;
     
     private TodoTask currentTask;
@@ -50,6 +53,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         textTime = findViewById(R.id.text_time);
         textReminderValue = findViewById(R.id.text_reminder_value);
         spinnerCategory = findViewById(R.id.spinner_category);
+        layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
         
         setupCategorySpinner();
@@ -126,6 +130,10 @@ public class TaskDetailActivity extends AppCompatActivity {
                             // Save to database
                             new Thread(() -> {
                                 database.todoDao().updateTask(currentTask);
+                                runOnUiThread(() -> {
+                                    // Set result to indicate data changed
+                                    setResult(RESULT_OK);
+                                });
                             }).start();
                         }
                     }
@@ -146,5 +154,54 @@ public class TaskDetailActivity extends AppCompatActivity {
     
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> finish());
+        
+        // Date picker click listener
+        layoutDatePicker.setOnClickListener(v -> showDateTimePicker());
+    }
+    
+    private void showDateTimePicker() {
+        DateTimePickerDialog dateTimeDialog = new DateTimePickerDialog(this, 
+            (date, time, reminder, repeat) -> {
+                // Update task data
+                if (currentTask != null) {
+                    currentTask.setDueDate(date);
+                    if (!"Không".equals(time)) {
+                        currentTask.setDueTime(time);
+                    }
+                    if (!"Không".equals(reminder)) {
+                        currentTask.setReminderType(reminder);
+                    }
+                    
+                    // Update UI
+                    textDueDate.setText(date);
+                    if (!"Không".equals(time)) {
+                        textTime.setText(time);
+                    }
+                    if (!"Không".equals(reminder)) {
+                        textReminderValue.setText(reminder);
+                    }
+                    
+                    // Save to database
+                    new Thread(() -> {
+                        database.todoDao().updateTask(currentTask);
+                        runOnUiThread(() -> {
+                            setResult(RESULT_OK);
+                            Toast.makeText(this, "Đã cập nhật thời gian", Toast.LENGTH_SHORT).show();
+                        });
+                    }).start();
+                }
+            });
+        
+        // Set current values if exists
+        if (currentTask != null) {
+            dateTimeDialog.setInitialValues(
+                currentTask.getDueDate(), 
+                currentTask.getDueTime(), 
+                currentTask.getReminderType(), 
+                ""
+            );
+        }
+        
+        dateTimeDialog.show();
     }
 }

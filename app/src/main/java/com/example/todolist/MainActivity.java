@@ -46,8 +46,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private ImageView btnMenu;
     
-    // Search components
-    private LinearLayout layoutFilterTabs;
+    private static final int REQUEST_TASK_DETAIL = 1001;
     private LinearLayout layoutSearch;
     private LinearLayout layoutCategoriesContainer;
     private EditText editSearch;
@@ -92,6 +91,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         loadCategories();
     }
     
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TASK_DETAIL && resultCode == RESULT_OK) {
+            // Reload data when returning from TaskDetailActivity with changes
+            loadTasks();
+        }
+    }
+    
     private void initDatabase() {
         database = TodoDatabase.getInstance(this);
         allTasks = new ArrayList<>();
@@ -113,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnMenu = findViewById(R.id.btn_menu);
         
         // Search components
-        layoutFilterTabs = findViewById(R.id.layout_filter_tabs);
+        // layoutFilterTabs = findViewById(R.id.layout_filter_tabs);
         layoutSearch = findViewById(R.id.layout_search);
         layoutCategoriesContainer = findViewById(R.id.layout_categories_container);
         editSearch = findViewById(R.id.edit_search);
@@ -391,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     
     private void enterSearchMode() {
         isSearchMode = true;
-        layoutFilterTabs.setVisibility(View.GONE);
+        // layoutFilterTabs.setVisibility(View.GONE);
         layoutSearch.setVisibility(View.VISIBLE);
         editSearch.requestFocus();
         
@@ -404,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     
     private void exitSearchMode() {
         isSearchMode = false;
-        layoutFilterTabs.setVisibility(View.VISIBLE);
+        // layoutFilterTabs.setVisibility(View.VISIBLE);
         layoutSearch.setVisibility(View.GONE);
         editSearch.setText("");
         
@@ -567,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     public void onTaskClick(TodoTask task) {
         Intent intent = new Intent(this, TaskDetailActivity.class);
         intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_TASK_DETAIL);
     }
 
     @Override
