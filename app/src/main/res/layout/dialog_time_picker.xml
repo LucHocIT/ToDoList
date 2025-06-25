@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@drawable/dialog_background"
+    android:elevation="8dp"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cài đặt thời gian"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Time Picker -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <!-- Hour Circle -->
+        <LinearLayout
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Time Display -->
+            <TextView
+                android:id="@+id/tv_selected_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2:09"
+                android:textSize="48sp"
+                android:textColor="#333333"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Clock Circle -->
+            <FrameLayout
+                android:layout_width="200dp"
+                android:layout_height="200dp">
+
+                <!-- Clock Background -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/circle_clock_background"/>
+
+                <!-- Hour Numbers -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="center_horizontal|top"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="25dp"/>
+
+                <TextView
+                    android:id="@+id/tv_hour_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="14sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/circle_selected_hour"
+                    android:gravity="center"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginEnd="12dp"
+                    android:minWidth="24dp"
+                    android:minHeight="24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="50dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="end"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginEnd="25dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginStart="25dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="50dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginStart="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="11"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginStart="25dp"/>
+
+                <!-- Clock hand -->
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="60dp"
+                    android:background="#4285F4"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="40dp"
+                    android:transformPivotX="1dp"
+                    android:transformPivotY="60dp"
+                    android:rotation="60"/>
+
+                <!-- Center dot -->
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle_clock_center"
+                    android:layout_gravity="center"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Quick Time Selection -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_no_time"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="Không có thời gian"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_07_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="07:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_09_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="09:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_10_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="10:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_12_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="12:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_14_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="14:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_16_00"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:text="16:00"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:backgroundTint="#F5F5F5"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_18_00"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:text="18:00"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:backgroundTint="#F5F5F5"
+        android:layout_marginBottom="24dp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+    <!-- Action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/btn_cancel_time"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="HỦY"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/btn_done_time"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="XONG"
+            android:textSize="14sp"
+            android:textColor="#4285F4"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"/>
+
+    </LinearLayout>
+
+</LinearLayout>

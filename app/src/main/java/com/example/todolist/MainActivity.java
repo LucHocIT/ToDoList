@@ -15,16 +15,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import androidx.recyclerview.widget.ItemTouchHelper;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.model.Category;
-import com.example.todolist.util.SwipeToRevealHelper;
+import com.example.todolist.util.TaskActionsDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -109,87 +107,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         recyclerIncompleteTasks.setLayoutManager(new LinearLayoutManager(this));
         incompleteTasksAdapter = new TaskAdapter(incompleteTasks, this);
         recyclerIncompleteTasks.setAdapter(incompleteTasksAdapter);
-        
-        // Add swipe gesture for incomplete tasks
-        SwipeToRevealHelper incompleteSwipeHelper = new SwipeToRevealHelper() {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                // Handle swipe completion if needed - don't auto dismiss
-            }
-            
-            @Override
-            public void onStarClicked(int position) {
-                if (position < incompleteTasks.size()) {
-                    onTaskStar(incompleteTasks.get(position));
-                }
-            }
-            
-            @Override
-            public void onCalendarClicked(int position) {
-                if (position < incompleteTasks.size()) {
-                    onTaskCalendar(incompleteTasks.get(position));
-                }
-            }
-            
-            @Override
-            public void onDeleteClicked(int position) {
-                if (position < incompleteTasks.size()) {
-                    onTaskDelete(incompleteTasks.get(position));
-                }
-            }
-        };
-        ItemTouchHelper incompleteHelper = new ItemTouchHelper(incompleteSwipeHelper);
-        incompleteHelper.attachToRecyclerView(recyclerIncompleteTasks);
-        
-        // Add touch listener to handle action button clicks
-        recyclerIncompleteTasks.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull android.view.MotionEvent e) {
-                if (e.getAction() == android.view.MotionEvent.ACTION_UP) {
-                    View child = rv.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null) {
-                        RecyclerView.ViewHolder viewHolder = rv.getChildViewHolder(child);
-                        // If item is swiped and user taps on action area, handle it
-                        if (child.getTranslationX() < 0) {
-                            boolean handled = incompleteSwipeHelper.handleActionClick(viewHolder, e.getX(), e.getY());
-                            if (handled) {
-                                return true; // Consume the touch event, don't close slideshow
-                            }
-                            // If click wasn't on action buttons but item is swiped, don't auto-close
-                            // Let user manually swipe back to close
-                        } else {
-                            // If user taps on a normal item, close any open swipe actions
-                            incompleteSwipeHelper.closeAllSwipeActions();
-                        }
-                    } else {
-                        // User tapped on empty area, close any open swipe actions
-                        incompleteSwipeHelper.closeAllSwipeActions();
-                    }
-                }
-                return false;
-            }
-            
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull android.view.MotionEvent e) {
-                // Handle touch events that were intercepted
-                if (e.getAction() == android.view.MotionEvent.ACTION_UP) {
-                    View child = rv.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null) {
-                        RecyclerView.ViewHolder viewHolder = rv.getChildViewHolder(child);
-                        if (child.getTranslationX() < 0) {
-                            // Don't automatically close after handling action click
-                            incompleteSwipeHelper.handleActionClick(viewHolder, e.getX(), e.getY());
-                        }
-                    }
-                }
-            }
-            
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-        });
-        
-        // Set recycler view reference for swipe helper
-        incompleteSwipeHelper.setRecyclerView(recyclerIncompleteTasks);
 
         // Completed tasks RecyclerView
         recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
@@ -505,6 +422,28 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             database.todoDao().updateTask(task);
             runOnUiThread(this::loadTasks);
         }).start();
+    }
+
+    @Override
+    public void onTaskLongClick(TodoTask task) {
+        // Show actions dialog on long click
+        TaskActionsDialog actionsDialog = new TaskActionsDialog(this, task, new TaskActionsDialog.OnActionSelectedListener() {
+            @Override
+            public void onStarAction(TodoTask task) {
+                onTaskStar(task);
+            }
+
+            @Override
+            public void onCalendarAction(TodoTask task) {
+                onTaskCalendar(task);
+            }
+
+            @Override
+            public void onDeleteAction(TodoTask task) {
+                onTaskDelete(task);
+            }
+        });
+        actionsDialog.show();
     }
 
     @Override

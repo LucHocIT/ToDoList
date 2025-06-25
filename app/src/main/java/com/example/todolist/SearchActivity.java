@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.util.TaskActionsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,28 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
             database.todoDao().updateTask(task);
             runOnUiThread(() -> searchAdapter.notifyDataSetChanged());
         }).start();
+    }
+
+    @Override
+    public void onTaskLongClick(TodoTask task) {
+        // Show actions dialog on long click
+        TaskActionsDialog actionsDialog = new TaskActionsDialog(this, task, new TaskActionsDialog.OnActionSelectedListener() {
+            @Override
+            public void onStarAction(TodoTask task) {
+                onTaskStar(task);
+            }
+
+            @Override
+            public void onCalendarAction(TodoTask task) {
+                onTaskCalendar(task);
+            }
+
+            @Override
+            public void onDeleteAction(TodoTask task) {
+                onTaskDelete(task);
+            }
+        });
+        actionsDialog.show();
     }
 
     @Override

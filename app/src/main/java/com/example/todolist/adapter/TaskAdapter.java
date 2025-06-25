@@ -21,6 +21,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public interface OnTaskClickListener {
         void onTaskClick(TodoTask task);
         void onTaskComplete(TodoTask task, boolean isCompleted);
+        void onTaskLongClick(TodoTask task);
         void onTaskStar(TodoTask task);
         void onTaskCalendar(TodoTask task);
         void onTaskDelete(TodoTask task);
@@ -96,6 +97,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (listener != null) {
                     listener.onTaskClick(task);
                 }
+            });
+            
+            // Long click listener for action menu
+            taskBackground.setOnLongClickListener(v -> {
+                if (listener != null) {
+                    listener.onTaskLongClick(task);
+                    return true;
+                }
+                return false;
             });
             
             checkboxComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
