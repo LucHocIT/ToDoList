@@ -7,10 +7,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.example.todolist.adapter.TaskAdapter;
@@ -28,6 +32,7 @@ import com.example.todolist.model.Category;
 import com.example.todolist.util.TaskActionsDialog;
 import com.example.todolist.util.TaskSortDialog;
 import com.example.todolist.util.SortType;
+import com.example.todolist.util.DateTimePickerDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -300,13 +305,46 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         EditText editTaskTitle = dialogView.findViewById(R.id.edit_task_title);
         View btnCancel = dialogView.findViewById(R.id.btn_cancel);
         View btnSave = dialogView.findViewById(R.id.btn_save);
+        Spinner spinnerCategory = dialogView.findViewById(R.id.spinner_category_dialog);
+        ImageView iconCalendar = dialogView.findViewById(R.id.icon_calendar_dialog);
+
+        // Variables to store selected values
+        final String[] selectedDate = {"2025/06/26"}; // Default to today
+        
+        // Setup category spinner
+        setupCategorySpinner(spinnerCategory);
+        
+        // Calendar icon click handler
+        iconCalendar.setOnClickListener(v -> {
+            showDateTimePickerDialog(new DateTimePickerDialog.OnDateTimeSelectedListener() {
+                @Override
+                public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
+                    selectedDate[0] = date;
+                    // You can also store selected time if needed
+                }
+            });
+        });
 
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         
         btnSave.setOnClickListener(v -> {
             String title = editTaskTitle.getText().toString().trim();
             if (!title.isEmpty()) {
-                createNewTask(title);
+                String selectedCategory = "Công việc"; // Default category
+                try {
+                    Object selectedItem = spinnerCategory.getSelectedItem();
+                    if (selectedItem != null) {
+                        if (selectedItem instanceof Category) {
+                            selectedCategory = ((Category) selectedItem).getName();
+                        } else {
+                            selectedCategory = selectedItem.toString();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Use default category if there's an error
+                }
+                createNewTaskWithDetails(title, selectedCategory, selectedDate[0]);
                 dialog.dismiss();
             } else {
                 Toast.makeText(this, "Vui lòng nhập tiêu đề nhiệm vụ", Toast.LENGTH_SHORT).show();
@@ -325,6 +363,19 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         } else {
             newTask.setCategory("Công việc"); // Default category
         }
+        
+        // Add to database
+        new Thread(() -> {
+            database.todoDao().insertTask(newTask);
+            runOnUiThread(this::loadTasks);
+        }).start();
+        
+        Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
+    }
+
+    private void createNewTaskWithDetails(String title, String category, String date) {
+        TodoTask newTask = new TodoTask(title, "", date, "12:00");
+        newTask.setCategory(category);
         
         // Add to database
         new Thread(() -> {
@@ -734,5 +785,76 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 });
                 break;
         }
+    }
+    
+    private void showDateTimePickerDialog(DateTimePickerDialog.OnDateTimeSelectedListener listener) {
+        DateTimePickerDialog dateTimeDialog = new DateTimePickerDialog(this, listener);
+        dateTimeDialog.show();
+    }
+
+    private void setupCategorySpinner(Spinner spinner) {
+        new Thread(() -> {
+            try {
+                List<Category> categories = database.categoryDao().getAllCategories();
+                
+                // Add default categories if empty
+                if (categories.isEmpty()) {
+                    createDefaultCategories();
+                    categories = database.categoryDao().getAllCategories();
+                }
+                
+                final List<Category> finalCategories = categories;
+                runOnUiThread(() -> {
+                    try {
+                        // Create simple string list for spinner
+                        List<String> categoryNames = new ArrayList<>();
+                        for (Category category : finalCategories) {
+                            categoryNames.add(category.getName());
+                        }
+                        
+                        // Use simple ArrayAdapter with built-in layout
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                            MainActivity.this, 
+                            android.R.layout.simple_spinner_item, 
+                            categoryNames
+                        );
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(adapter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // Fallback: create simple adapter with default categories
+                        List<String> defaultCategories = new ArrayList<>();
+                        defaultCategories.add("Công việc");
+                        defaultCategories.add("Cá nhân");
+                        defaultCategories.add("Yêu thích");
+                        
+                        ArrayAdapter<String> fallbackAdapter = new ArrayAdapter<>(
+                            MainActivity.this, 
+                            android.R.layout.simple_spinner_item, 
+                            defaultCategories
+                        );
+                        fallbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(fallbackAdapter);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Final fallback on UI thread
+                runOnUiThread(() -> {
+                    List<String> defaultCategories = new ArrayList<>();
+                    defaultCategories.add("Công việc");
+                    defaultCategories.add("Cá nhân");
+                    defaultCategories.add("Yêu thích");
+                    
+                    ArrayAdapter<String> fallbackAdapter = new ArrayAdapter<>(
+                        MainActivity.this, 
+                        android.R.layout.simple_spinner_item, 
+                        defaultCategories
+                    );
+                    fallbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(fallbackAdapter);
+                });
+            }
+        }).start();
     }
 }
