@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:layout_marginStart="40dp"
+    android:layout_marginBottom="8dp">
+
+    <!-- Task Item Background -->
+    <LinearLayout
+        android:id="@+id/task_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/task_item_background"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:clickable="true">
+
+        <!-- Checkbox -->
+        <CheckBox
+            android:id="@+id/checkbox_complete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="12dp"
+            android:button="@drawable/checkbox_selector"
+            android:clickable="false"/>
+
+        <!-- Task Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Task Title"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/text_task_datetime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="06-25 16:40"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:visibility="visible"/>
+
+        </LinearLayout>
+
+        <!-- Icons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="8dp">
+
+            <ImageView
+                android:id="@+id/icon_notification"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_notification"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/icon_repeat"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_repeat"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/icon_star"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_star"
+                android:tint="#FFD700"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private View layoutEmptyState;
     private TextView tvEmptyTitle;
     
+    // Check all completed tasks link
+    private TextView textCheckAllCompleted;
+    
     // Section headers for collapse/expand
     private LinearLayout headerOverdueTasks;
     private LinearLayout headerTodayTasks;
@@ -181,6 +184,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         layoutEmptyState = findViewById(R.id.layout_empty_state);
         tvEmptyTitle = findViewById(R.id.tv_empty_title);
         
+        // Check all completed tasks link
+        textCheckAllCompleted = findViewById(R.id.text_check_all_completed);
+        
         // Section headers
         headerOverdueTasks = findViewById(R.id.header_overdue_tasks);
         headerTodayTasks = findViewById(R.id.header_today_tasks);
@@ -245,6 +251,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         headerTodayTasks.setOnClickListener(v -> toggleSection("today"));
         headerFutureTasks.setOnClickListener(v -> toggleSection("future"));
         headerCompletedTodayTasks.setOnClickListener(v -> toggleSection("completed"));
+        
+        // Check all completed tasks click listener
+        textCheckAllCompleted.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CompletedTasksActivity.class);
+            startActivity(intent);
+        });
     }
     
     private void loadCategories() {
@@ -491,79 +503,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         new Thread(() -> {
             allTasks = database.todoDao().getAllTasks();
             
-            // Add sample data if empty
-            if (allTasks.isEmpty()) {
-                addSampleData();
-                allTasks = database.todoDao().getAllTasks();
-            }
-            
             runOnUiThread(() -> {
                 updateTaskLists();
                 // Apply current filter after loading tasks
                 filterTasks(currentFilter);
             });
         }).start();
-    }
-    
-    private void addSampleData() {
-        // Add sample tasks for different categories
-        TodoTask workTask = new TodoTask(
-            "Hoàn thành báo cáo tháng", 
-            "", 
-            "2025/05/25", 
-            "22:00"
-        );
-        workTask.setCategory("Công việc");
-        workTask.setHasReminder(true);
-        workTask.setReminderType("15 phút trước");
-        database.todoDao().insertTask(workTask);
-        
-        TodoTask personalTask = new TodoTask(
-            "Mua sắm thực phẩm cho tuần", 
-            "", 
-            "2025/05/26", 
-            "10:00"
-        );
-        personalTask.setCategory("Cá nhân");
-        personalTask.setRepeating(true);
-        personalTask.setRepeatType("Hàng tuần");
-        database.todoDao().insertTask(personalTask);
-        
-        TodoTask favoriteTask = new TodoTask(
-            "Đọc sách yêu thích", 
-            "", 
-            "2025/05/26", 
-            "20:00"
-        );
-        favoriteTask.setCategory("Yêu thích");
-        favoriteTask.setImportant(true);
-        favoriteTask.setHasReminder(true);
-        favoriteTask.setReminderType("1 giờ trước");
-        favoriteTask.setRepeating(true);
-        favoriteTask.setRepeatType("Hàng ngày");
-        database.todoDao().insertTask(favoriteTask);
-        
-        // Add a completed task for today
-        TodoTask completedTask = new TodoTask(
-            "Hoàn thành bài tập", 
-            "", 
-            "2025/01/22", 
-            "08:00"
-        );
-        completedTask.setCategory("Cá nhân");
-        completedTask.setCompleted(true);
-        database.todoDao().insertTask(completedTask);
-        
-        // Add an overdue task
-        TodoTask overdueTask = new TodoTask(
-            "Nộp hồ sơ", 
-            "", 
-            "2025/01/20", 
-            "17:00"
-        );
-        overdueTask.setCategory("Công việc");
-        overdueTask.setImportant(true);
-        database.todoDao().insertTask(overdueTask);
     }
 
     private void updateTaskLists() {

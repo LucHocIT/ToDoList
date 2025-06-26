@@ -67,24 +67,9 @@ public class TaskDetailActivity extends AppCompatActivity {
             // Load task from database
             new Thread(() -> {
                 currentTask = database.todoDao().getTaskById(taskId);
-                if (currentTask == null) {
-                    currentTask = createSampleTask();
-                }
                 runOnUiThread(this::displayTaskData);
             }).start();
-        } else {
-            currentTask = createSampleTask();
-            displayTaskData();
         }
-    }
-    
-    private TodoTask createSampleTask() {
-        return new TodoTask(
-            "Chúc ngủ ngon, đã đến giờ đi ngủ",
-            "",
-            null,  // No default date
-            null   // No default time
-        );
     }
     
     private void displayTaskData() {
@@ -107,6 +92,11 @@ public class TaskDetailActivity extends AppCompatActivity {
                     }
                 }
             }
+            
+            // Disable editing if task is completed
+            if (currentTask.isCompleted()) {
+                disableEditingForCompletedTask();
+            }
         }
     }
     
@@ -123,7 +113,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Category selectedCat = categoryAdapter.getCategory(position);
-                        if (selectedCat != null && currentTask != null) {
+                        if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
                             selectedCategory = selectedCat;
                             // Update task category
                             if (selectedCat.getId() == 0) {
@@ -160,8 +150,12 @@ public class TaskDetailActivity extends AppCompatActivity {
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> finish());
         
-        // Date picker click listener
-        layoutDatePicker.setOnClickListener(v -> showDateTimePicker());
+        // Date picker click listener - only if task is not completed
+        layoutDatePicker.setOnClickListener(v -> {
+            if (currentTask != null && !currentTask.isCompleted()) {
+                showDateTimePicker();
+            }
+        });
     }
     
     private void showDateTimePicker() {
@@ -222,5 +216,25 @@ public class TaskDetailActivity extends AppCompatActivity {
         }
         
         dateTimeDialog.show();
+    }
+    
+    private void disableEditingForCompletedTask() {
+        // Disable title editing
+        editDetailTitle.setEnabled(false);
+        editDetailTitle.setFocusable(false);
+        editDetailTitle.setTextColor(getColor(android.R.color.darker_gray));
+        
+        // Disable category spinner
+        spinnerCategory.setEnabled(false);
+        spinnerCategory.setClickable(false);
+        
+        // Disable date/time picker
+        layoutDatePicker.setEnabled(false);
+        layoutDatePicker.setClickable(false);
+        layoutDatePicker.setAlpha(0.5f);
+        
+        // Show completion status in UI
+        textPriorityValue.setText("Đã hoàn thành");
+        textPriorityValue.setTextColor(getColor(android.R.color.holo_green_dark));
     }
 }
