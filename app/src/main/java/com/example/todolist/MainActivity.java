@@ -75,6 +75,22 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private View layoutEmptyState;
     private TextView tvEmptyTitle;
     
+    // Section headers for collapse/expand
+    private LinearLayout headerOverdueTasks;
+    private LinearLayout headerTodayTasks;
+    private LinearLayout headerFutureTasks;
+    private LinearLayout headerCompletedTodayTasks;
+    private ImageView iconExpandOverdue;
+    private ImageView iconExpandToday;
+    private ImageView iconExpandFuture;
+    private ImageView iconExpandCompleted;
+    
+    // Collapse state tracking
+    private boolean isOverdueCollapsed = false;
+    private boolean isTodayCollapsed = false;
+    private boolean isFutureCollapsed = false;
+    private boolean isCompletedCollapsed = false;
+    
     // Current filter
     private String currentFilter = "all";
     
@@ -164,6 +180,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         // Empty state
         layoutEmptyState = findViewById(R.id.layout_empty_state);
         tvEmptyTitle = findViewById(R.id.tv_empty_title);
+        
+        // Section headers
+        headerOverdueTasks = findViewById(R.id.header_overdue_tasks);
+        headerTodayTasks = findViewById(R.id.header_today_tasks);
+        headerFutureTasks = findViewById(R.id.header_future_tasks);
+        headerCompletedTodayTasks = findViewById(R.id.header_completed_today_tasks);
+        iconExpandOverdue = findViewById(R.id.icon_expand_overdue);
+        iconExpandToday = findViewById(R.id.icon_expand_today);
+        iconExpandFuture = findViewById(R.id.icon_expand_future);
+        iconExpandCompleted = findViewById(R.id.icon_expand_completed);
     }
 
     private void setupRecyclerViews() {
@@ -213,6 +239,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             @Override
             public void afterTextChanged(Editable s) {}
         });
+        
+        // Section header click listeners for collapse/expand
+        headerOverdueTasks.setOnClickListener(v -> toggleSection("overdue"));
+        headerTodayTasks.setOnClickListener(v -> toggleSection("today"));
+        headerFutureTasks.setOnClickListener(v -> toggleSection("future"));
+        headerCompletedTodayTasks.setOnClickListener(v -> toggleSection("completed"));
     }
     
     private void loadCategories() {
@@ -348,9 +380,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         ImageView iconCalendar = dialogView.findViewById(R.id.icon_calendar_dialog);
 
         // Variables to store selected values
-        String todayDate = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
-        final String[] selectedDate = {todayDate}; // Default to today
-        final String[] selectedTime = {"12:00"}; // Default time
+        final String[] selectedDate = {null}; // No default date
+        final String[] selectedTime = {"Không"}; // Default time
         final String[] selectedReminder = {"Không"}; // Default reminder
         final String[] selectedRepeat = {"Không"}; // Default repeat
         
@@ -420,11 +451,23 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void createNewTaskWithDetails(String title, String category, String date, String time, String reminder, String repeat) {
-        TodoTask newTask = new TodoTask(title, "", date, time);
+        // Only set date if it's not the default today date (meaning user explicitly chose a date)
+        String finalDate = null;
+        String finalTime = null;
+        
+        // If user clicked calendar and selected date/time, use those values
+        if (date != null && !date.equals("Không")) {
+            finalDate = date;
+        }
+        if (time != null && !time.equals("Không") && !time.equals("12:00")) { // 12:00 is default, don't use it
+            finalTime = time;
+        }
+        
+        TodoTask newTask = new TodoTask(title, "", finalDate, finalTime);
         newTask.setCategory(category);
         
-        // Set reminder if not "Không"
-        if (reminder != null && !reminder.equals("Không")) {
+        // Set reminder if not "Không" and has time
+        if (reminder != null && !reminder.equals("Không") && finalTime != null) {
             newTask.setHasReminder(true);
             newTask.setReminderType(reminder);
         }
@@ -1078,6 +1121,31 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 });
             }
         }).start();
+    }
+    
+    private void toggleSection(String sectionType) {
+        switch (sectionType) {
+            case "overdue":
+                isOverdueCollapsed = !isOverdueCollapsed;
+                recyclerOverdueTasks.setVisibility(isOverdueCollapsed ? View.GONE : View.VISIBLE);
+                iconExpandOverdue.setImageResource(isOverdueCollapsed ? R.drawable.ic_expand_more : R.drawable.ic_expand_less);
+                break;
+            case "today":
+                isTodayCollapsed = !isTodayCollapsed;
+                recyclerTodayTasks.setVisibility(isTodayCollapsed ? View.GONE : View.VISIBLE);
+                iconExpandToday.setImageResource(isTodayCollapsed ? R.drawable.ic_expand_more : R.drawable.ic_expand_less);
+                break;
+            case "future":
+                isFutureCollapsed = !isFutureCollapsed;
+                recyclerFutureTasks.setVisibility(isFutureCollapsed ? View.GONE : View.VISIBLE);
+                iconExpandFuture.setImageResource(isFutureCollapsed ? R.drawable.ic_expand_more : R.drawable.ic_expand_less);
+                break;
+            case "completed":
+                isCompletedCollapsed = !isCompletedCollapsed;
+                recyclerCompletedTodayTasks.setVisibility(isCompletedCollapsed ? View.GONE : View.VISIBLE);
+                iconExpandCompleted.setImageResource(isCompletedCollapsed ? R.drawable.ic_expand_more : R.drawable.ic_expand_less);
+                break;
+        }
     }
     
     private void updateSectionVisibility() {

@@ -186,11 +186,14 @@
                     android:visibility="gone">
 
                     <LinearLayout
+                        android:id="@+id/header_overdue_tasks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:layout_width="0dp"
@@ -202,6 +205,7 @@
                             android:textStyle="bold"/>
 
                         <ImageView
+                            android:id="@+id/icon_expand_overdue"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_expand_more"/>
@@ -225,11 +229,14 @@
                     android:visibility="gone">
 
                     <LinearLayout
+                        android:id="@+id/header_today_tasks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:layout_width="0dp"
@@ -241,6 +248,7 @@
                             android:textStyle="bold"/>
 
                         <ImageView
+                            android:id="@+id/icon_expand_today"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_expand_more"/>
@@ -264,11 +272,14 @@
                     android:visibility="gone">
 
                     <LinearLayout
+                        android:id="@+id/header_future_tasks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:layout_width="0dp"
@@ -280,6 +291,7 @@
                             android:textStyle="bold"/>
 
                         <ImageView
+                            android:id="@+id/icon_expand_future"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_expand_more"/>
@@ -341,11 +353,14 @@
                     android:visibility="gone">
 
                     <LinearLayout
+                        android:id="@+id/header_completed_today_tasks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground">
 
                         <TextView
                             android:layout_width="0dp"
@@ -357,6 +372,7 @@
                             android:textStyle="bold"/>
 
                         <ImageView
+                            android:id="@+id/icon_expand_completed"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_expand_more"/>

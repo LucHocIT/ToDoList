@@ -86,9 +86,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             // Format date and time display
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
             
-            // Only show date/time if it's not empty or null
+            // Only show date/time if it's not empty or null and not default values
             if (dateTimeText != null && !dateTimeText.trim().isEmpty() && 
-                !dateTimeText.equals("null null") && !dateTimeText.contains("null")) {
+                !dateTimeText.equals("null null") && !dateTimeText.contains("null") &&
+                !dateTimeText.equals("Không") && !dateTimeText.equals("null")) {
                 textTaskDateTime.setText(dateTimeText);
                 textTaskDateTime.setVisibility(View.VISIBLE);
                 
@@ -155,16 +156,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private String formatDateTime(String dueDate, String dueTime) {
             try {
                 // Check for null or empty values
-                if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null")) {
-                    if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null")) {
+                if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("Không")) {
+                    if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
                         return ""; // Both date and time are empty
                     } else {
                         return dueTime; // Only time available
                     }
                 }
                 
-                if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null")) {
-                    // Only date available, format: MM-dd
+                if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
+                    // Only date available, but check if it's today - don't show date for today without time
+                    String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
+                    if (dueDate.equals(todayDateStr)) {
+                        return ""; // Don't show today's date if no specific time
+                    }
+                    // Format: MM-dd for other dates
                     String[] dateParts = dueDate.split("/");
                     if (dateParts.length == 3) {
                         return dateParts[1] + "-" + dateParts[2];
@@ -182,11 +188,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
             
             // Final fallback
-            if ((dueDate == null || dueDate.equals("null")) && (dueTime == null || dueTime.equals("null"))) {
+            if ((dueDate == null || dueDate.equals("null") || dueDate.equals("Không")) && 
+                (dueTime == null || dueTime.equals("null") || dueTime.equals("Không"))) {
                 return "";
             }
-            return (dueDate != null && !dueDate.equals("null") ? dueDate : "") + 
-                   (dueTime != null && !dueTime.equals("null") ? " " + dueTime : "");
+            return (dueDate != null && !dueDate.equals("null") && !dueDate.equals("Không") ? dueDate : "") + 
+                   (dueTime != null && !dueTime.equals("null") && !dueTime.equals("Không") ? " " + dueTime : "");
         }
         
         private boolean isTaskOverdueToday(TodoTask task) {

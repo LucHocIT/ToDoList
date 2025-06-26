@@ -19,7 +19,7 @@
     <item android:state_checked="false">
         <shape android:shape="oval">
             <solid android:color="@android:color/white"/>
-            <stroke android:color="#000000" android:width="2dp"/>
+            <stroke android:color="#CCCCCC" android:width="2dp"/>
             <size android:width="20dp" android:height="20dp"/>
         </shape>
     </item>

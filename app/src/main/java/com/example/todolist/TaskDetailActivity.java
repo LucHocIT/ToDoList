@@ -82,17 +82,17 @@ public class TaskDetailActivity extends AppCompatActivity {
         return new TodoTask(
             "Chúc ngủ ngon, đã đến giờ đi ngủ",
             "",
-            "2025/05/25",
-            "22:00"
+            null,  // No default date
+            null   // No default time
         );
     }
     
     private void displayTaskData() {
         if (currentTask != null) {
             editDetailTitle.setText(currentTask.getTitle());
-            textDueDate.setText(currentTask.getDueDate());
-            textTime.setText(currentTask.getDueTime());
-            textReminderValue.setText(currentTask.getReminderType());
+            textDueDate.setText(currentTask.getDueDate() != null ? currentTask.getDueDate() : "Không");
+            textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
+            textReminderValue.setText(currentTask.getReminderType() != null ? currentTask.getReminderType() : "Không");
             
             // Set priority based on important flag
             textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
@@ -191,9 +191,13 @@ public class TaskDetailActivity extends AppCompatActivity {
                     textDueDate.setText(date);
                     if (!"Không".equals(time)) {
                         textTime.setText(time);
+                    } else {
+                        textTime.setText("Không");
                     }
                     if (!"Không".equals(reminder)) {
                         textReminderValue.setText(reminder);
+                    } else {
+                        textReminderValue.setText("Không");
                     }
                     
                     // Save to database
