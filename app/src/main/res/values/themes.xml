@@ -2,8 +2,15 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.ToDoList" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/light_sky_blue</item>
+        <item name="colorAccent">@color/sky_blue</item>
     </style>
 
     <style name="Theme.ToDoList" parent="Base.Theme.ToDoList" />
+    
+    <!-- Custom Calendar Theme -->
+    <style name="CustomCalendarTheme" parent="android:Theme.Material.Light">
+        <item name="android:colorAccent">@color/light_sky_blue</item>
+        <item name="android:colorPrimary">@color/sky_blue</item>
+    </style>
 </resources>

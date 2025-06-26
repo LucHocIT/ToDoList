@@ -310,6 +310,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         // Variables to store selected values
         final String[] selectedDate = {"2025/06/26"}; // Default to today
+        final String[] selectedTime = {"12:00"}; // Default time
+        final String[] selectedReminder = {"Không"}; // Default reminder
+        final String[] selectedRepeat = {"Không"}; // Default repeat
         
         // Setup category spinner
         setupCategorySpinner(spinnerCategory);
@@ -320,7 +323,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 @Override
                 public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
                     selectedDate[0] = date;
-                    // You can also store selected time if needed
+                    selectedTime[0] = time;
+                    selectedReminder[0] = reminder;
+                    selectedRepeat[0] = repeat;
                 }
             });
         });
@@ -330,21 +335,20 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         btnSave.setOnClickListener(v -> {
             String title = editTaskTitle.getText().toString().trim();
             if (!title.isEmpty()) {
-                String selectedCategory = "Công việc"; // Default category
+                String selectedCategory = null; // Default to no category
                 try {
                     Object selectedItem = spinnerCategory.getSelectedItem();
                     if (selectedItem != null) {
-                        if (selectedItem instanceof Category) {
-                            selectedCategory = ((Category) selectedItem).getName();
-                        } else {
-                            selectedCategory = selectedItem.toString();
+                        String categoryText = selectedItem.toString();
+                        if (!categoryText.equals("Không có thể loại")) {
+                            selectedCategory = categoryText;
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    // Use default category if there's an error
+                    // Use null category if there's an error
                 }
-                createNewTaskWithDetails(title, selectedCategory, selectedDate[0]);
+                createNewTaskWithDetails(title, selectedCategory, selectedDate[0], selectedTime[0], selectedReminder[0], selectedRepeat[0]);
                 dialog.dismiss();
             } else {
                 Toast.makeText(this, "Vui lòng nhập tiêu đề nhiệm vụ", Toast.LENGTH_SHORT).show();
@@ -373,9 +377,20 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
     }
 
-    private void createNewTaskWithDetails(String title, String category, String date) {
-        TodoTask newTask = new TodoTask(title, "", date, "12:00");
+    private void createNewTaskWithDetails(String title, String category, String date, String time, String reminder, String repeat) {
+        TodoTask newTask = new TodoTask(title, "", date, time);
         newTask.setCategory(category);
+        
+        // Set reminder if not "Không"
+        if (reminder != null && !reminder.equals("Không")) {
+            newTask.setHasReminder(true);
+            // You can add more logic here to handle reminder details
+        }
+        
+        // Set repeat if not "Không"
+        if (repeat != null && !repeat.equals("Không")) {
+            // You can add logic here to handle repeat details
+        }
         
         // Add to database
         new Thread(() -> {
@@ -806,8 +821,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 final List<Category> finalCategories = categories;
                 runOnUiThread(() -> {
                     try {
-                        // Create simple string list for spinner
+                        // Create string list for spinner with "No category" option
                         List<String> categoryNames = new ArrayList<>();
+                        categoryNames.add("Không có thể loại"); // First option
                         for (Category category : finalCategories) {
                             categoryNames.add(category.getName());
                         }
@@ -820,10 +836,14 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         );
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(adapter);
+                        
+                        // Set default selection to "No category"
+                        spinner.setSelection(0);
                     } catch (Exception e) {
                         e.printStackTrace();
                         // Fallback: create simple adapter with default categories
                         List<String> defaultCategories = new ArrayList<>();
+                        defaultCategories.add("Không có thể loại");
                         defaultCategories.add("Công việc");
                         defaultCategories.add("Cá nhân");
                         defaultCategories.add("Yêu thích");
@@ -835,6 +855,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         );
                         fallbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(fallbackAdapter);
+                        spinner.setSelection(0);
                     }
                 });
             } catch (Exception e) {
@@ -842,6 +863,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 // Final fallback on UI thread
                 runOnUiThread(() -> {
                     List<String> defaultCategories = new ArrayList<>();
+                    defaultCategories.add("Không có thể loại");
                     defaultCategories.add("Công việc");
                     defaultCategories.add("Cá nhân");
                     defaultCategories.add("Yêu thích");
@@ -853,6 +875,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     );
                     fallbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(fallbackAdapter);
+                    spinner.setSelection(0);
                 });
             }
         }).start();
