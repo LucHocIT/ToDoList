@@ -25,6 +25,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView textDueDate;
     private TextView textTime;
     private TextView textReminderValue;
+    private TextView textPriorityValue;
     private Spinner spinnerCategory;
     private LinearLayout layoutDatePicker;
     private ImageView btnBack;
@@ -52,6 +53,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         textDueDate = findViewById(R.id.text_due_date);
         textTime = findViewById(R.id.text_time);
         textReminderValue = findViewById(R.id.text_reminder_value);
+        textPriorityValue = findViewById(R.id.text_priority_value);
         spinnerCategory = findViewById(R.id.spinner_category);
         layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
@@ -91,6 +93,9 @@ public class TaskDetailActivity extends AppCompatActivity {
             textDueDate.setText(currentTask.getDueDate());
             textTime.setText(currentTask.getDueTime());
             textReminderValue.setText(currentTask.getReminderType());
+            
+            // Set priority based on important flag
+            textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
             
             // Set category in spinner
             if (categoryAdapter != null && currentTask.getCategory() != null) {
@@ -170,6 +175,16 @@ public class TaskDetailActivity extends AppCompatActivity {
                     }
                     if (!"Không".equals(reminder)) {
                         currentTask.setReminderType(reminder);
+                        currentTask.setHasReminder(!"Không".equals(reminder));
+                    }
+                    
+                    // Set repeat information
+                    if (!"Không".equals(repeat)) {
+                        currentTask.setRepeatType(repeat);
+                        currentTask.setRepeating(true);
+                    } else {
+                        currentTask.setRepeatType("Không");
+                        currentTask.setRepeating(false);
                     }
                     
                     // Update UI
@@ -198,7 +213,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                 currentTask.getDueDate(), 
                 currentTask.getDueTime(), 
                 currentTask.getReminderType(), 
-                ""
+                currentTask.getRepeatType() != null ? currentTask.getRepeatType() : "Không"
             );
         }
         

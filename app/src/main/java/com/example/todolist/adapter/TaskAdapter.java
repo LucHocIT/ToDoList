@@ -85,24 +85,34 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             
             // Format date and time display
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
-            textTaskDateTime.setText(dateTimeText);
             
-            // Check if task is overdue but still today
-            boolean isOverdueToday = isTaskOverdueToday(task);
-            if (isOverdueToday) {
-                textTaskDateTime.setTextColor(Color.RED);
+            // Only show date/time if it's not empty or null
+            if (dateTimeText != null && !dateTimeText.trim().isEmpty() && 
+                !dateTimeText.equals("null null") && !dateTimeText.contains("null")) {
+                textTaskDateTime.setText(dateTimeText);
+                textTaskDateTime.setVisibility(View.VISIBLE);
+                
+                // Check if task is overdue but still today
+                boolean isOverdueToday = isTaskOverdueToday(task);
+                if (isOverdueToday) {
+                    textTaskDateTime.setTextColor(Color.RED);
+                } else {
+                    textTaskDateTime.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_gray));
+                }
             } else {
-                textTaskDateTime.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_gray));
+                textTaskDateTime.setVisibility(View.GONE);
             }
             
             checkboxComplete.setChecked(task.isCompleted());
             
-            // Show/hide notification icon (bell)
-            iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);
+            // Show/hide notification icon (bell) - only if has reminder AND has time
+            boolean hasValidTime = task.getDueTime() != null && !task.getDueTime().trim().isEmpty() && !task.getDueTime().equals("null");
+            iconNotification.setVisibility(task.isHasReminder() && hasValidTime ? View.VISIBLE : View.GONE);
             
             // Show/hide repeat icon
             iconRepeat.setVisibility(task.isRepeating() && 
                                    task.getRepeatType() != null && 
+                                   !task.getRepeatType().equals("Không") &&
                                    !task.getRepeatType().equals("Không có") ? View.VISIBLE : View.GONE);
             
             // Show/hide star icon for importance
@@ -144,15 +154,39 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         
         private String formatDateTime(String dueDate, String dueTime) {
             try {
-                // Format: MM-dd HH:mm
+                // Check for null or empty values
+                if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null")) {
+                    if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null")) {
+                        return ""; // Both date and time are empty
+                    } else {
+                        return dueTime; // Only time available
+                    }
+                }
+                
+                if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null")) {
+                    // Only date available, format: MM-dd
+                    String[] dateParts = dueDate.split("/");
+                    if (dateParts.length == 3) {
+                        return dateParts[1] + "-" + dateParts[2];
+                    }
+                    return dueDate;
+                }
+                
+                // Both date and time available, format: MM-dd HH:mm
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
                     return dateParts[1] + "-" + dateParts[2] + " " + dueTime;
                 }
             } catch (Exception e) {
-                // Fallback to original format
+                // Fallback for any parsing errors
             }
-            return dueDate + " " + dueTime;
+            
+            // Final fallback
+            if ((dueDate == null || dueDate.equals("null")) && (dueTime == null || dueTime.equals("null"))) {
+                return "";
+            }
+            return (dueDate != null && !dueDate.equals("null") ? dueDate : "") + 
+                   (dueTime != null && !dueTime.equals("null") ? " " + dueTime : "");
         }
         
         private boolean isTaskOverdueToday(TodoTask task) {

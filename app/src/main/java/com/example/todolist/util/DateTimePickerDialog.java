@@ -83,8 +83,12 @@ public class DateTimePickerDialog {
         // Time picker
         layoutTimePicker.setOnClickListener(v -> showTimePicker());
         
-        // Reminder picker
-        layoutReminderPicker.setOnClickListener(v -> showReminderPicker());
+        // Reminder picker - only enabled when time is set
+        layoutReminderPicker.setOnClickListener(v -> {
+            if (selectedTime != null && !selectedTime.equals("Không")) {
+                showReminderPicker();
+            }
+        });
         
         // Repeat picker
         layoutRepeatPicker.setOnClickListener(v -> showRepeatPicker());
@@ -98,6 +102,9 @@ public class DateTimePickerDialog {
             }
             dialog.dismiss();
         });
+        
+        // Initial state update
+        updateReminderState();
     }
     
     private void showTimePicker() {
@@ -107,12 +114,27 @@ public class DateTimePickerDialog {
             (view, hourOfDay, minute) -> {
                 selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
                 textSelectedTime.setText(selectedTime);
+                updateReminderState(); // Update reminder state when time changes
             },
             now.get(Calendar.HOUR_OF_DAY),
             now.get(Calendar.MINUTE),
             true
         );
         timePickerDialog.show();
+    }
+    
+    private void updateReminderState() {
+        boolean hasTime = selectedTime != null && !selectedTime.equals("Không");
+        
+        // Enable/disable reminder picker
+        layoutReminderPicker.setEnabled(hasTime);
+        layoutReminderPicker.setAlpha(hasTime ? 1.0f : 0.5f);
+        
+        // Reset reminder if no time selected
+        if (!hasTime) {
+            selectedReminder = "Không";
+            textSelectedReminder.setText(selectedReminder);
+        }
     }
     
     private void showReminderPicker() {
@@ -165,6 +187,9 @@ public class DateTimePickerDialog {
             selectedRepeat = repeat;
             textSelectedRepeat.setText(repeat);
         }
+        
+        // Update reminder state based on time
+        updateReminderState();
     }
     
     public void show() {
