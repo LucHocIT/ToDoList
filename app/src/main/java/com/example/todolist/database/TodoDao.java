@@ -41,4 +41,7 @@ public interface TodoDao {
     
     @Query("DELETE FROM todo_tasks")
     void deleteAllTasks();
+    
+    @Query("SELECT * FROM todo_tasks WHERE dueDate = :date")
+    List<TodoTask> getTasksForDate(String date);
 }

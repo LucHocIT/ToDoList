@@ -230,6 +230,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         
         btnMenu.setOnClickListener(v -> showPopupMenu(v));
         
+        // Bottom navigation
+        setupBottomNavigation();
+        
         // Search listeners
         btnCancelSearch.setOnClickListener(v -> exitSearchMode());
         
@@ -257,6 +260,32 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             Intent intent = new Intent(this, CompletedTasksActivity.class);
             startActivity(intent);
         });
+    }
+    
+    private void setupBottomNavigation() {
+        LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);
+        LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
+        LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
+        LinearLayout btnNavProfile = findViewById(R.id.btn_nav_profile);
+        
+        if (btnNavCalendar != null) {
+            btnNavCalendar.setOnClickListener(v -> {
+                Intent intent = new Intent(this, CalendarActivity.class);
+                startActivity(intent);
+            });
+        }
+        
+        if (btnNavMenu != null) {
+            btnNavMenu.setOnClickListener(v -> {
+                Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show();
+            });
+        }
+        
+        if (btnNavProfile != null) {
+            btnNavProfile.setOnClickListener(v -> {
+                Toast.makeText(this, "Của tôi", Toast.LENGTH_SHORT).show();
+            });
+        }
     }
     
     private void loadCategories() {
