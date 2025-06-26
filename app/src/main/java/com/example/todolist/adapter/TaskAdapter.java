@@ -1,5 +1,6 @@
 package com.example.todolist.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.R;
 import com.example.todolist.model.TodoTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     
@@ -54,12 +61,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.tasks = newTasks;
         notifyDataSetChanged();
     }
-      class TaskViewHolder extends RecyclerView.ViewHolder {
+    class TaskViewHolder extends RecyclerView.ViewHolder {
         private CheckBox checkboxComplete;
         private TextView textTaskTitle;
         private TextView textTaskDateTime;
         private ImageView iconNotification;
-        private ImageView iconFlag;
+        private ImageView iconRepeat;
+        private ImageView iconStar;
         private LinearLayout taskBackground;
         
         public TaskViewHolder(@NonNull View itemView) {
@@ -68,27 +76,45 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textTaskTitle = itemView.findViewById(R.id.text_task_title);
             textTaskDateTime = itemView.findViewById(R.id.text_task_datetime);
             iconNotification = itemView.findViewById(R.id.icon_notification);
-            iconFlag = itemView.findViewById(R.id.icon_flag);
+            iconRepeat = itemView.findViewById(R.id.icon_repeat);
+            iconStar = itemView.findViewById(R.id.icon_star);
             taskBackground = itemView.findViewById(R.id.task_background);
         }
-          public void bind(TodoTask task) {
+        public void bind(TodoTask task) {
             textTaskTitle.setText(task.getTitle());
-            textTaskDateTime.setText(task.getDueDate() + " " + task.getDueTime());
+            
+            // Format date and time display
+            String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
+            textTaskDateTime.setText(dateTimeText);
+            
+            // Check if task is overdue but still today
+            boolean isOverdueToday = isTaskOverdueToday(task);
+            if (isOverdueToday) {
+                textTaskDateTime.setTextColor(Color.RED);
+            } else {
+                textTaskDateTime.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_gray));
+            }
+            
             checkboxComplete.setChecked(task.isCompleted());
             
-            // Show/hide notification icon
+            // Show/hide notification icon (bell)
             iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);
             
-            // Show/hide importance flag
-            iconFlag.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
+            // Show/hide repeat icon
+            iconRepeat.setVisibility(task.isRepeating() && 
+                                   task.getRepeatType() != null && 
+                                   !task.getRepeatType().equals("Không có") ? View.VISIBLE : View.GONE);
+            
+            // Show/hide star icon for importance
+            iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
             
             // Strike through text if completed
             if (task.isCompleted()) {
                 textTaskTitle.setPaintFlags(textTaskTitle.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
-                textTaskTitle.setTextColor(itemView.getContext().getColor(android.R.color.darker_gray));
+                textTaskTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.darker_gray));
             } else {
                 textTaskTitle.setPaintFlags(textTaskTitle.getPaintFlags() & (~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG));
-                textTaskTitle.setTextColor(itemView.getContext().getColor(R.color.black));
+                textTaskTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.black));
             }
             
             // Click listeners
@@ -114,6 +140,40 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             });            
             // Reset item position on bind
             itemView.setTranslationX(0);
+        }
+        
+        private String formatDateTime(String dueDate, String dueTime) {
+            try {
+                // Format: MM-dd HH:mm
+                String[] dateParts = dueDate.split("/");
+                if (dateParts.length == 3) {
+                    return dateParts[1] + "-" + dateParts[2] + " " + dueTime;
+                }
+            } catch (Exception e) {
+                // Fallback to original format
+            }
+            return dueDate + " " + dueTime;
+        }
+        
+        private boolean isTaskOverdueToday(TodoTask task) {
+            try {
+                // Get current date and time
+                Calendar now = Calendar.getInstance();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                
+                String todayDateStr = dateFormat.format(now.getTime());
+                String currentTimeStr = timeFormat.format(now.getTime());
+                
+                // Check if task is today
+                if (task.getDueDate().equals(todayDateStr)) {
+                    // Compare time
+                    return task.getDueTime().compareTo(currentTimeStr) < 0;
+                }
+                return false;
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

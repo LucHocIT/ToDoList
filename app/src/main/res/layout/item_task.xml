@@ -41,32 +41,49 @@
                 android:textColor="#333333"
                 android:textStyle="normal"/>
 
-            <TextView
-                android:id="@+id/text_task_datetime"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="05-25 22:00"
-                android:textSize="12sp"
-                android:textColor="#666666"
-                android:layout_marginTop="4dp"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/text_task_datetime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="05-25 22:00"
+                    android:textSize="12sp"
+                    android:textColor="#666666"/>
+
+                <!-- Notification bell icon -->
+                <ImageView
+                    android:id="@+id/icon_notification"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_notification"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone"/>
+
+                <!-- Repeat icon -->
+                <ImageView
+                    android:id="@+id/icon_repeat"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_repeat"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Notification icon -->
+        <!-- Star icon for importance -->
         <ImageView
-            android:id="@+id/icon_notification"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_notification"
-            android:layout_marginStart="8dp"
-            android:visibility="visible"/>
-
-        <!-- Flag icon for importance -->
-        <ImageView
-            android:id="@+id/icon_flag"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_flag"
+            android:id="@+id/icon_star"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_star_filled"
             android:layout_marginStart="8dp"
             android:visibility="gone"/>
 
