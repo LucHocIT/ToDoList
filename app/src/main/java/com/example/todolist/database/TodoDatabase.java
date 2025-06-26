@@ -7,16 +7,14 @@ import android.content.Context;
 
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.model.Category;
-import com.example.todolist.model.Reminder;
 
-@Database(entities = {TodoTask.class, Category.class, Reminder.class}, version = 4, exportSchema = false)
+@Database(entities = {TodoTask.class, Category.class}, version = 5, exportSchema = false)
 public abstract class TodoDatabase extends RoomDatabase {
     
     private static TodoDatabase instance;
     
     public abstract TodoDao todoDao();
     public abstract CategoryDao categoryDao();
-    public abstract ReminderDao reminderDao();
     
     public static synchronized TodoDatabase getInstance(Context context) {
         if (instance == null) {
@@ -33,6 +31,5 @@ public abstract class TodoDatabase extends RoomDatabase {
     public void clearAllTables() {
         todoDao().deleteAllTasks();
         categoryDao().deleteAllCategories();
-        // Don't clear reminders as they might be linked to tasks
     }
 }

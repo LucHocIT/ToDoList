@@ -221,20 +221,17 @@ public class TaskDetailActivity extends AppCompatActivity {
     private void disableEditingForCompletedTask() {
         // Disable title editing
         editDetailTitle.setEnabled(false);
-        editDetailTitle.setFocusable(false);
-        editDetailTitle.setTextColor(getColor(android.R.color.darker_gray));
+        editDetailTitle.setTextColor(getColor(R.color.gray_text));
         
         // Disable category spinner
         spinnerCategory.setEnabled(false);
-        spinnerCategory.setClickable(false);
         
-        // Disable date/time picker
-        layoutDatePicker.setEnabled(false);
+        // Make date picker non-clickable
         layoutDatePicker.setClickable(false);
-        layoutDatePicker.setAlpha(0.5f);
+        layoutDatePicker.setAlpha(0.6f);
         
-        // Show completion status in UI
+        // Change priority text to show "Đã hoàn thành"
         textPriorityValue.setText("Đã hoàn thành");
-        textPriorityValue.setTextColor(getColor(android.R.color.holo_green_dark));
+        textPriorityValue.setTextColor(getColor(R.color.green_success));
     }
 }

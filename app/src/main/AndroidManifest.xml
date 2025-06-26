@@ -33,10 +33,6 @@
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".ReminderActivity"
-            android:theme="@style/Theme.ToDoList"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".CompletedTasksActivity"
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />

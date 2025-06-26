@@ -12,4 +12,5 @@
     <color name="background_light">#F5F5F5</color>
     <color name="gray_text">#999999</color>
     <color name="red">#F44336</color>
+    <color name="green_success">#4CAF50</color>
 </resources>

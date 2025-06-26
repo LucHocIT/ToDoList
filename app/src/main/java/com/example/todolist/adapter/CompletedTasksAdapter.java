@@ -131,7 +131,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
     
     class CompletedTaskViewHolder extends RecyclerView.ViewHolder {
-        private CheckBox checkboxComplete;
+        private ImageView checkboxComplete;
         private TextView textTaskTitle;
         private TextView textTaskDateTime;
         private ImageView iconNotification;
@@ -163,17 +163,14 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
             
             // Always checked for completed tasks, but disabled
-            checkboxComplete.setChecked(true);
-            checkboxComplete.setEnabled(false);
+            // checkboxComplete is now an ImageView with check circle icon
             
             // Show icons based on task properties
             iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);
             iconRepeat.setVisibility(task.isRepeating() ? View.VISIBLE : View.GONE);
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
             
-            // Gray out completed tasks
-            textTaskTitle.setTextColor(Color.GRAY);
-            textTaskDateTime.setTextColor(Color.GRAY);
+            // Gray out completed tasks - already handled by XML colors
             
             // Click listeners - disabled for completed tasks
             taskBackground.setOnClickListener(v -> {

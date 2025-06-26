@@ -29,7 +29,6 @@ import java.util.Map;
 public class CompletedTasksActivity extends AppCompatActivity implements CompletedTasksAdapter.OnCompletedTaskClickListener {
 
     private ImageView btnBack;
-    private TextView textDeleteAll;
     private RecyclerView recyclerCompletedTasks;
     private CompletedTasksAdapter completedTasksAdapter;
     
@@ -56,19 +55,18 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     
     private void initViews() {
         btnBack = findViewById(R.id.btn_back);
-        textDeleteAll = findViewById(R.id.text_delete_all);
+        ImageView btnDeleteAll = findViewById(R.id.btn_delete_all);
         recyclerCompletedTasks = findViewById(R.id.recycler_completed_tasks);
         
         // Setup RecyclerView
         recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
         completedTasksAdapter = new CompletedTasksAdapter(groupedTasks, this);
         recyclerCompletedTasks.setAdapter(completedTasksAdapter);
-    }
-    
-    private void setupClickListeners() {
+        
+        // Setup click listeners
         btnBack.setOnClickListener(v -> finish());
         
-        textDeleteAll.setOnClickListener(v -> {
+        btnDeleteAll.setOnClickListener(v -> {
             // Show confirmation dialog and delete all completed tasks
             new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Xóa tất cả")
@@ -77,6 +75,10 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 .setNegativeButton("Hủy", null)
                 .show();
         });
+    }
+    
+    private void setupClickListeners() {
+        // Click listeners are now handled in initViews()
     }
     
     private void loadCompletedTasks() {
