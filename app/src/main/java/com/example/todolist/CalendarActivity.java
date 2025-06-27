@@ -35,7 +35,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private TextView tvMonth, tvYear;
     private GridLayout calendarGrid;
-    private LinearLayout taskInfoContainer;
+    private LinearLayout taskInfoContainer, weekTaskInfoContainer;
     private ImageView btnPrevMonth, btnNextMonth, btnToggleCalendar;
     private FloatingActionButton fabAdd;
     private View calendarScrollView, weekViewContainer;
@@ -69,6 +69,7 @@ public class CalendarActivity extends AppCompatActivity {
         tvYear = findViewById(R.id.tv_year);
         calendarGrid = findViewById(R.id.calendar_grid);
         taskInfoContainer = findViewById(R.id.task_info_container);
+        weekTaskInfoContainer = findViewById(R.id.week_task_info_container);
         btnPrevMonth = findViewById(R.id.btn_prev_month);
         btnNextMonth = findViewById(R.id.btn_next_month);
         btnToggleCalendar = findViewById(R.id.btn_toggle_calendar);
@@ -336,6 +337,11 @@ public class CalendarActivity extends AppCompatActivity {
         // Clear previous task items
         taskInfoContainer.removeAllViews();
         
+        // Also update week view if it's visible
+        if (isWeekView) {
+            loadWeekTasksForSelectedDate();
+        }
+        
         if (tasksForSelectedDate.isEmpty()) {
             // Show no tasks message
             TextView noTasksView = new TextView(this);
@@ -520,6 +526,30 @@ public class CalendarActivity extends AppCompatActivity {
             TextView dayView = createWeekDayView(dayCalendar);
             weekGrid.addView(dayView);
         }
+        
+        // Load tasks for selected date in week view
+        loadWeekTasksForSelectedDate();
+    }
+    
+    private void loadWeekTasksForSelectedDate() {
+        weekTaskInfoContainer.removeAllViews();
+        
+        if (tasksForSelectedDate.isEmpty()) {
+            // Show empty state message
+            TextView addTaskPrompt = new TextView(this);
+            addTaskPrompt.setText("Nhấn + để tạo công việc của bạn.");
+            addTaskPrompt.setTextSize(14);
+            addTaskPrompt.setTextColor(Color.parseColor("#999999"));
+            addTaskPrompt.setGravity(android.view.Gravity.CENTER);
+            addTaskPrompt.setPadding(16, 0, 16, 32);
+            weekTaskInfoContainer.addView(addTaskPrompt);
+        } else {
+            // Show tasks for the selected date
+            for (TodoTask task : tasksForSelectedDate) {
+                View taskItemView = createTaskItemView(task);
+                weekTaskInfoContainer.addView(taskItemView);
+            }
+        }
     }
     
     private TextView createWeekDayView(Calendar dayCalendar) {
@@ -529,28 +559,37 @@ public class CalendarActivity extends AppCompatActivity {
         dayView.setTextSize(16);
         dayView.setGravity(android.view.Gravity.CENTER);
         
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, 60);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, 120);
         params.weight = 1;
         params.setMargins(4, 4, 4, 4);
         dayView.setLayoutParams(params);
+        dayView.setPadding(8, 16, 8, 16);
         
         // Check if it's current month
         boolean isCurrentMonth = dayCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
         boolean isSelected = day == selectedDay && isCurrentMonth;
         boolean isToday = isSameDay(dayCalendar, Calendar.getInstance());
         
+        // Check if day has tasks
+        boolean hasTasksForDay = hasTasks(dayCalendar.get(Calendar.YEAR), dayCalendar.get(Calendar.MONTH), day);
+        if (hasTasksForDay) {
+            // Add blue dot indicator below the day number
+            dayView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.task_indicator_dot);
+            dayView.setCompoundDrawablePadding(4);
+        }
+        
         if (isSelected) {
-            dayView.setBackgroundResource(R.drawable.selected_day_background);
+            dayView.setBackgroundResource(R.drawable.calendar_day_selected);
             dayView.setTextColor(Color.WHITE);
         } else if (isToday && isCurrentMonth) {
-            dayView.setBackgroundResource(R.drawable.today_background);
-            dayView.setTextColor(Color.parseColor("#4285F4"));
+            dayView.setBackgroundResource(R.drawable.calendar_day_today);
+            dayView.setTextColor(Color.WHITE);
         } else if (isCurrentMonth) {
             dayView.setTextColor(Color.parseColor("#333333"));
-            dayView.setBackgroundResource(R.drawable.day_background);
+            dayView.setBackgroundResource(R.drawable.calendar_day_normal);
         } else {
             dayView.setTextColor(Color.parseColor("#CCCCCC"));
-            dayView.setBackgroundResource(R.drawable.day_background);
+            dayView.setBackgroundColor(Color.WHITE);
         }
         
         // Set click listener
