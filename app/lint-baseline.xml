@@ -2,25 +2,111 @@
 <issues format="6" by="lint 8.9.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.9.1)" variant="all" version="8.9.1">
 
     <issue
-        id="DefaultLocale"
-        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
-        errorLine1="                        textReminderPhrase.setText(&quot;Chúc ngủ ngon, đã đến giờ &quot; + currentTask.getTitle().toLowerCase());"
-        errorLine2="                                                                                                         ~~~~~~~~~~~">
+        id="CutPasteId"
+        message="The id `R.id.recycler_overdue_tasks` has already been looked up in this method; possible cut &amp; paste error?"
+        errorLine1="                findViewById(R.id.recycler_overdue_tasks),"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="89"
-            column="106"/>
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="184"
+            column="17"/>
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="162"
+            column="17"
+            message="First usage here"/>
+    </issue>
+
+    <issue
+        id="CutPasteId"
+        message="The id `R.id.recycler_today_tasks` has already been looked up in this method; possible cut &amp; paste error?"
+        errorLine1="                findViewById(R.id.recycler_today_tasks),"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="185"
+            column="17"/>
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="163"
+            column="17"
+            message="First usage here"/>
+    </issue>
+
+    <issue
+        id="CutPasteId"
+        message="The id `R.id.recycler_future_tasks` has already been looked up in this method; possible cut &amp; paste error?"
+        errorLine1="                findViewById(R.id.recycler_future_tasks),"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="186"
+            column="17"/>
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="164"
+            column="17"
+            message="First usage here"/>
+    </issue>
+
+    <issue
+        id="CutPasteId"
+        message="The id `R.id.recycler_completed_today_tasks` has already been looked up in this method; possible cut &amp; paste error?"
+        errorLine1="                findViewById(R.id.recycler_completed_today_tasks),"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="187"
+            column="17"/>
+        <location
+            file="src/main/java/com/example/todolist/MainActivity.java"
+            line="165"
+            column="17"
+            message="First usage here"/>
     </issue>
 
     <issue
         id="DefaultLocale"
         message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
-        errorLine1="                    selectedTime = String.format(&quot;%02d:%02d&quot;, selectedHour, selectedMinute);"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="            String selectedDateString = String.format(&quot;%04d/%02d/%02d&quot;, "
+        errorLine2="                                        ^">
         <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="193"
-            column="36"/>
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="98"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="        String monthName = monthFormat.format(currentCalendar.getTime()).toUpperCase();"
+        errorLine2="                                                                         ~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="172"
+            column="74"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="        String dateString = String.format(&quot;%04d/%02d/%02d&quot;, year, month + 1, day);"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="310"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="        String dateString = String.format(&quot;%04d/%02d/%02d&quot;, "
+        errorLine2="                            ^">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="319"
+            column="29"/>
     </issue>
 
     <issue
@@ -65,6 +151,17 @@
             file="src/main/res/layout/content_main.xml"
             line="8"
             column="6"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="        View view = LayoutInflater.from(context).inflate(R.layout.dialog_date_time_picker, null);"
+        errorLine2="                                                                                           ~~~~">
+        <location
+            file="src/main/java/com/example/todolist/util/DateTimePickerDialog.java"
+            line="51"
+            column="92"/>
     </issue>
 
     <issue
@@ -140,7 +237,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="225"
+            line="331"
             column="25"/>
     </issue>
 
@@ -151,7 +248,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="327"
+            line="470"
             column="21"/>
     </issue>
 
@@ -164,50 +261,6 @@
             file="src/main/res/layout/activity_search.xml"
             line="29"
             column="13"/>
-    </issue>
-
-    <issue
-        id="UseAppTint"
-        message="Must use `app:tint` instead of `android:tint`"
-        errorLine1="                    android:tint=&quot;#FFA726&quot; />"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="67"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseAppTint"
-        message="Must use `app:tint` instead of `android:tint`"
-        errorLine1="                    android:tint=&quot;#9C27B0&quot; />"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="75"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseAppTint"
-        message="Must use `app:tint` instead of `android:tint`"
-        errorLine1="                    android:tint=&quot;#666666&quot; />"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="287"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="UseAppTint"
-        message="Must use `app:tint` instead of `android:tint`"
-        errorLine1="                    android:tint=&quot;#4285F4&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="110"
-            column="21"/>
     </issue>
 
     <issue
@@ -266,25 +319,91 @@
     </issue>
 
     <issue
-        id="UseCompatLoadingForDrawables"
-        message="Use `AppCompatResources.getDrawable()`"
-        errorLine1="            dayView.setBackground(getDrawable(R.drawable.day_selected));"
-        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="UseAppTint"
+        message="Must use `app:tint` instead of `android:tint`"
+        errorLine1="                    android:tint=&quot;#666666&quot; />"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="167"
-            column="35"/>
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="69"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseAppTint"
+        message="Must use `app:tint` instead of `android:tint`"
+        errorLine1="                    android:tint=&quot;#999999&quot; />"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="83"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseAppTint"
+        message="Must use `app:tint` instead of `android:tint`"
+        errorLine1="                    android:tint=&quot;#666666&quot; />"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="104"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseAppTint"
+        message="Must use `app:tint` instead of `android:tint`"
+        errorLine1="                    android:tint=&quot;#666666&quot; />"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="133"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseAppTint"
+        message="Must use `app:tint` instead of `android:tint`"
+        errorLine1="                    android:tint=&quot;#666666&quot; />"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="162"
+            column="21"/>
     </issue>
 
     <issue
         id="UseCompatLoadingForDrawables"
         message="Use `AppCompatResources.getDrawable()`"
-        errorLine1="            dayView.setBackground(getDrawable(R.drawable.day_selector));"
-        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="                dayView.setBackground(getDrawable(R.drawable.calendar_day_selected));"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="170"
-            column="35"/>
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="220"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="UseCompatLoadingForDrawables"
+        message="Use `AppCompatResources.getDrawable()`"
+        errorLine1="                textView.setBackground(getDrawable(R.drawable.calendar_day_today));"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="291"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="UseCompatLoadingForDrawables"
+        message="Use `AppCompatResources.getDrawable()`"
+        errorLine1="                textView.setBackground(getDrawable(R.drawable.calendar_day_normal));"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="296"
+            column="40"/>
     </issue>
 
     <issue
@@ -294,30 +413,19 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CategoryManagerActivity.java"
-            line="95"
+            line="99"
             column="17"/>
     </issue>
 
     <issue
         id="NotifyDataSetChanged"
         message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="                        adapter.notifyDataSetChanged();"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="        notifyDataSetChanged();"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/example/todolist/util/CategoryPickerDialog.java"
-            line="88"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="                        adapter.notifyDataSetChanged();"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/util/CategoryPickerDialog.java"
-            line="97"
-            column="25"/>
+            file="src/main/java/com/example/todolist/adapter/CompletedTasksAdapter.java"
+            line="60"
+            column="9"/>
     </issue>
 
     <issue
@@ -349,7 +457,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/adapter/TaskAdapter.java"
-            line="55"
+            line="62"
             column="9"/>
     </issue>
 
@@ -360,8 +468,81 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="14"
+            line="23"
             column="9"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/notification/NotificationHelper.java"
+            line="37"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/util/NotificationPermissionHelper.java"
+            line="23"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/util/NotificationPermissionHelper.java"
+            line="34"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/notification/ReminderScheduler.java"
+            line="100"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/notification/ReminderScheduler.java"
+            line="126"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 35"
+        errorLine1="        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/TodoApplication.java"
+            line="21"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 35. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <location
+            file="src/main/res/mipmap-anydpi-v26"/>
     </issue>
 
     <issue
@@ -372,47 +553,25 @@
     </issue>
 
     <issue
-        id="UseCompoundDrawables"
-        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable"
-        errorLine1="                &lt;LinearLayout"
-        errorLine2="                 ~~~~~~~~~~~~">
+        id="VectorPath"
+        message="Very long vector path (906 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="      android:pathData=&quot;M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.82,11.69 4.82,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z&quot;/>"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_main.xml"
-            line="180"
-            column="18"/>
+            file="src/main/res/drawable/ic_settings.xml"
+            line="9"
+            column="25"/>
     </issue>
 
     <issue
-        id="UseCompoundDrawables"
-        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable"
-        errorLine1="                &lt;LinearLayout"
-        errorLine2="                 ~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_main.xml"
-            line="248"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="UseCompoundDrawables"
-        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable"
+        id="DisableBaselineAlignment"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance"
         errorLine1="        &lt;LinearLayout"
         errorLine2="         ~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="55"
+            file="src/main/res/layout/activity_calendar.xml"
+            line="356"
             column="10"/>
-    </issue>
-
-    <issue
-        id="MergeRootFrame"
-        message="This `&lt;FrameLayout>` can be replaced with a `&lt;merge>` tag"
-        errorLine1="&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/layout/activity_main.xml"
-            line="2"
-            column="1"/>
     </issue>
 
     <issue
@@ -422,7 +581,7 @@
         errorLine2="         ~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="281"
+            line="424"
             column="10"/>
     </issue>
 
@@ -433,7 +592,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="145"
+            line="151"
             column="21"/>
     </issue>
 
@@ -450,11 +609,11 @@
 
     <issue
         id="Overdraw"
-        message="Possible overdraw: Root element paints background `@android:color/white` with a theme that also paints a background (inferred theme is `@style/Theme_ToDoList`)"
-        errorLine1="    android:background=&quot;@android:color/white&quot;>"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Possible overdraw: Root element paints background `#F5F5F5` with a theme that also paints a background (inferred theme is `@style/Theme_ToDoList`)"
+        errorLine1="    android:background=&quot;#F5F5F5&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_reminder.xml"
+            file="src/main/res/layout/activity_completed_tasks.xml"
             line="6"
             column="5"/>
     </issue>
@@ -472,23 +631,23 @@
 
     <issue
         id="Overdraw"
-        message="Possible overdraw: Root element paints background `#F5F5F5` with a theme that also paints a background (inferred theme is `@style/Theme.ToDoList`)"
-        errorLine1="    android:background=&quot;#F5F5F5&quot;"
+        message="Possible overdraw: Root element paints background `#F5F5F5` with a theme that also paints a background (inferred theme is `@style/Theme_ToDoList`)"
+        errorLine1="    android:background=&quot;#F5F5F5&quot;>"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
+            file="src/main/res/layout/activity_task_detail.xml"
             line="6"
             column="5"/>
     </issue>
 
     <issue
         id="Overdraw"
-        message="Possible overdraw: Root element paints background `#F5F5F5` with a theme that also paints a background (inferred theme is `@style/Theme_ToDoList`)"
-        errorLine1="    android:background=&quot;#F5F5F5&quot;>    &lt;!-- Header -->"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Possible overdraw: Root element paints background `@android:color/white` with a theme that also paints a background (inferred theme is `@style/Theme.ToDoList`)"
+        errorLine1="    android:background=&quot;@android:color/white&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="7"
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="6"
             column="5"/>
     </issue>
 
@@ -516,17 +675,6 @@
 
     <issue
         id="Overdraw"
-        message="Possible overdraw: Root element paints background `?android:attr/selectableItemBackground` with a theme that also paints a background (inferred theme is `@style/Theme.ToDoList`)"
-        errorLine1="    android:background=&quot;?android:attr/selectableItemBackground&quot;>"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/item_category_selection.xml"
-            line="9"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="Overdraw"
         message="Possible overdraw: Root element paints background `@android:color/white` with a theme that also paints a background (inferred theme is `@style/Theme.ToDoList`)"
         errorLine1="    android:background=&quot;@android:color/white&quot;>"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -537,12 +685,41 @@
     </issue>
 
     <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@android:color/white` with a theme that also paints a background (inferred theme is `@style/Theme.ToDoList`)"
+        errorLine1="    android:background=&quot;@android:color/white&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
         id="UnusedResources"
-        message="The resource `R.layout.activity_sleep_reminder` appears to be unused"
-        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        message="The resource `R.drawable.add_time_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; android:shape=&quot;oval&quot;>"
         errorLine2="^">
         <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
+            file="src/main/res/drawable/add_time_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.avatar` appears to be unused">
+        <location
+            file="src/main/res/drawable/avatar.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.button_background_red` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/button_background_red.xml"
             line="2"
             column="1"/>
     </issue>
@@ -554,6 +731,28 @@
         errorLine2="^">
         <location
             file="src/main/res/drawable/button_outline.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.button_primary` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/button_primary.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.category_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/category_background.xml"
             line="2"
             column="1"/>
     </issue>
@@ -686,7 +885,18 @@
         errorLine2="           ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/colors.xml"
-            line="8"
+            line="10"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.text_primary` appears to be unused"
+        errorLine1="    &lt;color name=&quot;text_primary&quot;>#333333&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="11"
             column="12"/>
     </issue>
 
@@ -697,7 +907,7 @@
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/colors.xml"
-            line="9"
+            line="12"
             column="12"/>
     </issue>
 
@@ -708,7 +918,7 @@
         errorLine2="           ~~~~~~~~~~">
         <location
             file="src/main/res/values/colors.xml"
-            line="11"
+            line="14"
             column="12"/>
     </issue>
 
@@ -719,6 +929,17 @@
         errorLine2="^">
         <location
             file="src/main/res/layout/content_main.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.day_background` appears to be unused"
+        errorLine1="&lt;selector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/day_background.xml"
             line="2"
             column="1"/>
     </issue>
@@ -736,22 +957,11 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.drawable.ic_arrow_left` appears to be unused"
+        message="The resource `R.drawable.ic_attachment` appears to be unused"
         errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
-            file="src/main/res/drawable/ic_arrow_left.xml"
-            line="1"
-            column="1"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.drawable.ic_arrow_right` appears to be unused"
-        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
-        errorLine2="^">
-        <location
-            file="src/main/res/drawable/ic_arrow_right.xml"
+            file="src/main/res/drawable/ic_attachment.xml"
             line="1"
             column="1"/>
     </issue>
@@ -763,6 +973,17 @@
         errorLine2="^">
         <location
             file="src/main/res/drawable/ic_category.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_check` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_check.xml"
             line="1"
             column="1"/>
     </issue>
@@ -824,12 +1045,56 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.drawable.ic_note` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_note.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_share` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_share.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.drawable.ic_sleep_face` appears to be unused"
         errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
             file="src/main/res/drawable/ic_sleep_face.xml"
             line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_sleep_moon` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_sleep_moon.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_snooze` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_snooze.xml"
+            line="1"
             column="1"/>
     </issue>
 
@@ -857,11 +1122,33 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.drawable.reminder_text_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/reminder_text_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.drawable.rounded_background` appears to be unused"
         errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
         <location
             file="src/main/res/drawable/rounded_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.selected_day_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/selected_day_background.xml"
             line="2"
             column="1"/>
     </issue>
@@ -900,13 +1187,93 @@
     </issue>
 
     <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.task_item_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/task_item_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.time_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/time_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.today_background` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/today_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `LinearLayout` layout or its `LinearLayout` parent is possibly unnecessary; transfer the `background` attribute to the other view"
+        errorLine1="    &lt;LinearLayout"
+        errorLine2="     ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_completed_task.xml"
+            line="12"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive icon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive roundIcon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/avatar.png` in densityless folder">
+        <location
+            file="src/main/res/drawable/avatar.png"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/background_calendar.jpg` in densityless folder">
+        <location
+            file="src/main/res/drawable/background_calendar.jpg"/>
+    </issue>
+
+    <issue
         id="TextFields"
         message="This text field does not specify an `inputType`"
         errorLine1="                &lt;EditText"
         errorLine2="                 ~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="141"
+            line="147"
             column="18"/>
     </issue>
 
@@ -924,22 +1291,11 @@
     <issue
         id="TextFields"
         message="This text field does not specify an `inputType`"
-        errorLine1="                &lt;EditText"
-        errorLine2="                 ~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="80"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="TextFields"
-        message="This text field does not specify an `inputType`"
         errorLine1="    &lt;EditText"
         errorLine2="     ~~~~~~~~">
         <location
             file="src/main/res/layout/dialog_add_task.xml"
-            line="12"
+            line="13"
             column="6"/>
     </issue>
 
@@ -960,8 +1316,41 @@
         errorLine1="                    android:textSize=&quot;10sp&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_main.xml"
-            line="307"
+            file="src/main/res/layout/activity_calendar.xml"
+            line="382"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SmallSp"
+        message="Avoid using sizes smaller than `11sp`: `10sp`"
+        errorLine1="                    android:textSize=&quot;10sp&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="407"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SmallSp"
+        message="Avoid using sizes smaller than `11sp`: `10sp`"
+        errorLine1="                    android:textSize=&quot;10sp&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="433"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SmallSp"
+        message="Avoid using sizes smaller than `11sp`: `10sp`"
+        errorLine1="                    android:textSize=&quot;10sp&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="458"
             column="21"/>
     </issue>
 
@@ -972,7 +1361,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="333"
+            line="450"
             column="21"/>
     </issue>
 
@@ -983,7 +1372,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="358"
+            line="476"
             column="21"/>
     </issue>
 
@@ -994,7 +1383,18 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="383"
+            line="501"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SmallSp"
+        message="Avoid using sizes smaller than `11sp`: `10sp`"
+        errorLine1="                    android:textSize=&quot;10sp&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="526"
             column="21"/>
     </issue>
 
@@ -1005,7 +1405,7 @@
         errorLine2="                 ~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="141"
+            line="147"
             column="18"/>
     </issue>
 
@@ -1027,7 +1427,7 @@
         errorLine2="                 ~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="80"
+            line="76"
             column="18"/>
     </issue>
 
@@ -1038,7 +1438,7 @@
         errorLine2="     ~~~~~~~~">
         <location
             file="src/main/res/layout/dialog_add_task.xml"
-            line="12"
+            line="13"
             column="6"/>
     </issue>
 
@@ -1100,12 +1500,177 @@
     <issue
         id="ContentDescription"
         message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="27"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="65"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="76"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="88"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="109"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="373"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="398"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="423"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="449"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;com.google.android.material.floatingactionbutton.FloatingActionButton"
+        errorLine2="     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="469"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="         ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_completed_tasks.xml"
+            line="19"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="         ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_completed_tasks.xml"
+            line="37"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
         errorLine1="                &lt;ImageView"
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="135"
+            line="141"
             column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                        &lt;ImageView"
+        errorLine2="                         ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="213"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                        &lt;ImageView"
+        errorLine2="                         ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="256"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                        &lt;ImageView"
+        errorLine2="                         ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="299"
+            column="26"/>
     </issue>
 
     <issue
@@ -1115,30 +1680,19 @@
         errorLine2="                     ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="196"
+            line="325"
             column="22"/>
     </issue>
 
     <issue
         id="ContentDescription"
         message="Missing `contentDescription` attribute on image"
-        errorLine1="                    &lt;ImageView"
-        errorLine2="                     ~~~~~~~~~">
+        errorLine1="                        &lt;ImageView"
+        errorLine2="                         ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="219"
-            column="22"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                    &lt;ImageView"
-        errorLine2="                     ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_main.xml"
-            line="264"
-            column="22"/>
+            line="380"
+            column="26"/>
     </issue>
 
     <issue
@@ -1148,7 +1702,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="298"
+            line="441"
             column="18"/>
     </issue>
 
@@ -1159,7 +1713,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="323"
+            line="466"
             column="18"/>
     </issue>
 
@@ -1170,7 +1724,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="349"
+            line="492"
             column="18"/>
     </issue>
 
@@ -1181,7 +1735,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="374"
+            line="517"
             column="18"/>
     </issue>
 
@@ -1192,41 +1746,8 @@
         errorLine2="     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="394"
+            line="537"
             column="6"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="            &lt;ImageView"
-        errorLine2="             ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="22"
-            column="14"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="            &lt;ImageView"
-        errorLine2="             ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="62"
-            column="14"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="            &lt;ImageView"
-        errorLine2="             ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="232"
-            column="14"/>
     </issue>
 
     <issue
@@ -1243,12 +1764,12 @@
     <issue
         id="ContentDescription"
         message="Missing `contentDescription` attribute on image"
-        errorLine1="        &lt;ImageView"
-        errorLine2="         ~~~~~~~~~">
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="17"
-            column="10"/>
+            file="src/main/res/layout/activity_task_detail.xml"
+            line="23"
+            column="14"/>
     </issue>
 
     <issue
@@ -1257,30 +1778,8 @@
         errorLine1="                &lt;ImageView"
         errorLine2="                 ~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="62"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="70"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="278"
+            file="src/main/res/layout/activity_task_detail.xml"
+            line="103"
             column="18"/>
     </issue>
 
@@ -1291,7 +1790,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="69"
+            line="145"
             column="18"/>
     </issue>
 
@@ -1302,62 +1801,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="106"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="132"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="174"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="241"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="282"
-            column="18"/>
-    </issue>
-
-    <issue
-        id="ContentDescription"
-        message="Missing `contentDescription` attribute on image"
-        errorLine1="                &lt;ImageView"
-        errorLine2="                 ~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="324"
+            line="217"
             column="18"/>
     </issue>
 
@@ -1368,7 +1812,7 @@
         errorLine2="             ~~~~~~~~~">
         <location
             file="src/main/res/layout/dialog_add_task.xml"
-            line="35"
+            line="66"
             column="14"/>
     </issue>
 
@@ -1378,8 +1822,8 @@
         errorLine1="            &lt;ImageView"
         errorLine2="             ~~~~~~~~~">
         <location
-            file="src/main/res/layout/dialog_add_task.xml"
-            line="45"
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="36"
             column="14"/>
     </issue>
 
@@ -1389,8 +1833,19 @@
         errorLine1="            &lt;ImageView"
         errorLine2="             ~~~~~~~~~">
         <location
-            file="src/main/res/layout/dialog_add_task.xml"
-            line="55"
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="72"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="108"
             column="14"/>
     </issue>
 
@@ -1455,9 +1910,64 @@
         errorLine1="        &lt;ImageView"
         errorLine2="         ~~~~~~~~~">
         <location
-            file="src/main/res/layout/item_task.xml"
-            line="56"
+            file="src/main/res/layout/item_completed_task.xml"
+            line="23"
             column="10"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_completed_task.xml"
+            line="65"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_completed_task.xml"
+            line="74"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_completed_task.xml"
+            line="83"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_task.xml"
+            line="60"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_task.xml"
+            line="69"
+            column="18"/>
     </issue>
 
     <issue
@@ -1467,19 +1977,129 @@
         errorLine2="         ~~~~~~~~~">
         <location
             file="src/main/res/layout/item_task.xml"
-            line="65"
+            line="82"
             column="10"/>
     </issue>
 
     <issue
-        id="LabelFor"
-        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
-        errorLine1="                &lt;EditText"
-        errorLine2="                 ~~~~~~~~">
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
         <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="80"
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="64"
             column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="79"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="99"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="128"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                &lt;ImageView"
+        errorLine2="                 ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="157"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        tvMonth.setText(&quot;THÁNG &quot; + (currentCalendar.get(Calendar.MONTH) + 1));"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="175"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        tvMonth.setText(&quot;THÁNG &quot; + (currentCalendar.get(Calendar.MONTH) + 1));"
+        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="175"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="        tvMonth.setText(&quot;THÁNG &quot; + (currentCalendar.get(Calendar.MONTH) + 1));"
+        errorLine2="                        ~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="175"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="            noTasksView.setText(&quot;Không có nhiệm vụ nào trong ngày.&quot;);"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="348"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="            addTaskPrompt.setText(&quot;Nhấn + để tạo công việc của bạn.&quot;);"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="356"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="            addTaskPrompt.setText(&quot;Nhấn + để tạo công việc của bạn.&quot;);"
+        errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/CalendarActivity.java"
+            line="540"
+            column="35"/>
     </issue>
 
     <issue
@@ -1500,7 +2120,7 @@
         errorLine2="                                    ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CategoryManagerActivity.java"
-            line="137"
+            line="141"
             column="37"/>
     </issue>
 
@@ -1511,63 +2131,8 @@
         errorLine2="                                                 ~~~~~">
         <location
             file="src/main/java/com/example/todolist/CategoryManagerActivity.java"
-            line="137"
+            line="141"
             column="50"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="                tvEmptyTitle.setText(&quot;Không có nhiệm vụ nào.&quot;);"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/MainActivity.java"
-            line="519"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="                tvEmptyTitle.setText(&quot;Không có nhiệm vụ nào trong danh mục \&quot;&quot; + filter + &quot;\&quot;.&quot;);"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/MainActivity.java"
-            line="521"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="                tvEmptyTitle.setText(&quot;Không có nhiệm vụ nào trong danh mục \&quot;&quot; + filter + &quot;\&quot;.&quot;);"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/MainActivity.java"
-            line="521"
-            column="38"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="                        textReminderPhrase.setText(&quot;Chúc ngủ ngon, đã đến giờ &quot; + currentTask.getTitle().toLowerCase());"
-        errorLine2="                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="89"
-            column="52"/>
-    </issue>
-
-    <issue
-        id="SetTextI18n"
-        message="String literal in `setText` can not be translated. Use Android resources instead."
-        errorLine1="                        textReminderPhrase.setText(&quot;Chúc ngủ ngon, đã đến giờ &quot; + currentTask.getTitle().toLowerCase());"
-        errorLine2="                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/example/todolist/ReminderActivity.java"
-            line="89"
-            column="52"/>
     </issue>
 
     <issue
@@ -1594,13 +2159,255 @@
 
     <issue
         id="SetTextI18n"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
-        errorLine1="            textTaskDateTime.setText(task.getDueDate() + &quot; &quot; + task.getDueTime());"
-        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                        textTime.setText(&quot;Không&quot;);"
+        errorLine2="                                         ~~~~~~~">
         <location
-            file="src/main/java/com/example/todolist/adapter/TaskAdapter.java"
-            line="76"
-            column="38"/>
+            file="src/main/java/com/example/todolist/TaskDetailActivity.java"
+            line="190"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                        textReminderValue.setText(&quot;Không&quot;);"
+        errorLine2="                                                  ~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/TaskDetailActivity.java"
+            line="195"
+            column="51"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="        textPriorityValue.setText(&quot;Đã hoàn thành&quot;);"
+        errorLine2="                                  ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/example/todolist/TaskDetailActivity.java"
+            line="247"
+            column="35"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;THÁNG 5&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;THÁNG 5&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="48"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;2025&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;2025&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="58"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;CN&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;CN&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="144"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T2&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T2&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="154"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T3&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T3&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="164"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T4&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T4&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="174"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T5&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T5&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="184"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T6&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T6&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="194"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T7&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;T7&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="204"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;CN&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;CN&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="262"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T2&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T2&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="272"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T3&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T3&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="282"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T4&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T4&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="292"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T5&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T5&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="302"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T6&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T6&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="312"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;T7&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;T7&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="322"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Menu&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Menu&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="381"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Nhiệm vụ&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Nhiệm vụ&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="406"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Lịch&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Lịch&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="432"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Của tôi&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Của tôi&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_calendar.xml"
+            line="457"
+            column="21"/>
     </issue>
 
     <issue
@@ -1649,12 +2456,23 @@
 
     <issue
         id="HardcodedText"
+        message="Hardcoded string &quot;Thời gian hoàn thành&quot;, should use `@string` resource"
+        errorLine1="            android:text=&quot;Thời gian hoàn thành&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_completed_tasks.xml"
+            line="31"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
         message="Hardcoded string &quot;Tất cả&quot;, should use `@string` resource"
         errorLine1="                        android:text=&quot;Tất cả&quot;"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="50"
+            line="56"
             column="25"/>
     </issue>
 
@@ -1665,7 +2483,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="63"
+            line="69"
             column="25"/>
     </issue>
 
@@ -1676,7 +2494,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="76"
+            line="82"
             column="25"/>
     </issue>
 
@@ -1687,7 +2505,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="89"
+            line="95"
             column="25"/>
     </issue>
 
@@ -1698,7 +2516,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="108"
+            line="114"
             column="17"/>
     </issue>
 
@@ -1709,7 +2527,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="146"
+            line="152"
             column="21"/>
     </issue>
 
@@ -1720,19 +2538,41 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="159"
+            line="165"
             column="17"/>
     </issue>
 
     <issue
         id="HardcodedText"
         message="Hardcoded string &quot;Trước&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Trước&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="                            android:text=&quot;Trước&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="191"
-            column="25"/>
+            line="208"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Hôm nay&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;Hôm nay&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="251"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Tương lai&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;Tương lai&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="294"
+            column="29"/>
     </issue>
 
     <issue
@@ -1742,7 +2582,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="231"
+            line="337"
             column="25"/>
     </issue>
 
@@ -1753,19 +2593,30 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="240"
+            line="346"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Đã hoàn thành&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Đã hoàn thành&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Đã hoàn thành hôm nay&quot;, should use `@string` resource"
+        errorLine1="                            android:text=&quot;Đã hoàn thành hôm nay&quot;"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="259"
-            column="25"/>
+            line="375"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Kiểm tra tất cả nhiệm vụ đã hoàn thành&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Kiểm tra tất cả nhiệm vụ đã hoàn thành&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="411"
+            column="17"/>
     </issue>
 
     <issue
@@ -1775,7 +2626,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="306"
+            line="449"
             column="21"/>
     </issue>
 
@@ -1786,7 +2637,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="332"
+            line="475"
             column="21"/>
     </issue>
 
@@ -1797,7 +2648,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="357"
+            line="500"
             column="21"/>
     </issue>
 
@@ -1808,184 +2659,8 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="382"
+            line="525"
             column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Đi ngủ sớm&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Đi ngủ sớm&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="36"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;không có thể loại&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;không có thể loại&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="47"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Một giấc ngủ đều đặn có thể khuyến khích cơ thể bạn\nhọc hỏi những gì sắp xây ra vào ngày hôm sau và\nchuẩn bị cho bạn thần một cách thích hợp.&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Một giấc ngủ đều đặn có thể khuyến khích cơ thể bạn\nhọc hỏi những gì sắp xây ra vào ngày hôm sau và\nchuẩn bị cho bạn thần một cách thích hợp.&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="71"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Cụm từ nhắc nhở&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Cụm từ nhắc nhở&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="83"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Chúc ngủ ngon, đã đến giờ đi ngủ&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Chúc ngủ ngon, đã đến giờ đi ngủ&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="93"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lặp lại vào&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Lặp lại vào&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="104"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;CN&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;CN&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="122"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 2&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 2&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="134"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 3&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 3&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="146"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 4&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 4&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="158"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 5&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 5&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="170"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 6&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 6&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="182"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 7&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Th 7&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="194"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Nhắc nhở lúc&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Nhắc nhở lúc&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="207"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;22:00&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;22:00&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="224"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lưu&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Lưu&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_reminder.xml"
-            line="247"
-            column="13"/>
     </issue>
 
     <issue
@@ -2012,211 +2687,13 @@
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Đi ngủ sớm&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Đi ngủ sớm&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="30"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Z\nZ\nZ&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Z\nZ\nZ&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="83"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Một giấc ngủ đều đặn có thể khuyến khích cơ thể bạn học hỏi những gì sắp xảy ra vào ngày hôm sau và chuẩn bị cho bạn thần một cách thích hợp.&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Một giấc ngủ đều đặn có thể khuyến khích cơ thể bạn học hỏi những gì sắp xảy ra vào ngày hôm sau và chuẩn bị cho bạn thần một cách thích hợp.&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="95"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Cụm từ nhắc nhở&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Cụm từ nhắc nhở&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="114"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Chúc ngủ ngon, đã đến giờ đi ngủ&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Chúc ngủ ngon, đã đến giờ đi ngủ&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="124"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lặp lại vào&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Lặp lại vào&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="143"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;CN&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;CN&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="160"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 2&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 2&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="172"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 3&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 3&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="184"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 4&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 4&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="196"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 5&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 5&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="208"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 6&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 6&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="220"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Th 7&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Th 7&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="232"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Nhắc nhở lúc&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Nhắc nhở lúc&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="254"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;22:00&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;22:00&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="271"
-            column="21"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lưu&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;Lưu&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="300"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Back&quot;, should use `@string` resource"
-        errorLine1="            android:contentDescription=&quot;Back&quot;/>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Chi tiết nhiệm vụ&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Chi tiết nhiệm vụ&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="22"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Menu&quot;, should use `@string` resource"
-        errorLine1="            android:contentDescription=&quot;Menu&quot;/>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="34"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Không có thể loại&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Không có thể loại&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="65"
-            column="21"/>
+            line="36"
+            column="17"/>
     </issue>
 
     <issue
@@ -2226,18 +2703,18 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="84"
+            line="80"
             column="21"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Thêm nhiệm vụ phụ&quot;, should use `@string` resource"
-        errorLine1="                    android:text=&quot;Thêm nhiệm vụ phụ&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Nhập tiêu đề nhiệm vụ&quot;, should use `@string` resource"
+        errorLine1="                    android:hint=&quot;Nhập tiêu đề nhiệm vụ&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="116"
+            line="85"
             column="21"/>
     </issue>
 
@@ -2248,29 +2725,29 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="147"
+            line="118"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;2025/05/25&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;2025/05/25&quot;"
+        message="Hardcoded string &quot;2025/06/26&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;2025/06/26&quot;"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="155"
+            line="126"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Thời gian và lời nhắc&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Thời gian và lời nhắc&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Thời gian&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;Thời gian&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="189"
+            line="160"
             column="25"/>
     </issue>
 
@@ -2281,106 +2758,51 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="197"
+            line="168"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Nhắc nhở lúc&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Nhắc nhở lúc&quot;"
+        message="Hardcoded string &quot;Lời nhắc&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;Lời nhắc&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_task_detail.xml"
+            line="190"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;5 phút trước&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;5 phút trước&quot;"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="206"
+            line="198"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Loại lời nhắc&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Loại lời nhắc&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Độ ưu tiên&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;Độ ưu tiên&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="215"
+            line="232"
             column="25"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Thông báo&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Thông báo&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="223"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lặp lại nhiệm vụ&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Lặp lại nhiệm vụ&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="256"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Không&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Không&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="263"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Ghi chú&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Ghi chú&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="298"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;THÊM&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;THÊM&quot;"
+        message="Hardcoded string &quot;Thấp&quot;, should use `@string` resource"
+        errorLine1="                        android:text=&quot;Thấp&quot;"
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_task_detail.xml"
-            line="305"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Tập tin đính kèm&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;Tập tin đính kèm&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="339"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;THÊM&quot;, should use `@string` resource"
-        errorLine1="                        android:text=&quot;THÊM&quot;"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_task_detail.xml"
-            line="346"
+            line="240"
             column="25"/>
     </issue>
 
@@ -2391,62 +2813,29 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/dialog_add_task.xml"
-            line="19"
+            line="20"
             column="9"/>
     </issue>
 
     <issue
         id="HardcodedText"
         message="Hardcoded string &quot;Hủy&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Hủy&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/dialog_add_task.xml"
-            line="76"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Lưu&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;Lưu&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/dialog_add_task.xml"
-            line="89"
-            column="17"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Chọn thể loại&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;Chọn thể loại&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/dialog_category_picker.xml"
-            line="14"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;HỦY&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;HỦY&quot;"
+        errorLine1="            android:text=&quot;Hủy&quot;"
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/dialog_category_picker.xml"
-            line="37"
+            file="src/main/res/layout/dialog_add_task.xml"
+            line="91"
             column="13"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;XONG&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;XONG&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Lưu&quot;, should use `@string` resource"
+        errorLine1="            android:text=&quot;Lưu&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/dialog_category_picker.xml"
-            line="50"
+            file="src/main/res/layout/dialog_add_task.xml"
+            line="104"
             column="13"/>
     </issue>
 
@@ -2503,6 +2892,94 @@
             file="src/main/res/layout/dialog_create_category.xml"
             line="80"
             column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Thời gian&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Thời gian&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="46"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Không&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Không&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="54"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Lời nhắc&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Lời nhắc&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="82"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Không&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Không&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="90"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Lặp lại&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Lặp lại&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="118"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Không&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Không&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="126"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;HỦY&quot;, should use `@string` resource"
+        errorLine1="            android:text=&quot;HỦY&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="147"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;XONG&quot;, should use `@string` resource"
+        errorLine1="            android:text=&quot;XONG&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_date_time_picker.xml"
+            line="160"
+            column="13"/>
     </issue>
 
     <issue
@@ -2628,12 +3105,34 @@
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;Công việc&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;Công việc&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="Hardcoded string &quot;Task Title&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;Task Title&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/item_category_selection.xml"
-            line="30"
+            file="src/main/res/layout/item_completed_task.xml"
+            line="42"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;06-25 16:40&quot;, should use `@string` resource"
+        errorLine1="                android:text=&quot;06-25 16:40&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_completed_task.xml"
+            line="51"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;2025/06/25&quot;, should use `@string` resource"
+        errorLine1="        android:text=&quot;2025/06/25&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/item_date_header.xml"
+            line="36"
             column="9"/>
     </issue>
 
@@ -2651,12 +3150,12 @@
     <issue
         id="HardcodedText"
         message="Hardcoded string &quot;05-25 22:00&quot;, should use `@string` resource"
-        errorLine1="                android:text=&quot;05-25 22:00&quot;"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="                    android:text=&quot;05-25 22:00&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/item_task.xml"
-            line="48"
-            column="17"/>
+            line="55"
+            column="21"/>
     </issue>
 
     <issue
@@ -2704,25 +3203,91 @@
     </issue>
 
     <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;To-Do List Logo&quot;, should use `@string` resource"
+        errorLine1="            android:contentDescription=&quot;To-Do List Logo&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="23"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;To-Do List&quot;, should use `@string` resource"
+        errorLine1="            android:text=&quot;To-Do List&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="33"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Chủ đề&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Chủ đề&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="75"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Tiện ích&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Tiện ích&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="110"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Liên hệ&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Liên hệ&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="139"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Settings&quot;, should use `@string` resource"
+        errorLine1="                    android:text=&quot;Settings&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/nav_drawer_layout.xml"
+            line="168"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Công việc&quot;, should use `@string` resource"
+        errorLine1="        android:text=&quot;Công việc&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/spinner_category_item.xml"
+            line="21"
+            column="9"/>
+    </issue>
+
+    <issue
         id="RtlSymmetry"
         message="When you define `paddingEnd` you should probably also define `paddingStart` for right-to-left symmetry"
         errorLine1="                android:paddingEnd=&quot;8dp&quot;>"
         errorLine2="                ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_main.xml"
-            line="36"
+            line="42"
             column="17"/>
-    </issue>
-
-    <issue
-        id="RtlSymmetry"
-        message="When you define `paddingStart` you should probably also define `paddingEnd` for right-to-left symmetry"
-        errorLine1="                    android:paddingStart=&quot;16dp&quot;"
-        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_sleep_reminder.xml"
-            line="275"
-            column="21"/>
     </issue>
 
 </issues>

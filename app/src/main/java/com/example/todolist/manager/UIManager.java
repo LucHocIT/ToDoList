@@ -109,7 +109,10 @@ public class UIManager {
         
         if (btnNavMenu != null) {
             btnNavMenu.setOnClickListener(v -> {
-                Toast.makeText(activity, "Menu", Toast.LENGTH_SHORT).show();
+                // Open navigation drawer instead of showing toast
+                if (listener != null) {
+                    listener.onBottomNavigation("menu_drawer");
+                }
             });
         }
         

@@ -9,12 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.manager.CategoryManager;
 import com.example.todolist.manager.FilterManager;
+import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.manager.SearchManager;
 import com.example.todolist.manager.SectionManager;
 import com.example.todolist.manager.TaskManager;
@@ -36,7 +38,8 @@ public class MainActivity extends AppCompatActivity implements
     CategoryManager.CategoryUpdateListener,
     SearchManager.SearchListener,
     FilterManager.FilterListener,
-    UIManager.UIListener {
+    UIManager.UIListener,
+    NavigationDrawerManager.NavigationListener {
 
     // Managers
     private TaskManager taskManager;
@@ -45,8 +48,10 @@ public class MainActivity extends AppCompatActivity implements
     private FilterManager filterManager;
     private SectionManager sectionManager;
     private UIManager uiManager;
+    private NavigationDrawerManager navigationDrawerManager;
     
     // Core UI Components
+    private DrawerLayout drawerLayout;
     private FloatingActionButton fabAdd;
     private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private ImageView btnMenu;
@@ -116,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initViews() {
         // Core UI components
+        drawerLayout = findViewById(R.id.drawer_layout);
         fabAdd = findViewById(R.id.fab_add);
         btnAll = findViewById(R.id.btn_all);
         btnWork = findViewById(R.id.btn_work);
@@ -169,6 +175,9 @@ public class MainActivity extends AppCompatActivity implements
         
         // Initialize UIManager
         uiManager = new UIManager(this, fabAdd, btnMenu, findViewById(R.id.text_check_all_completed), this);
+        
+        // Initialize NavigationDrawerManager
+        navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
         
         // Setup RecyclerViews and get adapters
         TaskAdapter[] adapters = uiManager.setupRecyclerViews(
@@ -371,6 +380,40 @@ public class MainActivity extends AppCompatActivity implements
     
     @Override
     public void onBottomNavigation(String section) {
-        Toast.makeText(this, section, Toast.LENGTH_SHORT).show();
+        if ("menu_drawer".equals(section)) {
+            navigationDrawerManager.openDrawer();
+        } else {
+            Toast.makeText(this, section, Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    // NavigationDrawerManager.NavigationListener implementation
+    @Override
+    public void onThemeSelected() {
+        // Handle theme selection
+    }
+    
+    @Override
+    public void onUtilitiesSelected() {
+        // Handle utilities selection
+    }
+    
+    @Override
+    public void onContactSelected() {
+        // Handle contact selection
+    }
+    
+    @Override
+    public void onSettingsSelected() {
+        // Handle settings selection
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (navigationDrawerManager.isDrawerOpen()) {
+            navigationDrawerManager.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
