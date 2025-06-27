@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background gradient -->
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#E8F4FD"
+                android:endColor="#D1E7F7"
+                android:angle="45" />
+        </shape>
+    </item>
+    
+    <!-- Subtle grid pattern -->
+    <item>
+        <shape>
+            <stroke
+                android:width="0.5dp"
+                android:color="#C2E0F4"
+                android:dashWidth="4dp"
+                android:dashGap="8dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -36,8 +36,10 @@ public class CalendarActivity extends AppCompatActivity {
     private TextView tvMonth, tvYear;
     private GridLayout calendarGrid;
     private LinearLayout taskInfoContainer;
-    private ImageView btnPrevMonth, btnNextMonth;
+    private ImageView btnPrevMonth, btnNextMonth, btnToggleCalendar;
     private FloatingActionButton fabAdd;
+    private View calendarScrollView, weekViewContainer;
+    private LinearLayout weekGrid;
     
     private Calendar currentCalendar;
     private Calendar selectedDate;
@@ -48,6 +50,7 @@ public class CalendarActivity extends AppCompatActivity {
     private TodoDatabase database;
     private AddTaskHandler addTaskHandler;
     private int selectedDay = -1;
+    private boolean isWeekView = false;
     private List<TodoTask> tasksForSelectedDate = new ArrayList<>();
     
     @Override
@@ -68,7 +71,11 @@ public class CalendarActivity extends AppCompatActivity {
         taskInfoContainer = findViewById(R.id.task_info_container);
         btnPrevMonth = findViewById(R.id.btn_prev_month);
         btnNextMonth = findViewById(R.id.btn_next_month);
+        btnToggleCalendar = findViewById(R.id.btn_toggle_calendar);
         fabAdd = findViewById(R.id.fab_add);
+        calendarScrollView = findViewById(R.id.calendar_scroll_view);
+        weekViewContainer = findViewById(R.id.week_view_container);
+        weekGrid = findViewById(R.id.week_grid);
         
         database = TodoDatabase.getInstance(this);
         
@@ -78,6 +85,11 @@ public class CalendarActivity extends AppCompatActivity {
             loadCalendar();
             loadTasksForSelectedDate();
         });
+        
+        // Setup click listeners
+        btnPrevMonth.setOnClickListener(v -> navigateMonth(-1));
+        btnNextMonth.setOnClickListener(v -> navigateMonth(1));
+        btnToggleCalendar.setOnClickListener(v -> toggleCalendarView());
         
         // Setup FAB click listener - sử dụng AddTaskHandler với ngày được chọn
         fabAdd.setOnClickListener(v -> {
@@ -466,5 +478,98 @@ public class CalendarActivity extends AppCompatActivity {
     private void showDateTimePickerDialog(DateTimePickerDialog.OnDateTimeSelectedListener listener) {
         DateTimePickerDialog dateTimeDialog = new DateTimePickerDialog(this, listener);
         dateTimeDialog.show();
+    }
+    
+    private void navigateMonth(int direction) {
+        currentCalendar.add(Calendar.MONTH, direction);
+        loadCalendar();
+        if (isWeekView) {
+            loadWeekView();
+        }
+    }
+    
+    private void toggleCalendarView() {
+        isWeekView = !isWeekView;
+        
+        if (isWeekView) {
+            // Switch to week view
+            calendarScrollView.setVisibility(View.GONE);
+            weekViewContainer.setVisibility(View.VISIBLE);
+            btnToggleCalendar.setImageResource(R.drawable.ic_expand_more);
+            loadWeekView();
+        } else {
+            // Switch to month view
+            calendarScrollView.setVisibility(View.VISIBLE);
+            weekViewContainer.setVisibility(View.GONE);
+            btnToggleCalendar.setImageResource(R.drawable.ic_expand_less);
+        }
+    }
+    
+    private void loadWeekView() {
+        weekGrid.removeAllViews();
+        
+        // Get current week
+        Calendar weekStart = (Calendar) currentCalendar.clone();
+        weekStart.set(Calendar.DAY_OF_MONTH, selectedDay > 0 ? selectedDay : 1);
+        weekStart.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        
+        for (int i = 0; i < 7; i++) {
+            Calendar dayCalendar = (Calendar) weekStart.clone();
+            dayCalendar.add(Calendar.DAY_OF_MONTH, i);
+            
+            TextView dayView = createWeekDayView(dayCalendar);
+            weekGrid.addView(dayView);
+        }
+    }
+    
+    private TextView createWeekDayView(Calendar dayCalendar) {
+        TextView dayView = new TextView(this);
+        int day = dayCalendar.get(Calendar.DAY_OF_MONTH);
+        dayView.setText(String.valueOf(day));
+        dayView.setTextSize(16);
+        dayView.setGravity(android.view.Gravity.CENTER);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, 60);
+        params.weight = 1;
+        params.setMargins(4, 4, 4, 4);
+        dayView.setLayoutParams(params);
+        
+        // Check if it's current month
+        boolean isCurrentMonth = dayCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
+        boolean isSelected = day == selectedDay && isCurrentMonth;
+        boolean isToday = isSameDay(dayCalendar, Calendar.getInstance());
+        
+        if (isSelected) {
+            dayView.setBackgroundResource(R.drawable.selected_day_background);
+            dayView.setTextColor(Color.WHITE);
+        } else if (isToday && isCurrentMonth) {
+            dayView.setBackgroundResource(R.drawable.today_background);
+            dayView.setTextColor(Color.parseColor("#4285F4"));
+        } else if (isCurrentMonth) {
+            dayView.setTextColor(Color.parseColor("#333333"));
+            dayView.setBackgroundResource(R.drawable.day_background);
+        } else {
+            dayView.setTextColor(Color.parseColor("#CCCCCC"));
+            dayView.setBackgroundResource(R.drawable.day_background);
+        }
+        
+        // Set click listener
+        if (isCurrentMonth) {
+            dayView.setOnClickListener(v -> {
+                selectedDay = day;
+                selectedDate.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
+                selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH));
+                selectedDate.set(Calendar.DAY_OF_MONTH, day);
+                loadWeekView();
+                loadTasksForSelectedDate();
+            });
+        }
+        
+        return dayView;
+    }
+
+    private boolean isSameDay(Calendar cal1, Calendar cal2) {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+               cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 }

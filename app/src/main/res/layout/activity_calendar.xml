@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@drawable/calendar_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:paddingBottom="16dp"
             android:background="@android:color/white"
             android:gravity="center_vertical"
-            android:elevation="2dp">
+            android:elevation="4dp">
 
             <ImageView
                 android:id="@+id/btn_prev_month"
@@ -72,53 +72,267 @@
                 android:clickable="true"
                 android:focusable="true" />
 
+            <!-- Collapse/Expand triangle button -->
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:id="@+id/btn_toggle_calendar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_expand_less"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="#666666" />
+
+            <ImageView
+                android:id="@+id/btn_menu"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_more_vert"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
-                android:layout_marginStart="8dp"
+                android:padding="8dp"
+                android:layout_marginStart="4dp"
                 android:clickable="true"
                 android:focusable="true" />
 
         </LinearLayout>
 
-        <!-- Calendar Grid -->
-        <ScrollView
+        <!-- Calendar Container -->
+        <FrameLayout
+            android:id="@+id/calendar_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@android:color/white">
+            android:layout_weight="1">
 
-            <LinearLayout
+            <!-- Calendar Grid -->
+            <ScrollView
+                android:id="@+id/calendar_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:elevation="2dp">
 
-                <GridLayout
-                    android:id="@+id/calendar_grid"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="7"
+                    android:orientation="vertical">
+
+                    <!-- Day headers (CN, T2, T3, ...) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:background="#F8F9FA">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CN"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T2"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T3"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T4"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T5"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T6"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="T7"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:gravity="center"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <GridLayout
+                        android:id="@+id/calendar_grid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:columnCount="7"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="16dp"
+                        android:background="@android:color/white" />
+
+                    <!-- Task info section -->
+                    <LinearLayout
+                        android:id="@+id/task_info_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginTop="8dp"
+                        android:background="#F8F9FA" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <!-- Week view (initially hidden) -->
+            <LinearLayout
+                android:id="@+id/week_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:elevation="2dp"
+                android:visibility="gone">
+
+                <!-- Week day headers -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:background="@android:color/white" />
+                    android:background="#F8F9FA">
 
-                <!-- Task info section -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CN"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T2"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T3"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T4"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T5"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T6"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="T7"
+                        android:textSize="12sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Week grid -->
                 <LinearLayout
-                    android:id="@+id/task_info_container"
+                    android:id="@+id/week_grid"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:layout_marginTop="16dp" />
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:background="@android:color/white" />
 
             </LinearLayout>
 
-        </ScrollView>
+        </FrameLayout>
 
         <!-- Bottom navigation -->
         <LinearLayout
