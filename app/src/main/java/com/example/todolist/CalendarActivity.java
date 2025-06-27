@@ -21,6 +21,7 @@ import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.util.DateTimePickerDialog;
+import com.example.todolist.util.AddTaskHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -45,6 +46,7 @@ public class CalendarActivity extends AppCompatActivity {
     private SimpleDateFormat dayFormat;
     
     private TodoDatabase database;
+    private AddTaskHandler addTaskHandler;
     private int selectedDay = -1;
     private List<TodoTask> tasksForSelectedDate = new ArrayList<>();
     
@@ -70,8 +72,22 @@ public class CalendarActivity extends AppCompatActivity {
         
         database = TodoDatabase.getInstance(this);
         
-        // Setup FAB click listener
-        fabAdd.setOnClickListener(v -> showAddTaskDialog());
+        // Khởi tạo AddTaskHandler
+        addTaskHandler = new AddTaskHandler(this, task -> {
+            // Callback khi task được thêm thành công - reload lịch và tasks
+            loadCalendar();
+            loadTasksForSelectedDate();
+        });
+        
+        // Setup FAB click listener - sử dụng AddTaskHandler với ngày được chọn
+        fabAdd.setOnClickListener(v -> {
+            // Tạo ngày được chọn theo định dạng yyyy/MM/dd
+            String selectedDateString = String.format("%04d/%02d/%02d", 
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH) + 1,
+                selectedDay);
+            addTaskHandler.showAddTaskDialog(selectedDateString);
+        });
     }
     
     private void initCalendar() {
@@ -447,143 +463,8 @@ public class CalendarActivity extends AppCompatActivity {
         return taskItem;
     }
     
-    private void showAddTaskDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_task, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-        
-        // Make dialog background transparent so CardView corners show
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-        
-        EditText editTaskTitle = dialogView.findViewById(R.id.edit_task_title);
-        View btnCancel = dialogView.findViewById(R.id.btn_cancel);
-        View btnSave = dialogView.findViewById(R.id.btn_save);
-        Spinner spinnerCategory = dialogView.findViewById(R.id.spinner_category_dialog);
-        ImageView iconCalendar = dialogView.findViewById(R.id.icon_calendar_dialog);
-
-        // Variables to store selected values (pre-fill with selected date)
-        final String[] selectedDate = {String.format("%04d/%02d/%02d", 
-            this.selectedDate.get(Calendar.YEAR),
-            this.selectedDate.get(Calendar.MONTH) + 1,
-            selectedDay)}; 
-        final String[] selectedTime = {"Không"}; // Default time
-        final String[] selectedReminder = {"Không"}; // Default reminder
-        final String[] selectedRepeat = {"Không"}; // Default repeat
-        
-        // Setup category spinner
-        setupCategorySpinner(spinnerCategory);
-        
-        // Calendar icon click handler
-        iconCalendar.setOnClickListener(v -> {
-            showDateTimePickerDialog(new DateTimePickerDialog.OnDateTimeSelectedListener() {
-                @Override
-                public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
-                    selectedDate[0] = date;
-                    selectedTime[0] = time;
-                    selectedReminder[0] = reminder;
-                    selectedRepeat[0] = repeat;
-                }
-            });
-        });
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
-        btnSave.setOnClickListener(v -> {
-            String title = editTaskTitle.getText().toString().trim();
-            if (!title.isEmpty()) {
-                Category selectedCategory = (Category) spinnerCategory.getSelectedItem();
-                String categoryName = selectedCategory != null ? selectedCategory.getName() : "Công việc";
-                
-                createNewTaskWithDetails(title, categoryName, selectedDate[0], selectedTime[0], selectedReminder[0], selectedRepeat[0]);
-                dialog.dismiss();
-            } else {
-                editTaskTitle.setError("Vui lòng nhập tiêu đề nhiệm vụ");
-            }
-        });
-
-        dialog.show();
-    }
-    
-    private void createNewTaskWithDetails(String title, String category, String date, String time, String reminder, String repeat) {
-        // Only set date if it's not the default today date (meaning user explicitly chose a date)
-        String finalDate = null;
-        String finalTime = null;
-        
-        // If user clicked calendar and selected date/time, use those values
-        if (date != null && !date.equals("Không")) {
-            finalDate = date;
-        }
-        if (time != null && !time.equals("Không") && !time.equals("12:00")) { // 12:00 is default, don't use it
-            finalTime = time;
-        }
-        
-        TodoTask newTask = new TodoTask(title, "", finalDate, finalTime);
-        newTask.setCategory(category);
-        
-        // Set reminder if not "Không" and has time
-        if (reminder != null && !reminder.equals("Không") && finalTime != null) {
-            newTask.setHasReminder(true);
-            newTask.setReminderType(reminder);
-        }
-        
-        // Set repeat if not "Không"
-        if (repeat != null && !repeat.equals("Không")) {
-            newTask.setRepeating(true);
-            newTask.setRepeatType(repeat);
-        }
-        
-        // Add to database
-        new Thread(() -> {
-            database.todoDao().insertTask(newTask);
-            runOnUiThread(() -> {
-                // Reload calendar and tasks
-                loadCalendar();
-                loadTasksForSelectedDate();
-                Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
-            });
-        }).start();
-    }
-    
     private void showDateTimePickerDialog(DateTimePickerDialog.OnDateTimeSelectedListener listener) {
         DateTimePickerDialog dateTimeDialog = new DateTimePickerDialog(this, listener);
         dateTimeDialog.show();
-    }
-    
-    private void setupCategorySpinner(Spinner spinner) {
-        new Thread(() -> {
-            try {
-                List<Category> categories = database.categoryDao().getAllCategories();
-                
-                // Add default categories if empty
-                if (categories.isEmpty()) {
-                    Category work = new Category("Công việc", "#FF9800", 0, true);
-                    Category personal = new Category("Cá nhân", "#4CAF50", 1, true);
-                    Category favorite = new Category("Yêu thích", "#F44336", 2, true);
-                    
-                    database.categoryDao().insertCategory(work);
-                    database.categoryDao().insertCategory(personal);  
-                    database.categoryDao().insertCategory(favorite);
-                    
-                    categories.add(work);
-                    categories.add(personal);
-                    categories.add(favorite);
-                }
-                
-                final List<Category> finalCategories = categories;
-                runOnUiThread(() -> {
-                    CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(this, finalCategories);
-                    spinner.setAdapter(adapter);
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Lỗi khi tải danh mục", Toast.LENGTH_SHORT).show();
-                });
-            }
-        }).start();
     }
 }

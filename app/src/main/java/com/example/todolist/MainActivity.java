@@ -36,6 +36,7 @@ import com.example.todolist.util.TaskActionsDialog;
 import com.example.todolist.util.TaskSortDialog;
 import com.example.todolist.util.SortType;
 import com.example.todolist.util.DateTimePickerDialog;
+import com.example.todolist.util.AddTaskHandler;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private SortType currentSortType = SortType.DATE_TIME;
     
     private TodoDatabase database;
+    private AddTaskHandler addTaskHandler;
     private List<TodoTask> allTasks;
     private List<TodoTask> overdueTasks;
     private List<TodoTask> todayTasks;
@@ -221,7 +223,17 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void setupClickListeners() {
-        fabAdd.setOnClickListener(v -> showAddTaskDialog());
+        // Khởi tạo AddTaskHandler
+        addTaskHandler = new AddTaskHandler(this, task -> {
+            // Callback khi task được thêm thành công - reload danh sách tasks
+            loadTasks();
+        });
+        
+        fabAdd.setOnClickListener(v -> {
+            // Sử dụng AddTaskHandler thay vì showAddTaskDialog
+            String categoryFilter = currentFilter.equals("all") ? null : currentFilter;
+            addTaskHandler.showAddTaskDialog(null, categoryFilter);
+        });
         
         btnAll.setOnClickListener(v -> filterTasks("all"));
         btnWork.setOnClickListener(v -> filterTasks("công việc"));
@@ -400,132 +412,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private int getDp(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
-    }
-
-    private void showAddTaskDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_task, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-        
-        // Make dialog background transparent so CardView corners show
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-        
-        EditText editTaskTitle = dialogView.findViewById(R.id.edit_task_title);
-        View btnCancel = dialogView.findViewById(R.id.btn_cancel);
-        View btnSave = dialogView.findViewById(R.id.btn_save);
-        Spinner spinnerCategory = dialogView.findViewById(R.id.spinner_category_dialog);
-        ImageView iconCalendar = dialogView.findViewById(R.id.icon_calendar_dialog);
-
-        // Variables to store selected values
-        final String[] selectedDate = {null}; // No default date
-        final String[] selectedTime = {"Không"}; // Default time
-        final String[] selectedReminder = {"Không"}; // Default reminder
-        final String[] selectedRepeat = {"Không"}; // Default repeat
-        
-        // Setup category spinner
-        setupCategorySpinner(spinnerCategory);
-        
-        // Calendar icon click handler
-        iconCalendar.setOnClickListener(v -> {
-            showDateTimePickerDialog(new DateTimePickerDialog.OnDateTimeSelectedListener() {
-                @Override
-                public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
-                    selectedDate[0] = date;
-                    selectedTime[0] = time;
-                    selectedReminder[0] = reminder;
-                    selectedRepeat[0] = repeat;
-                }
-            });
-        });
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
-        btnSave.setOnClickListener(v -> {
-            String title = editTaskTitle.getText().toString().trim();
-            if (!title.isEmpty()) {
-                String selectedCategory = null; // Default to no category
-                try {
-                    Object selectedItem = spinnerCategory.getSelectedItem();
-                    if (selectedItem != null) {
-                        String categoryText = selectedItem.toString();
-                        if (!categoryText.equals("Không có thể loại")) {
-                            selectedCategory = categoryText;
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    // Use null category if there's an error
-                }
-                createNewTaskWithDetails(title, selectedCategory, selectedDate[0], selectedTime[0], selectedReminder[0], selectedRepeat[0]);
-                dialog.dismiss();
-            } else {
-                Toast.makeText(this, "Vui lòng nhập tiêu đề nhiệm vụ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void createNewTask(String title) {
-        // Get current date
-        String todayDate = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
-        TodoTask newTask = new TodoTask(title, "", todayDate, "12:00");
-        
-        // Set category based on current filter
-        if (!currentFilter.equalsIgnoreCase("all")) {
-            newTask.setCategory(currentFilter);
-        } else {
-            newTask.setCategory("Công việc"); // Default category
-        }
-        
-        // Add to database
-        new Thread(() -> {
-            database.todoDao().insertTask(newTask);
-            runOnUiThread(this::loadTasks);
-        }).start();
-        
-        Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
-    }
-
-    private void createNewTaskWithDetails(String title, String category, String date, String time, String reminder, String repeat) {
-        // Only set date if it's not the default today date (meaning user explicitly chose a date)
-        String finalDate = null;
-        String finalTime = null;
-        
-        // If user clicked calendar and selected date/time, use those values
-        if (date != null && !date.equals("Không")) {
-            finalDate = date;
-        }
-        if (time != null && !time.equals("Không") && !time.equals("12:00")) { // 12:00 is default, don't use it
-            finalTime = time;
-        }
-        
-        TodoTask newTask = new TodoTask(title, "", finalDate, finalTime);
-        newTask.setCategory(category);
-        
-        // Set reminder if not "Không" and has time
-        if (reminder != null && !reminder.equals("Không") && finalTime != null) {
-            newTask.setHasReminder(true);
-            newTask.setReminderType(reminder);
-        }
-        
-        // Set repeat if not "Không"
-        if (repeat != null && !repeat.equals("Không")) {
-            newTask.setRepeating(true);
-            newTask.setRepeatType(repeat);
-        }
-        
-        // Add to database
-        new Thread(() -> {
-            database.todoDao().insertTask(newTask);
-            runOnUiThread(this::loadTasks);
-        }).start();
-        
-        Toast.makeText(this, "Đã thêm nhiệm vụ mới", Toast.LENGTH_SHORT).show();
     }
 
     private void loadTasks() {
