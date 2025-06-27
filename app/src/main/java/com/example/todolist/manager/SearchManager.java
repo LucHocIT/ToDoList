@@ -27,6 +27,7 @@ public class SearchManager {
     
     // UI Components
     private LinearLayout layoutSearch;
+    private LinearLayout layoutFilterTabs; // Add reference to filter tabs
     private EditText editSearch;
     private ImageView btnCancelSearch;
     
@@ -42,8 +43,9 @@ public class SearchManager {
     private List<TodoTask> filteredFutureTasks;
     private List<TodoTask> filteredCompletedTodayTasks;
     
-    public SearchManager(LinearLayout layoutSearch, EditText editSearch, ImageView btnCancelSearch, SearchListener listener) {
+    public SearchManager(LinearLayout layoutSearch, LinearLayout layoutFilterTabs, EditText editSearch, ImageView btnCancelSearch, SearchListener listener) {
         this.layoutSearch = layoutSearch;
+        this.layoutFilterTabs = layoutFilterTabs;
         this.editSearch = editSearch;
         this.btnCancelSearch = btnCancelSearch;
         this.listener = listener;
@@ -86,6 +88,7 @@ public class SearchManager {
     
     public void enterSearchMode() {
         isSearchMode = true;
+        layoutFilterTabs.setVisibility(View.GONE); // Hide filter tabs
         layoutSearch.setVisibility(View.VISIBLE);
         editSearch.requestFocus();
         
@@ -108,6 +111,7 @@ public class SearchManager {
     public void exitSearchMode() {
         isSearchMode = false;
         layoutSearch.setVisibility(View.GONE);
+        layoutFilterTabs.setVisibility(View.VISIBLE); // Show filter tabs again
         editSearch.setText("");
         
         if (listener != null) {

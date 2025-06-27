@@ -92,12 +92,24 @@ public class FilterManager {
     }
     
     private void setupDynamicCategoryClicks() {
-        for (int i = 4; i < layoutCategoriesContainer.getChildCount(); i++) {
+        // This method should be called after category buttons are created
+        setupAllCategoryClicks();
+    }
+    
+    public void setupAllCategoryClicks() {
+        // Setup clicks for all category buttons including dynamic ones
+        // Only setup for buttons that don't already have click listeners set
+        int childrenCount = layoutCategoriesContainer.getChildCount();
+        
+        for (int i = 4; i < childrenCount; i++) {
             View child = layoutCategoriesContainer.getChildAt(i);
             if (child instanceof MaterialButton) {
                 MaterialButton button = (MaterialButton) child;
                 String categoryName = (String) button.getTag();
                 if (categoryName != null) {
+                    // Clear any existing click listener to prevent multiple listeners
+                    button.setOnClickListener(null);
+                    // Set new click listener
                     button.setOnClickListener(v -> filterTasks(categoryName));
                 }
             }

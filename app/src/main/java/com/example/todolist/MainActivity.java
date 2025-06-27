@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
         categoryManager = new CategoryManager(this, layoutCategoriesContainer, this);
         
         // Initialize SearchManager
-        searchManager = new SearchManager(layoutSearch, editSearch, btnCancelSearch, this);
+        searchManager = new SearchManager(layoutSearch, findViewById(R.id.layout_filter_tabs), editSearch, btnCancelSearch, this);
         
         // Initialize FilterManager
         filterManager = new FilterManager(this, btnAll, btnWork, btnPersonal, btnFavorite,
@@ -309,7 +309,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCategoriesUpdated() {
         runOnUiThread(() -> {
-            categoryManager.updateDynamicCategoryButtons();
+            // Update dynamic category buttons only once to prevent duplication
+            if (categoryManager != null) {
+                categoryManager.updateDynamicCategoryButtons();
+                
+                // Setup click listeners for dynamic category buttons after they are created
+                // Use a slightly longer delay to ensure buttons are fully created
+                new android.os.Handler().postDelayed(() -> {
+                    if (filterManager != null) {
+                        filterManager.setupAllCategoryClicks();
+                    }
+                }, 200); // Increased delay to ensure proper setup
+            }
         });
     }
     

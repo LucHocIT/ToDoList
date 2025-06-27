@@ -67,6 +67,10 @@ public class CategoryManagerActivity extends AppCompatActivity implements Catego
                 
                 Collections.swap(categories, fromPosition, toPosition);
                 categoryAdapter.notifyItemMoved(fromPosition, toPosition);
+                
+                // Save new order to database
+                saveCategoryOrder();
+                
                 return true;
             }
             
@@ -171,5 +175,16 @@ public class CategoryManagerActivity extends AppCompatActivity implements Catego
     private void showCategoryMenu(String categoryName) {
         // Show options for edit/delete category
         Toast.makeText(this, "Menu cho danh mục: " + categoryName, Toast.LENGTH_SHORT).show();
+    }
+    
+    private void saveCategoryOrder() {
+        new Thread(() -> {
+            // Update sort order for all categories (excluding the "Add new" item)
+            for (int i = 0; i < categories.size() - 1; i++) {
+                Category category = categories.get(i);
+                category.setSortOrder(i);
+                database.categoryDao().updateCategory(category);
+            }
+        }).start();
     }
 }

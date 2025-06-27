@@ -2,6 +2,9 @@ package com.example.todolist.manager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -45,6 +48,7 @@ public class CategoryManager {
                 categories = database.categoryDao().getAllCategories();
             }
             
+            // Only notify listener once after categories are loaded
             if (listener != null) {
                 listener.onCategoriesUpdated();
             }
@@ -52,13 +56,42 @@ public class CategoryManager {
     }
     
     public void updateDynamicCategoryButtons() {
-        clearDynamicCategories();
-        
-        for (Category category : categories) {
-            if (!isDefaultCategory(category.getName())) {
-                addDynamicCategoryButton(category);
+        // Load categories from database to ensure correct order
+        new Thread(() -> {
+            List<Category> orderedCategories = database.categoryDao().getAllCategories();
+            
+            // Update UI on main thread using Handler
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // Clear dynamic categories first to prevent duplication
+                clearDynamicCategories();
+                
+                categories = orderedCategories; // Update local categories list
+                
+                // Add dynamic category buttons in order
+                for (Category category : orderedCategories) {
+                    if (!isDefaultCategory(category.getName()) && !categoryButtonExists(category.getName())) {
+                        addDynamicCategoryButton(category);
+                    }
+                }
+                
+                // After updating buttons, setup click listeners
+                setupDynamicCategoryClicks();
+            });
+        }).start();
+    }
+    
+    private boolean categoryButtonExists(String categoryName) {
+        // Check if a button with this category name already exists
+        for (int i = 4; i < categoriesContainer.getChildCount(); i++) {
+            View child = categoriesContainer.getChildAt(i);
+            if (child instanceof MaterialButton) {
+                MaterialButton button = (MaterialButton) child;
+                if (categoryName.equals(button.getTag())) {
+                    return true;
+                }
             }
         }
+        return false;
     }
     
     private void createDefaultCategories() {
@@ -90,8 +123,11 @@ public class CategoryManager {
     
     private void clearDynamicCategories() {
         int childCount = categoriesContainer.getChildCount();
-        if (childCount > 4) {
-            categoriesContainer.removeViews(4, childCount - 4);
+        // Start from index 4 (after the 4 default buttons: All, Work, Personal, Favorite)
+        // Remove all dynamic category buttons
+        while (childCount > 4) {
+            categoriesContainer.removeViewAt(4);
+            childCount = categoriesContainer.getChildCount();
         }
     }
     
@@ -114,10 +150,15 @@ public class CategoryManager {
         params.setMarginEnd(getDp(12));
         categoryButton.setLayoutParams(params);
         
-        // Set click listener (will be handled by FilterManager)
-        categoryButton.setTag(category.getName()); // Store category name as tag
+        // Set tag for identification
+        categoryButton.setTag(category.getName());
         
         categoriesContainer.addView(categoryButton);
+    }
+    
+    private void setupDynamicCategoryClicks() {
+        // This method will be called by MainActivity to setup click listeners
+        // The FilterManager will handle the actual click events
     }
     
     private int getDp(int dp) {
