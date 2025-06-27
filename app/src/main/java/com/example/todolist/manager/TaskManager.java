@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.notification.ReminderScheduler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,6 +115,19 @@ public class TaskManager {
         task.setCompleted(isCompleted);
         new Thread(() -> {
             database.todoDao().updateTask(task);
+            
+            // Handle reminder scheduling based on completion status
+            ReminderScheduler scheduler = new ReminderScheduler(context);
+            if (isCompleted) {
+                // Cancel reminders for completed tasks
+                scheduler.cancelTaskReminders(task.getId());
+            } else {
+                // Reschedule reminders for uncompleted tasks
+                if (task.isHasReminder()) {
+                    scheduler.scheduleTaskReminder(task);
+                }
+            }
+            
             loadTasks();
         }).start();
     }
@@ -135,6 +149,10 @@ public class TaskManager {
                 .setMessage("Bạn có chắc chắn muốn xóa nhiệm vụ này?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
                     new Thread(() -> {
+                        // Cancel reminders before deleting task
+                        ReminderScheduler scheduler = new ReminderScheduler(context);
+                        scheduler.cancelTaskReminders(task.getId());
+                        
                         database.todoDao().deleteTask(task);
                         loadTasks();
                     }).start();
@@ -150,4 +168,20 @@ public class TaskManager {
     public List<TodoTask> getTodayTasks() { return todayTasks; }
     public List<TodoTask> getFutureTasks() { return futureTasks; }
     public List<TodoTask> getCompletedTodayTasks() { return completedTodayTasks; }
+    
+    /**
+     * Lên lịch lại tất cả thông báo cho các task chưa hoàn thành
+     */
+    public void rescheduleAllReminders() {
+        new Thread(() -> {
+            List<TodoTask> allTasks = database.todoDao().getAllTasks();
+            ReminderScheduler scheduler = new ReminderScheduler(context);
+            
+            for (TodoTask task : allTasks) {
+                if (!task.isCompleted() && task.isHasReminder()) {
+                    scheduler.scheduleTaskReminder(task);
+                }
+            }
+        }).start();
+    }
 }

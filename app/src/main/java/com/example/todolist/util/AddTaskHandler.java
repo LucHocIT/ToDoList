@@ -15,6 +15,7 @@ import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.notification.ReminderScheduler;
 
 import java.util.Calendar;
 import java.util.List;
@@ -199,6 +200,12 @@ public class AddTaskHandler {
         // Thêm vào cơ sở dữ liệu
         new Thread(() -> {
             database.todoDao().insertTask(newTask);
+            
+            // Lên lịch thông báo nếu có reminder
+            if (newTask.isHasReminder()) {
+                ReminderScheduler scheduler = new ReminderScheduler(context);
+                scheduler.scheduleTaskReminder(newTask);
+            }
             
             // Chạy trên UI thread để cập nhật giao diện
             if (context instanceof Activity) {

@@ -14,6 +14,7 @@ import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.notification.ReminderScheduler;
 import com.example.todolist.util.DateTimePickerDialog;
 import java.util.List;
 
@@ -197,6 +198,18 @@ public class TaskDetailActivity extends AppCompatActivity {
                     // Save to database
                     new Thread(() -> {
                         database.todoDao().updateTask(currentTask);
+                        
+                        // Update reminder scheduling
+                        ReminderScheduler scheduler = new ReminderScheduler(TaskDetailActivity.this);
+                        
+                        // Cancel existing reminders for this task
+                        scheduler.cancelTaskReminders(currentTask.getId());
+                        
+                        // Schedule new reminders if task has reminder
+                        if (currentTask.isHasReminder()) {
+                            scheduler.scheduleTaskReminder(currentTask);
+                        }
+                        
                         runOnUiThread(() -> {
                             setResult(RESULT_OK);
                             Toast.makeText(this, "Đã cập nhật thời gian", Toast.LENGTH_SHORT).show();

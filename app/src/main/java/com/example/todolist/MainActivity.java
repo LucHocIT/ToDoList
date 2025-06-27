@@ -20,7 +20,9 @@ import com.example.todolist.manager.SectionManager;
 import com.example.todolist.manager.TaskManager;
 import com.example.todolist.manager.UIManager;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.notification.NotificationHelper;
 import com.example.todolist.util.AddTaskHandler;
+import com.example.todolist.util.NotificationPermissionHelper;
 import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
 import com.google.android.material.button.MaterialButton;
@@ -70,12 +72,21 @@ public class MainActivity extends AppCompatActivity implements
         initManagers();
         setupAddTaskHandler();
         loadData();
+        
+        // Handle notification click
+        handleNotificationIntent();
+        
+        // Request notification permission for Android 13+
+        NotificationPermissionHelper.requestNotificationPermission(this);
     }
     
     @Override
     protected void onResume() {
         super.onResume();
         categoryManager.loadCategories();
+        
+        // Reschedule all reminders when app resumes
+        taskManager.rescheduleAllReminders();
     }
     
     @Override
@@ -83,6 +94,19 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TASK_DETAIL && resultCode == RESULT_OK) {
             taskManager.loadTasks();
+        }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        if (NotificationPermissionHelper.isNotificationPermissionGranted(requestCode, grantResults)) {
+            Toast.makeText(this, "Đã cho phép thông báo", Toast.LENGTH_SHORT).show();
+            // Reschedule all reminders now that we have permission
+            taskManager.rescheduleAllReminders();
+        } else {
+            Toast.makeText(this, "Cần quyền thông báo để nhận lời nhắc", Toast.LENGTH_LONG).show();
         }
     }
     
@@ -180,6 +204,39 @@ public class MainActivity extends AppCompatActivity implements
     private void loadData() {
         categoryManager.loadCategories();
         taskManager.loadTasks();
+    }
+    
+    /**
+     * Xử lý khi nhấn vào thông báo
+     */
+    private void handleNotificationIntent() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            int taskId = intent.getIntExtra(NotificationHelper.EXTRA_TASK_ID, -1);
+            String action = intent.getStringExtra("action");
+            
+            if (taskId != -1) {
+                // Tìm và hiển thị task được click từ notification
+                new Thread(() -> {
+                    TodoTask task = database.todoDao().getTaskById(taskId);
+                    if (task != null) {
+                        runOnUiThread(() -> {
+                            // Mở TaskDetailActivity để xem chi tiết task
+                            Intent detailIntent = new Intent(this, TaskDetailActivity.class);
+                            detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
+                            startActivityForResult(detailIntent, REQUEST_TASK_DETAIL);
+                            
+                            // Hiển thị thông báo tùy theo action
+                            if (NotificationHelper.ACTION_REMINDER.equals(action)) {
+                                Toast.makeText(this, "Bạn có lời nhắc cho: " + task.getTitle(), Toast.LENGTH_LONG).show();
+                            } else if (NotificationHelper.ACTION_DUE.equals(action)) {
+                                Toast.makeText(this, "Nhiệm vụ đã đến hạn: " + task.getTitle(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }).start();
+            }
+        }
     }
 
     
