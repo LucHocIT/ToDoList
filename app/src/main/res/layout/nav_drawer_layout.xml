@@ -13,27 +13,14 @@
         android:background="@drawable/nav_header_gradient"
         android:padding="16dp">
 
-        <!-- App Logo -->
+        <!-- App Logo Full Size -->
         <ImageView
             android:id="@+id/nav_app_logo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/todolist"
+            android:scaleType="centerCrop"
             android:contentDescription="To-Do List Logo" />
-
-        <!-- App Title -->
-        <TextView
-            android:id="@+id/nav_app_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/nav_app_logo"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="To-Do List"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
 
     </RelativeLayout>
 
