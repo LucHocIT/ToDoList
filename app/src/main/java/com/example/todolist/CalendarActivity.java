@@ -292,9 +292,15 @@ public class CalendarActivity extends AppCompatActivity {
         // Convert to date string format that matches TodoTask dueDate (yyyy/MM/dd)
         String dateString = String.format("%04d/%02d/%02d", year, month + 1, day);
         
-        List<TodoTask> tasks = database.todoDao().getTasksForDate(dateString);
+        // Lấy tất cả tasks và kiểm tra xem có task nào hiển thị trong ngày này không
+        List<TodoTask> allTasks = database.todoDao().getAllTasks();
+        for (TodoTask task : allTasks) {
+            if (isTaskOnDate(task, dateString)) {
+                return true;
+            }
+        }
         
-        return tasks != null && !tasks.isEmpty();
+        return false;
     }
     
     private void loadTasksForSelectedDate() {
@@ -305,10 +311,18 @@ public class CalendarActivity extends AppCompatActivity {
             selectedDay);
         
         new Thread(() -> {
-            tasksForSelectedDate = database.todoDao().getTasksForDate(dateString);
-            if (tasksForSelectedDate == null) {
-                tasksForSelectedDate = new ArrayList<>();
+            // Lấy tất cả tasks từ database
+            List<TodoTask> allTasks = database.todoDao().getAllTasks();
+            List<TodoTask> tasksForDate = new ArrayList<>();
+            
+            // Lọc tasks cho ngày được chọn (bao gồm cả task lặp lại)
+            for (TodoTask task : allTasks) {
+                if (isTaskOnDate(task, dateString)) {
+                    tasksForDate.add(task);
+                }
             }
+            
+            tasksForSelectedDate = tasksForDate;
             
             runOnUiThread(() -> {
                 updateTaskDisplay();
@@ -354,28 +368,35 @@ public class CalendarActivity extends AppCompatActivity {
     private View createTaskItemView(TodoTask task) {
         LinearLayout taskItem = new LinearLayout(this);
         taskItem.setOrientation(LinearLayout.HORIZONTAL);
-        taskItem.setPadding(0, 16, 16, 16);
+        taskItem.setPadding(0, dpToPx(12), dpToPx(16), dpToPx(12));
         taskItem.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        taskItem.setBackgroundColor(Color.WHITE);
+        taskItem.setBackgroundResource(R.drawable.task_item_background);
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(0, 0, 0, 1); // Small margin between items
+        params.setMargins(dpToPx(8), 0, dpToPx(8), dpToPx(8)); // Giảm margin trái phải xuống 8dp
         taskItem.setLayoutParams(params);
         
-        // Blue left border
+        // Set elevation for shadow effect
+        taskItem.setElevation(4f);
+        
+        // Blue left border - sử dụng drawable có bo tròn, khác màu nếu completed
         View leftBorder = new View(this);
-        leftBorder.setBackgroundColor(Color.parseColor("#4285F4"));
-        LinearLayout.LayoutParams borderParams = new LinearLayout.LayoutParams(8, LinearLayout.LayoutParams.MATCH_PARENT);
+        if (task.isCompleted()) {
+            leftBorder.setBackgroundResource(R.drawable.task_left_border_completed);
+        } else {
+            leftBorder.setBackgroundResource(R.drawable.task_left_border);
+        }
+        LinearLayout.LayoutParams borderParams = new LinearLayout.LayoutParams(dpToPx(6), LinearLayout.LayoutParams.MATCH_PARENT);
         leftBorder.setLayoutParams(borderParams);
         taskItem.addView(leftBorder);
         
         // Content container
         LinearLayout contentContainer = new LinearLayout(this);
         contentContainer.setOrientation(LinearLayout.VERTICAL);
-        contentContainer.setPadding(16, 0, 0, 0);
+        contentContainer.setPadding(dpToPx(16), dpToPx(8), 0, dpToPx(8));
         LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
             0, LinearLayout.LayoutParams.WRAP_CONTENT
         );
@@ -386,73 +407,77 @@ public class CalendarActivity extends AppCompatActivity {
         TextView taskTitle = new TextView(this);
         taskTitle.setText(task.getTitle());
         taskTitle.setTextSize(16);
-        taskTitle.setTextColor(Color.parseColor("#333333"));
+        taskTitle.setTextColor(Color.parseColor("#000000"));
         taskTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        
+        // Gạch ngang nếu task đã hoàn thành
+        if (task.isCompleted()) {
+            taskTitle.setPaintFlags(taskTitle.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+            taskTitle.setTextColor(Color.parseColor("#888888")); // Màu nhạt hơn
+        }
+        
         contentContainer.addView(taskTitle);
         
-        // Task time if available
+        // Time and icons container
+        LinearLayout timeIconContainer = new LinearLayout(this);
+        timeIconContainer.setOrientation(LinearLayout.HORIZONTAL);
+        timeIconContainer.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        timeIconContainer.setPadding(0, dpToPx(4), 0, 0);
+        
+        // Task time - logic màu đỏ nếu thời gian đã qua
         if (task.getDueTime() != null && !task.getDueTime().equals("Không")) {
-            LinearLayout timeContainer = new LinearLayout(this);
-            timeContainer.setOrientation(LinearLayout.HORIZONTAL);
-            timeContainer.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            timeContainer.setPadding(0, 4, 0, 0);
-            
             TextView timeText = new TextView(this);
             timeText.setText(task.getDueTime());
             timeText.setTextSize(14);
-            timeText.setTextColor(Color.parseColor("#666666"));
-            timeText.setPadding(0, 0, 8, 0);
-            timeContainer.addView(timeText);
             
-            // Notification icon if has reminder
-            if (task.isHasReminder()) {
-                ImageView notificationIcon = new ImageView(this);
-                notificationIcon.setImageResource(R.drawable.ic_notifications);
-                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(20, 20);
-                iconParams.setMarginEnd(8);
-                notificationIcon.setLayoutParams(iconParams);
-                timeContainer.addView(notificationIcon);
+            // Logic kiểm tra thời gian: đỏ nếu nhỏ hơn thời gian hiện tại
+            boolean isOverdue = isTimeOverdue(task.getDueTime());
+            if (isOverdue && !task.isCompleted()) {
+                timeText.setTextColor(Color.parseColor("#FF0000")); // Red color
+            } else {
+                timeText.setTextColor(Color.parseColor("#000000")); // Black color
             }
             
-            // Repeat icon if repeating
-            if (task.isRepeating()) {
-                ImageView repeatIcon = new ImageView(this);
-                repeatIcon.setImageResource(R.drawable.ic_repeat);
-                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(20, 20);
-                repeatIcon.setLayoutParams(iconParams);
-                timeContainer.addView(repeatIcon);
-            }
+            // KHÔNG gạch ngang thời gian, chỉ gạch tiêu đề
+            // Thời gian luôn giữ nguyên màu sắc và style bình thường
             
-            contentContainer.addView(timeContainer);
+            timeText.setPadding(0, 0, dpToPx(8), 0);
+            timeIconContainer.addView(timeText);
         }
         
+        // Notification icon if has reminder
+        if (task.isHasReminder()) {
+            ImageView notificationIcon = new ImageView(this);
+            notificationIcon.setImageResource(R.drawable.ic_notifications);
+            notificationIcon.setColorFilter(Color.parseColor("#666666"));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(18), dpToPx(18));
+            iconParams.setMarginEnd(dpToPx(6));
+            notificationIcon.setLayoutParams(iconParams);
+            timeIconContainer.addView(notificationIcon);
+        }
+        
+        // Repeat icon if repeating
+        if (task.isRepeating()) {
+            ImageView repeatIcon = new ImageView(this);
+            repeatIcon.setImageResource(R.drawable.ic_repeat);
+            repeatIcon.setColorFilter(Color.parseColor("#666666"));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(18), dpToPx(18));
+            repeatIcon.setLayoutParams(iconParams);
+            timeIconContainer.addView(repeatIcon);
+        }
+        
+        contentContainer.addView(timeIconContainer);
         taskItem.addView(contentContainer);
         
-        // Right side icons
-        LinearLayout rightContainer = new LinearLayout(this);
-        rightContainer.setOrientation(LinearLayout.HORIZONTAL);
-        rightContainer.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        
-        // Important icon if task is important
+        // Right side - Star icon cho important (giống màn hình chính)
         if (task.isImportant()) {
-            ImageView flagIcon = new ImageView(this);
-            flagIcon.setImageResource(R.drawable.ic_flag);
-            flagIcon.setColorFilter(Color.parseColor("#FFA726"));
-            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(24, 24);
-            iconParams.setMarginEnd(8);
-            flagIcon.setLayoutParams(iconParams);
-            rightContainer.addView(flagIcon);
+            ImageView starIcon = new ImageView(this);
+            starIcon.setImageResource(R.drawable.ic_star_filled); // Sử dụng sao vàng
+            LinearLayout.LayoutParams starParams = new LinearLayout.LayoutParams(dpToPx(20), dpToPx(20));
+            starParams.setMarginEnd(dpToPx(8));
+            starIcon.setLayoutParams(starParams);
+            taskItem.addView(starIcon);
         }
-        
-        // Person icon (for assignment, like in the image)
-        ImageView personIcon = new ImageView(this);
-        personIcon.setImageResource(R.drawable.ic_person_outline);
-        personIcon.setColorFilter(Color.parseColor("#999999"));
-        LinearLayout.LayoutParams personParams = new LinearLayout.LayoutParams(24, 24);
-        personIcon.setLayoutParams(personParams);
-        rightContainer.addView(personIcon);
-        
-        taskItem.addView(rightContainer);
         
         // Add click listener to open task detail
         taskItem.setOnClickListener(v -> {
@@ -611,5 +636,112 @@ public class CalendarActivity extends AppCompatActivity {
     private boolean isSameDay(Calendar cal1, Calendar cal2) {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
+    private boolean isTimeOverdue(String taskTime) {
+        try {
+            // Get current time
+            Calendar now = Calendar.getInstance();
+            int currentHour = now.get(Calendar.HOUR_OF_DAY);
+            int currentMinute = now.get(Calendar.MINUTE);
+            
+            // Parse task time (format: "HH:mm" hoặc "H:mm")
+            String[] timeParts = taskTime.split(":");
+            if (timeParts.length == 2) {
+                int taskHour = Integer.parseInt(timeParts[0]);
+                int taskMinute = Integer.parseInt(timeParts[1]);
+                
+                // Convert to minutes for easy comparison
+                int currentTotalMinutes = currentHour * 60 + currentMinute;
+                int taskTotalMinutes = taskHour * 60 + taskMinute;
+                
+                return taskTotalMinutes < currentTotalMinutes;
+            }
+        } catch (Exception e) {
+            // If parsing fails, don't mark as overdue
+            return false;
+        }
+        return false;
+    }
+
+    private boolean isTaskOnDate(TodoTask task, String targetDate) {
+        try {
+            // Nếu task không có ngày đáo hạn, bỏ qua
+            if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
+                return false;
+            }
+            
+            // Parse ngày gốc của task
+            String[] taskDateParts = task.getDueDate().split("/");
+            String[] targetDateParts = targetDate.split("/");
+            
+            if (taskDateParts.length != 3 || targetDateParts.length != 3) {
+                return false;
+            }
+            
+            Calendar taskDate = Calendar.getInstance();
+            taskDate.set(Calendar.YEAR, Integer.parseInt(taskDateParts[0]));
+            taskDate.set(Calendar.MONTH, Integer.parseInt(taskDateParts[1]) - 1);
+            taskDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(taskDateParts[2]));
+            
+            Calendar targetCalendar = Calendar.getInstance();
+            targetCalendar.set(Calendar.YEAR, Integer.parseInt(targetDateParts[0]));
+            targetCalendar.set(Calendar.MONTH, Integer.parseInt(targetDateParts[1]) - 1);
+            targetCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(targetDateParts[2]));
+            
+            // Nếu ngày target trước ngày gốc, không hiển thị
+            if (targetCalendar.before(taskDate)) {
+                return false;
+            }
+            
+            // Nếu task không lặp lại, chỉ hiển thị trong ngày gốc
+            if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
+                return task.getDueDate().equals(targetDate);
+            }
+            
+            // Kiểm tra các loại lặp lại
+            switch (task.getRepeatType()) {
+                case "Hàng ngày":
+                    // Hiển thị mọi ngày từ ngày gốc trở đi
+                    return !targetCalendar.before(taskDate);
+                    
+                case "Hàng tuần":
+                    // Hiển thị vào cùng thứ trong tuần
+                    if (targetCalendar.get(Calendar.DAY_OF_WEEK) == taskDate.get(Calendar.DAY_OF_WEEK)) {
+                        // Kiểm tra xem có phải là tuần hợp lệ không (mỗi 7 ngày)
+                        long diffInMillis = targetCalendar.getTimeInMillis() - taskDate.getTimeInMillis();
+                        long diffInDays = diffInMillis / (24 * 60 * 60 * 1000);
+                        return diffInDays >= 0 && diffInDays % 7 == 0;
+                    }
+                    return false;
+                    
+                case "Hàng tháng":
+                    // Hiển thị vào cùng ngày trong tháng
+                    if (targetCalendar.get(Calendar.DAY_OF_MONTH) == taskDate.get(Calendar.DAY_OF_MONTH)) {
+                        // Kiểm tra xem có phải tháng hợp lệ không
+                        int taskYear = taskDate.get(Calendar.YEAR);
+                        int taskMonth = taskDate.get(Calendar.MONTH);
+                        int targetYear = targetCalendar.get(Calendar.YEAR);
+                        int targetMonth = targetCalendar.get(Calendar.MONTH);
+                        
+                        // Tính số tháng chênh lệch
+                        int monthDiff = (targetYear - taskYear) * 12 + (targetMonth - taskMonth);
+                        return monthDiff >= 0;
+                    }
+                    return false;
+                    
+                default:
+                    return task.getDueDate().equals(targetDate);
+            }
+            
+        } catch (Exception e) {
+            // Nếu có lỗi parsing, chỉ so sánh ngày gốc
+            return task.getDueDate().equals(targetDate);
+        }
     }
 }

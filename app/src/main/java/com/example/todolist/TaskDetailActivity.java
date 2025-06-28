@@ -27,6 +27,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView textTime;
     private TextView textReminderValue;
     private TextView textPriorityValue;
+    private TextView textRepeatValue;
     private Spinner spinnerCategory;
     private LinearLayout layoutDatePicker;
     private ImageView btnBack;
@@ -55,6 +56,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         textTime = findViewById(R.id.text_time);
         textReminderValue = findViewById(R.id.text_reminder_value);
         textPriorityValue = findViewById(R.id.text_priority_value);
+        textRepeatValue = findViewById(R.id.text_repeat_value);
         spinnerCategory = findViewById(R.id.spinner_category);
         layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
@@ -82,6 +84,9 @@ public class TaskDetailActivity extends AppCompatActivity {
             
             // Set priority based on important flag
             textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
+            
+            // Set repeat information
+            textRepeatValue.setText(currentTask.getRepeatType() != null ? currentTask.getRepeatType() : "Không có");
             
             // Set category in spinner
             if (categoryAdapter != null && currentTask.getCategory() != null) {
