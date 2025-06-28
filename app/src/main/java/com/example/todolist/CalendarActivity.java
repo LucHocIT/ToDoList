@@ -140,8 +140,11 @@ public class CalendarActivity extends AppCompatActivity {
         
         if (btnNavMenu != null) {
             btnNavMenu.setOnClickListener(v -> {
-                // Handle menu navigation
-                Toast.makeText(this, "Menu", Toast.LENGTH_SHORT).show();
+                // Open navigation drawer (go to main activity)
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("open_drawer", true);
+                startActivity(intent);
+                finish();
             });
         }
         

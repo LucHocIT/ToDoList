@@ -2,6 +2,7 @@ package com.example.todolist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements
         
         // Handle notification click
         handleNotificationIntent();
+        
+        // Handle drawer open intent
+        handleDrawerIntent();
         
         // Request notification permission for Android 13+
         NotificationPermissionHelper.requestNotificationPermission(this);
@@ -245,6 +250,21 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }).start();
             }
+        }
+    }
+
+    /**
+     * Xử lý khi cần mở navigation drawer từ activity khác
+     */
+    private void handleDrawerIntent() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra("open_drawer", false)) {
+            // Mở drawer sau khi layout đã sẵn sàng
+            findViewById(android.R.id.content).post(() -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
         }
     }
 

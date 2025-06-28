@@ -104,6 +104,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 textTaskDateTime.setVisibility(View.GONE);
             }
             
+            // Set checkbox state without triggering listener
+            checkboxComplete.setOnCheckedChangeListener(null);
             checkboxComplete.setChecked(task.isCompleted());
             
             // Show/hide notification icon (bell) - only if has reminder AND has time
@@ -143,7 +145,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 }
                 return false;
             });
-            
+
+            // Set checkbox listener after setting the state
             checkboxComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (listener != null) {
                     listener.onTaskComplete(task, isChecked);

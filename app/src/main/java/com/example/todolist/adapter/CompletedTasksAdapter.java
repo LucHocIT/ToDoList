@@ -34,6 +34,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public interface OnCompletedTaskClickListener {
         void onCompletedTaskClick(TodoTask task);
         void onCompletedTaskLongClick(TodoTask task);
+        void onCompletedTaskUncheck(TodoTask task);
     }
     
     public CompletedTasksAdapter(Map<String, List<TodoTask>> groupedTasks, OnCompletedTaskClickListener listener) {
@@ -162,8 +163,13 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 textTaskDateTime.setVisibility(View.GONE);
             }
             
-            // Always checked for completed tasks, but disabled
+            // Always checked for completed tasks, but can be unchecked by clicking
             // checkboxComplete is now an ImageView with check circle icon
+            checkboxComplete.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onCompletedTaskUncheck(task);
+                }
+            });
             
             // Show icons based on task properties
             iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);

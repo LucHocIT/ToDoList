@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -190,6 +191,23 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             }
         });
         actionsDialog.show();
+    }
+
+    @Override
+    public void onCompletedTaskUncheck(TodoTask task) {
+        // Mark task as incomplete and remove from completed list
+        new Thread(() -> {
+            task.setCompleted(false);
+            database.todoDao().updateTask(task);
+            
+            allCompletedTasks.remove(task);
+            groupTasksByDate();
+            
+            runOnUiThread(() -> {
+                completedTasksAdapter.updateGroupedTasks(groupedTasks);
+                Toast.makeText(this, "Nhiệm vụ đã được đánh dấu chưa hoàn thành", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
     
     private void deleteTask(TodoTask task) {

@@ -8,11 +8,11 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="184"
+            line="189"
             column="17"/>
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="162"
+            line="167"
             column="17"
             message="First usage here"/>
     </issue>
@@ -24,11 +24,11 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="185"
+            line="190"
             column="17"/>
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="163"
+            line="168"
             column="17"
             message="First usage here"/>
     </issue>
@@ -40,11 +40,11 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="186"
+            line="191"
             column="17"/>
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="164"
+            line="169"
             column="17"
             message="First usage here"/>
     </issue>
@@ -56,11 +56,11 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="187"
+            line="192"
             column="17"/>
         <location
             file="src/main/java/com/example/todolist/MainActivity.java"
-            line="165"
+            line="170"
             column="17"
             message="First usage here"/>
     </issue>
@@ -83,7 +83,7 @@
         errorLine2="                                                                         ~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="172"
+            line="175"
             column="74"/>
     </issue>
 
@@ -94,7 +94,7 @@
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="310"
+            line="313"
             column="29"/>
     </issue>
 
@@ -105,7 +105,7 @@
         errorLine2="                            ^">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="319"
+            line="322"
             column="29"/>
     </issue>
 
@@ -380,7 +380,7 @@
         errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="220"
+            line="223"
             column="39"/>
     </issue>
 
@@ -391,7 +391,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="291"
+            line="294"
             column="40"/>
     </issue>
 
@@ -402,7 +402,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="296"
+            line="299"
             column="40"/>
     </issue>
 
@@ -424,7 +424,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/adapter/CompletedTasksAdapter.java"
-            line="60"
+            line="61"
             column="9"/>
     </issue>
 
@@ -2043,7 +2043,7 @@
         errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="175"
+            line="178"
             column="25"/>
     </issue>
 
@@ -2054,7 +2054,7 @@
         errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="175"
+            line="178"
             column="37"/>
     </issue>
 
@@ -2065,7 +2065,7 @@
         errorLine2="                        ~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="175"
+            line="178"
             column="25"/>
     </issue>
 
@@ -2076,7 +2076,7 @@
         errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="348"
+            line="351"
             column="33"/>
     </issue>
 
@@ -2087,7 +2087,7 @@
         errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="356"
+            line="359"
             column="35"/>
     </issue>
 
@@ -2098,7 +2098,7 @@
         errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/example/todolist/CalendarActivity.java"
-            line="540"
+            line="543"
             column="35"/>
     </issue>
 
