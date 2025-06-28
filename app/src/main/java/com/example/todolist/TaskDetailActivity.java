@@ -27,6 +27,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView textTime;
     private TextView textReminderValue;
     private TextView textPriorityValue;
+    private TextView textPriorityLabel;
     private TextView textRepeatValue;
     private Spinner spinnerCategory;
     private LinearLayout layoutDatePicker;
@@ -56,6 +57,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         textTime = findViewById(R.id.text_time);
         textReminderValue = findViewById(R.id.text_reminder_value);
         textPriorityValue = findViewById(R.id.text_priority_value);
+        textPriorityLabel = findViewById(R.id.text_priority_label);
         textRepeatValue = findViewById(R.id.text_repeat_value);
         spinnerCategory = findViewById(R.id.spinner_category);
         layoutDatePicker = findViewById(R.id.layout_date_picker);
@@ -82,8 +84,16 @@ public class TaskDetailActivity extends AppCompatActivity {
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
             textReminderValue.setText(currentTask.getReminderType() != null ? currentTask.getReminderType() : "Không");
             
-            // Set priority based on important flag
-            textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
+            // Set priority/status based on completion status
+            if (currentTask.isCompleted()) {
+                // Hiển thị trạng thái cho task đã hoàn thành
+                textPriorityLabel.setText("Trạng thái");
+                textPriorityValue.setText("Đã hoàn thành");
+            } else {
+                // Hiển thị độ ưu tiên cho task chưa hoàn thành
+                textPriorityLabel.setText("Độ ưu tiên");
+                textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
+            }
             
             // Set repeat information
             textRepeatValue.setText(currentTask.getRepeatType() != null ? currentTask.getRepeatType() : "Không có");
