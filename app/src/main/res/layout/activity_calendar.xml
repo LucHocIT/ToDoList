@@ -98,6 +98,90 @@
 
         </LinearLayout>
 
+        <!-- Day headers chung cho cả month và week view -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:background="@android:color/white"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CN"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T2"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T3"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T4"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T5"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T6"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T7"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:gravity="center"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <!-- Calendar Container -->
         <FrameLayout
             android:id="@+id/calendar_container"
@@ -125,89 +209,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
-                    <!-- Day headers (CN, T2, T3, ...) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingTop="16dp"
-                        android:paddingBottom="8dp"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:background="@drawable/calendar_overlay">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="CN"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T2"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T3"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T4"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T5"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T6"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="T7"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:gravity="center"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
 
                     <GridLayout
                         android:id="@+id/calendar_grid"
@@ -244,89 +245,6 @@
                 android:elevation="2dp"
                 android:visibility="gone">
 
-                <!-- Week day headers -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:background="@drawable/calendar_overlay">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="CN"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T2"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T3"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T4"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T5"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T6"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="T7"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
                 <!-- Week grid -->
                 <LinearLayout
                     android:id="@+id/week_grid"
@@ -335,6 +253,7 @@
                     android:orientation="horizontal"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
+                    android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:background="@drawable/calendar_overlay" />
 

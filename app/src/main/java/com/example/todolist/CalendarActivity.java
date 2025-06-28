@@ -110,7 +110,7 @@ public class CalendarActivity extends AppCompatActivity {
         yearFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         dayFormat = new SimpleDateFormat("d", Locale.getDefault());
         
-        // Set selected date to today
+        // Set selected day to today initially
         selectedDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
     }
     
@@ -187,13 +187,6 @@ public class CalendarActivity extends AppCompatActivity {
         int firstDayOfWeek = tempCal.get(Calendar.DAY_OF_WEEK);
         int daysInMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         
-        // Add day headers
-        String[] dayHeaders = {"CN", "Th 2", "Th 3", "Th 4", "Th 5", "Th 6", "Th 7"};
-        for (String dayHeader : dayHeaders) {
-            TextView headerView = createDayHeaderView(dayHeader);
-            calendarGrid.addView(headerView);
-        }
-        
         // Add empty cells for days before month starts
         int startOffset = (firstDayOfWeek == Calendar.SUNDAY) ? 0 : firstDayOfWeek - 1;
         Calendar prevMonth = (Calendar) currentCalendar.clone();
@@ -219,9 +212,14 @@ public class CalendarActivity extends AppCompatActivity {
                                 day == selectedDay);
             TextView dayView = createDayView(day, true, isToday);
             
+            // Chỉ highlight ngày được chọn, không highlight today
             if (isSelected) {
                 dayView.setBackground(getDrawable(R.drawable.calendar_day_selected));
                 dayView.setTextColor(Color.WHITE);
+            } else {
+                // Không highlight today nữa, chỉ sử dụng style bình thường
+                dayView.setTextColor(Color.parseColor("#333333"));
+                dayView.setBackground(getDrawable(R.drawable.calendar_day_normal));
             }
             
             // Check if day has tasks
@@ -247,31 +245,13 @@ public class CalendarActivity extends AppCompatActivity {
         
         // Add remaining cells for next month
         int totalCells = calendarGrid.getChildCount();
-        int remainingCells = 49 - totalCells; // 7 headers + 42 day cells
+        int remainingCells = 42 - totalCells; // 42 day cells (6 weeks x 7 days)
         for (int i = 1; i <= remainingCells; i++) {
             TextView dayView = createDayView(i, false, false);
             calendarGrid.addView(dayView);
         }
         
         loadTasksForSelectedDate();
-    }
-    
-    private TextView createDayHeaderView(String text) {
-        TextView textView = new TextView(this);
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = 0;
-        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        params.setMargins(2, 8, 2, 8);
-        textView.setLayoutParams(params);
-        
-        textView.setText(text);
-        textView.setTextSize(12);
-        textView.setTextColor(Color.parseColor("#666666"));
-        textView.setGravity(android.view.Gravity.CENTER);
-        textView.setPadding(8, 8, 8, 8);
-        
-        return textView;
     }
     
     private TextView createDayView(int day, boolean isCurrentMonth, boolean isToday) {
@@ -490,10 +470,29 @@ public class CalendarActivity extends AppCompatActivity {
     }
     
     private void navigateMonth(int direction) {
-        currentCalendar.add(Calendar.MONTH, direction);
-        loadCalendar();
         if (isWeekView) {
+            // Nếu đang ở chế độ tuần, di chuyển theo tuần
+            selectedDate.add(Calendar.WEEK_OF_YEAR, direction);
+            selectedDay = selectedDate.get(Calendar.DAY_OF_MONTH);
+            
+            // Cập nhật currentCalendar để sync với tháng của tuần mới
+            currentCalendar.set(Calendar.YEAR, selectedDate.get(Calendar.YEAR));
+            currentCalendar.set(Calendar.MONTH, selectedDate.get(Calendar.MONTH));
+            
             loadWeekView();
+            loadTasksForSelectedDate();
+        } else {
+            // Nếu đang ở chế độ tháng, di chuyển theo tháng
+            currentCalendar.add(Calendar.MONTH, direction);
+            
+            // Cập nhật selectedDate để theo tháng mới nếu cần
+            if (currentCalendar.get(Calendar.YEAR) != selectedDate.get(Calendar.YEAR) ||
+                currentCalendar.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH)) {
+                // Reset selected day để tránh conflict
+                selectedDay = -1;
+            }
+            
+            loadCalendar();
         }
     }
     
@@ -517,10 +516,16 @@ public class CalendarActivity extends AppCompatActivity {
     private void loadWeekView() {
         weekGrid.removeAllViews();
         
-        // Get current week
-        Calendar weekStart = (Calendar) currentCalendar.clone();
-        weekStart.set(Calendar.DAY_OF_MONTH, selectedDay > 0 ? selectedDay : 1);
+        // Get current week based on selected date
+        Calendar weekStart = (Calendar) selectedDate.clone();
         weekStart.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        
+        // Update month and year display for week view
+        String monthName = monthFormat.format(selectedDate.getTime()).toUpperCase();
+        String yearText = yearFormat.format(selectedDate.getTime());
+        
+        tvMonth.setText("THÁNG " + (selectedDate.get(Calendar.MONTH) + 1));
+        tvYear.setText(yearText);
         
         for (int i = 0; i < 7; i++) {
             Calendar dayCalendar = (Calendar) weekStart.clone();
@@ -568,9 +573,8 @@ public class CalendarActivity extends AppCompatActivity {
         dayView.setLayoutParams(params);
         dayView.setPadding(8, 16, 8, 16);
         
-        // Check if it's current month
-        boolean isCurrentMonth = dayCalendar.get(Calendar.MONTH) == currentCalendar.get(Calendar.MONTH);
-        boolean isSelected = day == selectedDay && isCurrentMonth;
+        // Check if it's selected day
+        boolean isSelected = isSameDay(dayCalendar, selectedDate);
         boolean isToday = isSameDay(dayCalendar, Calendar.getInstance());
         
         // Check if day has tasks
@@ -581,31 +585,25 @@ public class CalendarActivity extends AppCompatActivity {
             dayView.setCompoundDrawablePadding(4);
         }
         
+        // Chỉ highlight ngày được chọn, không highlight today
         if (isSelected) {
             dayView.setBackgroundResource(R.drawable.calendar_day_selected);
             dayView.setTextColor(Color.WHITE);
-        } else if (isToday && isCurrentMonth) {
-            dayView.setBackgroundResource(R.drawable.calendar_day_today);
-            dayView.setTextColor(Color.WHITE);
-        } else if (isCurrentMonth) {
+        } else {
+            // Không highlight today nữa, chỉ sử dụng style bình thường
             dayView.setTextColor(Color.parseColor("#333333"));
             dayView.setBackgroundResource(R.drawable.calendar_day_normal);
-        } else {
-            dayView.setTextColor(Color.parseColor("#CCCCCC"));
-            dayView.setBackgroundColor(Color.WHITE);
         }
         
         // Set click listener
-        if (isCurrentMonth) {
-            dayView.setOnClickListener(v -> {
-                selectedDay = day;
-                selectedDate.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
-                selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH));
-                selectedDate.set(Calendar.DAY_OF_MONTH, day);
-                loadWeekView();
-                loadTasksForSelectedDate();
-            });
-        }
+        dayView.setOnClickListener(v -> {
+            selectedDay = day;
+            selectedDate.set(Calendar.YEAR, dayCalendar.get(Calendar.YEAR));
+            selectedDate.set(Calendar.MONTH, dayCalendar.get(Calendar.MONTH));
+            selectedDate.set(Calendar.DAY_OF_MONTH, day);
+            loadWeekView();
+            loadTasksForSelectedDate();
+        });
         
         return dayView;
     }
