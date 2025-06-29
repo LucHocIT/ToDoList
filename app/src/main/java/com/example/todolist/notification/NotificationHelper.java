@@ -52,9 +52,8 @@ public class NotificationHelper {
             notificationManager.createNotificationChannel(channel);
         }
     }
-    
-    /**
-     * Hiển thị thông báo khi task sắp đến hạn
+      /**
+     * Hiển thị thông báo khi task đến hạn đúng giờ
      */
     public void showDueNotification(TodoTask task) {
         // Kiểm tra xem notifications có được bật không
@@ -62,18 +61,26 @@ public class NotificationHelper {
             return;
         }
         
-        String title = "Task sắp đến hạn!";
+        String title = "⏰ Task đến hạn!";
         String content = task.getTitle();
+        String expandedContent = task.getTitle();
+        
         if (task.getDueDate() != null && !task.getDueDate().equals("Không")) {
-            content += "\nHạn: " + task.getDueDate();
+            expandedContent += "\n📅 Hạn: " + task.getDueDate();
+        }
+        if (task.getDueTime() != null && !task.getDueTime().equals("Không")) {
+            expandedContent += " ⏱️ " + task.getDueTime();
+        }
+        if (task.getDescription() != null && !task.getDescription().isEmpty()) {
+            expandedContent += "\n📝 " + task.getDescription();
         }
         
         int notificationId = ("due_" + task.getId()).hashCode();
-        showNotification(notificationId, title, content, task, false);
+        showNotification(notificationId, title, content, expandedContent, task, false);
     }
-    
+
     /**
-     * Hiển thị thông báo nhắc nhở task
+     * Hiển thị thông báo nhắc nhở task (trước khi đến hạn)
      */
     public void showReminderNotification(TodoTask task) {
         // Kiểm tra xem notifications có được bật không
@@ -81,20 +88,31 @@ public class NotificationHelper {
             return;
         }
         
-        String title = "Nhắc nhở task";
+        String title = "🔔 Nhắc nhở task";
         String content = task.getTitle();
+        String expandedContent = task.getTitle();
+        
         if (task.getDueDate() != null && !task.getDueDate().equals("Không")) {
-            content += "\nHạn: " + task.getDueDate();
+            expandedContent += "\n📅 Sẽ đến hạn: " + task.getDueDate();
+        }
+        if (task.getDueTime() != null && !task.getDueTime().equals("Không")) {
+            expandedContent += " ⏱️ " + task.getDueTime();
+        }
+        if (task.getReminderType() != null && !task.getReminderType().equals("Không")) {
+            expandedContent += "\n⏰ Nhắc: " + task.getReminderType();
+        }
+        if (task.getDescription() != null && !task.getDescription().isEmpty()) {
+            expandedContent += "\n📝 " + task.getDescription();
         }
         
         int notificationId = ("reminder_" + task.getId()).hashCode();
-        showNotification(notificationId, title, content, task, true);
+        showNotification(notificationId, title, content, expandedContent, task, true);
     }
     
     /**
-     * Hiển thị notification cơ bản
+     * Hiển thị notification cơ bản với giao diện cải thiện
      */
-    private void showNotification(int notificationId, String title, String content, TodoTask task, boolean isReminder) {
+    private void showNotification(int notificationId, String title, String content, String expandedContent, TodoTask task, boolean isReminder) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_TASK_ID, task.getId());
@@ -107,13 +125,24 @@ public class NotificationHelper {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
+        // Chọn icon dựa trên loại thông báo
+        int iconRes = isReminder ? R.drawable.ic_schedule : R.drawable.ic_notifications;
+        
+        // Chọn màu dựa trên độ ưu tiên
+        int color = task.isImportant() ? 0xFFFF5722 : 0xFF4CAF50; // Đỏ cho quan trọng, xanh cho bình thường
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications)
+                .setSmallIcon(iconRes)
                 .setContentTitle(title)
                 .setContentText(content)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                    .bigText(expandedContent)
+                    .setBigContentTitle(title))
+                .setPriority(task.isImportant() ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_DEFAULT)
+                .setColor(color)
                 .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true)
                 .setContentIntent(pendingIntent);
 
         // Apply sound settings
@@ -128,16 +157,17 @@ public class NotificationHelper {
         
         // Apply vibration settings
         if (SettingsManager.isVibrationEnabled(context)) {
-            builder.setVibrate(new long[]{0, 250, 250, 250}); // Pattern: wait, vibrate, wait, vibrate
+            if (task.isImportant()) {
+                // Vibration pattern cho task quan trọng
+                builder.setVibrate(new long[]{0, 300, 100, 300, 100, 300});
+            } else {
+                // Vibration pattern cho task bình thường
+                builder.setVibrate(new long[]{0, 250, 250, 250});
+            }
         }
         
         // Apply lights
         builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
-
-        // Thêm thông tin về thời gian và danh mục nếu có
-        if (task.getDueTime() != null && !task.getDueTime().equals("Không")) {
-            builder.setSubText("Thời gian: " + task.getDueTime());
-        }
 
         notificationManager.notify(notificationId, builder.build());
     }
