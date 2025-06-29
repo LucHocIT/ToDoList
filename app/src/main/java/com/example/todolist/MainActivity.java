@@ -22,6 +22,7 @@ import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.manager.SearchManager;
 import com.example.todolist.manager.SectionManager;
 import com.example.todolist.manager.TaskManager;
+import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.manager.UIManager;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.notification.NotificationHelper;
@@ -41,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements
     SearchManager.SearchListener,
     FilterManager.FilterListener,
     UIManager.UIListener,
-    NavigationDrawerManager.NavigationListener {
+    NavigationDrawerManager.NavigationListener,
+    ThemeManager.ThemeChangeListener {
 
     // Managers
     private TaskManager taskManager;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements
     private SectionManager sectionManager;
     private UIManager uiManager;
     private NavigationDrawerManager navigationDrawerManager;
+    private ThemeManager themeManager;
     
     // Core UI Components
     private DrawerLayout drawerLayout;
@@ -97,6 +100,11 @@ public class MainActivity extends AppCompatActivity implements
         
         // Reschedule all reminders when app resumes
         taskManager.rescheduleAllReminders();
+        
+        // Apply current theme
+        if (themeManager != null) {
+            themeManager.applyCurrentTheme();
+        }
     }
     
     @Override
@@ -183,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements
         
         // Initialize NavigationDrawerManager
         navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
+        
+        // Initialize ThemeManager
+        themeManager = new ThemeManager(this, this);
         
         // Setup RecyclerViews and get adapters
         TaskAdapter[] adapters = uiManager.setupRecyclerViews(
@@ -410,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements
     // NavigationDrawerManager.NavigationListener implementation
     @Override
     public void onThemeSelected() {
-        // Handle theme selection
+        // Handle theme selection - đã được xử lý trong NavigationDrawerManager
     }
     
     @Override
@@ -426,6 +437,15 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSettingsSelected() {
         // Handle settings selection
+    }
+    
+    // ThemeManager.ThemeChangeListener implementation
+    @Override
+    public void onThemeChanged(ThemeManager.ThemeColor themeColor) {
+        // Theme has been changed, apply immediately
+        if (themeManager != null) {
+            themeManager.applyCurrentTheme();
+        }
     }
     
     @Override

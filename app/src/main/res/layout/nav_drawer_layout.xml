@@ -8,10 +8,10 @@
 
     <!-- Header with gradient background -->
     <RelativeLayout
+        android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@drawable/nav_header_gradient"
-        android:padding="16dp">
+        android:background="@drawable/nav_header_gradient">
 
         <!-- App Logo Full Size -->
         <ImageView
@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/todolist"
             android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             android:contentDescription="To-Do List Logo" />
 
     </RelativeLayout>

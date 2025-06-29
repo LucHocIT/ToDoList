@@ -49,6 +49,10 @@
             android:name=".CalendarActivity"
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ThemeSelectionActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
 
         <!-- Notification receivers -->
         <receiver

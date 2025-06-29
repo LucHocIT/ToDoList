@@ -106,19 +106,9 @@ public class NavigationDrawerManager {
     }
     
     private void showThemeDialog() {
-        // Hiển thị dialog chọn theme
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);
-        builder.setTitle("Chọn chủ đề");
-        
-        String[] themes = {"Sáng", "Tối", "Theo hệ thống"};
-        builder.setItems(themes, (dialog, which) -> {
-            String selectedTheme = themes[which];
-            Toast.makeText(activity, "Đã chọn chủ đề: " + selectedTheme, Toast.LENGTH_SHORT).show();
-            // TODO: Implement theme change logic
-        });
-        
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
+        // Mở ThemeSelectionActivity thay vì hiển thị dialog đơn giản
+        Intent intent = new Intent(activity, com.example.todolist.ThemeSelectionActivity.class);
+        activity.startActivity(intent);
     }
     
     private void showUtilitiesDialog() {
