@@ -12,27 +12,32 @@ import androidx.core.app.NotificationCompat;
 import com.example.todolist.MainActivity;
 import com.example.todolist.R;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.util.SettingsManager;
 
+/**
+ * Helper class để quản lý notification
+ */
 public class NotificationHelper {
-
-    private static final String CHANNEL_ID = "todo_reminders";
-    private static final String CHANNEL_NAME = "Lời nhắc nhiệm vụ";
-    private static final String CHANNEL_DESCRIPTION = "Thông báo lời nhắc cho các nhiệm vụ sắp tới hạn";
+    private static final String CHANNEL_ID = "todolist_notifications";
+    private static final String CHANNEL_NAME = "TodoList Notifications";
+    private static final String CHANNEL_DESC = "Thông báo từ ứng dụng TodoList";
     
-    // Notification IDs
     public static final String EXTRA_TASK_ID = "task_id";
-    public static final String ACTION_REMINDER = "reminder";
-    public static final String ACTION_DUE = "due";
-
+    public static final String ACTION_DUE = "task_due";
+    public static final String ACTION_REMINDER = "task_reminder";
+    
     private Context context;
     private NotificationManager notificationManager;
-
+    
     public NotificationHelper(Context context) {
         this.context = context;
         this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel();
     }
-
+    
+    /**
+     * Tạo notification channel cho Android 8.0+
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
@@ -40,36 +45,54 @@ public class NotificationHelper {
                     CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel.setDescription(CHANNEL_DESCRIPTION);
+            channel.setDescription(CHANNEL_DESC);
             channel.enableLights(true);
             channel.enableVibration(true);
-            channel.setLightColor(android.graphics.Color.BLUE);
+            
             notificationManager.createNotificationChannel(channel);
         }
     }
-
+    
     /**
-     * Hiển thị thông báo lời nhắc trước khi nhiệm vụ đến hạn
-     */
-    public void showReminderNotification(TodoTask task, String reminderTime) {
-        String title = "⏰ Lời nhắc nhiệm vụ";
-        String content = "\"" + task.getTitle() + "\" sẽ đến hạn " + reminderTime;
-        
-        showNotification(task.getId() * 10, title, content, task, true);
-    }
-
-    /**
-     * Hiển thị thông báo khi nhiệm vụ đến hạn
+     * Hiển thị thông báo khi task sắp đến hạn
      */
     public void showDueNotification(TodoTask task) {
-        String title = "🔔 Nhiệm vụ đến hạn";
-        String content = "\"" + task.getTitle() + "\" đã đến hạn";
+        // Kiểm tra xem notifications có được bật không
+        if (!SettingsManager.isNotificationsEnabled(context)) {
+            return;
+        }
         
-        showNotification(task.getId() * 10 + 1, title, content, task, false);
+        String title = "Task sắp đến hạn!";
+        String content = task.getTitle();
+        if (task.getDueDate() != null && !task.getDueDate().equals("Không")) {
+            content += "\nHạn: " + task.getDueDate();
+        }
+        
+        int notificationId = ("due_" + task.getId()).hashCode();
+        showNotification(notificationId, title, content, task, false);
     }
-
+    
     /**
-     * Hiển thị thông báo chung
+     * Hiển thị thông báo nhắc nhở task
+     */
+    public void showReminderNotification(TodoTask task) {
+        // Kiểm tra xem notifications có được bật không
+        if (!SettingsManager.isNotificationsEnabled(context)) {
+            return;
+        }
+        
+        String title = "Nhắc nhở task";
+        String content = task.getTitle();
+        if (task.getDueDate() != null && !task.getDueDate().equals("Không")) {
+            content += "\nHạn: " + task.getDueDate();
+        }
+        
+        int notificationId = ("reminder_" + task.getId()).hashCode();
+        showNotification(notificationId, title, content, task, true);
+    }
+    
+    /**
+     * Hiển thị notification cơ bản
      */
     private void showNotification(int notificationId, String title, String content, TodoTask task, boolean isReminder) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -90,9 +113,26 @@ public class NotificationHelper {
                 .setContentText(content)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
+
+        // Apply sound settings
+        if (SettingsManager.isSoundEnabled(context)) {
+            String ringtoneUri = SettingsManager.getRingtoneUri(context);
+            if (ringtoneUri != null) {
+                builder.setSound(android.net.Uri.parse(ringtoneUri));
+            } else {
+                builder.setDefaults(NotificationCompat.DEFAULT_SOUND);
+            }
+        }
+        
+        // Apply vibration settings
+        if (SettingsManager.isVibrationEnabled(context)) {
+            builder.setVibrate(new long[]{0, 250, 250, 250}); // Pattern: wait, vibrate, wait, vibrate
+        }
+        
+        // Apply lights
+        builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
 
         // Thêm thông tin về thời gian và danh mục nếu có
         if (task.getDueTime() != null && !task.getDueTime().equals("Không")) {
@@ -108,14 +148,24 @@ public class NotificationHelper {
     public void cancelNotification(int notificationId) {
         notificationManager.cancel(notificationId);
     }
-
+    
     /**
-     * Hủy tất cả thông báo của một task
+     * Hủy tất cả thông báo
      */
-    public void cancelTaskNotifications(int taskId) {
-        // Hủy thông báo reminder
-        notificationManager.cancel(taskId * 10);
+    public void cancelAllNotifications() {
+        notificationManager.cancelAll();
+    }
+    
+    /**
+     * Hủy thông báo cho một task cụ thể
+     */
+    public void cancelTaskNotifications(String taskId) {
         // Hủy thông báo due
-        notificationManager.cancel(taskId * 10 + 1);
+        int dueNotificationId = ("due_" + taskId).hashCode();
+        cancelNotification(dueNotificationId);
+        
+        // Hủy thông báo reminder
+        int reminderNotificationId = ("reminder_" + taskId).hashCode();
+        cancelNotification(reminderNotificationId);
     }
 }

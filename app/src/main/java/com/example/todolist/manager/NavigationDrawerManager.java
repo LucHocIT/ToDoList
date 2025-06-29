@@ -224,18 +224,8 @@ public class NavigationDrawerManager {
     }
     
     private void showSettingsDialog() {
-        // Hiển thị dialog cài đặt
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);
-        builder.setTitle("Cài đặt");
-        
-        String[] settings = {"Thông báo", "Âm thanh", "Ngôn ngữ", "Về ứng dụng"};
-        builder.setItems(settings, (dialog, which) -> {
-            String selectedSetting = settings[which];
-            Toast.makeText(activity, "Đã chọn: " + selectedSetting, Toast.LENGTH_SHORT).show();
-            // TODO: Implement settings functions
-        });
-        
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
+        // Mở SettingsActivity thay vì hiển thị dialog đơn giản
+        Intent intent = new Intent(activity, com.example.todolist.SettingsActivity.class);
+        activity.startActivity(intent);
     }
 }

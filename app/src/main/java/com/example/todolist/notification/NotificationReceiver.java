@@ -32,8 +32,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 
                 if (ACTION_REMINDER.equals(action)) {
                     String reminderType = intent.getStringExtra(EXTRA_REMINDER_TYPE);
-                    String reminderText = getReminderText(reminderType);
-                    notificationHelper.showReminderNotification(task, reminderText);
+                    notificationHelper.showReminderNotification(task);
                 } else if (ACTION_DUE.equals(action)) {
                     notificationHelper.showDueNotification(task);
                 }

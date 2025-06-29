@@ -1,6 +1,37 @@
 <resources>
     <string name="app_name">ToDoList</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- Settings strings -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_notifications">THÔNG BÁO</string>
+    <string name="settings_notifications_enable">Thông báo</string>
+    <string name="settings_sound">Âm thanh</string>
+    <string name="settings_vibration">Rung</string>
+    <string name="settings_notification_time">Thời gian nhắc nhở</string>
+    <string name="settings_ringtone">Âm thanh thông báo</string>
+    <string name="settings_appearance">GIAO DIỆN</string>
+    <string name="settings_dark_mode">Chế độ tối</string>
+    <string name="settings_general">CHUNG</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_data_management">QUẢN LÝ DỮ LIỆU</string>
+    <string name="settings_backup">Sao lưu dữ liệu</string>
+    <string name="settings_restore">Khôi phục dữ liệu</string>
+    <string name="settings_support">HỖ TRỢ</string>
+    <string name="settings_about">Về ứng dụng</string>
+    <string name="settings_privacy">Chính sách bảo mật</string>
+    <string name="settings_terms">Điều khoản sử dụng</string>
+    <string name="settings_help">Trợ giúp &amp; Hỗ trợ</string>
+    
+    <!-- Notification time options -->
+    <string name="notification_time_5_min">5 phút trước</string>
+    <string name="notification_time_10_min">10 phút trước</string>
+    <string name="notification_time_15_min">15 phút trước</string>
+    <string name="notification_time_30_min">30 phút trước</string>
+    <string name="notification_time_1_hour">1 giờ trước</string>
+    <string name="notification_time_2_hours">2 giờ trước</string>
+    <string name="notification_time_1_day">1 ngày trước</string>
+    
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>

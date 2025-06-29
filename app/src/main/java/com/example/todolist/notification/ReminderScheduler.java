@@ -8,6 +8,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.util.SettingsManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,7 +60,15 @@ public class ReminderScheduler {
 
             // Tính toán thời gian thông báo reminder
             Calendar reminderCal = (Calendar) dueCal.clone();
-            int reminderMinutes = getReminderMinutes(reminderType);
+            
+            // Sử dụng thời gian nhắc nhở từ settings nếu không có reminder type cụ thể
+            int reminderMinutes;
+            if (reminderType.equals("Theo cài đặt") || reminderType.isEmpty()) {
+                reminderMinutes = SettingsManager.getNotificationTimeInMinutes(context);
+            } else {
+                reminderMinutes = getReminderMinutes(reminderType);
+            }
+            
             reminderCal.add(Calendar.MINUTE, -reminderMinutes);
 
             // Chỉ lên lịch nếu thời gian thông báo chưa qua

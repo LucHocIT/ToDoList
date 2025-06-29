@@ -130,9 +130,9 @@ public class DateTimePickerDialog {
         layoutReminderPicker.setEnabled(hasTime);
         layoutReminderPicker.setAlpha(hasTime ? 1.0f : 0.5f);
         
-        // Set default reminder to "5 phút trước" when time is selected
+        // Set default reminder to "Theo cài đặt" when time is selected
         if (hasTime && selectedReminder.equals("Không")) {
-            selectedReminder = "5 phút trước";
+            selectedReminder = "Theo cài đặt";
             textSelectedReminder.setText(selectedReminder);
         }
         
@@ -144,7 +144,7 @@ public class DateTimePickerDialog {
     }
     
     private void showReminderPicker() {
-        String[] reminderOptions = {"Không", "5 phút trước", "15 phút trước", "30 phút trước", "1 giờ trước", "1 ngày trước"};
+        String[] reminderOptions = {"Không", "Theo cài đặt", "5 phút trước", "15 phút trước", "30 phút trước", "1 giờ trước", "1 ngày trước"};
         
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
         builder.setTitle("Chọn lời nhắc");
