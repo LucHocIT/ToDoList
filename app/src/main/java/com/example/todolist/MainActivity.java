@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
+import com.example.todolist.dialog.WidgetsDialog;
 import com.example.todolist.manager.CategoryManager;
 import com.example.todolist.manager.FilterManager;
 import com.example.todolist.manager.NavigationDrawerManager;
@@ -432,7 +433,13 @@ public class MainActivity extends AppCompatActivity implements
     
     @Override
     public void onUtilitiesSelected() {
-        // Handle utilities selection
+        // Handle utilities selection - show widgets dialog
+        WidgetsDialog widgetsDialog = new WidgetsDialog(this);
+        widgetsDialog.show();
+        // Close drawer after opening dialog
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
     
     @Override
