@@ -61,13 +61,8 @@ public class ReminderScheduler {
             // Tính toán thời gian thông báo reminder
             Calendar reminderCal = (Calendar) dueCal.clone();
             
-            // Sử dụng thời gian nhắc nhở từ settings nếu không có reminder type cụ thể
-            int reminderMinutes;
-            if (reminderType.equals("Theo cài đặt") || reminderType.isEmpty()) {
-                reminderMinutes = SettingsManager.getNotificationTimeInMinutes(context);
-            } else {
-                reminderMinutes = getReminderMinutes(reminderType);
-            }
+            // Lấy số phút nhắc nhở từ reminder type
+            int reminderMinutes = getReminderMinutes(reminderType);
             
             reminderCal.add(Calendar.MINUTE, -reminderMinutes);
 

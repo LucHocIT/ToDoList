@@ -29,18 +29,13 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch switchNotifications;
     private Switch switchSound;
     private Switch switchVibration;
-    private Switch switchDarkMode;
-    private LinearLayout layoutNotificationTime;
     private LinearLayout layoutRingtone;
     private LinearLayout layoutLanguage;
-    private LinearLayout layoutDataBackup;
-    private LinearLayout layoutDataRestore;
     private LinearLayout layoutAboutApp;
     private LinearLayout layoutPrivacyPolicy;
     private LinearLayout layoutTerms;
     private LinearLayout layoutHelpSupport;
     
-    private TextView tvNotificationTimeValue;
     private TextView tvRingtoneValue;
     private TextView tvLanguageValue;
     private TextView tvAppVersion;
@@ -78,21 +73,12 @@ public class SettingsActivity extends AppCompatActivity {
         switchNotifications = findViewById(R.id.switch_notifications);
         switchSound = findViewById(R.id.switch_sound);
         switchVibration = findViewById(R.id.switch_vibration);
-        layoutNotificationTime = findViewById(R.id.layout_notification_time);
-        tvNotificationTimeValue = findViewById(R.id.tv_notification_time_value);
         layoutRingtone = findViewById(R.id.layout_ringtone);
         tvRingtoneValue = findViewById(R.id.tv_ringtone_value);
-        
-        // Appearance Settings
-        switchDarkMode = findViewById(R.id.switch_dark_mode);
         
         // General Settings
         layoutLanguage = findViewById(R.id.layout_language);
         tvLanguageValue = findViewById(R.id.tv_language_value);
-        
-        // Data Management
-        layoutDataBackup = findViewById(R.id.layout_data_backup);
-        layoutDataRestore = findViewById(R.id.layout_data_restore);
         
         // About & Support
         layoutAboutApp = findViewById(R.id.layout_about_app);
@@ -128,25 +114,12 @@ public class SettingsActivity extends AppCompatActivity {
         switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SettingsManager.setVibrationEnabled(this, isChecked);
         });
-        
-        // Dark mode
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SettingsManager.setDarkModeEnabled(this, isChecked);
-            applyDarkMode(isChecked);
-        });
-        
-        // Notification time setting
-        layoutNotificationTime.setOnClickListener(v -> showNotificationTimeDialog());
-        
+
         // Ringtone setting
         layoutRingtone.setOnClickListener(v -> showRingtoneSelector());
         
         // Language setting
         layoutLanguage.setOnClickListener(v -> showLanguageDialog());
-        
-        // Data management
-        layoutDataBackup.setOnClickListener(v -> showDataBackupDialog());
-        layoutDataRestore.setOnClickListener(v -> showDataRestoreDialog());
         
         // About & Support
         layoutAboutApp.setOnClickListener(v -> showAboutDialog());
@@ -160,20 +133,14 @@ public class SettingsActivity extends AppCompatActivity {
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
         boolean soundEnabled = SettingsManager.isSoundEnabled(this);
         boolean vibrationEnabled = SettingsManager.isVibrationEnabled(this);
-        boolean darkModeEnabled = SettingsManager.isDarkModeEnabled(this);
         
         switchNotifications.setChecked(notificationsEnabled);
         switchSound.setChecked(soundEnabled);
         switchVibration.setChecked(vibrationEnabled);
-        switchDarkMode.setChecked(darkModeEnabled);
         
         // Enable/disable sound and vibration based on notifications setting
         switchSound.setEnabled(notificationsEnabled);
         switchVibration.setEnabled(notificationsEnabled);
-        
-        // Load notification time
-        String notificationTime = SettingsManager.getNotificationTime(this);
-        tvNotificationTimeValue.setText(notificationTime);
         
         // Load ringtone
         String ringtoneName = SettingsManager.getRingtoneName(this);
@@ -190,36 +157,6 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (Exception e) {
             tvAppVersion.setText("Phiên bản 1.0");
         }
-    }
-    
-    private void applyDarkMode(boolean enabled) {
-        if (enabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
-    
-    private void showNotificationTimeDialog() {
-        String[] timeOptions = {
-            "5 phút trước",
-            "10 phút trước", 
-            "15 phút trước",
-            "30 phút trước",
-            "1 giờ trước",
-            "2 giờ trước",
-            "1 ngày trước"
-        };
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Thời gian nhắc nhở");
-        builder.setItems(timeOptions, (dialog, which) -> {
-            String selectedTime = timeOptions[which];
-            tvNotificationTimeValue.setText(selectedTime);
-            SettingsManager.setNotificationTime(this, selectedTime);
-            Toast.makeText(this, "Đã cập nhật thời gian nhắc nhở", Toast.LENGTH_SHORT).show();
-        });
-        builder.show();
     }
     
     private void showRingtoneSelector() {
@@ -246,30 +183,6 @@ public class SettingsActivity extends AppCompatActivity {
             SettingsManager.setLanguage(this, selectedLanguage);
             Toast.makeText(this, "Ngôn ngữ sẽ được áp dụng khi khởi động lại ứng dụng", Toast.LENGTH_LONG).show();
         });
-        builder.show();
-    }
-    
-    private void showDataBackupDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sao lưu dữ liệu");
-        builder.setMessage("Tính năng này sẽ sao lưu tất cả nhiệm vụ và danh mục của bạn ra file. Bạn có muốn tiếp tục?");
-        builder.setPositiveButton("Sao lưu", (dialog, which) -> {
-            // TODO: Implement backup functionality
-            Toast.makeText(this, "Tính năng sao lưu đang được phát triển", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
-    }
-    
-    private void showDataRestoreDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Khôi phục dữ liệu");
-        builder.setMessage("Tính năng này sẽ khôi phục dữ liệu từ file sao lưu. Dữ liệu hiện tại sẽ bị ghi đè. Bạn có chắc chắn?");
-        builder.setPositiveButton("Khôi phục", (dialog, which) -> {
-            // TODO: Implement restore functionality
-            Toast.makeText(this, "Tính năng khôi phục đang được phát triển", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNegativeButton("Hủy", null);
         builder.show();
     }
     
