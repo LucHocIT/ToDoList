@@ -195,7 +195,7 @@
                         android:id="@+id/text_reminder_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5 phút trước"
+                        android:text="Không"
                         android:textSize="16sp"
                         android:textColor="#333333"
                         android:layout_marginTop="2dp"/>

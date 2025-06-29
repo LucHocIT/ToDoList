@@ -130,9 +130,9 @@ public class DateTimePickerDialog {
         layoutReminderPicker.setEnabled(hasTime);
         layoutReminderPicker.setAlpha(hasTime ? 1.0f : 0.5f);
         
-        // Set default reminder to "30 phút trước" when time is selected
+        // Set default reminder to "5 phút trước" when time is selected
         if (hasTime && selectedReminder.equals("Không")) {
-            selectedReminder = "30 phút trước";
+            selectedReminder = "5 phút trước";
             textSelectedReminder.setText(selectedReminder);
         }
         

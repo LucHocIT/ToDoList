@@ -146,4 +146,14 @@ public class CalendarWidgetHelper {
         }
         return false;
     }
+    
+    public static void resetToCurrentMonth(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
+        Calendar calendar = Calendar.getInstance();
+        
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        editor.putInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        editor.apply();
+    }
 }

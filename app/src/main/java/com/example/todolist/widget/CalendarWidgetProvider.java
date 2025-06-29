@@ -18,9 +18,19 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
     
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        // Reset to current month on first update
+        CalendarWidgetHelper.resetToCurrentMonth(context);
+        
         for (int appWidgetId : appWidgetIds) {
             updateWidget(context, appWidgetManager, appWidgetId);
         }
+    }
+    
+    @Override
+    public void onEnabled(Context context) {
+        super.onEnabled(context);
+        // Reset to current month when widget is first enabled
+        CalendarWidgetHelper.resetToCurrentMonth(context);
     }
     
     @Override
