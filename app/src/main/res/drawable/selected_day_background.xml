@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#4285F4" />
-    <corners android:radius="20dp" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow -->
+    <item android:top="1dp" android:left="1dp">
+        <shape android:shape="oval">
+            <solid android:color="#20000000" />
+        </shape>
+    </item>
+    
+    <!-- Main background -->
+    <item android:bottom="1dp" android:right="1dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#4285F4"
+                android:endColor="#3367D6"
+                android:angle="135" />
+        </shape>
+    </item>
+</layer-list>

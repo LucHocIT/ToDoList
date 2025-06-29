@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="#4285F4" />
-    <size android:width="6dp" android:height="6dp" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow -->
+    <item android:top="0.5dp" android:left="0.5dp">
+        <shape android:shape="oval">
+            <solid android:color="#20000000" />
+            <size android:width="8dp" android:height="8dp" />
+        </shape>
+    </item>
+    
+    <!-- Main dot -->
+    <item android:bottom="0.5dp" android:right="0.5dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#FF5722"
+                android:endColor="#E64A19"
+                android:angle="135" />
+            <size android:width="8dp" android:height="8dp" />
+        </shape>
+    </item>
+</layer-list>

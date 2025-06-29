@@ -2,10 +2,32 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Today -->
     <item android:state_selected="true">
+        <layer-list>
+            <!-- Shadow -->
+            <item android:top="1dp" android:left="1dp">
+                <shape android:shape="oval">
+                    <solid android:color="#20000000" />
+                </shape>
+            </item>
+            <!-- Main background -->
+            <item android:bottom="1dp" android:right="1dp">
+                <shape android:shape="oval">
+                    <gradient
+                        android:startColor="#4285F4"
+                        android:endColor="#3367D6"
+                        android:angle="135" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    
+    <!-- Pressed state -->
+    <item android:state_pressed="true">
         <shape android:shape="oval">
-            <solid android:color="#4285F4" />
+            <solid android:color="#10000000" />
         </shape>
     </item>
+    
     <!-- Normal day -->
     <item>
         <shape android:shape="rectangle">
