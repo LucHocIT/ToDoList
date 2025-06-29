@@ -15,6 +15,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.todolist.R;
+import com.example.todolist.dialog.WidgetsDialog;
 
 public class NavigationDrawerManager {
     
@@ -70,7 +71,8 @@ public class NavigationDrawerManager {
                 if (listener != null) {
                     listener.onUtilitiesSelected();
                 }
-                showUtilitiesDialog();
+                // Hiển thị WidgetsDialog thay vì showUtilitiesDialog
+                showWidgetsPreview();
             });
         }
         
@@ -117,20 +119,10 @@ public class NavigationDrawerManager {
         activity.startActivity(intent);
     }
     
-    private void showUtilitiesDialog() {
-        // Hiển thị dialog tiện ích
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);
-        builder.setTitle("Tiện ích");
-        
-        String[] utilities = {"Xuất dữ liệu", "Nhập dữ liệu", "Sao lưu", "Khôi phục"};
-        builder.setItems(utilities, (dialog, which) -> {
-            String selectedUtility = utilities[which];
-            Toast.makeText(activity, "Đã chọn: " + selectedUtility, Toast.LENGTH_SHORT).show();
-            // TODO: Implement utility functions
-        });
-        
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
+    private void showWidgetsPreview() {
+        // Hiển thị dialog preview widget
+        WidgetsDialog widgetsDialog = new WidgetsDialog(activity);
+        widgetsDialog.show();
     }
     
     private void showContactDialog() {

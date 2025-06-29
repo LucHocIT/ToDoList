@@ -65,251 +65,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Small Task Widget -->
-            <LinearLayout
-                android:id="@+id/widget_small_task"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/widget_preview_selector"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Widget Nhiệm vụ Nhỏ (2x1)"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#4285F4"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Mini widget preview -->
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/mini_widget_background"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_gravity="center">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hôm nay: 3 việc"
-                        android:textSize="8sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
-                        android:layout_marginBottom="2dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="• Họp team 9h"
-                        android:textSize="7sp"
-                        android:textColor="#666666"
-                        android:maxLines="1"
-                        android:ellipsize="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="• Gửi báo cáo"
-                        android:textSize="7sp"
-                        android:textColor="#666666"
-                        android:maxLines="1"
-                        android:ellipsize="end" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hiển thị danh sách nhiệm vụ hôm nay"
-                    android:textSize="11sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="8dp" />
-
-            </LinearLayout>
-
-            <!-- Medium Task Widget -->
-            <LinearLayout
-                android:id="@+id/widget_medium_task"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/widget_preview_selector"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:focusable="true">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Widget Nhiệm vụ Trung (2x2)"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#4285F4"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Mini widget preview -->
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:background="@drawable/mini_widget_background"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_gravity="center">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="4dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="To-Do List"
-                            android:textSize="8sp"
-                            android:textStyle="bold"
-                            android:textColor="#333333" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3/5"
-                            android:textSize="7sp"
-                            android:textColor="#4285F4"
-                            android:background="@drawable/mini_badge_background"
-                            android:paddingHorizontal="4dp"
-                            android:paddingVertical="1dp" />
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#EEEEEE"
-                        android:layout_marginBottom="4dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="2dp">
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:background="@drawable/checkbox_mini_checked"
-                            android:layout_marginEnd="4dp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Họp team 9h"
-                            android:textSize="7sp"
-                            android:textColor="#999999"
-                            android:maxLines="1"
-                            android:ellipsize="end" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="2dp">
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:background="@drawable/checkbox_mini_unchecked"
-                            android:layout_marginEnd="4dp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Gửi báo cáo"
-                            android:textSize="7sp"
-                            android:textColor="#333333"
-                            android:maxLines="1"
-                            android:ellipsize="end" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <View
-                            android:layout_width="6dp"
-                            android:layout_height="6dp"
-                            android:background="@drawable/checkbox_mini_unchecked"
-                            android:layout_marginEnd="4dp" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Mua sắm"
-                            android:textSize="7sp"
-                            android:textColor="#333333"
-                            android:maxLines="1"
-                            android:ellipsize="end" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:text="+ Thêm nhiệm vụ"
-                        android:textSize="7sp"
-                        android:textColor="#4285F4"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hiển thị danh sách chi tiết với checkbox và nút thêm"
-                    android:textSize="11sp"
-                    android:textColor="#999999"
-                    android:layout_marginTop="8dp" />
-
-            </LinearLayout>
-
             <!-- Calendar Widget -->
             <LinearLayout
                 android:id="@+id/widget_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_preview_selector"
+                android:background="@drawable/widget_preview_background"
                 android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="true"
-                android:focusable="true">
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Widget Lịch (3x2)"
+                    android:text="Widget Lịch (3x4)"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="#4285F4"
@@ -505,10 +274,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/widget_preview_selector"
-                android:padding="16dp"
-                android:clickable="true"
-                android:focusable="true">
+                android:background="@drawable/widget_preview_background"
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="match_parent"
