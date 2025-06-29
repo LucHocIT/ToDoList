@@ -119,12 +119,18 @@ public class MainActivity extends AppCompatActivity implements
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         
+        // Xử lý quyền thông báo
         if (NotificationPermissionHelper.isNotificationPermissionGranted(requestCode, grantResults)) {
             Toast.makeText(this, "Đã cho phép thông báo", Toast.LENGTH_SHORT).show();
             // Reschedule all reminders now that we have permission
             taskManager.rescheduleAllReminders();
-        } else {
+        } else if (requestCode == NotificationPermissionHelper.NOTIFICATION_PERMISSION_CODE) {
             Toast.makeText(this, "Cần quyền thông báo để nhận lời nhắc", Toast.LENGTH_LONG).show();
+        }
+        
+        // Xử lý quyền gọi điện từ NavigationDrawerManager
+        if (navigationDrawerManager != null) {
+            navigationDrawerManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
     

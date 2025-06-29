@@ -1,18 +1,24 @@
 package com.example.todolist.manager;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.todolist.R;
 
 public class NavigationDrawerManager {
+    
+    private static final int REQUEST_CALL_PERMISSION = 1001;
     
     public interface NavigationListener {
         void onThemeSelected();
@@ -128,31 +134,101 @@ public class NavigationDrawerManager {
     }
     
     private void showContactDialog() {
-        // Hiển thị thông tin liên hệ
+        // Tạo dialog với layout custom
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);
-        builder.setTitle("Liên hệ");
-        builder.setMessage("Ứng dụng To-Do List\n\n" +
-                "Phiên bản: 1.0\n" +
-                "Nhà phát triển: Your Name\n" +
-                "Email: contact@todolist.com\n" +
-                "Website: www.todolist.com");
         
-        builder.setPositiveButton("Đóng", null);
-        builder.setNeutralButton("Gửi phản hồi", (dialog, which) -> {
-            // Mở email app để gửi phản hồi
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("message/rfc822");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"contact@todolist.com"});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Phản hồi về ứng dụng To-Do List");
-            
-            try {
-                activity.startActivity(Intent.createChooser(emailIntent, "Gửi email"));
-            } catch (android.content.ActivityNotFoundException ex) {
-                Toast.makeText(activity, "Không tìm thấy ứng dụng email", Toast.LENGTH_SHORT).show();
-            }
+        // Inflate custom layout
+        View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_contact, null);
+        builder.setView(dialogView);
+        
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup click listeners
+        setupContactDialogListeners(dialogView, dialog);
+        
+        dialog.show();
+    }
+    
+    private void setupContactDialogListeners(View dialogView, androidx.appcompat.app.AlertDialog dialog) {
+        // Email contact click
+        View layoutEmailContact = dialogView.findViewById(R.id.layout_email_contact);
+        layoutEmailContact.setOnClickListener(v -> {
+            sendEmail();
         });
         
-        builder.show();
+        // Phone contact click
+        View layoutPhoneContact = dialogView.findViewById(R.id.layout_phone_contact);
+        layoutPhoneContact.setOnClickListener(v -> {
+            makePhoneCall();
+        });
+        
+        // Send feedback button
+        View btnSendFeedback = dialogView.findViewById(R.id.btn_send_feedback);
+        btnSendFeedback.setOnClickListener(v -> {
+            sendEmail();
+            dialog.dismiss();
+        });
+        
+        // Close button
+        View btnCloseContact = dialogView.findViewById(R.id.btn_close_contact);
+        btnCloseContact.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+    }
+    
+    private void sendEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"phamluc2304@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Phản hồi về ứng dụng To-Do List");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Xin chào đội phát triển,\n\nTôi muốn gửi phản hồi về ứng dụng To-Do List:\n\n");
+        
+        try {
+            activity.startActivity(Intent.createChooser(emailIntent, "Gửi email qua"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(activity, "Không tìm thấy ứng dụng email", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void makePhoneCall() {
+        // Kiểm tra quyền CALL_PHONE
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) 
+                != PackageManager.PERMISSION_GRANTED) {
+            // Nếu chưa có quyền, yêu cầu quyền
+            ActivityCompat.requestPermissions(activity, 
+                new String[]{Manifest.permission.CALL_PHONE}, 
+                REQUEST_CALL_PERMISSION);
+        } else {
+            // Nếu đã có quyền, thực hiện cuộc gọi
+            performPhoneCall();
+        }
+    }
+    
+    private void performPhoneCall() {
+        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+        phoneIntent.setData(android.net.Uri.parse("tel:0354337494"));
+        
+        try {
+            activity.startActivity(phoneIntent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(activity, "Không thể thực hiện cuộc gọi", Toast.LENGTH_SHORT).show();
+        } catch (SecurityException ex) {
+            Toast.makeText(activity, "Cần cấp quyền để thực hiện cuộc gọi", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    // Phương thức để xử lý kết quả yêu cầu quyền
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Quyền được cấp, thực hiện cuộc gọi
+                performPhoneCall();
+            } else {
+                // Quyền bị từ chối
+                Toast.makeText(activity, "Cần cấp quyền gọi điện để sử dụng tính năng này", Toast.LENGTH_LONG).show();
+            }
+        }
     }
     
     private void showSettingsDialog() {
