@@ -21,11 +21,11 @@
     <!-- Task indicator dot -->
     <ImageView
         android:id="@+id/widget_task_dot"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
         android:layout_below="@id/widget_day_number"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="2dp"
         android:src="@drawable/widget_task_dot"
         android:visibility="gone" />
 

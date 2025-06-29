@@ -107,7 +107,7 @@ public class CalendarWidgetHelper {
                     }
                     
                     // Check if this day has tasks
-                    boolean hasTasks = hasTasksOnDay(monthTasks, dayCounter);
+                    boolean hasTasks = hasTasksOnDay(monthTasks, dayCounter, month, year);
                     if (hasTasks) {
                         dayView.setViewVisibility(R.id.widget_task_dot, android.view.View.VISIBLE);
                     } else {
@@ -131,35 +131,17 @@ public class CalendarWidgetHelper {
     private static List<TodoTask> getTasksForMonth(Context context, int year, int month) {
         TodoDatabase database = TodoDatabase.getInstance(context);
         
-        Calendar startOfMonth = Calendar.getInstance();
-        startOfMonth.set(year, month, 1, 0, 0, 0);
-        startOfMonth.set(Calendar.MILLISECOND, 0);
-        
-        Calendar endOfMonth = Calendar.getInstance();
-        endOfMonth.set(year, month, startOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-        endOfMonth.set(Calendar.MILLISECOND, 999);
-        
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String startDate = dateFormat.format(startOfMonth.getTime());
-        String endDate = dateFormat.format(endOfMonth.getTime());
-        
-        return database.todoDao().getTasksBetweenDates(startDate, endDate);
+        // Get all tasks instead of limiting by date range to support recurring tasks
+        return database.todoDao().getAllTasks();
     }
     
-    private static boolean hasTasksOnDay(List<TodoTask> tasks, int day) {
+    private static boolean hasTasksOnDay(List<TodoTask> tasks, int day, int month, int year) {
+        // Use the same format as the main app: yyyy/MM/dd
+        String targetDate = String.format("%04d/%02d/%02d", year, month + 1, day);
+        
         for (TodoTask task : tasks) {
-            if (task.getDueDate() != null) {
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    Calendar taskDate = Calendar.getInstance();
-                    taskDate.setTime(dateFormat.parse(task.getDueDate()));
-                    
-                    if (taskDate.get(Calendar.DAY_OF_MONTH) == day) {
-                        return true;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (com.example.todolist.util.CalendarUtils.isTaskOnDate(task, targetDate)) {
+                return true;
             }
         }
         return false;
