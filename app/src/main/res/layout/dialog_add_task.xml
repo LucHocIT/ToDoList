@@ -26,32 +26,32 @@
 
     <!-- Category and Calendar row -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="327dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:orientation="horizontal">
 
         <!-- Category spinner -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
             android:layout_marginEnd="8dp"
+            android:layout_weight="0.7"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="#E0E0E0">
+            app:strokeColor="#E0E0E0"
+            app:strokeWidth="1dp">
 
             <Spinner
                 android:id="@+id/spinner_category_dialog"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_width="258dp"
+                android:layout_height="50dp"
                 android:layout_margin="8dp"
                 android:background="@android:color/transparent"
                 android:dropDownWidth="match_parent"
                 android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
+                android:paddingEnd="8dp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -59,19 +59,19 @@
         <androidx.cardview.widget.CardView
             android:layout_width="48dp"
             android:layout_height="48dp"
+            app:cardBackgroundColor="#E3F2FD"
             app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="#E3F2FD">
+            app:cardElevation="2dp">
 
             <ImageView
                 android:id="@+id/icon_calendar_dialog"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_calendar"
-                android:clickable="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                app:tint="#2196F3"/>
+                android:clickable="true"
+                android:src="@drawable/ic_calendar"
+                app:tint="#2196F3" />
 
         </androidx.cardview.widget.CardView>
 
