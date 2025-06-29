@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.notification.ReminderScheduler;
+import com.example.todolist.widget.WidgetUpdateHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class TaskManager {
             if (listener != null) {
                 listener.onTasksUpdated();
             }
+            // Update widget whenever tasks are loaded
+            WidgetUpdateHelper.updateAllWidgets(context);
         }).start();
     }
     

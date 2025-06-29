@@ -1,0 +1,167 @@
+package com.example.todolist.widget;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.RemoteViews;
+
+import com.example.todolist.R;
+import com.example.todolist.database.TodoDatabase;
+import com.example.todolist.model.TodoTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+public class CalendarWidgetHelper {
+    
+    private static final String WIDGET_PREFS = "widget_preferences";
+    private static final String PREF_CURRENT_MONTH = "current_month";
+    private static final String PREF_CURRENT_YEAR = "current_year";
+    
+    public static String getCurrentMonthYear(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
+        Calendar calendar = Calendar.getInstance();
+        
+        int month = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        int year = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", new Locale("vi", "VN"));
+        return monthFormat.format(calendar.getTime());
+    }
+    
+    public static void navigateMonth(Context context, int direction) {
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
+        Calendar calendar = Calendar.getInstance();
+        
+        int month = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        int year = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.add(Calendar.MONTH, direction);
+        
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        editor.putInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        editor.apply();
+    }
+    
+    public static void generateCalendar(Context context, RemoteViews views) {
+        // Remove all views from the grid first
+        views.removeAllViews(R.id.widget_calendar_grid);
+        
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
+        Calendar calendar = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+        
+        int month = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        int year = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        
+        // Get first day of week (Sunday = 1, Monday = 2, etc.)
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        
+        // Get number of days in month
+        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        
+        // Get tasks for this month
+        List<TodoTask> monthTasks = getTasksForMonth(context, year, month);
+        
+        // Create calendar grid with 6 rows
+        int dayCounter = 1;
+        boolean monthStarted = false;
+        
+        for (int week = 0; week < 6; week++) {
+            // Create a row for this week
+            RemoteViews weekRow = new RemoteViews(context.getPackageName(), R.layout.widget_week_row);
+            
+            for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                RemoteViews dayView = new RemoteViews(context.getPackageName(), R.layout.widget_calendar_day);
+                
+                if (week == 0 && dayOfWeek < firstDayOfWeek) {
+                    // Empty cell before month starts
+                    dayView.setTextViewText(R.id.widget_day_number, "");
+                    dayView.setViewVisibility(R.id.widget_task_dot, android.view.View.GONE);
+                } else if (dayCounter <= daysInMonth) {
+                    // Day in current month
+                    monthStarted = true;
+                    dayView.setTextViewText(R.id.widget_day_number, String.valueOf(dayCounter));
+                    
+                    // Check if this is today
+                    boolean isToday = (today.get(Calendar.YEAR) == year && 
+                                     today.get(Calendar.MONTH) == month && 
+                                     today.get(Calendar.DAY_OF_MONTH) == dayCounter);
+                    
+                    if (isToday) {
+                        dayView.setInt(R.id.widget_day_number, "setTextColor", 0xFFFFFFFF);
+                        dayView.setInt(R.id.widget_day_number, "setBackgroundResource", R.drawable.selected_day_background);
+                    } else {
+                        dayView.setInt(R.id.widget_day_number, "setTextColor", 0xFF333333);
+                    }
+                    
+                    // Check if this day has tasks
+                    boolean hasTasks = hasTasksOnDay(monthTasks, dayCounter);
+                    if (hasTasks) {
+                        dayView.setViewVisibility(R.id.widget_task_dot, android.view.View.VISIBLE);
+                    } else {
+                        dayView.setViewVisibility(R.id.widget_task_dot, android.view.View.GONE);
+                    }
+                    
+                    dayCounter++;
+                } else {
+                    // Empty cell after month ends
+                    dayView.setTextViewText(R.id.widget_day_number, "");
+                    dayView.setViewVisibility(R.id.widget_task_dot, android.view.View.GONE);
+                }
+                
+                weekRow.addView(R.id.widget_week_container, dayView);
+            }
+            
+            views.addView(R.id.widget_calendar_grid, weekRow);
+        }
+    }
+    
+    private static List<TodoTask> getTasksForMonth(Context context, int year, int month) {
+        TodoDatabase database = TodoDatabase.getInstance(context);
+        
+        Calendar startOfMonth = Calendar.getInstance();
+        startOfMonth.set(year, month, 1, 0, 0, 0);
+        startOfMonth.set(Calendar.MILLISECOND, 0);
+        
+        Calendar endOfMonth = Calendar.getInstance();
+        endOfMonth.set(year, month, startOfMonth.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+        endOfMonth.set(Calendar.MILLISECOND, 999);
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String startDate = dateFormat.format(startOfMonth.getTime());
+        String endDate = dateFormat.format(endOfMonth.getTime());
+        
+        return database.todoDao().getTasksBetweenDates(startDate, endDate);
+    }
+    
+    private static boolean hasTasksOnDay(List<TodoTask> tasks, int day) {
+        for (TodoTask task : tasks) {
+            if (task.getDueDate() != null) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Calendar taskDate = Calendar.getInstance();
+                    taskDate.setTime(dateFormat.parse(task.getDueDate()));
+                    
+                    if (taskDate.get(Calendar.DAY_OF_MONTH) == day) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+}

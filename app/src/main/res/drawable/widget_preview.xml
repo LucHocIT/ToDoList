@@ -1,0 +1,65 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Widget background -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M10,10 L110,10 Q115,10 115,15 L115,105 Q115,110 110,110 L10,110 Q5,110 5,105 L5,15 Q5,10 10,10 Z"/>
+    
+    <!-- Widget border -->
+    <path
+        android:strokeColor="#E0E0E0"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M10,10 L110,10 Q115,10 115,15 L115,105 Q115,110 110,110 L10,110 Q5,110 5,105 L5,15 Q5,10 10,10 Z"/>
+    
+    <!-- Header -->
+    <path
+        android:fillColor="#F5F5F5"
+        android:pathData="M10,10 L110,10 Q115,10 115,15 L115,30 L5,30 L5,15 Q5,10 10,10 Z"/>
+    
+    <!-- Month text area -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M45,18 L75,18 L75,25 L45,25 Z"/>
+    
+    <!-- Calendar grid lines -->
+    <g android:strokeColor="#E8E8E8" android:strokeWidth="0.5">
+        <!-- Vertical lines -->
+        <path android:pathData="M20,35 L20,100"/>
+        <path android:pathData="M30,35 L30,100"/>
+        <path android:pathData="M40,35 L40,100"/>
+        <path android:pathData="M50,35 L50,100"/>
+        <path android:pathData="M60,35 L60,100"/>
+        <path android:pathData="M70,35 L70,100"/>
+        <path android:pathData="M80,35 L80,100"/>
+        <path android:pathData="M90,35 L90,100"/>
+        <path android:pathData="M100,35 L100,100"/>
+        
+        <!-- Horizontal lines -->
+        <path android:pathData="M10,35 L110,35"/>
+        <path android:pathData="M10,45 L110,45"/>
+        <path android:pathData="M10,55 L110,55"/>
+        <path android:pathData="M10,65 L110,65"/>
+        <path android:pathData="M10,75 L110,75"/>
+        <path android:pathData="M10,85 L110,85"/>
+        <path android:pathData="M10,95 L110,95"/>
+    </g>
+    
+    <!-- Sample task dots -->
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M17,48.5 C18.38,48.5 19.5,49.62 19.5,51 C19.5,52.38 18.38,53.5 17,53.5 C15.62,53.5 14.5,52.38 14.5,51 C14.5,49.62 15.62,48.5 17,48.5 Z"/>
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M37,48.5 C38.38,48.5 39.5,49.62 39.5,51 C39.5,52.38 38.38,53.5 37,53.5 C35.62,53.5 34.5,52.38 34.5,51 C34.5,49.62 35.62,48.5 37,48.5 Z"/>
+    
+    <!-- Today indicator -->
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M65,52 C69.42,52 73,55.58 73,60 C73,64.42 69.42,68 65,68 C60.58,68 57,64.42 57,60 C57,55.58 60.58,52 65,52 Z"/>
+    
+</vector>

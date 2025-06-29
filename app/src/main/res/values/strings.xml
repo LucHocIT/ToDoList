@@ -43,4 +43,8 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    
+    <!-- Widget strings -->
+    <string name="widget_description">Lịch tháng To-Do List</string>
+    <string name="widget_name">To-Do Calendar</string>
 </resources>

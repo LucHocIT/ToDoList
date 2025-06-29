@@ -12,6 +12,9 @@
     
     <!-- Permission for phone calls -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- Indicate that telephony hardware is not required -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
         android:name=".TodoApplication"
@@ -74,6 +77,21 @@
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
                 <data android:scheme="package" />
             </intent-filter>
+        </receiver>
+
+        <!-- Calendar Widget -->
+        <receiver
+            android:name=".widget.CalendarWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.todolist.widget.PREV_MONTH" />
+                <action android:name="com.example.todolist.widget.NEXT_MONTH" />
+                <action android:name="com.example.todolist.widget.DAY_CLICK" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_widget_info" />
         </receiver>
 
     </application>

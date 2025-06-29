@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:background="@drawable/widget_day_background"
+    android:padding="2dp">
+
+    <!-- Day number -->
+    <TextView
+        android:id="@+id/widget_day_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:text="1"
+        android:textSize="10sp"
+        android:textColor="#333333"
+        android:textStyle="bold" />
+
+    <!-- Task indicator dot -->
+    <ImageView
+        android:id="@+id/widget_task_dot"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:layout_below="@id/widget_day_number"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="1dp"
+        android:src="@drawable/widget_task_dot"
+        android:visibility="gone" />
+
+</RelativeLayout>

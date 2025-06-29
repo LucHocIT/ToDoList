@@ -44,4 +44,7 @@ public interface TodoDao {
     
     @Query("SELECT * FROM todo_tasks WHERE dueDate = :date")
     List<TodoTask> getTasksForDate(String date);
+    
+    @Query("SELECT * FROM todo_tasks WHERE dueDate BETWEEN :startDate AND :endDate")
+    List<TodoTask> getTasksBetweenDates(String startDate, String endDate);
 }
