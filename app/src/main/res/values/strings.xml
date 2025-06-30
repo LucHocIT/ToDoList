@@ -78,4 +78,6 @@
     <!-- Widget strings -->
     <string name="widget_description">Lịch tháng To-Do List</string>
     <string name="widget_name">To-Do Calendar</string>
+    <string name="mini_widget_description">Nút thêm nhiệm vụ nhanh</string>
+    <string name="mini_widget_name">Quick Add Task</string>
 </resources>

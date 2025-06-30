@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements
         // Handle drawer open intent
         handleDrawerIntent();
         
+        // Handle quick add from widget
+        handleQuickAddIntent();
+        
         // Request notification permission for Android 13+
         NotificationPermissionHelper.requestNotificationPermission(this);
     }
@@ -286,6 +289,21 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Xử lý intent quick add từ mini widget
+     */
+    private void handleQuickAddIntent() {
+        Intent intent = getIntent();
+        if (intent != null && "com.example.todolist.QUICK_ADD_TASK".equals(intent.getAction())) {
+            // Mở dialog thêm task sau khi layout đã sẵn sàng
+            findViewById(android.R.id.content).post(() -> {
+                if (addTaskHandler != null) {
+                    addTaskHandler.showAddTaskDialog();
+                }
+            });
+        }
+    }
+
     
     // ==================== INTERFACE IMPLEMENTATIONS ====================
     
@@ -356,17 +374,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCategoriesUpdated() {
         runOnUiThread(() -> {
-            // Update dynamic category buttons only once to prevent duplication
-            if (categoryManager != null) {
-                categoryManager.updateDynamicCategoryButtons();
-                
-                // Setup click listeners for dynamic category buttons after they are created
-                // Use a slightly longer delay to ensure buttons are fully created
+            // Only setup click listeners for dynamic category buttons after they are created
+            // Don't call updateDynamicCategoryButtons again to prevent duplication
+            if (filterManager != null) {
+                // Use a delay to ensure buttons are fully created
                 new android.os.Handler().postDelayed(() -> {
-                    if (filterManager != null) {
-                        filterManager.setupAllCategoryClicks();
-                    }
-                }, 200); // Increased delay to ensure proper setup
+                    filterManager.setupAllCategoryClicks();
+                }, 100); // Reduced delay
             }
         });
     }

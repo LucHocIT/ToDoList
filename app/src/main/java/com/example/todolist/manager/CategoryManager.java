@@ -48,10 +48,16 @@ public class CategoryManager {
                 categories = database.categoryDao().getAllCategories();
             }
             
-            // Only notify listener once after categories are loaded
-            if (listener != null) {
-                listener.onCategoriesUpdated();
-            }
+            // Update UI on main thread using Handler
+            new Handler(Looper.getMainLooper()).post(() -> {
+                // Update dynamic category buttons after loading categories
+                updateDynamicCategoryButtonsInternal();
+                
+                // Only notify listener once after categories are loaded and buttons updated
+                if (listener != null) {
+                    listener.onCategoriesUpdated();
+                }
+            });
         }).start();
     }
     
@@ -62,22 +68,25 @@ public class CategoryManager {
             
             // Update UI on main thread using Handler
             new Handler(Looper.getMainLooper()).post(() -> {
-                // Clear dynamic categories first to prevent duplication
-                clearDynamicCategories();
-                
                 categories = orderedCategories; // Update local categories list
-                
-                // Add dynamic category buttons in order
-                for (Category category : orderedCategories) {
-                    if (!isDefaultCategory(category.getName()) && !categoryButtonExists(category.getName())) {
-                        addDynamicCategoryButton(category);
-                    }
-                }
-                
-                // After updating buttons, setup click listeners
-                setupDynamicCategoryClicks();
+                updateDynamicCategoryButtonsInternal();
             });
         }).start();
+    }
+
+    private void updateDynamicCategoryButtonsInternal() {
+        // Always clear dynamic categories first to prevent duplication
+        clearDynamicCategories();
+        
+        // Add dynamic category buttons in order (skip default categories)
+        for (Category category : categories) {
+            if (!isDefaultCategory(category.getName())) {
+                addDynamicCategoryButton(category);
+            }
+        }
+        
+        // After updating buttons, setup click listeners
+        setupDynamicCategoryClicks();
     }
     
     private boolean categoryButtonExists(String categoryName) {
@@ -95,23 +104,29 @@ public class CategoryManager {
     }
     
     private void createDefaultCategories() {
-        Category existingWork = database.categoryDao().getCategoryByName("Công việc");
-        Category existingPersonal = database.categoryDao().getCategoryByName("Cá nhân");
-        Category existingFavorite = database.categoryDao().getCategoryByName("Yêu thích");
-        
-        if (existingWork == null) {
-            Category workCategory = new Category("Công việc", "#FF9800", 1, true);
-            database.categoryDao().insertCategory(workCategory);
-        }
-        
-        if (existingPersonal == null) {
-            Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
-            database.categoryDao().insertCategory(personalCategory);
-        }
-        
-        if (existingFavorite == null) {
-            Category favoriteCategory = new Category("Yêu thích", "#E91E63", 3, true);
-            database.categoryDao().insertCategory(favoriteCategory);
+        // Use try-catch to prevent errors if categories already exist
+        try {
+            Category existingWork = database.categoryDao().getCategoryByName("Công việc");
+            Category existingPersonal = database.categoryDao().getCategoryByName("Cá nhân");
+            Category existingFavorite = database.categoryDao().getCategoryByName("Yêu thích");
+            
+            if (existingWork == null) {
+                Category workCategory = new Category("Công việc", "#FF9800", 1, true);
+                database.categoryDao().insertCategory(workCategory);
+            }
+            
+            if (existingPersonal == null) {
+                Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
+                database.categoryDao().insertCategory(personalCategory);
+            }
+            
+            if (existingFavorite == null) {
+                Category favoriteCategory = new Category("Yêu thích", "#E91E63", 3, true);
+                database.categoryDao().insertCategory(favoriteCategory);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Categories might already exist, continue silently
         }
     }
     
@@ -124,10 +139,9 @@ public class CategoryManager {
     private void clearDynamicCategories() {
         int childCount = categoriesContainer.getChildCount();
         // Start from index 4 (after the 4 default buttons: All, Work, Personal, Favorite)
-        // Remove all dynamic category buttons
-        while (childCount > 4) {
-            categoriesContainer.removeViewAt(4);
-            childCount = categoriesContainer.getChildCount();
+        // Remove all dynamic category buttons in reverse order to avoid index issues
+        for (int i = childCount - 1; i >= 4; i--) {
+            categoriesContainer.removeViewAt(i);
         }
     }
     

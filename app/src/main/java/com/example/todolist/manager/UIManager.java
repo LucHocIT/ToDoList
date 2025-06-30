@@ -175,10 +175,8 @@ public class UIManager {
             try {
                 List<Category> categories = database.categoryDao().getAllCategories();
                 
-                if (categories.isEmpty()) {
-                    createDefaultCategories();
-                    categories = database.categoryDao().getAllCategories();
-                }
+                // Categories should already be created by CategoryManager
+                // Don't create default categories here to avoid duplication
                 
                 final List<Category> finalCategories = categories;
                 activity.runOnUiThread(() -> {
@@ -225,26 +223,5 @@ public class UIManager {
         fallbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(fallbackAdapter);
         spinner.setSelection(0);
-    }
-    
-    private void createDefaultCategories() {
-        Category existingWork = database.categoryDao().getCategoryByName("Công việc");
-        Category existingPersonal = database.categoryDao().getCategoryByName("Cá nhân");
-        Category existingFavorite = database.categoryDao().getCategoryByName("Yêu thích");
-        
-        if (existingWork == null) {
-            Category workCategory = new Category("Công việc", "#FF9800", 1, true);
-            database.categoryDao().insertCategory(workCategory);
-        }
-        
-        if (existingPersonal == null) {
-            Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
-            database.categoryDao().insertCategory(personalCategory);
-        }
-        
-        if (existingFavorite == null) {
-            Category favoriteCategory = new Category("Yêu thích", "#E91E63", 3, true);
-            database.categoryDao().insertCategory(favoriteCategory);
-        }
     }
 }

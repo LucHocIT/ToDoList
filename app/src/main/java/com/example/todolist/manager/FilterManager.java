@@ -106,7 +106,7 @@ public class FilterManager {
             if (child instanceof MaterialButton) {
                 MaterialButton button = (MaterialButton) child;
                 String categoryName = (String) button.getTag();
-                if (categoryName != null) {
+                if (categoryName != null && !categoryName.isEmpty()) {
                     // Clear any existing click listener to prevent multiple listeners
                     button.setOnClickListener(null);
                     // Set new click listener
