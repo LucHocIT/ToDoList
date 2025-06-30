@@ -45,4 +45,8 @@ public interface CategoryDao {
     
     @Query("DELETE FROM categories")
     void deleteAllCategories();
+    
+    // Add method to clean up duplicate categories
+    @Query("DELETE FROM categories WHERE id NOT IN (SELECT MIN(id) FROM categories GROUP BY name)")
+    void removeDuplicateCategories();
 }

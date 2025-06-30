@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -41,11 +42,16 @@ public class CategoryManager {
     
     public void loadCategories() {
         new Thread(() -> {
+            // First, clean up any duplicate categories
+            database.categoryDao().removeDuplicateCategories();
+            
             categories = database.categoryDao().getAllCategories();
+            Log.d("CategoryManager", "loadCategories: Loaded " + categories.size() + " categories after cleanup");
             
             if (categories.isEmpty()) {
                 createDefaultCategories();
                 categories = database.categoryDao().getAllCategories();
+                Log.d("CategoryManager", "loadCategories: Created default categories, now have " + categories.size() + " categories");
             }
             
             // Update UI on main thread using Handler
@@ -106,27 +112,37 @@ public class CategoryManager {
     private void createDefaultCategories() {
         // Use try-catch to prevent errors if categories already exist
         try {
-            Category existingWork = database.categoryDao().getCategoryByName("Công việc");
-            Category existingPersonal = database.categoryDao().getCategoryByName("Cá nhân");
-            Category existingFavorite = database.categoryDao().getCategoryByName("Yêu thích");
+            // Check if any default categories exist first
+            List<Category> existingCategories = database.categoryDao().getAllCategories();
+            boolean hasDefaultCategories = false;
             
-            if (existingWork == null) {
+            for (Category category : existingCategories) {
+                if (isDefaultCategory(category.getName())) {
+                    hasDefaultCategories = true;
+                    break;
+                }
+            }
+            
+            // Only create default categories if none exist
+            if (!hasDefaultCategories) {
+                Log.d("CategoryManager", "Creating default categories");
+                
                 Category workCategory = new Category("Công việc", "#FF9800", 1, true);
                 database.categoryDao().insertCategory(workCategory);
-            }
-            
-            if (existingPersonal == null) {
+                
                 Category personalCategory = new Category("Cá nhân", "#9C27B0", 2, true);
                 database.categoryDao().insertCategory(personalCategory);
-            }
-            
-            if (existingFavorite == null) {
+                
                 Category favoriteCategory = new Category("Yêu thích", "#E91E63", 3, true);
                 database.categoryDao().insertCategory(favoriteCategory);
+                
+                Log.d("CategoryManager", "Default categories created successfully");
+            } else {
+                Log.d("CategoryManager", "Default categories already exist, skipping creation");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Categories might already exist, continue silently
+            Log.e("CategoryManager", "Error creating default categories: " + e.getMessage());
         }
     }
     
@@ -185,6 +201,26 @@ public class CategoryManager {
             database.clearAllTables();
             createDefaultCategories();
             loadCategories();
+        }).start();
+    }
+    
+    // Method to clean up any "không có thể loại" entries in database
+    public void cleanupDatabase() {
+        new Thread(() -> {
+            try {
+                // Remove any "không có thể loại" entries from database
+                Category noCategory = database.categoryDao().getCategoryByName("không có thể loại");
+                if (noCategory != null) {
+                    database.categoryDao().deleteCategory(noCategory);
+                    Log.d("CategoryManager", "Removed 'không có thể loại' from database");
+                }
+                
+                // Remove duplicates
+                database.categoryDao().removeDuplicateCategories();
+                Log.d("CategoryManager", "Cleaned up database duplicates");
+            } catch (Exception e) {
+                Log.e("CategoryManager", "Error cleaning database: " + e.getMessage());
+            }
         }).start();
     }
     

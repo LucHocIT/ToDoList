@@ -169,6 +169,9 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize CategoryManager
         categoryManager = new CategoryManager(this, layoutCategoriesContainer, this);
         
+        // Clean up database on startup
+        categoryManager.cleanupDatabase();
+        
         // Initialize SearchManager
         searchManager = new SearchManager(layoutSearch, findViewById(R.id.layout_filter_tabs), editSearch, btnCancelSearch, this);
         
@@ -301,6 +304,19 @@ public class MainActivity extends AppCompatActivity implements
                     addTaskHandler.showAddTaskDialog();
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Update the current intent
+        
+        // Handle quick add from widget when app is already running
+        if ("com.example.todolist.QUICK_ADD_TASK".equals(intent.getAction())) {
+            if (addTaskHandler != null) {
+                addTaskHandler.showAddTaskDialog();
+            }
         }
     }
 

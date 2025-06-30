@@ -2,6 +2,7 @@ package com.example.todolist.manager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.example.todolist.CalendarActivity;
 import com.example.todolist.CategoryManagerActivity;
 import com.example.todolist.CompletedTasksActivity;
 import com.example.todolist.R;
+import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
@@ -174,34 +176,30 @@ public class UIManager {
         new Thread(() -> {
             try {
                 List<Category> categories = database.categoryDao().getAllCategories();
+                Log.d("UIManager", "setupCategorySpinner: Loaded " + categories.size() + " categories from database");
                 
-                // Categories should already be created by CategoryManager
-                // Don't create default categories here to avoid duplication
+                // Debug: Print all categories from database
+                for (Category cat : categories) {
+                    Log.d("UIManager", "Database category: " + cat.getName() + " (ID: " + cat.getId() + ")");
+                }
                 
-                final List<Category> finalCategories = categories;
                 activity.runOnUiThread(() -> {
                     try {
-                        List<String> categoryNames = new ArrayList<>();
-                        categoryNames.add("Không có thể loại");
-                        for (Category category : finalCategories) {
-                            categoryNames.add(category.getName());
-                        }
-                        
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                            activity, 
-                            android.R.layout.simple_spinner_item, 
-                            categoryNames
-                        );
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        // Use CategorySpinnerAdapter for consistency
+                        CategorySpinnerAdapter adapter = new CategorySpinnerAdapter(activity, categories);
                         spinner.setAdapter(adapter);
-                        spinner.setSelection(0);
+                        spinner.setSelection(0); // Select "không có thể loại" by default
+                        
+                        Log.d("UIManager", "CategorySpinnerAdapter created successfully");
                         
                     } catch (Exception e) {
+                        Log.e("UIManager", "Error setting up CategorySpinnerAdapter: " + e.getMessage());
                         e.printStackTrace();
                         setupFallbackSpinner(spinner);
                     }
                 });
             } catch (Exception e) {
+                Log.e("UIManager", "Error loading categories from database: " + e.getMessage());
                 e.printStackTrace();
                 activity.runOnUiThread(() -> setupFallbackSpinner(spinner));
             }

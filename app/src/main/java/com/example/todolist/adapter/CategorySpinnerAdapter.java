@@ -1,6 +1,7 @@
 package com.example.todolist.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +21,40 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         this.context = context;
         this.categories = new ArrayList<>();
         
-        // Create default category object
+        // Add debug logging
+        Log.d("CategorySpinnerAdapter", "Constructor called with " + (categories != null ? categories.size() : 0) + " categories");
+        
+        // Always add default "no category" option first
         Category defaultCategory = new Category("không có thể loại", "#999999", 0, false);
-        defaultCategory.setId(0); // Set ID after creation
+        defaultCategory.setId(0);
         this.categories.add(defaultCategory);
         
-        this.categories.addAll(categories);
+        // Add only non-duplicate categories from database
+        if (categories != null) {
+            for (Category category : categories) {
+                // Skip the default "no category" entry if it exists in database
+                if (category.getName().equalsIgnoreCase("không có thể loại")) {
+                    Log.d("CategorySpinnerAdapter", "Skipping 'không có thể loại' from database");
+                    continue;
+                }
+                
+                // Skip if category name already exists (case insensitive)
+                boolean exists = false;
+                for (Category existing : this.categories) {
+                    if (existing.getName().equalsIgnoreCase(category.getName())) {
+                        exists = true;
+                        Log.d("CategorySpinnerAdapter", "Skipping duplicate category: " + category.getName());
+                        break;
+                    }
+                }
+                if (!exists) {
+                    this.categories.add(category);
+                    Log.d("CategorySpinnerAdapter", "Added category: " + category.getName());
+                }
+            }
+        }
+        
+        Log.d("CategorySpinnerAdapter", "Final adapter has " + this.categories.size() + " categories");
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -83,12 +112,33 @@ public class CategorySpinnerAdapter extends BaseAdapter {
     public void updateCategories(List<Category> newCategories) {
         this.categories.clear();
         
-        // Create default category object  
+        // Always add default "no category" option first  
         Category defaultCategory = new Category("không có thể loại", "#999999", 0, false);
         defaultCategory.setId(0);
         this.categories.add(defaultCategory);
         
-        this.categories.addAll(newCategories);
+        // Add only non-duplicate categories from new list
+        if (newCategories != null) {
+            for (Category category : newCategories) {
+                // Skip the default "no category" entry if it exists in database
+                if (category.getName().equalsIgnoreCase("không có thể loại")) {
+                    continue;
+                }
+                
+                // Skip if category name already exists (case insensitive)
+                boolean exists = false;
+                for (Category existing : this.categories) {
+                    if (existing.getName().equalsIgnoreCase(category.getName())) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    this.categories.add(category);
+                }
+            }
+        }
+        
         notifyDataSetChanged();
     }
 

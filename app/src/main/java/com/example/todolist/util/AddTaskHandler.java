@@ -3,6 +3,7 @@ package com.example.todolist.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -151,10 +152,21 @@ public class AddTaskHandler {
      */
     private String getCategoryFromSpinner(Spinner spinner) {
         try {
-            Category selectedCategory = (Category) spinner.getSelectedItem();
-            return selectedCategory != null ? selectedCategory.getName() : "Công việc";
+            CategorySpinnerAdapter adapter = (CategorySpinnerAdapter) spinner.getAdapter();
+            Category selectedCategory = adapter.getCategory(spinner.getSelectedItemPosition());
+            
+            if (selectedCategory != null) {
+                // If it's the default "no category" option (ID = 0), return null
+                if (selectedCategory.getId() == 0 || 
+                    selectedCategory.getName().equalsIgnoreCase("không có thể loại")) {
+                    return null;
+                }
+                return selectedCategory.getName();
+            }
+            return null;
         } catch (Exception e) {
-            return "Công việc"; // Danh mục mặc định
+            Log.e("AddTaskHandler", "Error getting category from spinner: " + e.getMessage());
+            return null; // Return null instead of default category
         }
     }
     
