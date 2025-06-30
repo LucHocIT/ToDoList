@@ -109,12 +109,12 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         
         public void bind(String date) {
-            // Format the date for display
+            // Format the date for display - dd/MM/yyyy
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
                 Date dateObj = inputFormat.parse(date);
                 
-                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 textDate.setText(outputFormat.format(dateObj));
             } catch (Exception e) {
                 textDate.setText(date);

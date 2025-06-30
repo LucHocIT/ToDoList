@@ -54,4 +54,8 @@
     <color name="theme_pink_primary">#E91E63</color>
     <color name="theme_pink_secondary">#F06292</color>
     <color name="theme_pink_light">#FCE4EC</color>
+    
+    <!-- Completed Tasks Colors -->
+    <color name="completed_task_bg">#FAFAFA</color>
+    <color name="completed_task_border">#E8F5E8</color>
 </resources>

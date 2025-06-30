@@ -2,6 +2,7 @@ package com.example.todolist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,12 +41,27 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_completed_tasks);
+        Log.d("CompletedTasks", "onCreate started");
         
-        initDatabase();
-        initViews();
-        setupClickListeners();
-        loadCompletedTasks();
+        try {
+            setContentView(R.layout.activity_completed_tasks);
+            Log.d("CompletedTasks", "setContentView completed");
+            
+            initDatabase();
+            Log.d("CompletedTasks", "initDatabase completed");
+            
+            initViews();
+            Log.d("CompletedTasks", "initViews completed");
+            
+            setupClickListeners();
+            Log.d("CompletedTasks", "setupClickListeners completed");
+            
+            loadCompletedTasks();
+            Log.d("CompletedTasks", "loadCompletedTasks completed");
+            
+        } catch (Exception e) {
+            Log.e("CompletedTasks", "Error in onCreate: " + e.getMessage(), e);
+        }
     }
     
     private void initDatabase() {
@@ -55,27 +71,46 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     
     private void initViews() {
-        btnBack = findViewById(R.id.btn_back);
-        ImageView btnDeleteAll = findViewById(R.id.btn_delete_all);
-        recyclerCompletedTasks = findViewById(R.id.recycler_completed_tasks);
+        Log.d("CompletedTasks", "initViews started");
         
-        // Setup RecyclerView
-        recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
-        completedTasksAdapter = new CompletedTasksAdapter(groupedTasks, this);
-        recyclerCompletedTasks.setAdapter(completedTasksAdapter);
-        
-        // Setup click listeners
-        btnBack.setOnClickListener(v -> finish());
-        
-        btnDeleteAll.setOnClickListener(v -> {
-            // Show confirmation dialog and delete all completed tasks
-            new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Xóa tất cả")
-                .setMessage("Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?")
-                .setPositiveButton("Xóa", (dialog, which) -> deleteAllCompletedTasks())
-                .setNegativeButton("Hủy", null)
-                .show();
-        });
+        try {
+            btnBack = findViewById(R.id.btn_back);
+            Log.d("CompletedTasks", "btnBack found");
+            
+            ImageView btnDeleteAll = findViewById(R.id.btn_delete_all);
+            Log.d("CompletedTasks", "btnDeleteAll found");
+            
+            recyclerCompletedTasks = findViewById(R.id.recycler_completed_tasks);
+            Log.d("CompletedTasks", "recyclerCompletedTasks found");
+            
+            // Setup RecyclerView
+            recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
+            Log.d("CompletedTasks", "LayoutManager set");
+            
+            completedTasksAdapter = new CompletedTasksAdapter(groupedTasks, this);
+            Log.d("CompletedTasks", "Adapter created");
+            
+            recyclerCompletedTasks.setAdapter(completedTasksAdapter);
+            Log.d("CompletedTasks", "Adapter set");
+            
+            // Setup click listeners
+            btnBack.setOnClickListener(v -> finish());
+            
+            btnDeleteAll.setOnClickListener(v -> {
+                // Show confirmation dialog and delete all completed tasks
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa tất cả")
+                    .setMessage("Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?")
+                    .setPositiveButton("Xóa", (dialog, which) -> deleteAllCompletedTasks())
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            });
+            
+            Log.d("CompletedTasks", "Click listeners set");
+            
+        } catch (Exception e) {
+            Log.e("CompletedTasks", "Error in initViews: " + e.getMessage(), e);
+        }
     }
     
     private void setupClickListeners() {
@@ -92,8 +127,20 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             
             runOnUiThread(() -> {
                 completedTasksAdapter.updateGroupedTasks(groupedTasks);
+                updateEmptyState();
             });
         }).start();
+    }
+    
+    private void updateEmptyState() {
+        View emptyState = findViewById(R.id.empty_state);
+        if (allCompletedTasks.isEmpty()) {
+            emptyState.setVisibility(View.VISIBLE);
+            recyclerCompletedTasks.setVisibility(View.GONE);
+        } else {
+            emptyState.setVisibility(View.GONE);
+            recyclerCompletedTasks.setVisibility(View.VISIBLE);
+        }
     }
     
     private void groupTasksByDate() {
@@ -167,6 +214,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 allCompletedTasks.clear();
                 groupedTasks.clear();
                 completedTasksAdapter.updateGroupedTasks(groupedTasks);
+                updateEmptyState();
                 finish(); // Go back to main activity
             });
         }).start();
@@ -208,6 +256,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             
             runOnUiThread(() -> {
                 completedTasksAdapter.updateGroupedTasks(groupedTasks);
+                updateEmptyState();
                 Toast.makeText(this, "Nhiệm vụ đã được đánh dấu chưa hoàn thành", Toast.LENGTH_SHORT).show();
             });
         }).start();
@@ -221,6 +270,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             
             runOnUiThread(() -> {
                 completedTasksAdapter.updateGroupedTasks(groupedTasks);
+                updateEmptyState();
             });
         }).start();
     }

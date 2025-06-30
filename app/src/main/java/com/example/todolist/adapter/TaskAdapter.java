@@ -163,12 +163,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     return ""; // No date set, only show title
                 }
                 
-                // Check if it's today's date (created today without explicit due date)
+                // Get today's date
                 String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
-                if (dueDate.equals(todayDateStr) && (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không"))) {
-                    return ""; // Task created today without specific time, only show title
+                
+                // Check if it's today's date
+                if (dueDate.equals(todayDateStr)) {
+                    // For today's tasks, only show time if available
+                    if (dueTime != null && !dueTime.trim().isEmpty() && !dueTime.equals("null") && !dueTime.equals("Không")) {
+                        return dueTime; // Only show time for today's tasks
+                    } else {
+                        return ""; // Today's task without specific time, only show title
+                    }
                 }
                 
+                // For other dates (not today)
                 if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
                     // Only date available, format: dd-mm
                     String[] dateParts = dueDate.split("/");
@@ -178,7 +186,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     return dueDate;
                 }
                 
-                // Both date and time available, format: dd-mm HH:mm
+                // Both date and time available for other dates, format: dd-mm HH:mm
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
                     return dateParts[2] + "-" + dateParts[1] + " " + dueTime; // dd-mm HH:mm format

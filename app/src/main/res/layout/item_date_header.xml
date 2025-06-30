@@ -1,42 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp"
+    android:padding="20dp"
     android:gravity="center_vertical">
 
-    <!-- Timeline -->
+    <!-- Simplified Timeline -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
+        <!-- Timeline Dot -->
         <View
             android:id="@+id/timeline_dot"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:background="@drawable/timeline_dot"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="12dp"/>
 
+        <!-- Timeline Line -->
         <View
             android:id="@+id/timeline_line"
-            android:layout_width="2dp"
-            android:layout_height="40dp"
-            android:background="#4285F4"/>
+            android:layout_width="3dp"
+            android:layout_height="50dp"
+            android:background="#4CAF50"/>
 
     </LinearLayout>
 
-    <!-- Date Text -->
-    <TextView
-        android:id="@+id/text_date"
-        android:layout_width="wrap_content"
+    <!-- Date Card -->
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="2025/06/25"
-        android:textSize="16sp"
-        android:textColor="#4285F4"
-        android:textStyle="bold"
-        android:layout_marginStart="16dp"/>
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginStart="20dp"
+        android:elevation="2dp">
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25/06/2025"
+            android:textSize="16sp"
+            android:textColor="#2E7D32"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ngày hoàn thành"
+            android:textSize="12sp"
+            android:textColor="#81C784"
+            android:layout_marginTop="2dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
