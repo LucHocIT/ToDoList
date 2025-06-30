@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/calendar_background">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <!-- Main Content -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp">
+        android:background="@drawable/calendar_background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
 
         <!-- Header with month navigation -->
         <LinearLayout
@@ -370,4 +376,13 @@
         android:backgroundTint="#4285F4"
         android:src="@drawable/ic_add" />
 
-</FrameLayout>
+    </FrameLayout>
+
+    <!-- Navigation Drawer -->
+    <include
+        layout="@layout/nav_drawer_layout"
+        android:layout_width="280dp"
+        android:layout_height="match_parent" 
+        android:layout_gravity="start" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

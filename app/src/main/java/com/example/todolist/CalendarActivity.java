@@ -9,13 +9,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.todolist.database.TodoDatabase;
+import com.example.todolist.manager.NavigationDrawerManager;
+import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.util.AddTaskHandler;
-import com.example.todolist.util.CalendarNavigationHelper;
 import com.example.todolist.util.CalendarTaskHelper;
 import com.example.todolist.util.CalendarViewHelper;
+import com.example.todolist.util.UnifiedNavigationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +29,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class CalendarActivity extends AppCompatActivity 
-    implements CalendarViewHelper.OnDayClickListener, CalendarTaskHelper.TaskLoadListener {
+    implements CalendarViewHelper.OnDayClickListener, CalendarTaskHelper.TaskLoadListener,
+               NavigationDrawerManager.NavigationListener, ThemeManager.ThemeChangeListener {
 
     private TextView tvMonth, tvYear;
     private GridLayout calendarGrid;
@@ -34,6 +39,11 @@ public class CalendarActivity extends AppCompatActivity
     private FloatingActionButton fabAdd;
     private View calendarScrollView, weekViewContainer;
     private LinearLayout weekGrid;
+    
+    // Navigation components
+    private DrawerLayout drawerLayout;
+    private NavigationDrawerManager navigationDrawerManager;
+    private ThemeManager themeManager;
     
     private Calendar currentCalendar;
     private Calendar selectedDate;
@@ -52,12 +62,20 @@ public class CalendarActivity extends AppCompatActivity
         setContentView(R.layout.activity_calendar);
         
         initViews();
+        initManagers();
         initCalendar();
         setupBottomNavigation();
         loadCalendar();
+        
+        // Handle drawer open intent from other activities
+        handleDrawerIntent();
     }
     
     private void initViews() {
+        // Navigation components
+        drawerLayout = findViewById(R.id.drawer_layout);
+        
+        // Calendar components
         tvMonth = findViewById(R.id.tv_month);
         tvYear = findViewById(R.id.tv_year);
         calendarGrid = findViewById(R.id.calendar_grid);
@@ -73,6 +91,19 @@ public class CalendarActivity extends AppCompatActivity
         
         database = TodoDatabase.getInstance(this);
         setupClickListeners();
+    }
+    
+    private void initManagers() {
+        // Initialize NavigationDrawerManager
+        navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
+        
+        // Initialize ThemeManager
+        themeManager = new ThemeManager(this, this);
+        
+        // Apply current theme
+        if (themeManager != null) {
+            themeManager.applyCurrentTheme();
+        }
     }
     
     private void setupClickListeners() {
@@ -104,8 +135,27 @@ public class CalendarActivity extends AppCompatActivity
         LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
         
-        CalendarNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks, 
-                                                     btnNavCalendar, null);
+        // Use unified navigation helper
+        UnifiedNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks, 
+                                                     btnNavCalendar, null, "calendar");
+        
+        // Initialize drawer for CalendarActivity
+        UnifiedNavigationHelper.initializeDrawerForActivity(this, drawerLayout, this);
+    }
+    
+    /**
+     * Handle drawer open intent from other activities
+     */
+    private void handleDrawerIntent() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra("open_drawer", false)) {
+            // Mở drawer sau khi layout đã sẵn sàng
+            findViewById(android.R.id.content).post(() -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
     }
     
     private void loadCalendar() {
@@ -196,5 +246,42 @@ public class CalendarActivity extends AppCompatActivity
         }
         
         loadCalendar();
+    }
+    
+    // NavigationDrawerManager.NavigationListener implementations
+    @Override
+    public void onThemeSelected() {
+        // Theme selection handled by NavigationDrawerManager
+    }
+    
+    @Override
+    public void onUtilitiesSelected() {
+        // Utilities handled by NavigationDrawerManager
+    }
+    
+    @Override
+    public void onContactSelected() {
+        // Contact handled by NavigationDrawerManager
+    }
+    
+    @Override
+    public void onSettingsSelected() {
+        // Settings handled by NavigationDrawerManager
+    }
+    
+    // ThemeManager.ThemeChangeListener implementation
+    @Override
+    public void onThemeChanged(com.example.todolist.manager.ThemeManager.ThemeColor themeColor) {
+        // Recreate activity when theme changes
+        recreate();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }

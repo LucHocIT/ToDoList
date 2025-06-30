@@ -439,8 +439,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onMenuItemSelected(int itemId) {
         if (itemId == R.id.menu_search) {
             searchManager.enterSearchMode();
-        } else if (itemId == R.id.menu_reset_data) {
-            categoryManager.clearAllDataAndReset();
         }
     }
     

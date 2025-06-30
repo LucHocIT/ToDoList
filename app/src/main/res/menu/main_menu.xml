@@ -9,7 +9,4 @@
     <item
         android:id="@+id/menu_sort_tasks"
         android:title="Sắp xếp công việc" />
-    <item
-        android:id="@+id/menu_reset_data"
-        android:title="Reset dữ liệu (Test)" />
 </menu>

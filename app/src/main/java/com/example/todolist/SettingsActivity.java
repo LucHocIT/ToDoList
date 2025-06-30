@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.example.todolist.manager.CategoryManager;
 import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.util.SettingsManager;
 
@@ -35,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
     private LinearLayout layoutPrivacyPolicy;
     private LinearLayout layoutTerms;
     private LinearLayout layoutHelpSupport;
+    private LinearLayout layoutResetData;
     
     private TextView tvRingtoneValue;
     private TextView tvLanguageValue;
@@ -86,6 +88,9 @@ public class SettingsActivity extends AppCompatActivity {
         layoutTerms = findViewById(R.id.layout_terms);
         layoutHelpSupport = findViewById(R.id.layout_help_support);
         tvAppVersion = findViewById(R.id.tv_app_version);
+        
+        // Advanced Settings
+        layoutResetData = findViewById(R.id.layout_reset_data);
     }
     
     private void setupClickListeners() {
@@ -126,6 +131,9 @@ public class SettingsActivity extends AppCompatActivity {
         layoutPrivacyPolicy.setOnClickListener(v -> showPrivacyPolicy());
         layoutTerms.setOnClickListener(v -> showTermsOfService());
         layoutHelpSupport.setOnClickListener(v -> showHelpSupport());
+        
+        // Advanced Settings
+        layoutResetData.setOnClickListener(v -> showResetDataDialog());
     }
     
     private void loadCurrentSettings() {
@@ -262,6 +270,41 @@ public class SettingsActivity extends AppCompatActivity {
                 SettingsManager.setRingtoneName(this, ringtoneName);
                 Toast.makeText(this, "Đã cập nhật âm thanh thông báo", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+    
+    private void showResetDataDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Reset dữ liệu")
+            .setMessage("Bạn có chắc chắn muốn xóa tất cả dữ liệu và khôi phục về mặc định?\n\nThao tác này không thể hoàn tác!")
+            .setPositiveButton("Đồng ý", (dialog, which) -> {
+                performDataReset();
+            })
+            .setNegativeButton("Hủy", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
+    }
+    
+    private void performDataReset() {
+        try {
+            // Reset database using CategoryManager
+            CategoryManager categoryManager = new CategoryManager(this, null, null);
+            categoryManager.clearAllDataAndReset();
+            
+            // Reset app settings
+            SettingsManager.resetAllSettings(this);
+            
+            Toast.makeText(this, "Đã reset tất cả dữ liệu thành công", Toast.LENGTH_LONG).show();
+            
+            // Restart app to reflect changes
+            Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Có lỗi xảy ra khi reset dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

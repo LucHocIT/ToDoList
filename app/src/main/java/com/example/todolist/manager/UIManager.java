@@ -101,20 +101,15 @@ public class UIManager {
         LinearLayout btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
         
-        if (btnNavCalendar != null) {
-            btnNavCalendar.setOnClickListener(v -> {
-                Intent intent = new Intent(activity, CalendarActivity.class);
-                activity.startActivity(intent);
-            });
-        }
-        
-        if (btnNavMenu != null) {
-            btnNavMenu.setOnClickListener(v -> {
-                // Open navigation drawer instead of showing toast
-                if (listener != null) {
-                    listener.onBottomNavigation("menu_drawer");
-                }
-            });
+        // Use unified navigation helper with drawer initialization
+        com.example.todolist.util.UnifiedNavigationHelper.setupBottomNavigation(
+            activity, btnNavMenu, btnNavTasks, btnNavCalendar, null, "tasks");
+            
+        // Initialize drawer for MainActivity
+        androidx.drawerlayout.widget.DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
+        if (drawerLayout != null && listener instanceof com.example.todolist.manager.NavigationDrawerManager.NavigationListener) {
+            com.example.todolist.util.UnifiedNavigationHelper.initializeDrawerForActivity(
+                activity, drawerLayout, (com.example.todolist.manager.NavigationDrawerManager.NavigationListener) listener);
         }
     }
     
@@ -132,17 +127,13 @@ public class UIManager {
             } else if (item.getItemId() == R.id.menu_sort_tasks) {
                 showSortDialog();
                 return true;
-            } else if (item.getItemId() == R.id.menu_reset_data) {
-                showResetDataDialog();
-                return true;
             }
             return false;
         });
         
         popup.show();
     }
-    
-    private void showSortDialog() {
+      private void showSortDialog() {
         TaskSortDialog sortDialog = new TaskSortDialog(activity, sortType -> {
             if (listener != null) {
                 listener.onSortTypeSelected(sortType);
@@ -150,21 +141,7 @@ public class UIManager {
         });
         sortDialog.show();
     }
-    
-    private void showResetDataDialog() {
-        new AlertDialog.Builder(activity)
-            .setTitle("Reset dữ liệu")
-            .setMessage("Bạn có chắc chắn muốn xóa tất cả dữ liệu và tạo lại từ đầu?")
-            .setPositiveButton("Reset", (dialog, which) -> {
-                if (listener != null) {
-                    listener.onMenuItemSelected(R.id.menu_reset_data);
-                }
-                Toast.makeText(activity, "Đã reset tất cả dữ liệu", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Hủy", null)
-            .show();
-    }
-    
+
     public void setupCategorySpinner(Spinner spinner) {
         new Thread(() -> {
             try {
