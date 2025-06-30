@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements
         setupAddTaskHandler();
         loadData();
         
+        // Setup first time install tracking
+        setupFirstTimeInstall();
+        
         // Handle notification click
         handleNotificationIntent();
         
@@ -488,6 +491,18 @@ public class MainActivity extends AppCompatActivity implements
         // Theme has been changed, apply immediately
         if (themeManager != null) {
             themeManager.applyCurrentTheme();
+        }
+    }
+    
+    private void setupFirstTimeInstall() {
+        android.content.SharedPreferences preferences = getSharedPreferences("TodoApp", MODE_PRIVATE);
+        if (!preferences.contains("install_time")) {
+            preferences.edit()
+                    .putLong("install_time", System.currentTimeMillis())
+                    .putString("user_name", "Người dùng")
+                    .putInt("current_streak", 0)
+                    .putInt("longest_streak", 0)
+                    .apply();
         }
     }
     

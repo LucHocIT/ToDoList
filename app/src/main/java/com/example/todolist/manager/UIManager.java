@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.CalendarActivity;
 import com.example.todolist.CategoryManagerActivity;
 import com.example.todolist.CompletedTasksActivity;
+import com.example.todolist.ProfileActivity;
 import com.example.todolist.R;
 import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.adapter.TaskAdapter;
@@ -120,7 +121,8 @@ public class UIManager {
         
         if (btnNavProfile != null) {
             btnNavProfile.setOnClickListener(v -> {
-                Toast.makeText(activity, "Của tôi", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(activity, ProfileActivity.class);
+                activity.startActivity(intent);
             });
         }
     }

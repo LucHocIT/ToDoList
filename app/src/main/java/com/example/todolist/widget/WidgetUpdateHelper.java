@@ -8,6 +8,11 @@ import android.content.Intent;
 public class WidgetUpdateHelper {
     
     public static void updateAllWidgets(Context context) {
+        updateCalendarWidget(context);
+        updateMiniWidget(context);
+    }
+    
+    public static void updateCalendarWidget(Context context) {
         Intent intent = new Intent(context, CalendarWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         
@@ -17,5 +22,15 @@ public class WidgetUpdateHelper {
         
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         context.sendBroadcast(intent);
+    }
+    
+    public static void updateMiniWidget(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+            new ComponentName(context, MiniWidgetProvider.class));
+        
+        for (int appWidgetId : appWidgetIds) {
+            MiniWidgetProvider.updateWidget(context, appWidgetManager, appWidgetId);
+        }
     }
 }

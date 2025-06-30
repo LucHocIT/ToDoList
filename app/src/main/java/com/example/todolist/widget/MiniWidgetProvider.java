@@ -9,10 +9,14 @@ import android.widget.RemoteViews;
 
 import com.example.todolist.MainActivity;
 import com.example.todolist.R;
+import com.example.todolist.database.TodoDatabase;
+import com.example.todolist.model.TodoTask;
+
+import java.util.List;
 
 /**
- * Mini Widget Provider for 1x1 quick add task widget
- * Provides a simple button to quickly add tasks from home screen
+ * Enhanced Mini Widget Provider for 1x1 quick add task widget
+ * Shows task count and provides a beautiful gradient design
  */
 public class MiniWidgetProvider extends AppWidgetProvider {
     
@@ -42,14 +46,45 @@ public class MiniWidgetProvider extends AppWidgetProvider {
     public static void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
         
-        // Set click listener for add button
+        // Set click listener for add button first (for immediate response)
         Intent addIntent = new Intent(context, MiniWidgetProvider.class);
         addIntent.setAction(ACTION_QUICK_ADD);
         PendingIntent addPendingIntent = PendingIntent.getBroadcast(context, 0, addIntent, 
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.widget_mini_add_button, addPendingIntent);
         
-        // Update widget
+        // Update widget immediately with basic setup
         appWidgetManager.updateAppWidget(appWidgetId, views);
+        
+        // Get task count in background and update again
+        new Thread(() -> {
+            try {
+                TodoDatabase database = TodoDatabase.getInstance(context);
+                List<TodoTask> incompleteTasks = database.todoDao().getIncompleteTasks();
+                int taskCount = incompleteTasks != null ? incompleteTasks.size() : 0;
+                
+                // Update UI on main thread
+                RemoteViews updatedViews = new RemoteViews(context.getPackageName(), R.layout.widget_mini);
+                
+                // Set task count with smart display logic
+                if (taskCount > 0) {
+                    String countText = taskCount > 99 ? "99+" : String.valueOf(taskCount);
+                    updatedViews.setTextViewText(R.id.widget_mini_task_count, countText);
+                    updatedViews.setViewVisibility(R.id.widget_mini_task_count, android.view.View.VISIBLE);
+                } else {
+                    updatedViews.setViewVisibility(R.id.widget_mini_task_count, android.view.View.GONE);
+                }
+                
+                // Re-set click listener
+                updatedViews.setOnClickPendingIntent(R.id.widget_mini_add_button, addPendingIntent);
+                
+                // Update widget with task count
+                appWidgetManager.updateAppWidget(appWidgetId, updatedViews);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Error case handled by initial update above
+            }
+        }).start();
     }
 }
