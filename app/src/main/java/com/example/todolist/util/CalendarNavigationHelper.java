@@ -43,12 +43,6 @@ public class CalendarNavigationHelper {
                 }
             });
         }
-        
-        if (btnNavProfile != null) {
-            btnNavProfile.setOnClickListener(v -> {
-                Toast.makeText(context, "Của tôi", Toast.LENGTH_SHORT).show();
-            });
-        }
     }
     
     private static void setNavigationSelected(LinearLayout navItem) {

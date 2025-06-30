@@ -103,10 +103,9 @@ public class CalendarActivity extends AppCompatActivity
         LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
-        LinearLayout btnNavProfile = findViewById(R.id.btn_nav_profile);
         
         CalendarNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks, 
-                                                     btnNavCalendar, btnNavProfile);
+                                                     btnNavCalendar, null);
     }
     
     private void loadCalendar() {

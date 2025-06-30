@@ -163,12 +163,10 @@ public class ThemeManager {
         View btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
         View btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         View btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
-        View btnNavProfile = activity.findViewById(R.id.btn_nav_profile);
         
         applyThemeToNavButton(btnNavMenu, primaryColor);
         applyThemeToNavButton(btnNavTasks, primaryColor);
         applyThemeToNavButton(btnNavCalendar, primaryColor);
-        applyThemeToNavButton(btnNavProfile, primaryColor);
     }
     
     private void applyThemeToNavButton(View navButton, int primaryColor) {

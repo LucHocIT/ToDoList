@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.CalendarActivity;
 import com.example.todolist.CategoryManagerActivity;
 import com.example.todolist.CompletedTasksActivity;
-import com.example.todolist.ProfileActivity;
 import com.example.todolist.R;
 import com.example.todolist.adapter.CategorySpinnerAdapter;
 import com.example.todolist.adapter.TaskAdapter;
@@ -101,7 +100,6 @@ public class UIManager {
         LinearLayout btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
-        LinearLayout btnNavProfile = activity.findViewById(R.id.btn_nav_profile);
         
         if (btnNavCalendar != null) {
             btnNavCalendar.setOnClickListener(v -> {
@@ -116,13 +114,6 @@ public class UIManager {
                 if (listener != null) {
                     listener.onBottomNavigation("menu_drawer");
                 }
-            });
-        }
-        
-        if (btnNavProfile != null) {
-            btnNavProfile.setOnClickListener(v -> {
-                Intent intent = new Intent(activity, ProfileActivity.class);
-                activity.startActivity(intent);
             });
         }
     }
