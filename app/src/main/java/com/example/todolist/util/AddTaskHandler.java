@@ -182,14 +182,23 @@ public class AddTaskHandler {
      * Tạo nhiệm vụ mới với các chi tiết đã chọn
      */
     private void createNewTaskWithDetails(String title, String category, String date, String time, String reminder, String repeat) {
-        // Chỉ đặt ngày nếu không phải là giá trị mặc định
-        String finalDate = null;
+        // Đặt ngày và thời gian
+        String finalDate;
         String finalTime = null;
         
-        // Nếu người dùng đã chọn ngày/giờ, sử dụng những giá trị đó
+        // Nếu người dùng đã chọn ngày, sử dụng ngày đó
         if (date != null && !date.equals("Không")) {
             finalDate = date;
+        } else {
+            // Nếu không chọn ngày, đặt ngày hiện tại
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH) + 1; // Calendar.MONTH bắt đầu từ 0
+            int year = calendar.get(Calendar.YEAR);
+            finalDate = String.format("%02d/%02d/%04d", day, month, year);
         }
+        
+        // Chỉ đặt thời gian nếu người dùng đã chọn thời gian cụ thể
         if (time != null && !time.equals("Không") && !time.equals("12:00")) { // 12:00 là mặc định
             finalTime = time;
         }
