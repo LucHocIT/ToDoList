@@ -8,7 +8,7 @@ import android.content.Context;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.model.Category;
 
-@Database(entities = {TodoTask.class, Category.class}, version = 5, exportSchema = false)
+@Database(entities = {TodoTask.class, Category.class}, version = 6, exportSchema = false)
 public abstract class TodoDatabase extends RoomDatabase {
     
     private static TodoDatabase instance;

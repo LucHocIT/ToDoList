@@ -15,8 +15,11 @@ import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.util.TaskActionsDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnTaskClickListener {
 
@@ -111,6 +114,15 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
     @Override
     public void onTaskComplete(TodoTask task, boolean isCompleted) {
         task.setCompleted(isCompleted);
+        
+        // Set completion date when marking as completed, clear when marking as incomplete
+        if (isCompleted) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            task.setCompletionDate(dateFormat.format(new Date()));
+        } else {
+            task.setCompletionDate(null);
+        }
+        
         new Thread(() -> {
             database.todoDao().updateTask(task);
             runOnUiThread(() -> searchAdapter.notifyDataSetChanged());

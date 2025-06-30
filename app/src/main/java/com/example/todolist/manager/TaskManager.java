@@ -116,6 +116,15 @@ public class TaskManager {
     
     public void completeTask(TodoTask task, boolean isCompleted) {
         task.setCompleted(isCompleted);
+        
+        // Set completion date when marking as completed, clear when marking as incomplete
+        if (isCompleted) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            task.setCompletionDate(dateFormat.format(new Date()));
+        } else {
+            task.setCompletionDate(null);
+        }
+        
         new Thread(() -> {
             database.todoDao().updateTask(task);
             

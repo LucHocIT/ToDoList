@@ -21,6 +21,7 @@ public class TodoTask {
     private String attachments;
     private String repeatType; // Không có, Hàng ngày, Hàng tuần, Hàng tháng
     private boolean isRepeating;
+    private String completionDate; // Ngày thực tế hoàn thành task
     
     public TodoTask() {
     }
@@ -39,6 +40,7 @@ public class TodoTask {
         this.attachments = "";
         this.repeatType = "Không có";
         this.isRepeating = false;
+        this.completionDate = null;
     }
     
     // Getters
@@ -55,6 +57,7 @@ public class TodoTask {
     public String getAttachments() { return attachments; }
     public String getRepeatType() { return repeatType; }
     public boolean isRepeating() { return isRepeating; }
+    public String getCompletionDate() { return completionDate; }
     
     // Setters
     public void setId(int id) { this.id = id; }
@@ -70,4 +73,5 @@ public class TodoTask {
     public void setAttachments(String attachments) { this.attachments = attachments; }
     public void setRepeatType(String repeatType) { this.repeatType = repeatType; }
     public void setRepeating(boolean repeating) { isRepeating = repeating; }
+    public void setCompletionDate(String completionDate) { this.completionDate = completionDate; }
 }

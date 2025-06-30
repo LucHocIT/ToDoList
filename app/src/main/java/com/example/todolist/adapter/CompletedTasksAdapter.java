@@ -200,18 +200,18 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
             
             if (dueTime == null || dueTime.equals("null") || dueTime.trim().isEmpty() || dueTime.equals("Không")) {
-                // Only date, format as MM-dd
+                // Only date, format as dd-mm
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
-                    return dateParts[1] + "-" + dateParts[2];
+                    return dateParts[2] + "-" + dateParts[1]; // dd-mm format
                 }
                 return dueDate;
             }
             
-            // Both date and time, format as MM-dd HH:mm
+            // Both date and time, format as dd-mm HH:mm
             String[] dateParts = dueDate.split("/");
             if (dateParts.length == 3) {
-                return dateParts[1] + "-" + dateParts[2] + " " + dueTime;
+                return dateParts[2] + "-" + dateParts[1] + " " + dueTime; // dd-mm HH:mm format
             }
             return dueDate + " " + dueTime;
         }

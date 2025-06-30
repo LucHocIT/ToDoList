@@ -160,31 +160,28 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             try {
                 // Check for null or empty values
                 if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("Không")) {
-                    if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
-                        return ""; // Both date and time are empty
-                    } else {
-                        return dueTime; // Only time available
-                    }
+                    return ""; // No date set, only show title
+                }
+                
+                // Check if it's today's date (created today without explicit due date)
+                String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
+                if (dueDate.equals(todayDateStr) && (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không"))) {
+                    return ""; // Task created today without specific time, only show title
                 }
                 
                 if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
-                    // Only date available, but check if it's today - don't show date for today without time
-                    String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
-                    if (dueDate.equals(todayDateStr)) {
-                        return ""; // Don't show today's date if no specific time
-                    }
-                    // Format: MM-dd for other dates
+                    // Only date available, format: dd-mm
                     String[] dateParts = dueDate.split("/");
                     if (dateParts.length == 3) {
-                        return dateParts[1] + "-" + dateParts[2];
+                        return dateParts[2] + "-" + dateParts[1]; // dd-mm format
                     }
                     return dueDate;
                 }
                 
-                // Both date and time available, format: MM-dd HH:mm
+                // Both date and time available, format: dd-mm HH:mm
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
-                    return dateParts[1] + "-" + dateParts[2] + " " + dueTime;
+                    return dateParts[2] + "-" + dateParts[1] + " " + dueTime; // dd-mm HH:mm format
                 }
             } catch (Exception e) {
                 // Fallback for any parsing errors

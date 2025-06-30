@@ -121,13 +121,12 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     
     private String getDateKey(TodoTask task) {
-        // For now, we'll use the due date as completion date
-        // In a real app, you'd have a separate completion date field
-        String dueDate = task.getDueDate();
-        if (dueDate != null) {
+        // Use completion date instead of due date for completed tasks
+        String completionDate = task.getCompletionDate();
+        if (completionDate != null && !completionDate.isEmpty()) {
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-                Date date = inputFormat.parse(dueDate);
+                Date date = inputFormat.parse(completionDate);
                 
                 Calendar taskCal = Calendar.getInstance();
                 taskCal.setTime(date);
@@ -137,17 +136,20 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 yesterday.add(Calendar.DAY_OF_YEAR, -1);
                 
                 if (isSameDay(taskCal, today)) {
-                    return "2025/06/25"; // Today's date
+                    return completionDate; // Use actual completion date
                 } else if (isSameDay(taskCal, yesterday)) {
-                    return "2025/06/23"; // Yesterday's date  
+                    return completionDate; // Use actual completion date
                 } else {
-                    return dueDate;
+                    return completionDate;
                 }
             } catch (Exception e) {
-                return dueDate != null ? dueDate : "2025/06/24";
+                return completionDate;
             }
         }
-        return "2025/06/24"; // Default date
+        
+        // Fallback to current date if no completion date (shouldn't happen for completed tasks)
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        return dateFormat.format(new Date());
     }
     
     private boolean isSameDay(Calendar cal1, Calendar cal2) {
@@ -195,9 +197,10 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
 
     @Override
     public void onCompletedTaskUncheck(TodoTask task) {
-        // Mark task as incomplete and remove from completed list
+        // Mark task as incomplete and remove completion date
         new Thread(() -> {
             task.setCompleted(false);
+            task.setCompletionDate(null); // Clear completion date when marking as incomplete
             database.todoDao().updateTask(task);
             
             allCompletedTasks.remove(task);

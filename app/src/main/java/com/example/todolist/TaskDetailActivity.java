@@ -16,7 +16,10 @@ import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.notification.ReminderScheduler;
 import com.example.todolist.util.DateTimePickerDialog;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class TaskDetailActivity extends AppCompatActivity {
     
@@ -80,7 +83,11 @@ public class TaskDetailActivity extends AppCompatActivity {
     private void displayTaskData() {
         if (currentTask != null) {
             editDetailTitle.setText(currentTask.getTitle());
-            textDueDate.setText(currentTask.getDueDate() != null ? currentTask.getDueDate() : "Không");
+            
+            // Format due date as dd/MM/yyyy
+            String formattedDate = formatDateDisplay(currentTask.getDueDate());
+            textDueDate.setText(formattedDate != null ? formattedDate : "Không");
+            
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
             textReminderValue.setText(currentTask.getReminderType() != null ? currentTask.getReminderType() : "Không");
             
@@ -183,10 +190,10 @@ public class TaskDetailActivity extends AppCompatActivity {
                     if (!"Không".equals(time)) {
                         currentTask.setDueTime(time);
                     }
-                    if (!"Không".equals(reminder)) {
-                        currentTask.setReminderType(reminder);
-                        currentTask.setHasReminder(!"Không".equals(reminder));
-                    }
+                    
+                    // Always update reminder, whether it's set to a value or "Không"
+                    currentTask.setReminderType(reminder);
+                    currentTask.setHasReminder(!"Không".equals(reminder));
                     
                     // Set repeat information
                     if (!"Không".equals(repeat)) {
@@ -197,18 +204,17 @@ public class TaskDetailActivity extends AppCompatActivity {
                         currentTask.setRepeating(false);
                     }
                     
-                    // Update UI
-                    textDueDate.setText(date);
+                    // Update UI - format date properly
+                    String formattedDate = formatDateDisplay(date);
+                    textDueDate.setText(formattedDate != null ? formattedDate : "Không");
                     if (!"Không".equals(time)) {
                         textTime.setText(time);
                     } else {
                         textTime.setText("Không");
                     }
-                    if (!"Không".equals(reminder)) {
-                        textReminderValue.setText(reminder);
-                    } else {
-                        textReminderValue.setText("Không");
-                    }
+                    
+                    // Always update reminder display
+                    textReminderValue.setText(reminder);
                     
                     // Save to database
                     new Thread(() -> {
@@ -261,5 +267,23 @@ public class TaskDetailActivity extends AppCompatActivity {
         // Change priority text to show "Đã hoàn thành"
         textPriorityValue.setText("Đã hoàn thành");
         textPriorityValue.setTextColor(getColor(R.color.green_success));
+    }
+    
+    private String formatDateDisplay(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty() || dateStr.equals("null") || dateStr.equals("Không")) {
+            return null;
+        }
+        
+        try {
+            // Parse from yyyy/MM/dd format
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            Date date = inputFormat.parse(dateStr);
+            
+            // Format to dd/MM/yyyy
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            return dateStr; // Return original if parsing fails
+        }
     }
 }
