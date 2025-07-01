@@ -35,6 +35,9 @@ public class NotificationHelper {
         this.context = context;
         this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel();
+        
+        // Sửa cài đặt nếu có vấn đề trước khi validate
+        SettingsManager.fixNotificationSettings(context);
         validateNotificationSettings(); // Kiểm tra và đồng bộ cài đặt
     }
     
@@ -165,8 +168,8 @@ public class NotificationHelper {
                 .setShowWhen(true)
                 .setContentIntent(pendingIntent);
 
-        // Apply sound settings
-        if (SettingsManager.isSoundEnabled(context)) {
+        // Apply sound settings - chỉ khi notifications được bật
+        if (SettingsManager.isNotificationsEnabled(context) && SettingsManager.isSoundEnabled(context)) {
             String ringtoneUri = SettingsManager.getRingtoneUri(context);
             if (ringtoneUri != null && !ringtoneUri.isEmpty()) {
                 try {
@@ -185,8 +188,8 @@ public class NotificationHelper {
             builder.setSound(null);
         }
         
-        // Apply vibration settings
-        if (SettingsManager.isVibrationEnabled(context)) {
+        // Apply vibration settings - chỉ khi notifications được bật
+        if (SettingsManager.isNotificationsEnabled(context) && SettingsManager.isVibrationEnabled(context)) {
             if (task.isImportant()) {
                 // Vibration pattern cho task quan trọng (dài hơn, mạnh hơn)
                 builder.setVibrate(new long[]{0, 300, 100, 300, 100, 300, 100, 300});

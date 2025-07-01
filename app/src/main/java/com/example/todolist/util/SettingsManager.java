@@ -75,4 +75,34 @@ public class SettingsManager {
     public static void resetAllSettings(Context context) {
         getSharedPreferences(context).edit().clear().apply();
     }
+    
+    /**
+     * Kiểm tra logic cài đặt thông báo có đúng không
+     */
+    public static boolean isNotificationLogicValid(Context context) {
+        boolean notificationsEnabled = isNotificationsEnabled(context);
+        boolean soundEnabled = isSoundEnabled(context);
+        boolean vibrationEnabled = isVibrationEnabled(context);
+        
+        // Nếu notifications tắt thì sound và vibration cũng phải tắt
+        if (!notificationsEnabled && (soundEnabled || vibrationEnabled)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Sửa logic cài đặt nếu có vấn đề
+     */
+    public static void fixNotificationSettings(Context context) {
+        if (!isNotificationLogicValid(context)) {
+            boolean notificationsEnabled = isNotificationsEnabled(context);
+            if (!notificationsEnabled) {
+                // Tắt sound và vibration nếu notifications bị tắt
+                setSoundEnabled(context, false);
+                setVibrationEnabled(context, false);
+            }
+        }
+    }
 }

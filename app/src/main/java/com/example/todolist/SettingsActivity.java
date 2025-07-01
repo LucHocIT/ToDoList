@@ -2,8 +2,6 @@ package com.example.todolist;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,7 +28,6 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch switchNotifications;
     private Switch switchSound;
     private Switch switchVibration;
-    private LinearLayout layoutRingtone;
     private LinearLayout layoutLanguage;
     private LinearLayout layoutAboutApp;
     private LinearLayout layoutPrivacyPolicy;
@@ -38,7 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
     private LinearLayout layoutHelpSupport;
     private LinearLayout layoutResetData;
     
-    private TextView tvRingtoneValue;
     private TextView tvLanguageValue;
     private TextView tvAppVersion;
     
@@ -75,8 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
         switchNotifications = findViewById(R.id.switch_notifications);
         switchSound = findViewById(R.id.switch_sound);
         switchVibration = findViewById(R.id.switch_vibration);
-        layoutRingtone = findViewById(R.id.layout_ringtone);
-        tvRingtoneValue = findViewById(R.id.tv_ringtone_value);
         
         // General Settings
         layoutLanguage = findViewById(R.id.layout_language);
@@ -106,6 +100,9 @@ public class SettingsActivity extends AppCompatActivity {
                 switchVibration.setChecked(false);
                 switchSound.setEnabled(false);
                 switchVibration.setEnabled(false);
+                // Lưu vào SettingsManager để đảm bảo tắt thật sự
+                SettingsManager.setSoundEnabled(this, false);
+                SettingsManager.setVibrationEnabled(this, false);
             } else {
                 switchSound.setEnabled(true);
                 switchVibration.setEnabled(true);
@@ -120,9 +117,6 @@ public class SettingsActivity extends AppCompatActivity {
             SettingsManager.setVibrationEnabled(this, isChecked);
         });
 
-        // Ringtone setting
-        layoutRingtone.setOnClickListener(v -> showRingtoneSelector());
-        
         // Language setting
         layoutLanguage.setOnClickListener(v -> showLanguageDialog());
         
@@ -137,6 +131,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
     
     private void loadCurrentSettings() {
+        // Sửa logic cài đặt nếu có vấn đề
+        SettingsManager.fixNotificationSettings(this);
+        
         // Load notification settings using SettingsManager
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
         boolean soundEnabled = SettingsManager.isSoundEnabled(this);
@@ -149,10 +146,6 @@ public class SettingsActivity extends AppCompatActivity {
         // Enable/disable sound and vibration based on notifications setting
         switchSound.setEnabled(notificationsEnabled);
         switchVibration.setEnabled(notificationsEnabled);
-        
-        // Load ringtone
-        String ringtoneName = SettingsManager.getRingtoneName(this);
-        tvRingtoneValue.setText(ringtoneName);
         
         // Load language
         String language = SettingsManager.getLanguage(this);
@@ -167,46 +160,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
     
-    private void showRingtoneSelector() {
-        // 5 tùy chọn âm thanh thông báo với tên theo chủ đề
-        String[] options = {
-            "🔔 Âm thanh mặc định",
-            "� Thông báo nhẹ nhàng",
-            "⏰ Tiếng chuông báo thức", 
-            "🎵 Giai điệu êm dịu",
-            "� Âm thanh khẩn cấp"
-        };
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Âm thanh thông báo");
-        builder.setItems(options, (dialog, which) -> {
-            switch (which) {
-                case 0: // Âm thanh mặc định
-                    SettingsManager.setRingtoneUri(this, null);
-                    SettingsManager.setRingtoneName(this, "Mặc định");
-                    tvRingtoneValue.setText("Mặc định");
-                    Toast.makeText(this, "Đã chọn âm thanh mặc định", Toast.LENGTH_SHORT).show();
-                    break;
-                    
-                case 1: // Thông báo nhẹ nhàng
-                    setPresetNotificationSound(1, "Thông báo nhẹ nhàng");
-                    break;
-                    
-                case 2: // Tiếng chuông báo thức
-                    setPresetNotificationSound(2, "Tiếng chuông báo thức");
-                    break;
-                    
-                case 3: // Giai điệu êm dịu
-                    setPresetNotificationSound(3, "Giai điệu êm dịu");
-                    break;
-                    
-                case 4: // Âm thanh khẩn cấp
-                    setPresetNotificationSound(4, "Âm thanh khẩn cấp");
-                    break;
-            }
-        });
-        builder.show();
-    }
+
     
     private void showLanguageDialog() {
         String[] languages = {"Tiếng Việt", "English", "中文", "한국어"};
@@ -285,19 +239,7 @@ public class SettingsActivity extends AppCompatActivity {
         builder.show();
     }
     
-    // Không cần onActivityResult nữa vì chỉ sử dụng 5 âm thanh preset
-    // Method này có thể được xóa hoặc giữ lại cho tương lai
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // Không cần xử lý gì vì chỉ sử dụng preset sounds
-    }
-    
-    private String getFileNameFromUri(Uri uri) {
-        // Method này không còn cần thiết vì không upload file tùy chỉnh
-        // Giữ lại để tránh lỗi compile nếu có chỗ nào đang reference
-        return null;
-    }
+
     
     private void showResetDataDialog() {
         new AlertDialog.Builder(this)
@@ -334,43 +276,5 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void setPresetNotificationSound(int soundIndex, String soundName) {
-        // Sử dụng âm thanh notification khác nhau với tên mô tả đúng chủ đề
-        Uri soundUri = null;
-        try {
-            switch (soundIndex) {
-                case 1: // Thông báo nhẹ nhàng
-                    soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                    break;
-                case 2: // Tiếng chuông báo thức
-                    soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                    break;
-                case 3: // Giai điệu êm dịu
-                    soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                    break;
-                case 4: // Âm thanh khẩn cấp
-                    // Sử dụng âm thanh system notification với volume cao
-                    soundUri = android.provider.Settings.System.DEFAULT_NOTIFICATION_URI;
-                    break;
-            }
-            
-            if (soundUri != null) {
-                SettingsManager.setRingtoneUri(this, soundUri.toString());
-                SettingsManager.setRingtoneName(this, soundName);
-                tvRingtoneValue.setText(soundName);
-                Toast.makeText(this, "Đã chọn: " + soundName, Toast.LENGTH_SHORT).show();
-            } else {
-                // Fallback to default if unable to get preset sound
-                SettingsManager.setRingtoneUri(this, null);
-                SettingsManager.setRingtoneName(this, "Mặc định");
-                tvRingtoneValue.setText("Mặc định");
-                Toast.makeText(this, "Đã chọn âm thanh mặc định", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, "Lỗi khi chọn âm thanh, sử dụng mặc định", Toast.LENGTH_SHORT).show();
-            SettingsManager.setRingtoneUri(this, null);
-            SettingsManager.setRingtoneName(this, "Mặc định");
-            tvRingtoneValue.setText("Mặc định");
-        }
-    }
+
 }
