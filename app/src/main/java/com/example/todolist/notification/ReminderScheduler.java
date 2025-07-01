@@ -177,8 +177,6 @@ public class ReminderScheduler {
                 return 30;
             case "1 giờ trước":
                 return 60;
-            case "1 ngày trước":
-                return 24 * 60; // 1440 phút
             default:
                 return 5; // Mặc định 5 phút
         }

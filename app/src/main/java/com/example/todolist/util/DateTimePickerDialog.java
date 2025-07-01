@@ -144,7 +144,7 @@ public class DateTimePickerDialog {
     }
     
     private void showReminderPicker() {
-        String[] reminderOptions = {"Không", "5 phút trước", "15 phút trước", "30 phút trước", "1 giờ trước", "1 ngày trước"};
+        String[] reminderOptions = {"Không", "5 phút trước", "15 phút trước", "30 phút trước", "1 giờ trước"};
         
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
         builder.setTitle("Chọn lời nhắc");

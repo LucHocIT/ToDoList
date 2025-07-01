@@ -50,8 +50,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 return "trong 30 phút";
             case "1 giờ trước":
                 return "trong 1 giờ";
-            case "1 ngày trước":
-                return "vào ngày mai";
             default:
                 return "sắp tới";
         }

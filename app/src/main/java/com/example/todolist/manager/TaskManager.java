@@ -92,7 +92,14 @@ public class TaskManager {
     }
     
     private boolean isTaskCompletedToday(TodoTask task, String todayDateStr) {
-        return true; // Simplified - in real app, track completion date
+        // Check if task was completed today by comparing completion date
+        String completionDate = task.getCompletionDate();
+        if (completionDate == null || completionDate.isEmpty()) {
+            return false; // No completion date means not completed or very old completion
+        }
+        
+        // Compare completion date with today's date
+        return completionDate.equals(todayDateStr);
     }
     
     private int getTaskTimeCategory(TodoTask task, Calendar now, String todayDateStr) {

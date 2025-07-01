@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -33,6 +35,7 @@ public class NotificationHelper {
         this.context = context;
         this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         createNotificationChannel();
+        validateNotificationSettings(); // Kiểm tra và đồng bộ cài đặt
     }
     
     /**
@@ -46,8 +49,25 @@ public class NotificationHelper {
                     NotificationManager.IMPORTANCE_HIGH
             );
             channel.setDescription(CHANNEL_DESC);
+            
+            // Tắt âm thanh channel mặc định để app tự quản lý âm thanh
+            channel.setSound(null, null);
+            
+            // Tắt rung channel mặc định để app tự quản lý rung
+            channel.enableVibration(false);
+            
+            // Cấu hình đèn LED - luôn bật để dễ nhận biết
             channel.enableLights(true);
-            channel.enableVibration(true);
+            channel.setLightColor(android.graphics.Color.BLUE);
+            
+            // Hiển thị trên màn hình khóa
+            channel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            
+            // Cho phép hiển thị badge
+            channel.setShowBadge(true);
+            
+            // Bypass Do Not Disturb cho thông báo quan trọng
+            channel.setBypassDnd(true);
             
             notificationManager.createNotificationChannel(channel);
         }
@@ -148,26 +168,39 @@ public class NotificationHelper {
         // Apply sound settings
         if (SettingsManager.isSoundEnabled(context)) {
             String ringtoneUri = SettingsManager.getRingtoneUri(context);
-            if (ringtoneUri != null) {
-                builder.setSound(android.net.Uri.parse(ringtoneUri));
+            if (ringtoneUri != null && !ringtoneUri.isEmpty()) {
+                try {
+                    android.net.Uri soundUri = android.net.Uri.parse(ringtoneUri);
+                    builder.setSound(soundUri);
+                } catch (Exception e) {
+                    // Fallback to default sound if custom sound fails
+                    builder.setDefaults(NotificationCompat.DEFAULT_SOUND);
+                }
             } else {
+                // Sử dụng âm thanh mặc định khi không có URI được lưu
                 builder.setDefaults(NotificationCompat.DEFAULT_SOUND);
             }
+        } else {
+            // Tắt âm thanh hoàn toàn
+            builder.setSound(null);
         }
         
         // Apply vibration settings
         if (SettingsManager.isVibrationEnabled(context)) {
             if (task.isImportant()) {
-                // Vibration pattern cho task quan trọng
-                builder.setVibrate(new long[]{0, 300, 100, 300, 100, 300});
+                // Vibration pattern cho task quan trọng (dài hơn, mạnh hơn)
+                builder.setVibrate(new long[]{0, 300, 100, 300, 100, 300, 100, 300});
             } else {
-                // Vibration pattern cho task bình thường
+                // Vibration pattern cho task bình thường (ngắn gọn)
                 builder.setVibrate(new long[]{0, 250, 250, 250});
             }
+        } else {
+            // Tắt rung hoàn toàn
+            builder.setVibrate(null);
         }
         
-        // Apply lights
-        builder.setDefaults(NotificationCompat.DEFAULT_LIGHTS);
+        // Apply lights (luôn bật để dễ nhận biết)
+        builder.setLights(task.isImportant() ? 0xFFFF0000 : 0xFF0000FF, 1000, 1000);
 
         notificationManager.notify(notificationId, builder.build());
     }
@@ -197,5 +230,38 @@ public class NotificationHelper {
         // Hủy thông báo reminder
         int reminderNotificationId = ("reminder_" + taskId).hashCode();
         cancelNotification(reminderNotificationId);
+    }
+    
+    /**
+     * Kiểm tra và áp dụng tất cả cài đặt thông báo
+     */
+    public void validateNotificationSettings() {
+        // Kiểm tra xem notification có được bật không
+        boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(context);
+        boolean soundEnabled = SettingsManager.isSoundEnabled(context);
+        boolean vibrationEnabled = SettingsManager.isVibrationEnabled(context);
+        
+        Log.d("NotificationHelper", "Notification Settings Check:");
+        Log.d("NotificationHelper", "- Notifications enabled: " + notificationsEnabled);
+        Log.d("NotificationHelper", "- Sound enabled: " + soundEnabled);
+        Log.d("NotificationHelper", "- Vibration enabled: " + vibrationEnabled);
+        
+        String ringtoneUri = SettingsManager.getRingtoneUri(context);
+        String ringtoneName = SettingsManager.getRingtoneName(context);
+        
+        Log.d("NotificationHelper", "- Ringtone URI: " + (ringtoneUri != null ? ringtoneUri : "Default"));
+        Log.d("NotificationHelper", "- Ringtone Name: " + ringtoneName);
+        
+        // Tự động tắt sound và vibration nếu notification bị tắt
+        if (!notificationsEnabled) {
+            if (soundEnabled) {
+                SettingsManager.setSoundEnabled(context, false);
+                Log.d("NotificationHelper", "Auto-disabled sound because notifications are disabled");
+            }
+            if (vibrationEnabled) {
+                SettingsManager.setVibrationEnabled(context, false);
+                Log.d("NotificationHelper", "Auto-disabled vibration because notifications are disabled");
+            }
+        }
     }
 }
