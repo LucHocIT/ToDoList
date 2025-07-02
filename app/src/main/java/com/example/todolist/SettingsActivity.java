@@ -30,7 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
     // UI Components
     private ImageView btnBack;
     private Switch switchNotifications;
-    private Switch switchVibration;
     private LinearLayout layoutLanguage;
     private LinearLayout layoutAboutApp;
     private LinearLayout layoutPrivacyPolicy;
@@ -72,7 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
         
         // Notification Settings
         switchNotifications = findViewById(R.id.switch_notifications);
-        switchVibration = findViewById(R.id.switch_vibration);
         
         // General Settings
         layoutLanguage = findViewById(R.id.layout_language);
@@ -96,21 +94,10 @@ public class SettingsActivity extends AppCompatActivity {
         // Notification switches
         switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SettingsManager.setNotificationsEnabled(this, isChecked);
+            // Automatically disable sound when notifications are disabled
             if (!isChecked) {
-                // Disable vibration when notifications are disabled
-                switchVibration.setChecked(false);
-                switchVibration.setEnabled(false);
-                // Lưu vào SettingsManager để đảm bảo tắt thật sự
-                SettingsManager.setVibrationEnabled(this, false);
-                // Automatically disable sound when notifications are disabled
                 SettingsManager.setSoundEnabled(this, false);
-            } else {
-                switchVibration.setEnabled(true);
             }
-        });
-        
-        switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SettingsManager.setVibrationEnabled(this, isChecked);
         });
 
         // Language setting
@@ -134,13 +121,8 @@ public class SettingsActivity extends AppCompatActivity {
         
         // Load notification settings using SettingsManager
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
-        boolean vibrationEnabled = SettingsManager.isVibrationEnabled(this);
         
         switchNotifications.setChecked(notificationsEnabled);
-        switchVibration.setChecked(vibrationEnabled);
-        
-        // Enable/disable vibration based on notifications setting
-        switchVibration.setEnabled(notificationsEnabled);
         
         // Load language
         String language = SettingsManager.getLanguage(this);

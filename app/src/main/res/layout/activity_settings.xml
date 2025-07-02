@@ -93,41 +93,6 @@
 
             </LinearLayout>
 
-
-
-            <!-- Vibration -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:background="?android:attr/selectableItemBackground">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_vibration"
-                    android:tint="#666666"
-                    android:layout_marginEnd="16dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/settings_vibration"
-                    android:textSize="16sp"
-                    android:textColor="#333333" />
-
-                <Switch
-                    android:id="@+id/switch_vibration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-
-
         </LinearLayout>
 
         <!-- General Settings Section -->

@@ -6,7 +6,7 @@
     <string name="settings_title">Settings</string>
     <string name="settings_notifications">NOTIFICATIONS</string>
     <string name="settings_notifications_enable">Notifications</string>
-    <string name="settings_vibration">Vibration</string>
+
     <string name="settings_notification_time">Reminder time</string>
     <string name="settings_appearance">APPEARANCE</string>
     <string name="settings_dark_mode">Dark mode</string>
@@ -51,6 +51,9 @@
     <string name="cancel">Cancel</string>
     <string name="reset_success">All data has been reset successfully</string>
     <string name="reset_error">An error occurred while resetting data: %s</string>
+    
+    <!-- Theme Selection -->
+    <string name="theme_selected">Theme selected: %s</string>
     
     <!-- Notification time options -->
     <string name="notification_time_5_min">5 minutes before</string>

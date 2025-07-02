@@ -7,7 +7,7 @@
     <string name="settings_notifications">THÔNG BÁO</string>
     <string name="settings_notifications_enable">Thông báo</string>
     <string name="settings_sound">Âm thanh</string>
-    <string name="settings_vibration">Rung</string>
+
     <string name="settings_notification_time">Thời gian nhắc nhở</string>
     <string name="settings_ringtone">Âm thanh thông báo</string>
     <string name="settings_appearance">GIAO DIỆN</string>
@@ -53,6 +53,9 @@
     <string name="cancel">Hủy</string>
     <string name="reset_success">Đã reset tất cả dữ liệu thành công</string>
     <string name="reset_error">Có lỗi xảy ra khi reset dữ liệu: %s</string>
+    
+    <!-- Theme Selection -->
+    <string name="theme_selected">Đã chọn chủ đề: %s</string>
     
     <!-- Notification time options -->
     <string name="notification_time_5_min">5 phút trước</string>

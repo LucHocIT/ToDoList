@@ -63,7 +63,7 @@ public class ThemeSelectionActivity extends AppCompatActivity implements ThemeAd
     @Override
     public void onThemeSelected(ThemeManager.ThemeColor theme) {
         themeManager.setTheme(theme);
-        Toast.makeText(this, "Đã chọn chủ đề: " + theme.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.theme_selected, theme.getName()), Toast.LENGTH_SHORT).show();
         
         // Return result to MainActivity
         Intent resultIntent = new Intent();

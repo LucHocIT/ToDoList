@@ -51,7 +51,7 @@ public class TodoApplication extends Application {
             );
             channel.setDescription("Thông báo lời nhắc cho các nhiệm vụ sắp tới hạn");
             channel.enableLights(true);
-            channel.enableVibration(true);
+            channel.enableVibration(false);
             channel.setLightColor(android.graphics.Color.BLUE);
             
             NotificationManager notificationManager = getSystemService(NotificationManager.class);

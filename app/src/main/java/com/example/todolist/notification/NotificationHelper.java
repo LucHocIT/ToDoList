@@ -56,7 +56,7 @@ public class NotificationHelper {
             // Tắt âm thanh channel mặc định để app tự quản lý âm thanh
             channel.setSound(null, null);
             
-            // Tắt rung channel mặc định để app tự quản lý rung
+            // Tắt rung channel mặc định
             channel.enableVibration(false);
             
             // Cấu hình đèn LED - luôn bật để dễ nhận biết
@@ -188,19 +188,8 @@ public class NotificationHelper {
             builder.setSound(null);
         }
         
-        // Apply vibration settings - chỉ khi notifications được bật
-        if (SettingsManager.isNotificationsEnabled(context) && SettingsManager.isVibrationEnabled(context)) {
-            if (task.isImportant()) {
-                // Vibration pattern cho task quan trọng (dài hơn, mạnh hơn)
-                builder.setVibrate(new long[]{0, 300, 100, 300, 100, 300, 100, 300});
-            } else {
-                // Vibration pattern cho task bình thường (ngắn gọn)
-                builder.setVibrate(new long[]{0, 250, 250, 250});
-            }
-        } else {
-            // Tắt rung hoàn toàn
-            builder.setVibrate(null);
-        }
+        // Tắt rung hoàn toàn
+        builder.setVibrate(null);
         
         // Apply lights (luôn bật để dễ nhận biết)
         builder.setLights(task.isImportant() ? 0xFFFF0000 : 0xFF0000FF, 1000, 1000);
@@ -242,12 +231,10 @@ public class NotificationHelper {
         // Kiểm tra xem notification có được bật không
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(context);
         boolean soundEnabled = SettingsManager.isSoundEnabled(context);
-        boolean vibrationEnabled = SettingsManager.isVibrationEnabled(context);
         
         Log.d("NotificationHelper", "Notification Settings Check:");
         Log.d("NotificationHelper", "- Notifications enabled: " + notificationsEnabled);
         Log.d("NotificationHelper", "- Sound enabled: " + soundEnabled);
-        Log.d("NotificationHelper", "- Vibration enabled: " + vibrationEnabled);
         
         String ringtoneUri = SettingsManager.getRingtoneUri(context);
         String ringtoneName = SettingsManager.getRingtoneName(context);
@@ -255,15 +242,11 @@ public class NotificationHelper {
         Log.d("NotificationHelper", "- Ringtone URI: " + (ringtoneUri != null ? ringtoneUri : "Default"));
         Log.d("NotificationHelper", "- Ringtone Name: " + ringtoneName);
         
-        // Tự động tắt sound và vibration nếu notification bị tắt
+        // Tự động tắt sound nếu notification bị tắt
         if (!notificationsEnabled) {
             if (soundEnabled) {
                 SettingsManager.setSoundEnabled(context, false);
                 Log.d("NotificationHelper", "Auto-disabled sound because notifications are disabled");
-            }
-            if (vibrationEnabled) {
-                SettingsManager.setVibrationEnabled(context, false);
-                Log.d("NotificationHelper", "Auto-disabled vibration because notifications are disabled");
             }
         }
     }

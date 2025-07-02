@@ -10,7 +10,6 @@ public class SettingsManager {
     // Notification Settings Keys
     public static final String KEY_NOTIFICATIONS_ENABLED = "notifications_enabled";
     public static final String KEY_SOUND_ENABLED = "sound_enabled";
-    public static final String KEY_VIBRATION_ENABLED = "vibration_enabled";
     public static final String KEY_RINGTONE_URI = "ringtone_uri";
     public static final String KEY_RINGTONE_NAME = "ringtone_name";
     
@@ -36,14 +35,6 @@ public class SettingsManager {
     
     public static void setSoundEnabled(Context context, boolean enabled) {
         getSharedPreferences(context).edit().putBoolean(KEY_SOUND_ENABLED, enabled).apply();
-    }
-    
-    public static boolean isVibrationEnabled(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_VIBRATION_ENABLED, true);
-    }
-    
-    public static void setVibrationEnabled(Context context, boolean enabled) {
-        getSharedPreferences(context).edit().putBoolean(KEY_VIBRATION_ENABLED, enabled).apply();
     }
     
     public static String getRingtoneUri(Context context) {
@@ -82,10 +73,9 @@ public class SettingsManager {
     public static boolean isNotificationLogicValid(Context context) {
         boolean notificationsEnabled = isNotificationsEnabled(context);
         boolean soundEnabled = isSoundEnabled(context);
-        boolean vibrationEnabled = isVibrationEnabled(context);
         
-        // Nếu notifications tắt thì sound và vibration cũng phải tắt
-        if (!notificationsEnabled && (soundEnabled || vibrationEnabled)) {
+        // Nếu notifications tắt thì sound cũng phải tắt
+        if (!notificationsEnabled && soundEnabled) {
             return false;
         }
         
@@ -99,9 +89,8 @@ public class SettingsManager {
         if (!isNotificationLogicValid(context)) {
             boolean notificationsEnabled = isNotificationsEnabled(context);
             if (!notificationsEnabled) {
-                // Tắt sound và vibration nếu notifications bị tắt
+                // Tắt sound nếu notifications bị tắt
                 setSoundEnabled(context, false);
-                setVibrationEnabled(context, false);
             }
         }
     }
