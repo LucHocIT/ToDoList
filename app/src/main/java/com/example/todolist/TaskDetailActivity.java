@@ -1,5 +1,7 @@
 package com.example.todolist;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +18,7 @@ import com.example.todolist.model.Category;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.notification.ReminderScheduler;
 import com.example.todolist.util.DateTimePickerDialog;
+import com.example.todolist.util.SettingsManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -233,7 +236,7 @@ public class TaskDetailActivity extends AppCompatActivity {
                         
                         runOnUiThread(() -> {
                             setResult(RESULT_OK);
-                            Toast.makeText(this, "Đã cập nhật thời gian", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.time_updated_toast), Toast.LENGTH_SHORT).show();
                         });
                     }).start();
                 }
@@ -285,5 +288,28 @@ public class TaskDetailActivity extends AppCompatActivity {
         } catch (Exception e) {
             return dateStr; // Return original if parsing fails
         }
+    }
+    
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(updateBaseContextLocale(newBase));
+    }
+    
+    private Context updateBaseContextLocale(Context context) {
+        String languageName = SettingsManager.getLanguage(context);
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        
+        return context.createConfigurationContext(configuration);
     }
 }

@@ -37,7 +37,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Liên hệ"
+                    android:text="@string/contact_title"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="#333333"/>
@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thông tin về ứng dụng"
+                    android:text="@string/contact_subtitle"
                     android:textSize="14sp"
                     android:textColor="#666666"
                     android:layout_marginTop="4dp"/>

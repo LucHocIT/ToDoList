@@ -3,9 +3,13 @@ package com.example.todolist;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.res.Configuration;
 import android.os.Build;
 
 import com.example.todolist.notification.NotificationHelper;
+import com.example.todolist.util.SettingsManager;
+
+import java.util.Locale;
 
 public class TodoApplication extends Application {
     
@@ -13,8 +17,29 @@ public class TodoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         
+        // Apply saved language globally
+        applyLanguageFromSettings();
+        
         // Tạo notification channel khi ứng dụng khởi động
         createNotificationChannels();
+    }
+    
+    private void applyLanguageFromSettings() {
+        String savedLanguage = SettingsManager.getLanguage(this);
+        String languageCode;
+        
+        if (savedLanguage.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
     
     private void createNotificationChannels() {

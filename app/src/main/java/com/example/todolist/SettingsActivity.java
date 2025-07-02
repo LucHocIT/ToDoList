@@ -1,7 +1,9 @@
 package com.example.todolist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +20,8 @@ import com.example.todolist.manager.CategoryManager;
 import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.util.SettingsManager;
 
+import java.util.Locale;
+
 public class SettingsActivity extends AppCompatActivity {
     
     private SharedPreferences sharedPreferences;
@@ -26,7 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
     // UI Components
     private ImageView btnBack;
     private Switch switchNotifications;
-    private Switch switchSound;
     private Switch switchVibration;
     private LinearLayout layoutLanguage;
     private LinearLayout layoutAboutApp;
@@ -69,7 +72,6 @@ public class SettingsActivity extends AppCompatActivity {
         
         // Notification Settings
         switchNotifications = findViewById(R.id.switch_notifications);
-        switchSound = findViewById(R.id.switch_sound);
         switchVibration = findViewById(R.id.switch_vibration);
         
         // General Settings
@@ -95,22 +97,16 @@ public class SettingsActivity extends AppCompatActivity {
         switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SettingsManager.setNotificationsEnabled(this, isChecked);
             if (!isChecked) {
-                // Disable sound and vibration when notifications are disabled
-                switchSound.setChecked(false);
+                // Disable vibration when notifications are disabled
                 switchVibration.setChecked(false);
-                switchSound.setEnabled(false);
                 switchVibration.setEnabled(false);
                 // Lưu vào SettingsManager để đảm bảo tắt thật sự
-                SettingsManager.setSoundEnabled(this, false);
                 SettingsManager.setVibrationEnabled(this, false);
+                // Automatically disable sound when notifications are disabled
+                SettingsManager.setSoundEnabled(this, false);
             } else {
-                switchSound.setEnabled(true);
                 switchVibration.setEnabled(true);
             }
-        });
-        
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SettingsManager.setSoundEnabled(this, isChecked);
         });
         
         switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -133,18 +129,17 @@ public class SettingsActivity extends AppCompatActivity {
     private void loadCurrentSettings() {
         // Sửa logic cài đặt nếu có vấn đề
         SettingsManager.fixNotificationSettings(this);
+        // Ensure sound is disabled since we removed the sound UI
+        SettingsManager.ensureSoundDisabledWhenNotificationsOff(this);
         
         // Load notification settings using SettingsManager
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
-        boolean soundEnabled = SettingsManager.isSoundEnabled(this);
         boolean vibrationEnabled = SettingsManager.isVibrationEnabled(this);
         
         switchNotifications.setChecked(notificationsEnabled);
-        switchSound.setChecked(soundEnabled);
         switchVibration.setChecked(vibrationEnabled);
         
-        // Enable/disable sound and vibration based on notifications setting
-        switchSound.setEnabled(notificationsEnabled);
+        // Enable/disable vibration based on notifications setting
         switchVibration.setEnabled(notificationsEnabled);
         
         // Load language
@@ -154,88 +149,74 @@ public class SettingsActivity extends AppCompatActivity {
         // Load app version
         try {
             String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            tvAppVersion.setText("Phiên bản " + versionName);
+            tvAppVersion.setText(getString(R.string.version_format, versionName));
         } catch (Exception e) {
-            tvAppVersion.setText("Phiên bản 1.0");
+            tvAppVersion.setText(getString(R.string.version_default));
         }
     }
     
 
     
     private void showLanguageDialog() {
-        String[] languages = {"Tiếng Việt", "English", "中文", "한국어"};
+        String[] languages = {"Tiếng Việt", "English"};
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chọn ngôn ngữ");
+        builder.setTitle(getString(R.string.choose_language));
         builder.setItems(languages, (dialog, which) -> {
             String selectedLanguage = languages[which];
             tvLanguageValue.setText(selectedLanguage);
             SettingsManager.setLanguage(this, selectedLanguage);
-            Toast.makeText(this, "Ngôn ngữ sẽ được áp dụng khi khởi động lại ứng dụng", Toast.LENGTH_LONG).show();
+            
+            // Apply language change immediately
+            applyLanguageChange(selectedLanguage);
+            
+            Toast.makeText(this, getString(R.string.language_changed), Toast.LENGTH_SHORT).show();
         });
         builder.show();
     }
     
     private void showAboutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Về ứng dụng To-Do List");
-        builder.setMessage("To-Do List - Ứng dụng quản lý công việc thông minh\n\n" +
-                "Phiên bản: 1.0\n" +
-                "Nhà phát triển: Team Development\n" +
-                "Email: phamluc2304@gmail.com\n\n" +
-                "Ứng dụng giúp bạn quản lý công việc hàng ngày một cách hiệu quả với giao diện đẹp mắt và nhiều tính năng hữu ích.");
-        builder.setPositiveButton("Đóng", null);
+        builder.setTitle(getString(R.string.about_app_title));
+        builder.setMessage(getString(R.string.about_app_message));
+        builder.setPositiveButton(getString(R.string.close), null);
         builder.show();
     }
     
     private void showPrivacyPolicy() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chính sách bảo mật");
-        builder.setMessage("Chúng tôi cam kết bảo vệ quyền riêng tư của bạn:\n\n" +
-                "• Dữ liệu được lưu trữ cục bộ trên thiết bị\n" +
-                "• Không thu thập thông tin cá nhân\n" +
-                "• Không chia sẻ dữ liệu với bên thứ ba\n" +
-                "• Chỉ yêu cầu quyền cần thiết cho hoạt động ứng dụng");
-        builder.setPositiveButton("Đã hiểu", null);
+        builder.setTitle(getString(R.string.privacy_policy_title));
+        builder.setMessage(getString(R.string.privacy_policy_message));
+        builder.setPositiveButton(getString(R.string.understood), null);
         builder.show();
     }
     
     private void showTermsOfService() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Điều khoản sử dụng");
-        builder.setMessage("Bằng việc sử dụng ứng dụng này, bạn đồng ý:\n\n" +
-                "• Sử dụng ứng dụng cho mục đích cá nhân\n" +
-                "• Không sử dụng ứng dụng cho mục đích bất hợp pháp\n" +
-                "• Nhà phát triển không chịu trách nhiệm cho dữ liệu bị mất\n" +
-                "• Bạn có trách nhiệm sao lưu dữ liệu của mình");
-        builder.setPositiveButton("Đồng ý", null);
+        builder.setTitle(getString(R.string.terms_title));
+        builder.setMessage(getString(R.string.terms_message));
+        builder.setPositiveButton(getString(R.string.agree), null);
         builder.show();
     }
     
     private void showHelpSupport() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Trợ giúp & Hỗ trợ");
-        builder.setMessage("Cần trợ giúp? Liên hệ với chúng tôi:\n\n" +
-                "📧 Email: phamluc2304@gmail.com\n" +
-                "📱 Điện thoại: 0354337494\n\n" +
-                "Hoặc bạn có thể:\n" +
-                "• Xem hướng dẫn sử dụng trong ứng dụng\n" +
-                "• Gửi phản hồi qua email\n" +
-                "• Báo cáo lỗi để cải thiện ứng dụng");
-        builder.setPositiveButton("Gửi email", (dialog, which) -> {
+        builder.setTitle(getString(R.string.help_support_title));
+        builder.setMessage(getString(R.string.help_support_message));
+        builder.setPositiveButton(getString(R.string.send_email), (dialog, which) -> {
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
             emailIntent.setType("message/rfc822");
             emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"phamluc2304@gmail.com"});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hỗ trợ ứng dụng To-Do List");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Xin chào,\n\nTôi cần hỗ trợ về ứng dụng To-Do List:\n\n");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
             
             try {
-                startActivity(Intent.createChooser(emailIntent, "Gửi email"));
+                startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_app)));
             } catch (Exception e) {
-                Toast.makeText(this, "Không tìm thấy ứng dụng email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_email_app), Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Đóng", null);
+        builder.setNegativeButton(getString(R.string.close), null);
         builder.show();
     }
     
@@ -243,12 +224,12 @@ public class SettingsActivity extends AppCompatActivity {
     
     private void showResetDataDialog() {
         new AlertDialog.Builder(this)
-            .setTitle("Reset dữ liệu")
-            .setMessage("Bạn có chắc chắn muốn xóa tất cả dữ liệu và khôi phục về mặc định?\n\nThao tác này không thể hoàn tác!")
-            .setPositiveButton("Đồng ý", (dialog, which) -> {
+            .setTitle(getString(R.string.reset_data_title))
+            .setMessage(getString(R.string.reset_data_message))
+            .setPositiveButton(getString(R.string.agree), (dialog, which) -> {
                 performDataReset();
             })
-            .setNegativeButton("Hủy", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .show();
     }
@@ -262,7 +243,7 @@ public class SettingsActivity extends AppCompatActivity {
             // Reset app settings
             SettingsManager.resetAllSettings(this);
             
-            Toast.makeText(this, "Đã reset tất cả dữ liệu thành công", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.reset_success), Toast.LENGTH_LONG).show();
             
             // Restart app to reflect changes
             Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -272,8 +253,27 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Có lỗi xảy ra khi reset dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.reset_error, e.getMessage()), Toast.LENGTH_LONG).show();
         }
+    }
+    
+    private void applyLanguageChange(String languageName) {
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+        
+        // Recreate activity to apply changes immediately
+        recreate();
     }
 
 

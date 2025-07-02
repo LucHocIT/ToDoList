@@ -105,4 +105,13 @@ public class SettingsManager {
             }
         }
     }
+    
+    /**
+     * Auto-disable sound when notifications are disabled (since sound UI is removed)
+     */
+    public static void ensureSoundDisabledWhenNotificationsOff(Context context) {
+        if (!isNotificationsEnabled(context)) {
+            setSoundEnabled(context, false);
+        }
+    }
 }

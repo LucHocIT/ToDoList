@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tạo danh mục mới"
+            android:text="@string/create_category_title"
             android:textSize="18sp"
             android:textColor="#333333"
             android:textStyle="bold"
@@ -34,7 +34,7 @@
                 android:id="@+id/edit_category_name"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="Nhập tại đây"
+                android:hint="@string/category_name_hint"
                 android:textSize="16sp"
                 android:textColor="#333333"
                 android:background="@android:drawable/edit_text"
@@ -65,7 +65,7 @@
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="Hủy"
+                android:text="@string/btn_cancel"
                 android:textSize="14sp"
                 android:textColor="#4285F4"
                 android:gravity="center"
@@ -77,13 +77,15 @@
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="Lưu"
+                android:text="@string/btn_save"
                 android:textSize="14sp"
                 android:textColor="#4285F4"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
-                android:background="?android:attr/selectableItemBackground"/>        </LinearLayout>
+                android:background="?android:attr/selectableItemBackground"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

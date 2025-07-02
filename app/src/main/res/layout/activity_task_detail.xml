@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Chi tiết nhiệm vụ"
+                android:text="@string/task_detail_title"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#333333"
@@ -82,7 +82,7 @@
                     android:textColor="#333333"
                     android:padding="16dp"
                     android:background="@android:color/transparent"
-                    android:hint="Nhập tiêu đề nhiệm vụ"
+                    android:hint="@string/task_title_hint"
                     android:inputType="textMultiLine"
                     android:minLines="2"/>
 
@@ -115,7 +115,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ngày đến hạn"
+                        android:text="@string/due_date_label"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -157,7 +157,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thời gian"
+                        android:text="@string/time_label"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -187,7 +187,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lời nhắc"
+                        android:text="@string/reminder_label"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -195,7 +195,7 @@
                         android:id="@+id/text_reminder_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Không"
+                        android:text="@string/reminder_none"
                         android:textSize="16sp"
                         android:textColor="#333333"
                         android:layout_marginTop="2dp"/>
@@ -229,7 +229,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lặp lại"
+                        android:text="@string/repeat_label"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -237,7 +237,7 @@
                         android:id="@+id/text_repeat_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Không có"
+                        android:text="@string/repeat_none"
                         android:textSize="16sp"
                         android:textColor="#333333"
                         android:layout_marginTop="2dp"/>
@@ -272,7 +272,7 @@
                         android:id="@+id/text_priority_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Độ ưu tiên"
+                        android:text="@string/priority_label"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -280,7 +280,7 @@
                         android:id="@+id/text_priority_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thấp"
+                        android:text="@string/priority_low"
                         android:textSize="16sp"
                         android:textColor="#333333"
                         android:layout_marginTop="2dp"/>

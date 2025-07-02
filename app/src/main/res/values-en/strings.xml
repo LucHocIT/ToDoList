@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">ToDoList</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Settings strings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_notifications">NOTIFICATIONS</string>
+    <string name="settings_notifications_enable">Notifications</string>
+    <string name="settings_vibration">Vibration</string>
+    <string name="settings_notification_time">Reminder time</string>
+    <string name="settings_appearance">APPEARANCE</string>
+    <string name="settings_dark_mode">Dark mode</string>
+    <string name="settings_general">GENERAL</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_data_management">DATA MANAGEMENT</string>
+    <string name="settings_backup">Backup data</string>
+    <string name="settings_restore">Restore data</string>
+    <string name="settings_support">SUPPORT</string>
+    <string name="settings_about">About app</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_terms">Terms of use</string>
+    <string name="settings_help">Help &amp; Support</string>
+    <string name="language_changed">Language changed successfully</string>
+    <string name="choose_language">Choose language</string>
+    <string name="version_format">Version %s</string>
+    <string name="version_default">Version 1.0</string>
+    
+    <!-- Dialog strings -->
+    <string name="about_app_title">About To-Do List App</string>
+    <string name="about_app_message">To-Do List - Smart task management application\n\nVersion: 1.0\nDeveloper: Team Development\nEmail: phamluc2304@gmail.com\n\nThe app helps you manage your daily tasks efficiently with a beautiful interface and many useful features.</string>
+    <string name="close">Close</string>
+    
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="privacy_policy_message">We are committed to protecting your privacy:\n\n• Data is stored locally on your device\n• We do not collect personal information\n• We do not share data with third parties\n• We only request permissions necessary for app functionality</string>
+    <string name="understood">Understood</string>
+    
+    <string name="terms_title">Terms of Use</string>
+    <string name="terms_message">By using this application, you agree to:\n\n• Use the app for personal purposes\n• Not use the app for illegal purposes\n• The developer is not responsible for lost data\n• You are responsible for backing up your data</string>
+    <string name="agree">Agree</string>
+    
+    <string name="help_support_title">Help &amp; Support</string>
+    <string name="help_support_message">Need help? Contact us:\n\n📧 Email: phamluc2304@gmail.com\n📱 Phone: 0354337494\n\nOr you can:\n• View user guide in the app\n• Send feedback via email\n• Report bugs to improve the app</string>
+    <string name="send_email">Send email</string>
+    <string name="email_subject">To-Do List App Support</string>
+    <string name="email_body">Hello,\n\nI need support for the To-Do List app:\n\n</string>
+    <string name="choose_email_app">Send email</string>
+    <string name="no_email_app">No email app found</string>
+    
+    <string name="reset_data_title">Reset Data</string>
+    <string name="reset_data_message">Are you sure you want to delete all data and restore to default?\n\nThis action cannot be undone!</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset_success">All data has been reset successfully</string>
+    <string name="reset_error">An error occurred while resetting data: %s</string>
+    
+    <!-- Notification time options -->
+    <string name="notification_time_5_min">5 minutes before</string>
+    <string name="notification_time_10_min">10 minutes before</string>
+    <string name="notification_time_15_min">15 minutes before</string>
+    <string name="notification_time_30_min">30 minutes before</string>
+    <string name="notification_time_1_hour">1 hour before</string>
+    <string name="notification_time_2_hours">2 hours before</string>
+    <string name="notification_time_1_day">1 day before</string>
+    
+    <!-- Widget strings -->
+    <string name="widget_name">ToDo Widget</string>
+    <string name="widget_description">Display current tasks</string>
+    <string name="mini_widget_name">Mini ToDo Widget</string>
+    <string name="mini_widget_description">Small task count widget</string>
+    
+    <!-- Main Activity -->
+    <string name="all_tasks">All</string>
+    <string name="work_tasks">Work</string>
+    <string name="personal_tasks">Personal</string>
+    <string name="favorite_tasks">Favorite</string>
+    <string name="search_tasks_hint">Search tasks...</string>
+    <string name="cancel_search">Cancel search</string>
+    <string name="overdue_tasks">Overdue</string>
+    <string name="today_tasks">Today</string>
+    <string name="future_tasks">Future</string>
+    <string name="completed_today_tasks">Completed today</string>
+    <string name="empty_state_title">No tasks in this category.</string>
+    <string name="empty_state_subtitle">Tap + to create your tasks.</string>
+    <string name="check_all_completed">Check all completed tasks</string>
+    <string name="menu">Menu</string>
+    <string name="tasks">Tasks</string>
+    <string name="calendar">Calendar</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="nav_theme">Theme</string>
+    <string name="nav_utilities">Utilities</string>
+    <string name="nav_contact">Contact</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Task Actions Dialog -->
+    <string name="mark_important">Mark as important</string>
+    <string name="unmark_important">Unmark as important</string>
+    
+    <!-- Add Task Dialog -->
+    <string name="add_task_hint">Enter new task here...</string>
+    <string name="save">Save</string>
+    
+    <!-- Sort Dialog -->
+    <string name="sort_dialog_title">Tasks are sorted by</string>
+    <string name="sort_by_date_time">Due date and time</string>
+    <string name="sort_by_creation_time">Task creation time</string>
+    <string name="sort_by_alphabetical">Alphabetical A-Z</string>
+    <string name="choose">CHOOSE</string>
+    
+    <!-- Date Time Picker Dialog -->
+    <string name="time_label">Time</string>
+    <string name="reminder_label">Reminder</string>
+    <string name="repeat_label">Repeat</string>
+    <string name="none">None</string>
+    <string name="done">DONE</string>
+    
+    <!-- Navigation strings -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
+        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
+        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
+        litora torquent per conubia nostra, per inceptos himenaeos. Mauris in erat justo. Nullam
+        ultrices lorem velit, at consequat arcu elementum eget. Morbi eget maximus lorem, eu maximus est.
+        Aliquam eleifend porttitor tellus, vel lobortis elit tempus id. Donec ullamcorper est quis
+        cursus facilisis. Integer semper rutrum magna eget condimentum. Pellentesque eu finibus massa.
+        Curabitur ut molestie massa, et venenatis lacus. Sed porta magna in elit euismod, at cursus ex
+        vestibulum.
+    </string>
+    
+    <!-- Menu strings -->
+    <string name="menu_category_manager">Category Manager</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_sort_tasks">Sort Tasks</string>
+    
+    <!-- Task Detail Activity -->
+    <string name="task_detail_title">Task Details</string>
+    <string name="task_title_hint">Enter task title</string>
+    <string name="due_date_label">Due date</string>
+    <string name="reminder_none">None</string>
+    <string name="repeat_none">None</string>
+    <string name="priority_label">Priority</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="time_updated_toast">Time updated</string>
+    
+    <!-- Category Manager Activity -->
+    <string name="category_manager_title">Category Manager</string>
+    <string name="category_manager_info">Categories displayed on homepage</string>
+    <string name="category_manager_footer">Tap and drag to reorder</string>
+    <string name="category_created_toast">Category created</string>
+    <string name="category_name_required_toast">Please enter category name</string>
+    <string name="category_menu_toast">Menu for category: %s</string>
+    <string name="category_clicked_toast">Clicked: %s</string>
+    
+    <!-- Create Category Dialog -->
+    <string name="create_category_title">Create New Category</string>
+    <string name="category_name_hint">Enter here</string>
+    <string name="character_count_format">%d/50</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    
+    <!-- Contact Dialog -->
+    <string name="contact_title">Contact</string>
+    <string name="contact_subtitle">About the application</string>
+    
+    <!-- Search Activity -->
+    <string name="search_hint">Search...</string>
+    <string name="no_results_found">No results found</string>
+    
+    <!-- Completed Tasks Activity -->
+    <string name="completed_tasks_title">Completed Tasks</string>
+    <string name="no_completed_tasks">No completed tasks yet</string>
+    
+    <!-- General -->
+    <string name="back_button">Back</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="confirm">Confirm</string>
+    <string name="warning">Warning</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    
+    <!-- Widgets Dialog -->
+    <string name="widgets_dialog_title">Widget Utilities</string>
+    <string name="widgets_dialog_description">Preview widgets that can be added to your phone\'s home screen</string>
+    <string name="calendar_widget_title">Calendar Widget (3x4)</string>
+    <string name="mini_widget_title">Mini Widget (1x1)</string>
+    
+</resources>

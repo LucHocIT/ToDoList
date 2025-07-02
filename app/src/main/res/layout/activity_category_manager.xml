@@ -26,7 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Quản lí danh mục"
+            android:text="@string/category_manager_title"
             android:textSize="18sp"
             android:textColor="#333333"
             android:textStyle="bold"
@@ -42,12 +42,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Các danh mục hiện thị trên trang chủ"
+        android:text="@string/category_manager_info"
         android:textSize="14sp"
         android:textColor="#666666"
         android:gravity="center"
         android:padding="16dp"
-        android:background="#E3F2FD"/>    <!-- Categories list with RecyclerView for drag & drop -->
+        android:background="#E3F2FD"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_categories"
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nhấn và kéo để sắp xếp lại"
+        android:text="@string/category_manager_footer"
         android:textSize="12sp"
         android:textColor="#999999"
         android:gravity="center"

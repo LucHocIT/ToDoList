@@ -1,6 +1,8 @@
 package com.example.todolist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -35,6 +37,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements 
     TaskAdapter.OnTaskClickListener,
@@ -76,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Apply saved language before setting content view
+        applyLanguageFromSettings();
+        
         setContentView(R.layout.activity_main);
 
         initDatabase();
@@ -323,6 +330,28 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(updateBaseContextLocale(newBase));
+    }
+    
+    private Context updateBaseContextLocale(Context context) {
+        String languageName = com.example.todolist.util.SettingsManager.getLanguage(context);
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        
+        return context.createConfigurationContext(configuration);
+    }
     
     // ==================== INTERFACE IMPLEMENTATIONS ====================
     
@@ -490,6 +519,24 @@ public class MainActivity extends AppCompatActivity implements
         if (themeManager != null) {
             themeManager.applyCurrentTheme();
         }
+    }
+    
+    private void applyLanguageFromSettings() {
+        String savedLanguage = com.example.todolist.util.SettingsManager.getLanguage(this);
+        String languageCode;
+        
+        if (savedLanguage.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        java.util.Locale locale = new java.util.Locale(languageCode);
+        java.util.Locale.setDefault(locale);
+        
+        android.content.res.Configuration config = new android.content.res.Configuration();
+        config.locale = locale;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
     
     private void setupFirstTimeInstall() {

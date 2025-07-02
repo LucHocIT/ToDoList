@@ -65,9 +65,9 @@ public class TaskActionsDialog {
     private void updateStarText(View dialogView) {
         TextView starText = dialogView.findViewById(R.id.tv_star_text);
         if (task.isImportant()) {
-            starText.setText("Bỏ đánh dấu quan trọng");
+            starText.setText(context.getString(R.string.unmark_important));
         } else {
-            starText.setText("Đánh dấu quan trọng");
+            starText.setText(context.getString(R.string.mark_important));
         }
     }
     

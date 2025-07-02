@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_category_manager"
-        android:title="Quản lý danh mục" />
+        android:title="@string/menu_category_manager" />
     <item
         android:id="@+id/menu_search"
-        android:title="Tìm kiếm" />
+        android:title="@string/menu_search" />
     <item
         android:id="@+id/menu_sort_tasks"
-        android:title="Sắp xếp công việc" />
+        android:title="@string/menu_sort_tasks" />
 </menu>

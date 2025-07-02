@@ -43,7 +43,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Thời gian"
+                android:text="@string/time_label"
                 android:textSize="16sp"
                 android:textColor="#333333"/>
 
@@ -51,7 +51,7 @@
                 android:id="@+id/text_selected_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Không"
+                android:text="@string/none"
                 android:textSize="16sp"
                 android:textColor="#666666"/>
 
@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Lời nhắc"
+                android:text="@string/reminder_label"
                 android:textSize="16sp"
                 android:textColor="#333333"/>
 
@@ -87,7 +87,7 @@
                 android:id="@+id/text_selected_reminder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Không"
+                android:text="@string/none"
                 android:textSize="16sp"
                 android:textColor="#666666"/>
 

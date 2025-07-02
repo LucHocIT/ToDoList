@@ -1,5 +1,7 @@
 package com.example.todolist;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
+import com.example.todolist.util.SettingsManager;
 import com.example.todolist.util.TaskActionsDialog;
 
 import java.text.SimpleDateFormat;
@@ -163,5 +166,28 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
             searchResults.remove(task);
             runOnUiThread(() -> searchAdapter.updateTasks(searchResults));
         }).start();
+    }
+    
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(updateBaseContextLocale(newBase));
+    }
+    
+    private Context updateBaseContextLocale(Context context) {
+        String languageName = SettingsManager.getLanguage(context);
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        
+        return context.createConfigurationContext(configuration);
     }
 }
