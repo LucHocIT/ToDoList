@@ -96,7 +96,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tháng 6, 2025"
+                        android:text="@string/month_year_format"
                         android:textSize="8sp"
                         android:textStyle="bold"
                         android:textColor="#333333"
@@ -113,7 +113,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T2"
+                            android:text="@string/mon_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -122,7 +122,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T3"
+                            android:text="@string/tue_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -131,7 +131,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T4"
+                            android:text="@string/wed_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -140,7 +140,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T5"
+                            android:text="@string/thu_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -149,7 +149,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T6"
+                            android:text="@string/fri_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -158,7 +158,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="T7"
+                            android:text="@string/sat_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -167,7 +167,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="CN"
+                            android:text="@string/sun_short"
                             android:textSize="6sp"
                             android:textColor="#999999"
                             android:gravity="center" />
@@ -250,7 +250,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:text="3 nhiệm vụ hôm nay"
+                        android:text="@string/tasks_today_count"
                         android:textSize="6sp"
                         android:textColor="#4285F4"
                         android:gravity="center_vertical|center_horizontal"
@@ -261,7 +261,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hiển thị lịch với số lượng nhiệm vụ theo ngày"
+                    android:text="@string/calendar_widget_description"
                     android:textSize="11sp"
                     android:textColor="#999999"
                     android:layout_marginTop="8dp" />
@@ -280,7 +280,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Widget Thêm nhanh (1x1)"
+                    android:text="@string/mini_widget_title"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="#4285F4"
@@ -306,7 +306,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thêm"
+                        android:text="@string/add_button"
                         android:textSize="5sp"
                         android:textColor="#4285F4"
                         android:textStyle="bold" />
@@ -316,7 +316,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nút thêm nhiệm vụ nhanh từ màn hình chính"
+                    android:text="@string/mini_widget_description"
                     android:textSize="11sp"
                     android:textColor="#999999"
                     android:layout_marginTop="8dp" />
@@ -348,7 +348,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Để thêm widget vào màn hình chính:\n1. Nhấn giữ màn hình chính\n2. Chọn Widget\n3. Tìm To-Do List và kéo vào vị trí mong muốn"
+            android:text="@string/widget_instructions"
             android:textSize="12sp"
             android:textColor="#2196F3"
             android:lineSpacingExtra="2dp" />

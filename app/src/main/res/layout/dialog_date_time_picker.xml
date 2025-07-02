@@ -115,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Lặp lại"
+                android:text="@string/repeat_label"
                 android:textSize="16sp"
                 android:textColor="#333333"/>
 
@@ -123,7 +123,7 @@
                 android:id="@+id/text_selected_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Không"
+                android:text="@string/none"
                 android:textSize="16sp"
                 android:textColor="#666666"/>
 

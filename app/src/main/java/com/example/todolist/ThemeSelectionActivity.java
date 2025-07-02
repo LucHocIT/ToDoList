@@ -1,6 +1,8 @@
 package com.example.todolist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.adapter.ThemeAdapter;
 import com.example.todolist.manager.ThemeManager;
+import com.example.todolist.util.SettingsManager;
+
+import java.util.Locale;
 
 public class ThemeSelectionActivity extends AppCompatActivity implements ThemeAdapter.OnThemeSelectedListener {
     
@@ -74,5 +79,28 @@ public class ThemeSelectionActivity extends AppCompatActivity implements ThemeAd
         super.onResume();
         // Apply current theme when activity resumes
         themeManager.applyCurrentTheme();
+    }
+    
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(updateBaseContextLocale(newBase));
+    }
+    
+    private Context updateBaseContextLocale(Context context) {
+        String languageName = SettingsManager.getLanguage(context);
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        
+        return context.createConfigurationContext(configuration);
     }
 }

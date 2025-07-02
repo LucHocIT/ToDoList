@@ -65,7 +65,7 @@
     <string name="widget_name">ToDo Widget</string>
     <string name="widget_description">Display current tasks</string>
     <string name="mini_widget_name">Mini ToDo Widget</string>
-    <string name="mini_widget_description">Small task count widget</string>
+    <string name="mini_widget_description">Quick add task button from home screen</string>
     
     <!-- Main Activity -->
     <string name="all_tasks">All</string>
@@ -193,5 +193,40 @@
     <string name="widgets_dialog_description">Preview widgets that can be added to your phone\'s home screen</string>
     <string name="calendar_widget_title">Calendar Widget (3x4)</string>
     <string name="mini_widget_title">Mini Widget (1x1)</string>
+    
+    <!-- Advanced settings -->
+    <string name="settings_advanced">ADVANCED SETTINGS</string>
+    
+    <!-- Widget strings details -->
+    <string name="month_year_format">June 2025</string>
+    <string name="mon_short">Mon</string>
+    <string name="tue_short">Tue</string>
+    <string name="wed_short">Wed</string>
+    <string name="thu_short">Thu</string>
+    <string name="fri_short">Fri</string>
+    <string name="sat_short">Sat</string>
+    <string name="sun_short">Sun</string>
+    <string name="tasks_today_count">3 tasks today</string>
+    <string name="calendar_widget_description">Display calendar with task count per day</string>
+    <string name="add_button">Add</string>
+    <string name="widget_instructions">To add widget to home screen:\n1. Long press home screen\n2. Select Widgets\n3. Find To-Do List and drag to desired position</string>
+    
+    <!-- Task repeat options -->
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_yearly">Yearly</string>
+    
+    <!-- Priority options -->
+    <string name="priority_very_low">Very Low</string>
+    <string name="priority_very_high">Very High</string>
+    
+    <!-- Reminder options -->
+    <string name="reminder_5_min">5 minutes before</string>
+    <string name="reminder_10_min">10 minutes before</string>
+    <string name="reminder_15_min">15 minutes before</string>
+    <string name="reminder_30_min">30 minutes before</string>
+    <string name="reminder_1_hour">1 hour before</string>
+    <string name="reminder_1_day">1 day before</string>
     
 </resources>

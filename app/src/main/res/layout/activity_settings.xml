@@ -388,7 +388,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CÀI ĐẶT NÂNG CAO"
+                android:text="@string/settings_advanced"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="#4285F4"

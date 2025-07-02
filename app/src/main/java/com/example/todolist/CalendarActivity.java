@@ -1,6 +1,8 @@
 package com.example.todolist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
@@ -19,6 +21,7 @@ import com.example.todolist.model.TodoTask;
 import com.example.todolist.util.AddTaskHandler;
 import com.example.todolist.util.CalendarTaskHelper;
 import com.example.todolist.util.CalendarViewHelper;
+import com.example.todolist.util.SettingsManager;
 import com.example.todolist.util.UnifiedNavigationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -274,6 +277,29 @@ public class CalendarActivity extends AppCompatActivity
     public void onThemeChanged(com.example.todolist.manager.ThemeManager.ThemeColor themeColor) {
         // Recreate activity when theme changes
         recreate();
+    }
+    
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(updateBaseContextLocale(newBase));
+    }
+    
+    private Context updateBaseContextLocale(Context context) {
+        String languageName = SettingsManager.getLanguage(context);
+        String languageCode;
+        if (languageName.equals("English")) {
+            languageCode = "en";
+        } else {
+            languageCode = "vi";
+        }
+        
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        
+        return context.createConfigurationContext(configuration);
     }
     
     @Override

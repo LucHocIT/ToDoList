@@ -109,7 +109,7 @@
     <!-- Widget strings -->
     <string name="widget_description">Lịch tháng To-Do List</string>
     <string name="widget_name">To-Do Calendar</string>
-    <string name="mini_widget_description">Nút thêm nhiệm vụ nhanh</string>
+    <string name="mini_widget_description">Nút thêm nhiệm vụ nhanh từ màn hình chính</string>
     <string name="mini_widget_name">Quick Add Task</string>
     
     <!-- Main Activity -->
@@ -220,5 +220,40 @@
     <string name="widgets_dialog_description">Xem trước các widget có thể thêm vào màn hình chính của điện thoại</string>
     <string name="calendar_widget_title">Widget Lịch (3x4)</string>
     <string name="mini_widget_title">Widget Mini (1x1)</string>
+    
+    <!-- Advanced settings -->
+    <string name="settings_advanced">CÀI ĐẶT NÂNG CAO</string>
+    
+    <!-- Widget strings details -->
+    <string name="month_year_format">Tháng 6, 2025</string>
+    <string name="mon_short">T2</string>
+    <string name="tue_short">T3</string>
+    <string name="wed_short">T4</string>
+    <string name="thu_short">T5</string>
+    <string name="fri_short">T6</string>
+    <string name="sat_short">T7</string>
+    <string name="sun_short">CN</string>
+    <string name="tasks_today_count">3 nhiệm vụ hôm nay</string>
+    <string name="calendar_widget_description">Hiển thị lịch với số lượng nhiệm vụ theo ngày</string>
+    <string name="add_button">Thêm</string>
+    <string name="widget_instructions">Để thêm widget vào màn hình chính:\n1. Nhấn giữ màn hình chính\n2. Chọn Widget\n3. Tìm To-Do List và kéo vào vị trí mong muốn</string>
+    
+    <!-- Task repeat options -->
+    <string name="repeat_daily">Hàng ngày</string>
+    <string name="repeat_weekly">Hàng tuần</string>
+    <string name="repeat_monthly">Hàng tháng</string>
+    <string name="repeat_yearly">Hàng năm</string>
+    
+    <!-- Priority options -->
+    <string name="priority_very_low">Rất thấp</string>
+    <string name="priority_very_high">Rất cao</string>
+    
+    <!-- Reminder options -->
+    <string name="reminder_5_min">5 phút trước</string>
+    <string name="reminder_10_min">10 phút trước</string>
+    <string name="reminder_15_min">15 phút trước</string>
+    <string name="reminder_30_min">30 phút trước</string>
+    <string name="reminder_1_hour">1 giờ trước</string>
+    <string name="reminder_1_day">1 ngày trước</string>
     
 </resources>
