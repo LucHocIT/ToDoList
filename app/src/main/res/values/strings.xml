@@ -200,11 +200,12 @@
     <!-- Contact Dialog -->
     <string name="contact_title">Liên hệ</string>
     <string name="contact_subtitle">Thông tin về ứng dụng</string>
-    
+
+    <string name="language_changed_restart_prompt">Ngôn ngữ đã được thay đổi. Vui lòng khởi động lại ứng dụng để áp dụng.</string>
     <!-- Search Activity -->
     <string name="search_hint">Tìm kiếm...</string>
     <string name="no_results_found">Không tìm thấy kết quả</string>
-    
+
     <!-- Completed Tasks Activity -->
     <string name="completed_tasks_title">Nhiệm vụ đã hoàn thành</string>
     <string name="no_completed_tasks">Chưa có nhiệm vụ nào hoàn thành</string>

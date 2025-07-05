@@ -136,27 +136,32 @@ public class SettingsActivity extends AppCompatActivity {
             tvAppVersion.setText(getString(R.string.version_default));
         }
     }
-    
 
-    
+
+
     private void showLanguageDialog() {
         String[] languages = {"Tiếng Việt", "English"};
-        
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.choose_language));
         builder.setItems(languages, (dialog, which) -> {
             String selectedLanguage = languages[which];
             tvLanguageValue.setText(selectedLanguage);
             SettingsManager.setLanguage(this, selectedLanguage);
-            
-            // Apply language change immediately
+
+            // Apply language change by prompting user to restart
             applyLanguageChange(selectedLanguage);
-            
-            Toast.makeText(this, getString(R.string.language_changed), Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(this, getString(R.string.language_changed_restart_prompt), Toast.LENGTH_LONG).show();
+
+            // Optionally, you can close the settings activity or even the app to force a restart
+            // Forcing app exit is generally not recommended, but for language change, it's a common pattern.
+            // finishAffinity(); // Closes all activities in the task
         });
         builder.show();
     }
-    
+
+
     private void showAboutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.about_app_title));
@@ -238,7 +243,7 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.reset_error, e.getMessage()), Toast.LENGTH_LONG).show();
         }
     }
-    
+
     private void applyLanguageChange(String languageName) {
         String languageCode;
         if (languageName.equals("English")) {
@@ -246,16 +251,16 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             languageCode = "vi";
         }
-        
+
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
-        
+
         Configuration config = new Configuration();
         config.locale = locale;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        
+
         // Recreate activity to apply changes immediately
-        recreate();
+
     }
 
 
