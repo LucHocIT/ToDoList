@@ -55,7 +55,7 @@
                         android:layout_marginEnd="12dp"
                         android:text="@string/all_tasks"
                         android:textColor="@android:color/white"
-                        android:backgroundTint="#4285F4"
+                        android:backgroundTint="#5B72D9"
                         android:textSize="14sp"
                         android:minWidth="100dp"
                         android:paddingHorizontal="16dp"/>
