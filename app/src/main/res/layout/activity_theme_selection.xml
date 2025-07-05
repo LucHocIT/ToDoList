@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Chọn chủ đề"
+            android:text="@string/select_theme"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#333333"
@@ -42,7 +42,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chọn màu chủ đề cho ứng dụng"
+        android:text="@string/select_theme_color"
         android:textSize="16sp"
         android:textColor="#666666"
         android:padding="16dp"
@@ -61,7 +61,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chủ đề sẽ được áp dụng ngay lập tức"
+        android:text="@string/theme_use_now"
         android:textSize="14sp"
         android:textColor="#999999"
         android:gravity="center"

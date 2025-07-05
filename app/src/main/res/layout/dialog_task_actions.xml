@@ -63,12 +63,13 @@
                 android:layout_marginEnd="12dp" />
 
             <TextView
+                android:id="@+id/tv_cl_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Xóa nhiệm vụ"
-                android:textSize="13sp"
-                android:textColor="#F44336" />
+                android:text="@string/delete_task"
+                android:textColor="#F44336"
+                android:textSize="13sp" />
 
         </LinearLayout>
 

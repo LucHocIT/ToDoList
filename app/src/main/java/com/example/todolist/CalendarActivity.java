@@ -29,11 +29,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
+import java.util.Locale; // Đảm bảo import này
 
-public class CalendarActivity extends AppCompatActivity 
-    implements CalendarViewHelper.OnDayClickListener, CalendarTaskHelper.TaskLoadListener,
-               NavigationDrawerManager.NavigationListener, ThemeManager.ThemeChangeListener {
+public class CalendarActivity extends AppCompatActivity
+        implements CalendarViewHelper.OnDayClickListener, CalendarTaskHelper.TaskLoadListener,
+        NavigationDrawerManager.NavigationListener, ThemeManager.ThemeChangeListener {
 
     private TextView tvMonth, tvYear;
     private GridLayout calendarGrid;
@@ -42,42 +42,43 @@ public class CalendarActivity extends AppCompatActivity
     private FloatingActionButton fabAdd;
     private View calendarScrollView, weekViewContainer;
     private LinearLayout weekGrid;
-    
+
     // Navigation components
     private DrawerLayout drawerLayout;
     private NavigationDrawerManager navigationDrawerManager;
     private ThemeManager themeManager;
-    
+
     private Calendar currentCalendar;
     private Calendar selectedDate;
+    // Sử dụng Locale.getDefault() để hiển thị tháng theo ngôn ngữ đã chọn
     private SimpleDateFormat monthFormat;
     private SimpleDateFormat yearFormat;
-    
+
     private TodoDatabase database;
     private AddTaskHandler addTaskHandler;
     private int selectedDay = -1;
     private boolean isWeekView = false;
     private List<TodoTask> tasksForSelectedDate = new ArrayList<>();
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-        
+
         initViews();
         initManagers();
         initCalendar();
         setupBottomNavigation();
         loadCalendar();
-        
+
         // Handle drawer open intent from other activities
         handleDrawerIntent();
     }
-    
+
     private void initViews() {
         // Navigation components
         drawerLayout = findViewById(R.id.drawer_layout);
-        
+
         // Calendar components
         tvMonth = findViewById(R.id.tv_month);
         tvYear = findViewById(R.id.tv_year);
@@ -91,61 +92,62 @@ public class CalendarActivity extends AppCompatActivity
         calendarScrollView = findViewById(R.id.calendar_scroll_view);
         weekViewContainer = findViewById(R.id.week_view_container);
         weekGrid = findViewById(R.id.week_grid);
-        
+
         database = TodoDatabase.getInstance(this);
         setupClickListeners();
     }
-    
+
     private void initManagers() {
         // Initialize NavigationDrawerManager
         navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
-        
+
         // Initialize ThemeManager
         themeManager = new ThemeManager(this, this);
-        
+
         // Apply current theme
         if (themeManager != null) {
             themeManager.applyCurrentTheme();
         }
     }
-    
+
     private void setupClickListeners() {
         addTaskHandler = new AddTaskHandler(this, task -> {
             loadCalendar();
             loadTasksForSelectedDate();
         });
-        
+
         btnPrevMonth.setOnClickListener(v -> navigateMonth(-1));
         btnNextMonth.setOnClickListener(v -> navigateMonth(1));
         btnToggleCalendar.setOnClickListener(v -> toggleCalendarView());
-        
+
         fabAdd.setOnClickListener(v -> {
             String selectedDateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
             addTaskHandler.showAddTaskDialog(selectedDateString);
         });
     }
-    
+
     private void initCalendar() {
         currentCalendar = Calendar.getInstance();
         selectedDate = Calendar.getInstance();
-        monthFormat = new SimpleDateFormat("MMMM", new Locale("vi", "VN"));
+        // Sửa đổi: Sử dụng Locale.getDefault() để định dạng tháng theo ngôn ngữ hiện tại của ứng dụng
+        monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         yearFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         selectedDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
     }
-    
+
     private void setupBottomNavigation() {
         LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
-        
+
         // Use unified navigation helper
-        UnifiedNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks, 
-                                                     btnNavCalendar, null, "calendar");
-        
+        UnifiedNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks,
+                btnNavCalendar, null, "calendar");
+
         // Initialize drawer for CalendarActivity
         UnifiedNavigationHelper.initializeDrawerForActivity(this, drawerLayout, this);
     }
-    
+
     /**
      * Handle drawer open intent from other activities
      */
@@ -160,31 +162,32 @@ public class CalendarActivity extends AppCompatActivity
             });
         }
     }
-    
+
     private void loadCalendar() {
         updateMonthYearDisplay();
-        
+
         if (isWeekView) {
             CalendarViewHelper.loadWeekView(this, weekGrid, selectedDate, selectedDay, this);
         } else {
-            CalendarViewHelper.loadMonthCalendar(this, calendarGrid, currentCalendar, 
-                                               selectedDate, selectedDay, this);
+            CalendarViewHelper.loadMonthCalendar(this, calendarGrid, currentCalendar,
+                    selectedDate, selectedDay, this);
         }
-        
+
         loadTasksForSelectedDate();
     }
-    
+
     private void updateMonthYearDisplay() {
         Calendar displayCalendar = isWeekView ? selectedDate : currentCalendar;
-        tvMonth.setText("THÁNG " + (displayCalendar.get(Calendar.MONTH) + 1));
+        // Sửa đổi: Lấy tên tháng từ SimpleDateFormat đã được khởi tạo với Locale.getDefault()
+        tvMonth.setText(monthFormat.format(displayCalendar.getTime()).toUpperCase()); // Chuyển sang chữ hoa nếu muốn
         tvYear.setText(yearFormat.format(displayCalendar.getTime()));
     }
-    
+
     private void loadTasksForSelectedDate() {
         String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
         CalendarTaskHelper.loadTasksForDate(this, dateString, this);
     }
-    
+
     // Implementation of CalendarViewHelper.OnDayClickListener
     @Override
     public void onDayClick(int day) {
@@ -194,7 +197,7 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
         loadCalendar();
     }
-    
+
     @Override
     public void onWeekDayClick(int day, Calendar dayCalendar) {
         selectedDay = day;
@@ -203,22 +206,22 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
         loadCalendar();
     }
-    
+
     // Implementation of CalendarTaskHelper.TaskLoadListener
     @Override
     public void onTasksLoaded(List<TodoTask> tasks) {
         tasksForSelectedDate = tasks;
         runOnUiThread(() -> updateTaskDisplay());
     }
-    
+
     private void updateTaskDisplay() {
         CalendarTaskHelper.updateTaskDisplay(this, taskInfoContainer, tasksForSelectedDate);
-        
+
         if (isWeekView) {
             CalendarTaskHelper.updateTaskDisplay(this, weekTaskInfoContainer, tasksForSelectedDate);
         }
     }
-    
+
     private void navigateMonth(int direction) {
         if (isWeekView) {
             selectedDate.add(Calendar.WEEK_OF_YEAR, direction);
@@ -228,16 +231,16 @@ public class CalendarActivity extends AppCompatActivity
         } else {
             currentCalendar.add(Calendar.MONTH, direction);
             if (currentCalendar.get(Calendar.YEAR) != selectedDate.get(Calendar.YEAR) ||
-                currentCalendar.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH)) {
+                    currentCalendar.get(Calendar.MONTH) != selectedDate.get(Calendar.MONTH)) {
                 selectedDay = -1;
             }
         }
         loadCalendar();
     }
-    
+
     private void toggleCalendarView() {
         isWeekView = !isWeekView;
-        
+
         if (isWeekView) {
             calendarScrollView.setVisibility(View.GONE);
             weekViewContainer.setVisibility(View.VISIBLE);
@@ -247,61 +250,64 @@ public class CalendarActivity extends AppCompatActivity
             weekViewContainer.setVisibility(View.GONE);
             btnToggleCalendar.setImageResource(R.drawable.ic_expand_less);
         }
-        
+
         loadCalendar();
     }
-    
+
     // NavigationDrawerManager.NavigationListener implementations
     @Override
     public void onThemeSelected() {
         // Theme selection handled by NavigationDrawerManager
     }
-    
+
     @Override
     public void onUtilitiesSelected() {
         // Utilities handled by NavigationDrawerManager
     }
-    
+
     @Override
     public void onContactSelected() {
         // Contact handled by NavigationDrawerManager
     }
-    
+
     @Override
     public void onSettingsSelected() {
         // Settings handled by NavigationDrawerManager
     }
-    
+
     // ThemeManager.ThemeChangeListener implementation
     @Override
     public void onThemeChanged(com.example.todolist.manager.ThemeManager.ThemeColor themeColor) {
         // Recreate activity when theme changes
         recreate();
     }
-    
+
+    // --- PHẦN QUAN TRỌNG NHẤT ĐỂ ÁP DỤNG NGÔN NGỮ ---
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(updateBaseContextLocale(newBase));
     }
-    
+
     private Context updateBaseContextLocale(Context context) {
-        String languageName = SettingsManager.getLanguage(context);
+        String languageName = SettingsManager.getLanguage(context); // Lấy ngôn ngữ đã lưu
         String languageCode;
         if (languageName.equals("English")) {
             languageCode = "en";
         } else {
-            languageCode = "vi";
+            languageCode = "vi"; // Mặc định là tiếng Việt
         }
-        
+
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
-        
+
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(locale);
-        
+
+        // Trả về một Context mới với cấu hình đã cập nhật
         return context.createConfigurationContext(configuration);
     }
-    
+    // --- KẾT THÚC PHẦN QUAN TRỌNG NHẤT ---
+
     @Override
     public void onBackPressed() {
         if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -311,3 +317,4 @@ public class CalendarActivity extends AppCompatActivity
         }
     }
 }
+

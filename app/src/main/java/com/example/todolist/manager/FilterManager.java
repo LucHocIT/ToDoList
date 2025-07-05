@@ -300,11 +300,11 @@ public class FilterManager {
         if (futureTasksAdapter != null) futureTasksAdapter.updateTasks(filteredFutureTasks);
         if (completedTodayTasksAdapter != null) completedTodayTasksAdapter.updateTasks(filteredCompletedTodayTasks);
     }
-    
+
     private void updateEmptyState(String filter) {
-        boolean hasAnyTasks = !filteredOverdueTasks.isEmpty() || !filteredTodayTasks.isEmpty() || 
-                              !filteredFutureTasks.isEmpty() || !filteredCompletedTodayTasks.isEmpty();
-        
+        boolean hasAnyTasks = !filteredOverdueTasks.isEmpty() || !filteredTodayTasks.isEmpty() ||
+                !filteredFutureTasks.isEmpty() || !filteredCompletedTodayTasks.isEmpty();
+
         String message;
         if (hasAnyTasks) {
             layoutEmptyState.setVisibility(View.GONE);
@@ -312,18 +312,19 @@ public class FilterManager {
         } else {
             layoutEmptyState.setVisibility(View.VISIBLE);
             if (filter.equalsIgnoreCase("all")) {
-                message = "Không có nhiệm vụ nào.";
+
+                message = context.getString(R.string.no_tasks_message);
             } else {
-                message = "Không có nhiệm vụ nào trong danh mục \"" + filter + "\".";
+
+                message = context.getString(R.string.no_tasks_in_category_message, filter);
             }
             tvEmptyTitle.setText(message);
         }
-        
+
         if (listener != null) {
             listener.onEmptyStateChanged(!hasAnyTasks, message);
         }
     }
-    
     // Getters
     public String getCurrentFilter() { return currentFilter; }
     public SortType getCurrentSortType() { return currentSortType; }

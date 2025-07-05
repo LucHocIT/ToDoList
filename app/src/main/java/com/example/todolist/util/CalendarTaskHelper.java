@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.todolist.R;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 
@@ -47,18 +48,20 @@ public class CalendarTaskHelper {
             }
         }
     }
-    
+
     private static void addEmptyTaskMessage(Context context, LinearLayout container) {
         TextView noTasksView = new TextView(context);
-        noTasksView.setText("Không có nhiệm vụ nào trong ngày.");
+
+        noTasksView.setText(context.getString(R.string.no_tasks_today_message));
         noTasksView.setTextSize(16);
         noTasksView.setTextColor(Color.parseColor("#666666"));
         noTasksView.setGravity(android.view.Gravity.CENTER);
         noTasksView.setPadding(16, 32, 16, 8);
         container.addView(noTasksView);
-        
+
         TextView addTaskPrompt = new TextView(context);
-        addTaskPrompt.setText("Nhấn + để tạo công việc của bạn.");
+
+        addTaskPrompt.setText(context.getString(R.string.add_task_prompt));
         addTaskPrompt.setTextSize(14);
         addTaskPrompt.setTextColor(Color.parseColor("#999999"));
         addTaskPrompt.setGravity(android.view.Gravity.CENTER);

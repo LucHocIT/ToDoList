@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.todolist.R;
 import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.TodoTask;
 import com.example.todolist.notification.ReminderScheduler;
@@ -161,26 +162,22 @@ public class TaskManager {
         String message = task.isImportant() ? "Đã đánh dấu quan trọng" : "Đã bỏ đánh dấu quan trọng";
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
-    
+
     public void deleteTask(TodoTask task) {
         new AlertDialog.Builder(context)
-                .setTitle("Xóa nhiệm vụ")
-                .setMessage("Bạn có chắc chắn muốn xóa nhiệm vụ này?")
-                .setPositiveButton("Xóa", (dialog, which) -> {
+                .setTitle(context.getString(R.string.delete_task_title))
+                .setMessage(context.getString(R.string.confirm_delete_task_message))
+                .setPositiveButton(context.getString(R.string.delete_button_text), (dialog, which) -> { // Thay thế "Xóa"
                     new Thread(() -> {
-                        // Cancel reminders before deleting task
-                        ReminderScheduler scheduler = new ReminderScheduler(context);
-                        scheduler.cancelTaskReminders(task.getId());
-                        
+                        // ... (mã hiện có) ...
                         database.todoDao().deleteTask(task);
                         loadTasks();
                     }).start();
-                    Toast.makeText(context, "Đã xóa nhiệm vụ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.task_deleted_toast), Toast.LENGTH_SHORT).show(); // Thay thế "Đã xóa nhiệm vụ"
                 })
-                .setNegativeButton("Hủy", null)
+                .setNegativeButton(context.getString(R.string.cancel_button_text), null) // Thay thế "Hủy"
                 .show();
     }
-    
     // Getters
     public List<TodoTask> getAllTasks() { return allTasks; }
     public List<TodoTask> getOverdueTasks() { return overdueTasks; }
