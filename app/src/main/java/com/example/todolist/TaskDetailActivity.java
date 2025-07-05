@@ -102,7 +102,7 @@ public class TaskDetailActivity extends AppCompatActivity {
             } else {
                 // Hiển thị độ ưu tiên cho task chưa hoàn thành
                 textPriorityLabel.setText("Độ ưu tiên");
-                textPriorityValue.setText(currentTask.isImportant() ? "Cao" : "Thấp");
+                textPriorityValue.setText(currentTask.isImportant() ? "Có" : "Không");
             }
             
             // Set repeat information

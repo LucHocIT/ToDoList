@@ -176,6 +176,9 @@
     <string name="priority_low">Thấp</string>
     <string name="priority_medium">Trung bình</string>
     <string name="priority_high">Cao</string>
+    <string name="priority_yes">Có</string>
+    <string name="priority_no">Không</string>
+
     <string name="time_updated_toast">Đã cập nhật thời gian</string>
     
     <!-- Category Manager Activity -->

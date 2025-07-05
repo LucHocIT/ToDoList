@@ -272,7 +272,7 @@
                         android:id="@+id/text_priority_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/priority_label"
+                        android:text="@string/priority_no"
                         android:textSize="14sp"
                         android:textColor="#666666"/>
 
@@ -280,7 +280,7 @@
                         android:id="@+id/text_priority_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/priority_low"
+                        android:text="@string/priority_label"
                         android:textSize="16sp"
                         android:textColor="#333333"
                         android:layout_marginTop="2dp"/>

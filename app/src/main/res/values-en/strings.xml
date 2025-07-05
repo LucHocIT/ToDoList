@@ -149,6 +149,9 @@
     <string name="priority_low">Low</string>
     <string name="priority_medium">Medium</string>
     <string name="priority_high">High</string>
+    <string name="priority_yes">Yes</string>
+    <string name="priority_no">No</string>
+
     <string name="time_updated_toast">Time updated</string>
     
     <!-- Category Manager Activity -->
