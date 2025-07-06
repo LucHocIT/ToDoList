@@ -262,6 +262,8 @@
     <string name="reminder_30_min">30 phút trước</string>
     <string name="reminder_1_hour">1 giờ trước</string>
     <string name="reminder_1_day">1 ngày trước</string>
+    <string name="choose_reminder">Chọn lời nhắc</string>
+    <string name="choose_repeat_option">Chọn lặp lại</string>
     <string name="delete_task_title">Xóa nhiệm vụ</string>
     <string name="confirm_delete_task_message">Bạn có chắc chắn muốn xóa nhiệm vụ này?</string>
     <string name="delete_button_text">Xóa</string>
@@ -272,8 +274,15 @@
     <string name="no_tasks_in_category_message">Không có nhiệm vụ nào trong danh mục \"%1$s\".</string>
     <string name="no_tasks_today_message">Không có nhiệm vụ nào trong ngày.</string>
     <string name="add_task_prompt">Nhấn + để tạo công việc của bạn.</string>
-
+    <string name="status_label">Trạng thái</string>
+    <string name="status_completed">Đã hoàn thành</string>
     <string name="select_theme">Chọn chủ đề</string>
     <string name="select_theme_color">Chọn màu chủ đề cho ứng dụng</string>
     <string name="theme_use_now">Chủ đề được áp dụng ngay lập tức</string>
+    <string name="no_category">Không có thể loại</string>
+    <string name="notification">Thông báo</string>
+    <string name="no_repeat">Không có</string>
+    <string name="title_required">Vui lòng nhập tiêu đề nhiệm vụ</string>
+    <string name="task_added">Đã thêm nhiệm vụ mới</string>
+    <string name="add_cate">Tạo thêm danh mục mới</string>
 </resources>

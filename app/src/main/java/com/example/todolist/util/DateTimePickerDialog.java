@@ -32,25 +32,28 @@ public class DateTimePickerDialog {
     private LinearLayout layoutRepeatPicker;
     private TextView btnCancel;
     private TextView btnSave;
-    
+
     private String selectedDate = "";
-    private String selectedTime = "Không";
-    private String selectedReminder = "Không";
-    private String selectedRepeat = "Không";
-    
+    private String selectedTime;
+    private String selectedReminder;
+    private String selectedRepeat;
+
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-    
+
     public DateTimePickerDialog(Context context, OnDateTimeSelectedListener listener) {
         this.context = context;
         this.listener = listener;
+        this.selectedTime = context.getString(R.string.none);
+        this.selectedReminder = context.getString(R.string.none);
+        this.selectedRepeat = context.getString(R.string.none);
         initDialog();
     }
-    
+
     private void initDialog() {
         dialog = new Dialog(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_date_time_picker, null);
         dialog.setContentView(view);
-        
+
         // Initialize views
         calendarView = view.findViewById(R.id.calendar_view);
         textSelectedTime = view.findViewById(R.id.text_selected_time);
@@ -61,52 +64,59 @@ public class DateTimePickerDialog {
         layoutRepeatPicker = view.findViewById(R.id.layout_repeat_picker);
         btnCancel = view.findViewById(R.id.btn_cancel);
         btnSave = view.findViewById(R.id.btn_save);
-        
+
         setupListeners();
         setupDefaultValues();
     }
-    
+
     private void setupDefaultValues() {
         Calendar today = Calendar.getInstance();
         selectedDate = dateFormat.format(today.getTime());
         calendarView.setDate(today.getTimeInMillis());
+        textSelectedTime.setText(selectedTime);
+        textSelectedReminder.setText(selectedReminder);
+        textSelectedRepeat.setText(selectedRepeat);
     }
-    
+
     private void setupListeners() {
         // Calendar listener
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, dayOfMonth);
             selectedDate = dateFormat.format(calendar.getTime());
+            updateRepeatState(); // Đã thêm ở lần trước
         });
-        
+
         // Time picker
         layoutTimePicker.setOnClickListener(v -> showTimePicker());
-        
+
         // Reminder picker - only enabled when time is set
         layoutReminderPicker.setOnClickListener(v -> {
-            if (selectedTime != null && !selectedTime.equals("Không")) {
+            // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
+            if (selectedTime != null && !selectedTime.equals(context.getString(R.string.none))) {
                 showReminderPicker();
             }
         });
-        
+
         // Repeat picker
         layoutRepeatPicker.setOnClickListener(v -> showRepeatPicker());
-        
+
         // Action buttons
         btnCancel.setOnClickListener(v -> dialog.dismiss());
-        
+
         btnSave.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDateTimeSelected(selectedDate, selectedTime, selectedReminder, selectedRepeat);
             }
             dialog.dismiss();
         });
-        
-        // Initial state update
+
+        // Initial state updates
         updateReminderState();
+        updateRepeatState();
     }
-    
+
+
     private void showTimePicker() {
         Calendar now = Calendar.getInstance();
         TimePickerDialog timePickerDialog = new TimePickerDialog(
@@ -122,51 +132,83 @@ public class DateTimePickerDialog {
         );
         timePickerDialog.show();
     }
-    
+
     private void updateReminderState() {
-        boolean hasTime = selectedTime != null && !selectedTime.equals("Không");
-        
-        // Enable/disable reminder picker
+
+        boolean hasTime = selectedTime != null && !selectedTime.equals(context.getString(R.string.none));
+
+
         layoutReminderPicker.setEnabled(hasTime);
         layoutReminderPicker.setAlpha(hasTime ? 1.0f : 0.5f);
-        
-        // Set default reminder to "5 phút trước" when time is selected
-        if (hasTime && selectedReminder.equals("Không")) {
-            selectedReminder = "5 phút trước";
+
+
+        if (hasTime && selectedReminder.equals(context.getString(R.string.none))) {
+            selectedReminder = context.getString(R.string.reminder_5_min);
             textSelectedReminder.setText(selectedReminder);
         }
-        
-        // Reset reminder if no time selected
+
+
         if (!hasTime) {
-            selectedReminder = "Không";
+            selectedReminder = context.getString(R.string.none);
             textSelectedReminder.setText(selectedReminder);
         }
     }
-    
+    private void updateRepeatState() {
+
+        boolean hasDate = selectedDate != null && !selectedDate.isEmpty();
+
+        layoutRepeatPicker.setEnabled(hasDate);
+        layoutRepeatPicker.setAlpha(hasDate ? 1.0f : 0.5f);
+
+
+        if (hasDate && selectedRepeat.equals(context.getString(R.string.none))) {
+            selectedRepeat = context.getString(R.string.repeat_daily);
+            textSelectedRepeat.setText(selectedRepeat);
+        }
+
+
+        if (!hasDate) {
+            selectedRepeat = context.getString(R.string.none);
+            textSelectedRepeat.setText(selectedRepeat);
+        }
+    }
     private void showReminderPicker() {
-        String[] reminderOptions = {"Không", "5 phút trước", "15 phút trước", "30 phút trước", "1 giờ trước"};
-        
+        String[] reminderOptions = {
+                context.getString(R.string.none),                // "Không"
+                context.getString(R.string.reminder_5_min),  // "5 phút trước"
+                context.getString(R.string.reminder_15_min), // "15 phút trước"
+                context.getString(R.string.reminder_30_min), // "30 phút trước"
+                context.getString(R.string.reminder_1_hour)    // "1 giờ trước"
+        };
+
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-        builder.setTitle("Chọn lời nhắc");
+        // Thay thế "Chọn lời nhắc" bằng tài nguyên chuỗi
+        builder.setTitle(context.getString(R.string.choose_reminder));
         builder.setItems(reminderOptions, (dialog, which) -> {
             selectedReminder = reminderOptions[which];
             textSelectedReminder.setText(selectedReminder);
         });
         builder.show();
     }
-    
     private void showRepeatPicker() {
-        String[] repeatOptions = {"Không", "Hàng ngày", "Hàng tuần", "Hàng tháng", "Hàng năm"};
-        
+        String[] repeatOptions = {
+                context.getString(R.string.none),         // "Không"
+                context.getString(R.string.repeat_daily),   // "Hàng ngày"
+                context.getString(R.string.repeat_weekly),  // "Hàng tuần"
+                context.getString(R.string.repeat_monthly), // "Hàng tháng"
+                context.getString(R.string.repeat_yearly)   // "Hàng năm"
+        };
+
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
-        builder.setTitle("Chọn lặp lại");
+        // Thay thế "Chọn lặp lại" bằng tài nguyên chuỗi
+        builder.setTitle(context.getString(R.string.choose_repeat_option));
         builder.setItems(repeatOptions, (dialog, which) -> {
             selectedRepeat = repeatOptions[which];
             textSelectedRepeat.setText(selectedRepeat);
         });
         builder.show();
     }
-    
+
     public void setInitialValues(String date, String time, String reminder, String repeat) {
         if (date != null && !date.isEmpty()) {
             selectedDate = date;
@@ -196,6 +238,7 @@ public class DateTimePickerDialog {
         
         // Update reminder state based on time
         updateReminderState();
+        updateRepeatState();
     }
     
     public void show() {

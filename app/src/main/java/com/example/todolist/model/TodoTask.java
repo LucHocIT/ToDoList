@@ -1,14 +1,18 @@
 package com.example.todolist.model;
 
+import android.content.Context;
+
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+import com.example.todolist.R;
 
 @Entity(tableName = "todo_tasks")
 public class TodoTask {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    
+
     private String title;
     private String description;
     private String dueDate;
@@ -19,31 +23,37 @@ public class TodoTask {
     private String reminderType;
     private boolean hasReminder;
     private String attachments;
-    private String repeatType; // Không có, Hàng ngày, Hàng tuần, Hàng tháng
+    private String repeatType;
     private boolean isRepeating;
-    private String completionDate; // Ngày thực tế hoàn thành task
-    
+    private String completionDate;
+
     public TodoTask() {
+        // Required by Room
     }
-    
+
+    // Constructor hỗ trợ đa ngôn ngữ bằng cách truyền Context
     @Ignore
-    public TodoTask(String title, String description, String dueDate, String dueTime) {
+    public TodoTask(Context context, String title, String description, String dueDate, String dueTime) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.dueTime = dueTime;
+
         this.isCompleted = false;
         this.isImportant = false;
-        this.category = "Không có thể loại";
-        this.reminderType = "Thông báo";
+
+        // Lấy chuỗi từ strings.xml
+        this.category = context.getString(R.string.no_category);
+        this.reminderType = context.getString(R.string.notification);
+        this.repeatType = context.getString(R.string.no_repeat);
+
         this.hasReminder = false;
         this.attachments = "";
-        this.repeatType = "Không có";
         this.isRepeating = false;
         this.completionDate = null;
     }
-    
-    // Getters
+
+    // Getter và Setter giữ nguyên như bạn đã viết
     public int getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -58,8 +68,7 @@ public class TodoTask {
     public String getRepeatType() { return repeatType; }
     public boolean isRepeating() { return isRepeating; }
     public String getCompletionDate() { return completionDate; }
-    
-    // Setters
+
     public void setId(int id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }

@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tạo danh mục mới"
+            android:text="@string/add_cate"
             android:textSize="16sp"
             android:textColor="#4285F4"
             android:textStyle="bold"/>

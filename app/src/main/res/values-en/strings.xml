@@ -235,6 +235,8 @@
     <string name="reminder_30_min">30 minutes before</string>
     <string name="reminder_1_hour">1 hour before</string>
     <string name="reminder_1_day">1 day before</string>
+    <string name="choose_reminder">Choose reminder</string>
+    <string name="choose_repeat_option">Choose repeat option</string>
     <string name="delete_task_title">Delete task</string>
     <string name="confirm_delete_task_message">Are you sure you want to delete this task?</string>
     <string name="delete_button_text">Delete</string>
@@ -248,4 +250,12 @@
     <string name="select_theme">Choose Theme</string>
     <string name="select_theme_color">Choose a theme color for the app</string>
     <string name="theme_use_now">The theme is applied immediately</string>
+    <string name="status_label">Status</string>
+    <string name="status_completed">Completed</string>
+    <string name="no_category">No category</string>
+    <string name="notification">Notification</string>
+    <string name="no_repeat">None</string>
+    <string name="title_required">Please enter a task title</string>
+    <string name="task_added">New task added</string>
+    <string name="add_cate">Add New Category </string>
 </resources>
