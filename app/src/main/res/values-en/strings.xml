@@ -258,4 +258,10 @@
     <string name="title_required">Please enter a task title</string>
     <string name="task_added">New task added</string>
     <string name="add_cate">Add New Category </string>
+    <string name="completed_history_title">Completed history by time</string>
+    <string name="no_completed_tasks_message">No tasks completed yet</string>
+    <string name="complete_first_task_prompt">Complete your first task to see it here</string>
+    <string name="delete_all_title">Delete All</string>
+    <string name="confirm_delete_all_completed_tasks">Are you sure you want to delete all completed tasks?</string>
+
 </resources>

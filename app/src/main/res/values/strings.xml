@@ -285,4 +285,11 @@
     <string name="title_required">Vui lòng nhập tiêu đề nhiệm vụ</string>
     <string name="task_added">Đã thêm nhiệm vụ mới</string>
     <string name="add_cate">Tạo thêm danh mục mới</string>
+    <string name="completed_history_title">Lịch sử hoàn thành theo thời gian</string>
+    <string name="no_completed_tasks_message">Chưa có nhiệm vụ nào hoàn thành</string>
+    <string name="complete_first_task_prompt">Hoàn thành nhiệm vụ đầu tiên để xem tại đây</string>
+    <string name="delete_all_title">Xóa tất cả</string>
+    <string name="confirm_delete_all_completed_tasks">Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?</string>
+
+   
 </resources>

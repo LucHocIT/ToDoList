@@ -98,15 +98,15 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             
             // Setup click listeners
             btnBack.setOnClickListener(v -> finish());
-            
+
             btnDeleteAll.setOnClickListener(v -> {
                 // Show confirmation dialog and delete all completed tasks
                 new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Xóa tất cả")
-                    .setMessage("Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?")
-                    .setPositiveButton("Xóa", (dialog, which) -> deleteAllCompletedTasks())
-                    .setNegativeButton("Hủy", null)
-                    .show();
+                        .setTitle(getString(R.string.delete_all_title)) // Thay thế "Xóa tất cả"
+                        .setMessage(getString(R.string.confirm_delete_all_completed_tasks)) // Thay thế "Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?"
+                        .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAllCompletedTasks()) // "Xóa"
+                        .setNegativeButton(getString(R.string.cancel), null) // "Hủy"
+                        .show();
             });
             
             Log.d("CompletedTasks", "Click listeners set");

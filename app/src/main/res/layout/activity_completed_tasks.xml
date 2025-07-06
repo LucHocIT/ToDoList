@@ -50,7 +50,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lịch sử hoàn thành theo thời gian"
+                    android:text="@string/completed_history_title"
                     android:textSize="13sp"
                     android:textColor="#E3F2FD"
                     android:layout_marginTop="2dp"/>
@@ -105,7 +105,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chưa có nhiệm vụ nào hoàn thành"
+                android:text="@string/no_completed_tasks_message"
                 android:textSize="18sp"
                 android:textColor="#757575"
                 android:textStyle="bold"
@@ -114,7 +114,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hoàn thành nhiệm vụ đầu tiên để xem tại đây"
+                android:text="@string/complete_first_task_prompt"
                 android:textSize="14sp"
                 android:textColor="#BDBDBD"
                 android:textAlignment="center"/>
