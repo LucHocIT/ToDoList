@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_theme"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="2dp"
+    app:strokeColor="#E0E0E0">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Color Preview -->
+        <View
+            android:id="@+id/color_preview"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#4285F4"/>
+
+        <!-- Gradient Preview -->
+        <View
+            android:id="@+id/gradient_preview"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@id/color_preview"
+            android:background="#E3F2FD"
+            android:alpha="0.5"/>
+
+        <!-- Theme Name -->
+        <TextView
+            android:id="@+id/text_theme_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/color_preview"
+            android:layout_centerInParent="true"
+            android:text="Sky Blue"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Selection Indicator -->
+        <ImageView
+            android:id="@+id/icon_selected"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_check_circle"
+            android:visibility="gone"
+            app:tint="@android:color/white"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

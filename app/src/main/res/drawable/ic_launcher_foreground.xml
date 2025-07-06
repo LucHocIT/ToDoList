@@ -1,0 +1,63 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group android:scaleX="1.0"
+      android:scaleY="1.0"
+      android:translateX="18"
+      android:translateY="18">
+    <!-- Background circle -->
+    <path android:fillColor="#E3F2FD"
+        android:pathData="M36,36m-36,0a36,36 0,1 1,72 0a36,36 0,1 1,-72 0"/>
+    
+    <!-- Clipboard background -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M20,12 L52,12 L52,60 L20,60 Z"
+        android:strokeColor="#2196F3"
+        android:strokeWidth="2"/>
+    
+    <!-- Clipboard clip -->
+    <path android:fillColor="#2196F3"
+        android:pathData="M30,8 L42,8 L42,16 L30,16 Z"/>
+    
+    <!-- Checkboxes and lines -->
+    <!-- First checkbox -->
+    <path android:fillColor="#4CAF50"
+        android:pathData="M24,20 L28,20 L28,24 L24,24 Z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M25.5,22.5 L26.5,21.5 L27.5,22.5 L26.5,23.5 Z"/>
+    <path android:fillColor="#757575"
+        android:pathData="M32,21 L46,21 L46,23 L32,23 Z"/>
+    
+    <!-- Second checkbox -->
+    <path android:fillColor="#4CAF50"
+        android:pathData="M24,28 L28,28 L28,32 L24,32 Z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M25.5,30.5 L26.5,29.5 L27.5,30.5 L26.5,31.5 Z"/>
+    <path android:fillColor="#757575"
+        android:pathData="M32,29 L46,29 L46,31 L32,31 Z"/>
+    
+    <!-- Third checkbox (unchecked) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M24,36 L28,36 L28,40 L24,40 Z"
+        android:strokeColor="#757575"
+        android:strokeWidth="1"/>
+    <path android:fillColor="#757575"
+        android:pathData="M32,37 L46,37 L46,39 L32,39 Z"/>
+    
+    <!-- Fourth checkbox (unchecked) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M24,44 L28,44 L28,48 L24,48 Z"
+        android:strokeColor="#757575"
+        android:strokeWidth="1"/>
+    <path android:fillColor="#757575"
+        android:pathData="M32,45 L46,45 L46,47 L32,47 Z"/>
+    
+    <!-- Pencil -->
+    <path android:fillColor="#FF9800"
+        android:pathData="M48,50 L52,46 L54,48 L50,52 Z"/>
+    <path android:fillColor="#FFC107"
+        android:pathData="M46,52 L48,50 L50,52 L48,54 Z"/>
+  </group>
+</vector>

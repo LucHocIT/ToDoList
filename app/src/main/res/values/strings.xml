@@ -1,0 +1,295 @@
+<resources>
+    <string name="app_name">ToDoList</string>
+    <string name="action_settings">Settings</string>
+    
+    <!-- Settings strings -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_notifications">THÔNG BÁO</string>
+    <string name="settings_notifications_enable">Thông báo</string>
+    <string name="settings_sound">Âm thanh</string>
+
+    <string name="settings_notification_time">Thời gian nhắc nhở</string>
+    <string name="settings_ringtone">Âm thanh thông báo</string>
+    <string name="settings_appearance">GIAO DIỆN</string>
+    <string name="settings_dark_mode">Chế độ tối</string>
+    <string name="settings_general">CHUNG</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_data_management">QUẢN LÝ DỮ LIỆU</string>
+    <string name="settings_backup">Sao lưu dữ liệu</string>
+    <string name="settings_restore">Khôi phục dữ liệu</string>
+    <string name="settings_support">HỖ TRỢ</string>
+    <string name="settings_about">Về ứng dụng</string>
+    <string name="settings_privacy">Chính sách bảo mật</string>
+    <string name="settings_terms">Điều khoản sử dụng</string>
+    <string name="settings_help">Trợ giúp &amp; Hỗ trợ</string>
+    <string name="language_changed">Ngôn ngữ đã được thay đổi</string>
+    <string name="choose_language">Chọn ngôn ngữ</string>
+    <string name="version_format">Phiên bản %s</string>
+    <string name="version_default">Phiên bản 1.0</string>
+    
+    <!-- Dialog strings -->
+    <string name="about_app_title">Về ứng dụng To-Do List</string>
+    <string name="about_app_message">To-Do List - Ứng dụng quản lý công việc thông minh\n\nPhiên bản: 1.0\nNhà phát triển: Team Development\nEmail: phamluc2304@gmail.com\n\nỨng dụng giúp bạn quản lý công việc hàng ngày một cách hiệu quả với giao diện đẹp mắt và nhiều tính năng hữu ích.</string>
+    <string name="close">Đóng</string>
+    
+    <string name="privacy_policy_title">Chính sách bảo mật</string>
+    <string name="privacy_policy_message">Chúng tôi cam kết bảo vệ quyền riêng tư của bạn:\n\n• Dữ liệu được lưu trữ cục bộ trên thiết bị\n• Không thu thập thông tin cá nhân\n• Không chia sẻ dữ liệu với bên thứ ba\n• Chỉ yêu cầu quyền cần thiết cho hoạt động ứng dụng</string>
+    <string name="understood">Đã hiểu</string>
+    
+    <string name="terms_title">Điều khoản sử dụng</string>
+    <string name="terms_message">Bằng việc sử dụng ứng dụng này, bạn đồng ý:\n\n• Sử dụng ứng dụng cho mục đích cá nhân\n• Không sử dụng ứng dụng cho mục đích bất hợp pháp\n• Nhà phát triển không chịu trách nhiệm cho dữ liệu bị mất\n• Bạn có trách nhiệm sao lưu dữ liệu của mình</string>
+    <string name="agree">Đồng ý</string>
+    
+    <string name="help_support_title">Trợ giúp &amp; Hỗ trợ</string>
+    <string name="help_support_message">Cần trợ giúp? Liên hệ với chúng tôi:\n\n📧 Email: phamluc2304@gmail.com\n📱 Điện thoại: 0354337494\n\nHoặc bạn có thể:\n• Xem hướng dẫn sử dụng trong ứng dụng\n• Gửi phản hồi qua email\n• Báo cáo lỗi để cải thiện ứng dụng</string>
+    <string name="send_email">Gửi email</string>
+    <string name="email_subject">Hỗ trợ ứng dụng To-Do List</string>
+    <string name="email_body">Xin chào,\n\nTôi cần hỗ trợ về ứng dụng To-Do List:\n\n</string>
+    <string name="choose_email_app">Gửi email</string>
+    <string name="no_email_app">Không tìm thấy ứng dụng email</string>
+    
+    <string name="reset_data_title">Reset dữ liệu</string>
+    <string name="reset_data_message">Bạn có chắc chắn muốn xóa tất cả dữ liệu và khôi phục về mặc định?\n\nThao tác này không thể hoàn tác!</string>
+    <string name="cancel">Hủy</string>
+    <string name="reset_success">Đã reset tất cả dữ liệu thành công</string>
+    <string name="reset_error">Có lỗi xảy ra khi reset dữ liệu: %s</string>
+    
+    <!-- Theme Selection -->
+    <string name="theme_selected">Đã chọn chủ đề: %s</string>
+    
+    <!-- Notification time options -->
+    <string name="notification_time_5_min">5 phút trước</string>
+    <string name="notification_time_10_min">10 phút trước</string>
+    <string name="notification_time_15_min">15 phút trước</string>
+    <string name="notification_time_30_min">30 phút trước</string>
+    <string name="notification_time_1_hour">1 giờ trước</string>
+    <string name="notification_time_2_hours">2 giờ trước</string>
+    <string name="notification_time_1_day">1 ngày trước</string>
+    
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
+        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
+        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
+        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
+        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
+        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
+        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
+        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
+        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
+        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
+        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
+        bibendum, vel congue leo egestas.\n\n
+        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
+        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
+        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
+        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
+        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
+        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
+        est.\n\n
+        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
+        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
+        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
+        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
+        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
+        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
+        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
+        convallis.\n\n
+        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
+        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
+        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
+        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
+        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
+        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
+        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
+    </string>
+    
+    <!-- Widget strings -->
+    <string name="widget_description">Lịch tháng To-Do List</string>
+    <string name="widget_name">To-Do Calendar</string>
+    <string name="mini_widget_description">Nút thêm nhiệm vụ nhanh từ màn hình chính</string>
+    <string name="mini_widget_name">Quick Add Task</string>
+    
+    <!-- Main Activity -->
+    <string name="all_tasks">Tất cả</string>
+    <string name="work_tasks">Công việc</string>
+    <string name="personal_tasks">Cá nhân</string>
+    <string name="favorite_tasks">Yêu thích</string>
+    <string name="search_tasks_hint">Tìm kiếm nhiệm vụ...</string>
+    <string name="cancel_search">Hủy tìm kiếm</string>
+    <string name="overdue_tasks">Trước</string>
+    <string name="today_tasks">Hôm nay</string>
+    <string name="future_tasks">Tương lai</string>
+    <string name="completed_today_tasks">Đã hoàn thành hôm nay</string>
+    <string name="empty_state_title">Không có nhiệm vụ nào trong danh mục này.</string>
+    <string name="empty_state_subtitle">Nhấn vào + để tạo nhiệm vụ của bạn.</string>
+    <string name="check_all_completed">Kiểm tra tất cả nhiệm vụ đã hoàn thành</string>
+    <string name="menu">Menu</string>
+    <string name="tasks">Nhiệm vụ</string>
+    <string name="calendar">Lịch</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="nav_theme">Chủ đề</string>
+    <string name="nav_utilities">Tiện ích</string>
+    <string name="nav_contact">Liên hệ</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Task Actions Dialog -->
+    <string name="mark_important">Đánh dấu quan trọng</string>
+    <string name="unmark_important">Bỏ đánh dấu quan trọng</string>
+    
+    <!-- Add Task Dialog -->
+    <string name="add_task_hint">Nhập nhiệm vụ mới tại đây...</string>
+    <string name="save">Lưu</string>
+    
+    <!-- Sort Dialog -->
+    <string name="sort_dialog_title">Các nhiệm vụ được sắp xếp theo</string>
+    <string name="sort_by_date_time">Ngày và giờ đến hạn</string>
+    <string name="sort_by_creation_time">Thời gian tạo tác vụ</string>
+    <string name="sort_by_alphabetical">Bảng chữ cái A-Z</string>
+    <string name="choose">CHỌN</string>
+    
+    <!-- Date Time Picker Dialog -->
+    <string name="time_label">Thời gian</string>
+    <string name="reminder_label">Lời nhắc</string>
+    <string name="repeat_label">Lặp lại</string>
+    <string name="none">Không</string>
+    <string name="done">XONG</string>
+    
+    <!-- Menu strings -->
+    <string name="menu_category_manager">Quản lý danh mục</string>
+    <string name="menu_search">Tìm kiếm</string>
+    <string name="menu_sort_tasks">Sắp xếp công việc</string>
+    
+    <!-- Task Detail Activity -->
+    <string name="task_detail_title">Chi tiết nhiệm vụ</string>
+    <string name="task_title_hint">Nhập tiêu đề nhiệm vụ</string>
+    <string name="due_date_label">Ngày đến hạn</string>
+    <string name="reminder_none">Không</string>
+    <string name="repeat_none">Không có</string>
+    <string name="priority_label">Độ ưu tiên</string>
+    <string name="priority_low">Thấp</string>
+    <string name="priority_medium">Trung bình</string>
+    <string name="priority_high">Cao</string>
+    <string name="priority_yes">Có</string>
+    <string name="priority_no">Không</string>
+
+    <string name="time_updated_toast">Đã cập nhật thời gian</string>
+    
+    <!-- Category Manager Activity -->
+    <string name="category_manager_title">Quản lí danh mục</string>
+    <string name="category_manager_info">Các danh mục hiện thị trên trang chủ</string>
+    <string name="category_manager_footer">Nhấn và kéo để sắp xếp lại</string>
+    <string name="category_created_toast">Đã tạo danh mục mới</string>
+    <string name="category_name_required_toast">Vui lòng nhập tên danh mục</string>
+    <string name="category_menu_toast">Menu cho danh mục: %s</string>
+    <string name="category_clicked_toast">Clicked: %s</string>
+    
+    <!-- Create Category Dialog -->
+    <string name="create_category_title">Tạo danh mục mới</string>
+    <string name="category_name_hint">Nhập tại đây</string>
+    <string name="character_count_format">%d/50</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_save">Lưu</string>
+    
+    <!-- Contact Dialog -->
+    <string name="contact_title">Liên hệ</string>
+    <string name="contact_subtitle">Thông tin về ứng dụng</string>
+
+    <string name="language_changed_restart_prompt">Ngôn ngữ đã được thay đổi. Vui lòng khởi động lại ứng dụng để áp dụng.</string>
+    <!-- Search Activity -->
+    <string name="search_hint">Tìm kiếm...</string>
+    <string name="no_results_found">Không tìm thấy kết quả</string>
+
+    <!-- Completed Tasks Activity -->
+    <string name="completed_tasks_title">Nhiệm vụ đã hoàn thành</string>
+    <string name="no_completed_tasks">Chưa có nhiệm vụ nào hoàn thành</string>
+    
+    <!-- General -->
+    <string name="back_button">Quay lại</string>
+    <string name="ok">OK</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Sửa</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="warning">Cảnh báo</string>
+    <string name="error">Lỗi</string>
+    <string name="success">Thành công</string>
+    
+    <!-- Widgets Dialog -->
+    <string name="widgets_dialog_title">Tiện ích Widget</string>
+    <string name="widgets_dialog_description">Xem trước các widget có thể thêm vào màn hình chính của điện thoại</string>
+    <string name="calendar_widget_title">Widget Lịch (3x4)</string>
+    <string name="mini_widget_title">Widget Mini (1x1)</string>
+    
+    <!-- Advanced settings -->
+    <string name="settings_advanced">CÀI ĐẶT NÂNG CAO</string>
+    
+    <!-- Widget strings details -->
+    <string name="month_year_format">Tháng 6, 2025</string>
+    <string name="mon_short">T2</string>
+    <string name="tue_short">T3</string>
+    <string name="wed_short">T4</string>
+    <string name="thu_short">T5</string>
+    <string name="fri_short">T6</string>
+    <string name="sat_short">T7</string>
+    <string name="sun_short">CN</string>
+    <string name="tasks_today_count">3 nhiệm vụ hôm nay</string>
+    <string name="calendar_widget_description">Hiển thị lịch với số lượng nhiệm vụ theo ngày</string>
+    <string name="add_button">Thêm</string>
+    <string name="widget_instructions">Để thêm widget vào màn hình chính:\n1. Nhấn giữ màn hình chính\n2. Chọn Widget\n3. Tìm To-Do List và kéo vào vị trí mong muốn</string>
+    
+    <!-- Task repeat options -->
+    <string name="repeat_daily">Hàng ngày</string>
+    <string name="repeat_weekly">Hàng tuần</string>
+    <string name="repeat_monthly">Hàng tháng</string>
+    <string name="repeat_yearly">Hàng năm</string>
+    
+    <!-- Priority options -->
+    <string name="priority_very_low">Rất thấp</string>
+    <string name="priority_very_high">Rất cao</string>
+    
+    <!-- Reminder options -->
+    <string name="reminder_5_min">5 phút trước</string>
+    <string name="reminder_10_min">10 phút trước</string>
+    <string name="reminder_15_min">15 phút trước</string>
+    <string name="reminder_30_min">30 phút trước</string>
+    <string name="reminder_1_hour">1 giờ trước</string>
+    <string name="reminder_1_day">1 ngày trước</string>
+    <string name="choose_reminder">Chọn lời nhắc</string>
+    <string name="choose_repeat_option">Chọn lặp lại</string>
+    <string name="delete_task_title">Xóa nhiệm vụ</string>
+    <string name="confirm_delete_task_message">Bạn có chắc chắn muốn xóa nhiệm vụ này?</string>
+    <string name="delete_button_text">Xóa</string>
+    <string name="cancel_button_text">Hủy</string>
+    <string name="task_deleted_toast">Đã xóa nhiệm vụ</string>
+    <string name="delete_task">Xóa nhiệm vụ</string>
+    <string name="no_tasks_message">Không có nhiệm vụ nào.</string>
+    <string name="no_tasks_in_category_message">Không có nhiệm vụ nào trong danh mục \"%1$s\".</string>
+    <string name="no_tasks_today_message">Không có nhiệm vụ nào trong ngày.</string>
+    <string name="add_task_prompt">Nhấn + để tạo công việc của bạn.</string>
+    <string name="status_label">Trạng thái</string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="select_theme">Chọn chủ đề</string>
+    <string name="select_theme_color">Chọn màu chủ đề cho ứng dụng</string>
+    <string name="theme_use_now">Chủ đề được áp dụng ngay lập tức</string>
+    <string name="no_category">Không có thể loại</string>
+    <string name="notification">Thông báo</string>
+    <string name="no_repeat">Không có</string>
+    <string name="title_required">Vui lòng nhập tiêu đề nhiệm vụ</string>
+    <string name="task_added">Đã thêm nhiệm vụ mới</string>
+    <string name="add_cate">Tạo thêm danh mục mới</string>
+    <string name="completed_history_title">Lịch sử hoàn thành theo thời gian</string>
+    <string name="no_completed_tasks_message">Chưa có nhiệm vụ nào hoàn thành</string>
+    <string name="complete_first_task_prompt">Hoàn thành nhiệm vụ đầu tiên để xem tại đây</string>
+    <string name="delete_all_title">Xóa tất cả</string>
+    <string name="confirm_delete_all_completed_tasks">Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?</string>
+
+   
+</resources>

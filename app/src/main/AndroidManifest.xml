@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permissions for notifications and alarms -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- Permission for phone calls -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- Indicate that telephony hardware is not required -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <application
+        android:name=".TodoApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ToDoList"
+        tools:targetApi="31">        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ToDoList">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TaskDetailActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CategoryManagerActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CompletedTasksActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ThemeSelectionActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Notification receivers -->
+        <receiver
+            android:name=".notification.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Boot receiver to reschedule alarms after reboot -->
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Calendar Widget -->
+        <receiver
+            android:name=".widget.CalendarWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.todolist.widget.PREV_MONTH" />
+                <action android:name="com.example.todolist.widget.NEXT_MONTH" />
+                <action android:name="com.example.todolist.widget.DAY_CLICK" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_widget_info" />
+        </receiver>
+
+        <!-- Mini Widget -->
+        <receiver
+            android:name=".widget.MiniWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.todolist.widget.QUICK_ADD" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/mini_widget_info" />
+        </receiver>
+
+    </application>
+
+</manifest>

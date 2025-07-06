@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Subtle glow effect -->
+    <path
+        android:fillColor="#40FFFFFF"
+        android:pathData="M19.5,13.5h-6v6h-2v-6H5.5v-2h6V5.5h2v6h6v2z"/>
+    
+    <!-- Main plus icon with enhanced contrast -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+    
+    <!-- Small highlight -->
+    <path
+        android:fillColor="#80FFFFFF"
+        android:pathData="M18,7h-4V6h4v1z"/>
+</vector>

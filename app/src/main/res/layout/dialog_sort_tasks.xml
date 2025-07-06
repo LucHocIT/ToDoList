@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@drawable/dialog_background"
+    android:elevation="8dp"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Dialog title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_dialog_title"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:gravity="start"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- RadioGroup to ensure only one option is selected -->
+    <RadioGroup
+        android:id="@+id/radioGroupSortOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <!-- Sort option 1: Date and time -->
+    <LinearLayout
+        android:id="@+id/option_date_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="16dp"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground">
+
+        <RadioButton
+            android:id="@+id/radio_date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="#4285F4"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sort_by_date_time"
+            android:textSize="16sp"
+            android:textColor="#333333"/>
+
+    </LinearLayout>
+
+    <!-- Sort option 2: Creation time -->
+    <LinearLayout
+        android:id="@+id/option_creation_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="16dp"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground">
+
+        <RadioButton
+            android:id="@+id/radio_creation_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="#4285F4"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sort_by_creation_time"
+            android:textSize="16sp"
+            android:textColor="#333333"/>
+
+    </LinearLayout>
+
+    <!-- Sort option 3: Alphabetical -->
+    <LinearLayout
+        android:id="@+id/option_alphabetical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="16dp"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground">
+
+        <RadioButton
+            android:id="@+id/radio_alphabetical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="#4285F4"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sort_by_alphabetical"
+            android:textSize="16sp"
+            android:textColor="#333333"/>
+
+    </LinearLayout>
+
+    </RadioGroup>
+
+    <!-- Action button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:id="@+id/btn_choose_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="@string/choose"
+            android:textSize="14sp"
+            android:textColor="#4285F4"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"/>
+
+    </LinearLayout>
+
+</LinearLayout>

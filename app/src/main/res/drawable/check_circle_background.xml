@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Trạng thái khi checkbox được tích (checked) -->
+    <item android:state_checked="true"
+        android:drawable="@drawable/ic_checkbox_checked_circle"/>
+    <!-- Trạng thái mặc định khi checkbox chưa được tích (unchecked) -->
+    <item android:drawable="@drawable/ic_checkbox_unchecked_circle"/>
+</selector>
