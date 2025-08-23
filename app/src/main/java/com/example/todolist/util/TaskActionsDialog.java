@@ -1,79 +1,85 @@
 package com.example.todolist.util;
-
 import android.app.AlertDialog;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.example.todolist.R;
-import com.example.todolist.model.TodoTask;
-
+import com.example.todolist.model.Task;
+/**
+ * TaskActionsDialog - Firebase version
+ * Shows action options for tasks (star/unstar, delete)
+ */
 public class TaskActionsDialog {
-    
     public interface OnActionSelectedListener {
-        void onStarAction(TodoTask task);
-        void onDeleteAction(TodoTask task);
+        void onStarAction(Task task);
+        void onDeleteAction(Task task);
     }
-    
     private Context context;
-    private TodoTask task;
+    private Task task;
     private OnActionSelectedListener listener;
     private AlertDialog dialog;
-    
-    public TaskActionsDialog(Context context, TodoTask task, OnActionSelectedListener listener) {
+    public TaskActionsDialog(Context context, Task task, OnActionSelectedListener listener) {
         this.context = context;
         this.task = task;
         this.listener = listener;
         createDialog();
     }
-    
     private void createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_task_actions, null);
-        builder.setView(dialogView);
-        
+        // Create simple LinearLayout
+        LinearLayout view = new LinearLayout(context);
+        view.setOrientation(LinearLayout.VERTICAL);
+        view.setPadding(20, 20, 20, 20);
+        // Setup views
+        setupViews(view);
+        builder.setView(view);
         dialog = builder.create();
-        
-        // Make dialog background transparent so CardView corners show
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-        
-        setupClickListeners(dialogView);
-        updateStarText(dialogView);
     }
-    
-    private void setupClickListeners(View dialogView) {
-        // Star action
-        dialogView.findViewById(R.id.layout_action_star).setOnClickListener(v -> {
+    private void setupViews(View view) {
+        // Use standard Android layout views
+        TextView titleText = new TextView(context);
+        titleText.setText(task.getTitle());
+        titleText.setTextSize(18);
+        titleText.setPadding(20, 20, 20, 10);
+        TextView starText = new TextView(context);
+        TextView deleteText = new TextView(context);
+        // Setup star action
+        if (task.isImportant()) {
+            starText.setText("â­ Bá» Ä‘Ă¡nh dáº¥u quan trá»ng");
+        } else {
+            starText.setText("â˜† ÄĂ¡nh dáº¥u quan trá»ng");
+        }
+        starText.setPadding(20, 10, 20, 10);
+        starText.setTextSize(16);
+        deleteText.setText("đŸ—‘ï¸ XĂ³a");
+        deleteText.setPadding(20, 10, 20, 20);
+        deleteText.setTextSize(16);
+        // Set click listeners
+        starText.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onStarAction(task);
             }
-            dialog.dismiss();
+            dismiss();
         });
-
-        // Delete action
-        dialogView.findViewById(R.id.layout_action_delete).setOnClickListener(v -> {
+        deleteText.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteAction(task);
             }
-            dialog.dismiss();
+            dismiss();
         });
+        // Add views to container
+        ((LinearLayout) view).addView(titleText);
+        ((LinearLayout) view).addView(starText);  
+        ((LinearLayout) view).addView(deleteText);
     }
-    
-    private void updateStarText(View dialogView) {
-        TextView starText = dialogView.findViewById(R.id.tv_star_text);
-        if (task.isImportant()) {
-            starText.setText(context.getString(R.string.unmark_important));
-        } else {
-            starText.setText(context.getString(R.string.mark_important));
-        }
-    }
-    
     public void show() {
         if (dialog != null) {
             dialog.show();
+        }
+    }
+    public void dismiss() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
         }
     }
 }

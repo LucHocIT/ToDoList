@@ -1,15 +1,13 @@
 package com.example.todolist.manager;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.example.todolist.database.TodoDatabase;
-import com.example.todolist.model.TodoTask;
+import com.example.todolist.model.Task;
+import com.example.todolist.service.TaskService;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 public class UserStatsManager {
-    
     public static class UserStats {
         public int totalTasks;
         public int completedTasks;
@@ -21,80 +19,77 @@ public class UserStatsManager {
         public int tasksCompletedThisWeek;
         public int tasksCompletedThisMonth;
     }
-    
     private Context context;
-    private TodoDatabase database;
+    private TaskService taskService;
     private SharedPreferences preferences;
-    
     public UserStatsManager(Context context) {
         this.context = context;
-        this.database = TodoDatabase.getInstance(context);
+        this.taskService = new TaskService(context, null);
         this.preferences = context.getSharedPreferences("TodoApp", Context.MODE_PRIVATE);
     }
-    
-    public UserStats calculateUserStats() {
+    public interface StatsCallback {
+        void onStatsCalculated(UserStats stats);
+    }
+    public void calculateUserStats(StatsCallback callback) {
         UserStats stats = new UserStats();
-        
         try {
-            // Get all tasks
-            List<TodoTask> allTasks = database.todoDao().getAllTasks();
-            List<TodoTask> completedTasks = database.todoDao().getCompletedTasks();
-            
-            stats.totalTasks = allTasks.size();
-            stats.completedTasks = completedTasks.size();
-            stats.pendingTasks = stats.totalTasks - stats.completedTasks;
-            
-            // Calculate productivity score
-            stats.productivityScore = stats.totalTasks > 0 ? 
-                (stats.completedTasks * 100) / stats.totalTasks : 0;
-            
-            // Calculate streak data
-            stats.currentStreak = calculateCurrentStreak(completedTasks);
-            stats.longestStreak = calculateLongestStreak(completedTasks);
-            
-            // Calculate time-based statistics
-            stats.tasksCompletedToday = calculateTasksCompletedInPeriod(completedTasks, 0);
-            stats.tasksCompletedThisWeek = calculateTasksCompletedInPeriod(completedTasks, 7);
-            stats.tasksCompletedThisMonth = calculateTasksCompletedInPeriod(completedTasks, 30);
-            
-            // Update shared preferences with calculated values
-            updatePreferences(stats);
-            
+            // Get all tasks using Firebase service
+            taskService.getAllTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
+                @Override
+                public void onSuccess(List<Task> allTasks) {
+                    List<Task> completedTasks = new ArrayList<>();
+                    for (Task task : allTasks) {
+                        if (task.isCompleted()) {
+                            completedTasks.add(task);
+                        }
+                    }
+                    stats.totalTasks = allTasks.size();
+                    stats.completedTasks = completedTasks.size();
+                stats.pendingTasks = stats.totalTasks - stats.completedTasks;
+                stats.productivityScore = stats.totalTasks > 0 ? 
+                    (stats.completedTasks * 100) / stats.totalTasks : 0;
+                stats.currentStreak = calculateCurrentStreak(completedTasks);
+                stats.longestStreak = calculateLongestStreak(completedTasks);
+                // Calculate time-based statistics
+                stats.tasksCompletedToday = calculateTasksCompletedInPeriod(completedTasks, 0);
+                stats.tasksCompletedThisWeek = calculateTasksCompletedInPeriod(completedTasks, 7);
+                stats.tasksCompletedThisMonth = calculateTasksCompletedInPeriod(completedTasks, 30);
+                updatePreferences(stats);
+                // Return stats via callback
+                if (callback != null) {
+                    callback.onStatsCalculated(stats);
+                }
+            }
+            @Override
+            public void onError(String error) {
+                if (callback != null) {
+                    callback.onStatsCalculated(getDefaultStats());
+                }
+            }
+        });
         } catch (Exception e) {
             e.printStackTrace();
             // Return default stats on error
-            stats = getDefaultStats();
+            if (callback != null) {
+                callback.onStatsCalculated(getDefaultStats());
+            }
         }
-        
-        return stats;
     }
-    
-    private int calculateCurrentStreak(List<TodoTask> completedTasks) {
-        // Simplified streak calculation - in a real app, you'd track daily completion dates
-        // Since we don't have completedAt timestamp, we'll use a simple logic
+    private int calculateCurrentStreak(List<Task> completedTasks) {
         int currentStreak = preferences.getInt("current_streak", 0);
-        
-        // For now, just return the stored value
-        // In a real implementation, you'd check if tasks were completed today
         return currentStreak;
     }
-    
-    private int calculateLongestStreak(List<TodoTask> completedTasks) {
+    private int calculateLongestStreak(List<Task> completedTasks) {
         int currentStreak = calculateCurrentStreak(completedTasks);
         int longestStreak = preferences.getInt("longest_streak", 0);
-        
         if (currentStreak > longestStreak) {
             longestStreak = currentStreak;
         }
-        
         return longestStreak;
     }
-    
-    private int calculateTasksCompletedInPeriod(List<TodoTask> completedTasks, int daysBack) {
-        // Simplified calculation since we don't have completion timestamps
-        // For demo purposes, return a portion of completed tasks
+    private int calculateTasksCompletedInPeriod(List<Task> completedTasks, int daysBack) {
+
         if (daysBack == 0) {
-            // Tasks completed today - simplified
             return Math.min(completedTasks.size() / 7, 5); // Assume 1/7 of tasks completed today, max 5
         } else if (daysBack == 7) {
             // Tasks completed this week
@@ -104,12 +99,10 @@ public class UserStatsManager {
             return completedTasks.size();
         }
     }
-    
     private boolean isSameDay(Calendar cal1, Calendar cal2) {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
-    
     private void updatePreferences(UserStats stats) {
         preferences.edit()
             .putInt("current_streak", stats.currentStreak)
@@ -119,7 +112,6 @@ public class UserStatsManager {
             .putInt("tasks_completed_month", stats.tasksCompletedThisMonth)
             .apply();
     }
-    
     private UserStats getDefaultStats() {
         UserStats stats = new UserStats();
         stats.totalTasks = 0;
@@ -133,32 +125,27 @@ public class UserStatsManager {
         stats.tasksCompletedThisMonth = 0;
         return stats;
     }
-    
     public void updateUserName(String name) {
         preferences.edit()
             .putString("user_name", name)
             .apply();
     }
-    
     public String getUserName() {
         return preferences.getString("user_name", "Người dùng");
     }
-    
     public long getInstallTime() {
         return preferences.getLong("install_time", System.currentTimeMillis());
     }
-    
-    /**
-     * Update streak when a task is completed
-     */
+
     public void onTaskCompleted() {
-        // Recalculate stats when a task is completed
-        calculateUserStats();
+
+        calculateUserStats(null);
     }
-    
-    /**
-     * Reset user statistics (useful for testing or data reset)
-     */
+
+    public void calculateUserStats() {
+        calculateUserStats(null);
+    }
+
     public void resetStats() {
         preferences.edit()
             .putInt("current_streak", 0)

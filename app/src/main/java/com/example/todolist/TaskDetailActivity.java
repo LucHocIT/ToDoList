@@ -1,5 +1,4 @@
 package com.example.todolist;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,21 +12,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.todolist.adapter.CategorySpinnerAdapter;
-import com.example.todolist.database.TodoDatabase;
 import com.example.todolist.model.Category;
-import com.example.todolist.model.TodoTask;
-import com.example.todolist.notification.ReminderScheduler;
+import com.example.todolist.model.Task;
+import com.example.todolist.service.TaskService;
+import com.example.todolist.service.CategoryService;
+import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.util.DateTimePickerDialog;
 import com.example.todolist.util.SettingsManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-public class TaskDetailActivity extends AppCompatActivity {
-
+public class TaskDetailActivity extends AppCompatActivity implements TaskService.TaskUpdateListener, CategoryService.CategoryUpdateListener {
     public static final String EXTRA_TASK_ID = "task_id";
-
     private EditText editDetailTitle;
     private TextView textDueDate;
     private TextView textTime;
@@ -38,25 +35,24 @@ public class TaskDetailActivity extends AppCompatActivity {
     private Spinner spinnerCategory;
     private LinearLayout layoutDatePicker;
     private ImageView btnBack;
-
-    private TodoTask currentTask;
-    private TodoDatabase database;
+    private Task currentTask;
+    private TaskService taskService;
+    private CategoryService categoryService;
     private Category selectedCategory;
     private CategorySpinnerAdapter categoryAdapter;
     private List<Category> allCategories;
-
+    private boolean isInitialCategorySetup = true; // Flag to prevent automatic updates during initial setup
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
-
-        database = TodoDatabase.getInstance(this);
-
+        // Initialize Firebase services
+        taskService = new TaskService(this, this);
+        categoryService = new CategoryService(this, null, this);
         initViews();
         loadTaskData();
         setupClickListeners();
     }
-
     private void initViews() {
         editDetailTitle = findViewById(R.id.edit_detail_title);
         textDueDate = findViewById(R.id.text_due_date);
@@ -68,257 +64,247 @@ public class TaskDetailActivity extends AppCompatActivity {
         spinnerCategory = findViewById(R.id.spinner_category);
         layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
-
         setupCategorySpinner();
     }
-
     private void loadTaskData() {
-        int taskId = getIntent().getIntExtra(EXTRA_TASK_ID, -1);
-        if (taskId != -1) {
-            // Load task from database
-            new Thread(() -> {
-                currentTask = database.todoDao().getTaskById(taskId);
-                runOnUiThread(this::displayTaskData);
-            }).start();
+        String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
+        if (taskId != null && !taskId.isEmpty()) {
+            // Load task from Firebase
+            taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
+                @Override
+                public void onSuccess(Task task) {
+                    currentTask = task;
+                    runOnUiThread(() -> displayTaskData());
+                }
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(TaskDetailActivity.this, "Lỗi tải task: " + error, Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                }
+            });
         }
     }
-
     private void displayTaskData() {
         if (currentTask != null) {
             editDetailTitle.setText(currentTask.getTitle());
-
             // Format due date as dd/MM/yyyy
             String formattedDate = formatDateDisplay(currentTask.getDueDate());
-            // Sử dụng tài nguyên chuỗi cho "Không"
-            textDueDate.setText(formattedDate != null ? formattedDate : getString(R.string.none));
-
-            // Sử dụng tài nguyên chuỗi cho "Không"
-            textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : getString(R.string.none));
-            // Sử dụng tài nguyên chuỗi cho "Không"
-            textReminderValue.setText(currentTask.getReminderType() != null ? currentTask.getReminderType() : getString(R.string.none));
-
-            // Set priority/status based on completion status
-            if (currentTask.isCompleted()) {
-                // Hiển thị trạng thái cho task đã hoàn thành
-                // Sử dụng tài nguyên chuỗi cho "Trạng thái"
-                textPriorityLabel.setText(getString(R.string.status_label));
-                // Sử dụng tài nguyên chuỗi cho "Đã hoàn thành"
-                textPriorityValue.setText(getString(R.string.status_completed));
-            } else {
-                // Hiển thị độ ưu tiên cho task chưa hoàn thành
-                // Sử dụng tài nguyên chuỗi cho "Độ ưu tiên"
-                textPriorityLabel.setText(getString(R.string.priority_label));
-                // Sử dụng tài nguyên chuỗi cho "Có" và "Không"
-                textPriorityValue.setText(currentTask.isImportant() ? getString(R.string.yes) : getString(R.string.none));
-            }
-
-            // Set repeat information
-            // Sửa chuỗi cứng "Không có" thành tài nguyên chuỗi
-            textRepeatValue.setText(currentTask.getRepeatType() != null ? currentTask.getRepeatType() : getString(R.string.none));
-
-            // Set category in spinner
-            if (categoryAdapter != null && currentTask.getCategory() != null) {
-                // Find category by name and set selection
-                for (int i = 0; i < allCategories.size(); i++) {
-                    if (allCategories.get(i).getName().equals(currentTask.getCategory())) {
-                        spinnerCategory.setSelection(categoryAdapter.getPositionForCategoryId(allCategories.get(i).getId()));
-                        break;
-                    }
-                }
-            }
-
-            // Disable editing if task is completed
-            if (currentTask.isCompleted()) {
-                disableEditingForCompletedTask();
+            textDueDate.setText(formattedDate != null ? formattedDate : "Không");
+            textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
+            textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
+            // Set priority
+            setPriorityDisplay(currentTask.getPriority());
+            textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");
+            // Set category selection if available
+            if (categoryAdapter != null && currentTask.getCategoryId() != null) {
+                // Reset flag before setting category to avoid triggering updates
+                isInitialCategorySetup = true;
+                setSelectedCategoryInSpinner(currentTask.getCategoryId());
+                isInitialCategorySetup = false;
             }
         }
     }
-
     private void setupCategorySpinner() {
-        // Load categories from database
-        new Thread(() -> {
-            allCategories = database.categoryDao().getAllCategories();
-            runOnUiThread(() -> {
-                categoryAdapter = new CategorySpinnerAdapter(this, allCategories);
-                spinnerCategory.setAdapter(categoryAdapter);
-
-                // Set up selection listener
-                spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Category selectedCat = categoryAdapter.getCategory(position);
-                        if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
-                            selectedCategory = selectedCat;
-                            // Update task category
-                            if (selectedCat.getId() == 0) {
-                                currentTask.setCategory(null); // "không có thể loại" - CHỈ LÀ COMMENT, KHÔNG HIỂN THỊ
-                            } else {
-                                currentTask.setCategory(selectedCat.getName());
+        // Load categories from Firebase
+        categoryService.getAllCategories(new BaseRepository.RepositoryCallback<List<Category>>() {
+            @Override
+            public void onSuccess(List<Category> categories) {
+                allCategories = categories;
+                runOnUiThread(() -> {
+                    categoryAdapter = new CategorySpinnerAdapter(TaskDetailActivity.this, allCategories);
+                    spinnerCategory.setAdapter(categoryAdapter);
+                    // Set up selection listener
+                    spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            // Skip automatic updates during initial setup
+                            if (isInitialCategorySetup) {
+                                return;
                             }
-
-                            // Save to database
-                            new Thread(() -> {
-                                database.todoDao().updateTask(currentTask);
-                                runOnUiThread(() -> {
-                                    // Set result to indicate data changed
-                                    setResult(RESULT_OK);
-                                });
-                            }).start();
+                            Category selectedCat = categoryAdapter.getCategory(position);
+                            if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
+                                selectedCategory = selectedCat;
+                                // Only update if category actually changed
+                                String newCategoryId = "0".equals(selectedCat.getId()) ? null : selectedCat.getId();
+                                String currentCategoryId = currentTask.getCategoryId();
+                                // Compare category IDs properly (handle null cases)
+                                boolean categoryChanged = (newCategoryId == null && currentCategoryId != null) ||
+                                                        (newCategoryId != null && !newCategoryId.equals(currentCategoryId));
+                                if (categoryChanged) {
+                                    // Update task category
+                                    currentTask.setCategoryId(newCategoryId);
+                                    // Save to Firebase
+                                    taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
+                                        @Override
+                                        public void onSuccess(Boolean result) {
+                                            runOnUiThread(() -> {
+                                                setResult(RESULT_OK);
+                                                // Removed unnecessary success toast
+                                            });
+                                        }
+                                        @Override
+                                        public void onError(String error) {
+                                            runOnUiThread(() ->
+                                                Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật category: " + error, Toast.LENGTH_SHORT).show()
+                                            );
+                                        }
+                                    });
+                                }
+                            }
                         }
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {}
+                    });
+                    // Set selected category if task is loaded
+                    if (currentTask != null && currentTask.getCategoryId() != null) {
+                        setSelectedCategoryInSpinner(currentTask.getCategoryId());
                     }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        // Do nothing
-                    }
+                    // Enable category updates after initial setup is complete
+                    isInitialCategorySetup = false;
                 });
-
-                // Update display if task is already loaded
-                if (currentTask != null) {
-                    displayTaskData();
-                }
-            });
-        }).start();
-    }
-
-    private void setupClickListeners() {
-        btnBack.setOnClickListener(v -> finish());
-
-        // Date picker click listener - only if task is not completed
-        layoutDatePicker.setOnClickListener(v -> {
-            if (currentTask != null && !currentTask.isCompleted()) {
-                showDateTimePicker();
+            }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() ->
+                    Toast.makeText(TaskDetailActivity.this, "Lỗi tải categories: " + error, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
-
+    private void setSelectedCategoryInSpinner(String categoryId) {
+        if (categoryAdapter != null && allCategories != null) {
+            for (int i = 0; i < allCategories.size(); i++) {
+                if (allCategories.get(i).getId().equals(categoryId)) {
+                    spinnerCategory.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+    private void setupClickListeners() {
+        btnBack.setOnClickListener(v -> {
+            updateTaskTitle();
+            finish();
+        });
+        layoutDatePicker.setOnClickListener(v -> showDateTimePicker());
+    }
     private void showDateTimePicker() {
-        DateTimePickerDialog dateTimeDialog = new DateTimePickerDialog(this,
-                (date, time, reminder, repeat) -> {
-                    // Update task data
-                    if (currentTask != null) {
-                        currentTask.setDueDate(date);
-                        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                        if (!getString(R.string.none).equals(time)) {
-                            currentTask.setDueTime(time);
-                        } else { // Nếu là "Không" thì đặt lại về null để tránh lưu chuỗi "Không" vào DB
-                            currentTask.setDueTime(null);
+        if (currentTask != null && !currentTask.isCompleted()) {
+            DateTimePickerDialog dialog = new DateTimePickerDialog(this, new DateTimePickerDialog.OnDateTimeSelectedListener() {
+                @Override
+                public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
+                    currentTask.setDueDate(date);
+                    currentTask.setDueTime(time);
+                    // Update UI
+                    textDueDate.setText(formatDateDisplay(date));
+                    textTime.setText(time != null ? time : "KhĂ´ng");
+                    // Save to Firebase
+                    taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            runOnUiThread(() -> setResult(RESULT_OK));
                         }
-
-                        // Always update reminder, whether it's set to a value or "Không"
-                        currentTask.setReminderType(reminder);
-                        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                        currentTask.setHasReminder(!getString(R.string.none).equals(reminder));
-
-                        // Set repeat information
-                        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                        if (!getString(R.string.none).equals(repeat)) {
-                            currentTask.setRepeatType(repeat);
-                            currentTask.setRepeating(true);
-                        } else {
-                            // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                            currentTask.setRepeatType(getString(R.string.none));
-                            currentTask.setRepeating(false);
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() ->
+                                Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật ngày giờ: " + error, Toast.LENGTH_SHORT).show()
+                            );
                         }
-
-                        // Update UI - format date properly
-                        String formattedDate = formatDateDisplay(date);
-                        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                        textDueDate.setText(formattedDate != null ? formattedDate : getString(R.string.none));
-                        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                        if (!getString(R.string.none).equals(time)) {
-                            textTime.setText(time);
-                        } else {
-                            // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                            textTime.setText(getString(R.string.none));
-                        }
-
-                        // Always update reminder display
-                        textReminderValue.setText(reminder);
-
-                        // Sửa Repeat display
-                        textRepeatValue.setText(repeat);
-
-
-                        // Save to database
-                        new Thread(() -> {
-                            database.todoDao().updateTask(currentTask);
-
-                            // Update reminder scheduling
-                            ReminderScheduler scheduler = new ReminderScheduler(TaskDetailActivity.this);
-
-                            // Cancel existing reminders for this task
-                            scheduler.cancelTaskReminders(currentTask.getId());
-
-                            // Schedule new reminders if task has reminder
-                            if (currentTask.isHasReminder()) {
-                                scheduler.scheduleTaskReminder(currentTask);
-                            }
-
-                            runOnUiThread(() -> {
-                                setResult(RESULT_OK);
-                                Toast.makeText(TaskDetailActivity.this, getString(R.string.time_updated_toast), Toast.LENGTH_SHORT).show();
-                            });
-                        }).start();
+                    });
+                }
+            });
+            dialog.show();
+        }
+    }
+    private void updateTaskTitle() {
+        if (currentTask != null && !currentTask.isCompleted()) {
+            String newTitle = editDetailTitle.getText().toString().trim();
+            if (!newTitle.isEmpty() && !newTitle.equals(currentTask.getTitle())) {
+                currentTask.setTitle(newTitle);
+                // Save to Firebase
+                taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        setResult(RESULT_OK);
+                    }
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật title: " + error, Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Set current values if exists
-        if (currentTask != null) {
-            dateTimeDialog.setInitialValues(
-                    currentTask.getDueDate(),
-                    currentTask.getDueTime(),
-                    currentTask.getReminderType(),
-                    // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-                    currentTask.getRepeatType() != null ? currentTask.getRepeatType() : getString(R.string.none)
-            );
+            }
         }
-
-        dateTimeDialog.show();
     }
-
-    private void disableEditingForCompletedTask() {
-        // Disable title editing
-        editDetailTitle.setEnabled(false);
-        editDetailTitle.setTextColor(getColor(R.color.gray_text)); // Sử dụng R.color.gray_text
-
-        // Disable category spinner
-        spinnerCategory.setEnabled(false);
-
-        // Make date picker non-clickable
-        layoutDatePicker.setClickable(false);
-        layoutDatePicker.setAlpha(0.6f);
-
-        // Change priority text to show "Đã hoàn thành"
-        // Sử dụng tài nguyên chuỗi cho "Đã hoàn thành"
-        textPriorityValue.setText(getString(R.string.status_completed));
-        textPriorityValue.setTextColor(getColor(R.color.green_success)); // Sử dụng R.color.green_success
+    private void setPriorityDisplay(String priority) {
+        if (priority != null) {
+            switch (priority.toLowerCase()) {
+                case "cao":
+                    textPriorityValue.setText("Cao");
+                    textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                    break;
+                case "trung bĂ¬nh":
+                    textPriorityValue.setText("Trung bĂ¬nh");
+                    textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+                    break;
+                case "tháº¥p":
+                    textPriorityValue.setText("Tháº¥p");
+                    textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                    break;
+                default:
+                    textPriorityValue.setText("KhĂ´ng");
+                    textPriorityValue.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                    break;
+            }
+        } else {
+            textPriorityValue.setText("Không");
+            textPriorityValue.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
     }
-
     private String formatDateDisplay(String dateStr) {
-        // Sửa chuỗi cứng "Không" thành tài nguyên chuỗi
-        if (dateStr == null || dateStr.trim().isEmpty() || dateStr.equals("null") || dateStr.equals(getString(R.string.none))) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
             return null;
         }
-
         try {
-            // Parse from yyyy/MM/dd format
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            Date date = inputFormat.parse(dateStr);
-
-            // Format to dd/MM/yyyy
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date date = inputFormat.parse(dateStr);
             return outputFormat.format(date);
         } catch (Exception e) {
             return dateStr; // Return original if parsing fails
         }
     }
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (taskService != null) {
+            taskService.cleanup();
+        }
+        if (categoryService != null) {
+            categoryService.cleanup();
+        }
+    }
+    // TaskService.TaskUpdateListener implementation
+    @Override
+    public void onTasksUpdated() {
+        // Handle task updates if needed
+    }
+    @Override
+    public void onError(String error) {
+        runOnUiThread(() -> 
+            Toast.makeText(this, "TaskService error: " + error, Toast.LENGTH_SHORT).show()
+        );
+    }
+    // CategoryService.CategoryUpdateListener implementation
+    @Override
+    public void onCategoriesUpdated() {
+        // Handle category updates if needed
+    }
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(updateBaseContextLocale(newBase));
     }
-
     private Context updateBaseContextLocale(Context context) {
         String languageName = SettingsManager.getLanguage(context);
         String languageCode;
@@ -327,13 +313,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         } else {
             languageCode = "vi";
         }
-
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
-
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(locale);
-
         return context.createConfigurationContext(configuration);
     }
 }

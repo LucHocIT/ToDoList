@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.backup.*
+*.backup
+temp_*.java
+*.tmp

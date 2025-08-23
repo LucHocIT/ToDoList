@@ -1,5 +1,4 @@
 package com.example.todolist.util;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,11 +6,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.example.todolist.CalendarActivity;
 import com.example.todolist.MainActivity;
 import com.example.todolist.R;
@@ -19,11 +16,8 @@ import com.example.todolist.SettingsActivity;
 import com.example.todolist.ThemeSelectionActivity;
 import com.example.todolist.dialog.WidgetsDialog;
 import com.example.todolist.manager.NavigationDrawerManager;
-
 public class UnifiedNavigationHelper {
-    
     private static NavigationDrawerManager sharedDrawerManager;
-    
     /**
      * Setup bottom navigation for any activity
      * @param context Current activity context
@@ -39,14 +33,11 @@ public class UnifiedNavigationHelper {
                                            LinearLayout btnNavCalendar,
                                            LinearLayout btnNavProfile,
                                            String currentScreen) {
-        
         // Set current screen as selected
         setCurrentScreenSelected(currentScreen, btnNavTasks, btnNavCalendar);
-        
         // Setup navigation button listeners
         setupNavigationListeners(context, btnNavMenu, btnNavTasks, btnNavCalendar, currentScreen);
     }
-    
     private static void setCurrentScreenSelected(String currentScreen, 
                                                LinearLayout btnNavTasks, 
                                                LinearLayout btnNavCalendar) {
@@ -63,13 +54,11 @@ public class UnifiedNavigationHelper {
                 break;
         }
     }
-    
     private static void setupNavigationListeners(Context context,
                                                 LinearLayout btnNavMenu,
                                                 LinearLayout btnNavTasks, 
                                                 LinearLayout btnNavCalendar,
                                                 String currentScreen) {
-        
         // Tasks navigation
         if (btnNavTasks != null) {
             btnNavTasks.setOnClickListener(v -> {
@@ -78,7 +67,6 @@ public class UnifiedNavigationHelper {
                 }
             });
         }
-        
         // Calendar navigation
         if (btnNavCalendar != null) {
             btnNavCalendar.setOnClickListener(v -> {
@@ -87,7 +75,6 @@ public class UnifiedNavigationHelper {
                 }
             });
         }
-        
         // Menu navigation - Always use unified menu system
         if (btnNavMenu != null) {
             btnNavMenu.setOnClickListener(v -> {
@@ -95,7 +82,6 @@ public class UnifiedNavigationHelper {
             });
         }
     }
-    
     private static void navigateToTasks(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
@@ -103,7 +89,6 @@ public class UnifiedNavigationHelper {
             ((AppCompatActivity) context).finish();
         }
     }
-    
     private static void navigateToCalendar(Context context) {
         Intent intent = new Intent(context, CalendarActivity.class);
         context.startActivity(intent);
@@ -111,17 +96,14 @@ public class UnifiedNavigationHelper {
             ((AppCompatActivity) context).finish();
         }
     }
-    
     /**
      * Unified menu handling - all activities use the same menu system
      */
     private static void handleMenuClick(Context context) {
         if (context instanceof AppCompatActivity) {
             AppCompatActivity activity = (AppCompatActivity) context;
-            
             // Try to find drawer layout in current activity
             DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
-            
             if (drawerLayout != null) {
                 // If activity has drawer, open it directly
                 drawerLayout.openDrawer(GravityCompat.START);
@@ -134,7 +116,6 @@ public class UnifiedNavigationHelper {
             }
         }
     }
-    
     /**
      * Initialize shared drawer manager for activities that have drawer
      */
@@ -145,7 +126,6 @@ public class UnifiedNavigationHelper {
             sharedDrawerManager = new NavigationDrawerManager(activity, drawerLayout, listener);
         }
     }
-    
     /**
      * Check if current activity has drawer capability
      */
@@ -157,13 +137,10 @@ public class UnifiedNavigationHelper {
         }
         return false;
     }
-    
     private static void setNavigationSelected(LinearLayout navItem) {
         if (navItem == null) return;
-        
         View icon = navItem.getChildAt(0);
         View text = navItem.getChildAt(1);
-        
         if (icon instanceof ImageView) {
             ((ImageView) icon).setColorFilter(Color.parseColor("#4285F4"));
         }

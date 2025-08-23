@@ -1,5 +1,4 @@
 package com.example.todolist.adapter;
-
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,36 +6,27 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.todolist.R;
 import com.example.todolist.model.Category;
-
 import java.util.List;
-
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    
     private static final int TYPE_CATEGORY = 0;
     private static final int TYPE_ADD_NEW = 1;
-    
     private List<Category> categories;
     private OnCategoryClickListener listener;
-
     public interface OnCategoryClickListener {
         void onCategoryClick(Category category);
         void onCategoryMenuClick(Category category);
     }
-
     public CategoryAdapter(List<Category> categories, OnCategoryClickListener listener) {
         this.categories = categories;
         this.listener = listener;
     }    @Override
     public int getItemViewType(int position) {
-        return categories.get(position).getId() == -1 ? TYPE_ADD_NEW : TYPE_CATEGORY;
+        return "-1".equals(categories.get(position).getId()) ? TYPE_ADD_NEW : TYPE_CATEGORY;
     }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,28 +40,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return new CategoryViewHolder(view);
         }
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Category category = categories.get(position);
-        
         if (holder instanceof CategoryViewHolder) {
             ((CategoryViewHolder) holder).bind(category);
         } else if (holder instanceof AddNewViewHolder) {
             ((AddNewViewHolder) holder).bind();
         }
     }
-
     @Override
     public int getItemCount() {
         return categories.size();
     }
-
     class CategoryViewHolder extends RecyclerView.ViewHolder {
         TextView tvCategoryName, tvTaskCount;
         ImageView imgCategoryIcon, btnCategoryMenu, imgDragHandle;
         FrameLayout iconBackground;
-
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCategoryName = itemView.findViewById(R.id.tv_category_name);
@@ -83,20 +68,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }        public void bind(Category category) {
             tvCategoryName.setText(category.getName());
             tvTaskCount.setText("0 nhiệm vụ"); // TODO: Calculate real task count
-            
             // Set background color
             try {
                 iconBackground.getBackground().setTint(Color.parseColor(category.getColor()));
             } catch (Exception e) {
                 iconBackground.getBackground().setTint(Color.parseColor("#4285F4"));
             }
-
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onCategoryClick(category);
                 }
             });
-
             btnCategoryMenu.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onCategoryMenuClick(category);
@@ -104,13 +86,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         }
     }
-
     class AddNewViewHolder extends RecyclerView.ViewHolder {
-
         public AddNewViewHolder(@NonNull View itemView) {
             super(itemView);
         }
-
         public void bind() {
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

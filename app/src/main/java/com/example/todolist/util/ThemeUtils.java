@@ -1,16 +1,11 @@
 package com.example.todolist.util;
-
 import android.content.Context;
 import android.widget.ImageView;
-
 import com.example.todolist.R;
 import com.example.todolist.manager.ThemeManager;
-
 public class ThemeUtils {
-    
     public static void updateNavigationHeaderGradient(Context context, ImageView headerBackground, ThemeManager.ThemeColor theme) {
         int gradientDrawable;
-        
         switch (theme) {
             case GREEN:
                 gradientDrawable = R.drawable.nav_header_gradient_green;
@@ -38,12 +33,10 @@ public class ThemeUtils {
                 gradientDrawable = R.drawable.nav_header_gradient;
                 break;
         }
-        
         if (headerBackground != null) {
             headerBackground.setBackgroundResource(gradientDrawable);
         }
     }
-    
     public static int getThemeGradientResource(ThemeManager.ThemeColor theme) {
         switch (theme) {
             case GREEN:
