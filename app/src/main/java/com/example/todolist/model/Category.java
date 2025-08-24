@@ -10,6 +10,7 @@ public class Category implements Serializable {
     private String id;
     private String name;
     private String color;
+    private String icon;
     private int sortOrder;
     private boolean isDefault;
     private long createdAt;
@@ -23,6 +24,7 @@ public class Category implements Serializable {
         this();
         this.name = name;
         this.color = color;
+        this.icon = null;
         this.sortOrder = 0;
         this.isDefault = false;
     }
@@ -30,6 +32,7 @@ public class Category implements Serializable {
         this();
         this.name = name;
         this.color = color;
+        this.icon = null;
         this.sortOrder = sortOrder;
         this.isDefault = isDefault;
     }
@@ -39,6 +42,7 @@ public class Category implements Serializable {
         result.put("id", id);
         result.put("name", name);
         result.put("color", color);
+        result.put("icon", icon);
         result.put("sortOrder", sortOrder);
         result.put("isDefault", isDefault);
         result.put("createdAt", createdAt);
@@ -62,6 +66,12 @@ public class Category implements Serializable {
         this.color = color;
         updateTimestamp();
     }
+    
+    public String getIcon() { return icon; }
+    public void setIcon(String icon) { 
+        this.icon = icon;
+        updateTimestamp();
+    }
     public int getSortOrder() { return sortOrder; }
     public void setSortOrder(int sortOrder) { 
         this.sortOrder = sortOrder;
@@ -83,6 +93,7 @@ public class Category implements Serializable {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", color='" + color + '\'' +
+                ", icon='" + icon + '\'' +
                 ", sortOrder=" + sortOrder +
                 '}';
     }
