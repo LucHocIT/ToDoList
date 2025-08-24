@@ -46,6 +46,7 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+        isInitialCategorySetup = true;    
         taskService = new TaskService(this, this);
         categoryService = new CategoryService(this, null, this);
         initViews();
@@ -92,11 +93,10 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
             textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
             setPriorityDisplay(currentTask.getPriority());
-            textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");
-            if (categoryAdapter != null && currentTask.getCategoryId() != null) {
-                isInitialCategorySetup = true;
+            textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
+            android.util.Log.d("TaskDetail", "Displaying task: " + currentTask.getTitle() + ", categoryId: " + currentTask.getCategoryId());
+            if (categoryAdapter != null) {
                 setSelectedCategoryInSpinner(currentTask.getCategoryId());
-                isInitialCategorySetup = false;
             }
         }
     }
@@ -111,17 +111,30 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                     spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            android.util.Log.d("TaskDetail", "onItemSelected called - position: " + position + ", isInitialSetup: " + isInitialCategorySetup);
+                            
                             if (isInitialCategorySetup) {
+                                android.util.Log.d("TaskDetail", "Skipping onItemSelected because isInitialCategorySetup = true");
                                 return;
                             }
+                            
                             Category selectedCat = categoryAdapter.getCategory(position);
+                            android.util.Log.d("TaskDetail", "Selected category: " + (selectedCat != null ? selectedCat.getName() + " (id: " + selectedCat.getId() + ")" : "null"));
+                            
                             if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
                                 selectedCategory = selectedCat;
                                 String newCategoryId = "0".equals(selectedCat.getId()) ? null : selectedCat.getId();
                                 String currentCategoryId = currentTask.getCategoryId();
+                                
+                                android.util.Log.d("TaskDetail", "Category comparison - current: " + currentCategoryId + ", new: " + newCategoryId);
+                                
                                 boolean categoryChanged = (newCategoryId == null && currentCategoryId != null) ||
                                                         (newCategoryId != null && !newCategoryId.equals(currentCategoryId));
+                                
+                                android.util.Log.d("TaskDetail", "Category changed: " + categoryChanged);
+                                
                                 if (categoryChanged) {
+                                    android.util.Log.d("TaskDetail", "Updating task category from " + currentCategoryId + " to " + newCategoryId);
                                     currentTask.setCategoryId(newCategoryId);
                                     taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
                                         @Override
@@ -144,11 +157,9 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
 
-                    if (currentTask != null && currentTask.getCategoryId() != null) {
+                    if (currentTask != null) {
                         setSelectedCategoryInSpinner(currentTask.getCategoryId());
                     }
-
-                    isInitialCategorySetup = false;
                 });
             }
             @Override
@@ -160,15 +171,43 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         });
     }
     private void setSelectedCategoryInSpinner(String categoryId) {
-        if (categoryAdapter != null && allCategories != null) {
-            for (int i = 0; i < allCategories.size(); i++) {
-                if (allCategories.get(i).getId().equals(categoryId)) {
-                    spinnerCategory.setSelection(i);
-                    break;
+        if (categoryAdapter != null) {
+            android.util.Log.d("TaskDetail", "setSelectedCategoryInSpinner called with categoryId: " + categoryId + ", isInitialSetup: " + isInitialCategorySetup);
+            
+            isInitialCategorySetup = true; // Set flag trước khi thay đổi selection
+            
+            int positionToSelect = 0; // Default to "Không có thể loại"
+            
+            // Tìm vị trí của category trong adapter
+            for (int i = 0; i < categoryAdapter.getCount(); i++) {
+                Category category = categoryAdapter.getCategory(i);
+                if (category != null) {
+                    // Nếu task không có category (null) thì chọn default category (id="0")
+                    if (categoryId == null && "0".equals(category.getId())) {
+                        positionToSelect = i;
+                        android.util.Log.d("TaskDetail", "Task has no category, selecting default at position: " + i);
+                        break;
+                    }
+                    // Nếu task có category thì tìm category đó
+                    else if (categoryId != null && category.getId().equals(categoryId)) {
+                        positionToSelect = i;
+                        android.util.Log.d("TaskDetail", "Found category at position: " + i + ", category: " + category.getName());
+                        break;
+                    }
                 }
-            }
+            }                   
+            
+            android.util.Log.d("TaskDetail", "Setting spinner selection to position: " + positionToSelect);
+            spinnerCategory.setSelection(positionToSelect);
+            
+            // Reset flag sau khi set selection để cho phép user thay đổi
+            spinnerCategory.post(() -> {
+                isInitialCategorySetup = false;
+                android.util.Log.d("TaskDetail", "isInitialCategorySetup reset to false");
+            });
         }
     }
+    
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> {
             updateTaskTitle();

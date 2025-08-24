@@ -33,7 +33,6 @@ public class ThemeSelectionActivity extends AppCompatActivity implements ThemeAd
     }
     private void setupThemeManager() {
         themeManager = new ThemeManager(this, theme -> {
-            // Theme changed, update adapter
             if (themeAdapter != null) {
                 themeAdapter.setSelectedTheme(theme);
             }
@@ -51,17 +50,14 @@ public class ThemeSelectionActivity extends AppCompatActivity implements ThemeAd
     public void onThemeSelected(ThemeManager.ThemeColor theme) {
         themeManager.setTheme(theme);
         Toast.makeText(this, getString(R.string.theme_selected, theme.getName()), Toast.LENGTH_SHORT).show();
-        // Return result to MainActivity
         Intent resultIntent = new Intent();
         resultIntent.putExtra("theme_changed", true);
         setResult(RESULT_OK, resultIntent);
-        // Apply theme immediately and finish
         finish();
     }
     @Override
     protected void onResume() {
         super.onResume();
-        // Apply current theme when activity resumes
         themeManager.applyCurrentTheme();
     }
     @Override
