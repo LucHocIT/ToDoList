@@ -16,11 +16,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Main TaskService orchestrator - coordinates all task operations
- * Replaces the original long TaskService by delegating to specialized sub-services
- */
 public class TaskService {
     
     public interface TaskUpdateListener {
@@ -37,13 +32,10 @@ public class TaskService {
     private TaskRepository taskRepository;
     private TaskUpdateListener listener;
     private ValueEventListener realtimeListener;
-    
-    // Sub-services that handle specific functionality
-    private TaskManager taskManager;              // CRUD operations + reminders
-    private TaskCompletionService completionService;  // Completion/importance logic
-    private TaskListService listService;         // Categorization + filtering
-    
-    // Firebase debouncing (inherited from original TaskService)
+    private TaskManager taskManager;              
+    private TaskCompletionService completionService;  
+    private TaskListService listService;         
+
     private Handler firebaseUpdateHandler;
     private Runnable pendingFirebaseUpdate;
     private static final long FIREBASE_UPDATE_DELAY = 500;
@@ -58,7 +50,6 @@ public class TaskService {
         this.taskRepository = new TaskRepository();
         this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
-        // Initialize specialized sub-services
         this.taskManager = new TaskManager(context);
         this.completionService = new TaskCompletionService();
         this.listService = new TaskListService();
@@ -120,7 +111,6 @@ public class TaskService {
         }
     }
 
-    // === CORE OPERATIONS - Delegate to TaskManager ===
     public void addTask(Task task) {
         taskManager.addTask(task, null);
     }
@@ -143,7 +133,6 @@ public class TaskService {
         taskManager.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                // Success handled by Firebase listener
             }
 
             @Override
@@ -186,12 +175,9 @@ public class TaskService {
         taskManager.deleteTask(task, callback);
     }
 
-    // === COMPLETION OPERATIONS - Delegate to TaskCompletionService ===
     public void completeTask(Task task, boolean isCompleted) {
         lastLocalUpdateTime = System.currentTimeMillis();
         cancelPendingFirebaseUpdates();
-        
-        // Update local state immediately
         completionService.completeTask(task, isCompleted, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -225,7 +211,6 @@ public class TaskService {
         completionService.toggleTaskImportance(task, null);
     }
 
-    // === LIST OPERATIONS - Delegate to TaskListService ===
     public List<Task> getAllTasks() { return new ArrayList<>(allTasks); }
     public List<Task> getOverdueTasks() { return listService.getOverdueTasks(); }
     public List<Task> getTodayTasks() { return listService.getTodayTasks(); }
@@ -242,9 +227,8 @@ public class TaskService {
         return incomplete;
     }
     
-    // === ASYNC OPERATIONS ===
     public void getAllTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
-        callback.onSuccess(getAllTasks());
+        taskRepository.getAllTasks(callback);
     }
     
     public void searchTasks(String query, BaseRepository.RepositoryCallback<List<Task>> callback) {
@@ -292,7 +276,6 @@ public class TaskService {
     }
 
     public void rescheduleAllReminders() {
-        // Delegate to taskManager if needed
         if (taskManager != null) {
         }
     }

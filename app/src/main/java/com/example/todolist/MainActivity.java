@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements
         categoryService = new CategoryService(this, this);
         searchManager = new SearchManager(layoutSearch, findViewById(R.id.layout_filter_tabs), editSearch, btnCancelSearch, this);
         filterManager = new FilterManager(this, layoutCategoriesContainer, 
-                findViewById(R.id.layout_empty_state), tvEmptyTitle, this);ager
+                findViewById(R.id.layout_empty_state), tvEmptyTitle, this);
         sectionManager = new SectionManager(
                 findViewById(R.id.section_overdue_tasks),
                 findViewById(R.id.section_today_tasks),

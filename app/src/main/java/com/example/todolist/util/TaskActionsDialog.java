@@ -45,13 +45,13 @@ public class TaskActionsDialog {
         TextView deleteText = new TextView(context);
         // Setup star action
         if (task.isImportant()) {
-            starText.setText("â­ Bá» Ä‘Ă¡nh dáº¥u quan trá»ng");
+            starText.setText("â­ Bật đánh dấu quan trọng");
         } else {
-            starText.setText("â˜† ÄĂ¡nh dáº¥u quan trá»ng");
+            starText.setText("â˜† Đánh dấu quan trọng");
         }
         starText.setPadding(20, 10, 20, 10);
         starText.setTextSize(16);
-        deleteText.setText("đŸ—‘ï¸ XĂ³a");
+        deleteText.setText("đŸ—‘ï¸ Xóa");
         deleteText.setPadding(20, 10, 20, 20);
         deleteText.setTextSize(16);
         // Set click listeners
