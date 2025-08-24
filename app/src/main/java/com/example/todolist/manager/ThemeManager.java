@@ -70,7 +70,6 @@ public class ThemeManager {
     public void setTheme(ThemeColor theme) {
         currentTheme = theme;
         preferences.edit().putString(PREF_THEME_KEY, theme.name()).apply();
-        // Apply theme immediately
         applyCurrentTheme();
         if (listener != null) {
             listener.onThemeChanged(theme);
@@ -86,32 +85,23 @@ public class ThemeManager {
         int primaryColor = activity.getResources().getColor(theme.getPrimaryColorRes(), null);
         int secondaryColor = activity.getResources().getColor(theme.getSecondaryColorRes(), null);
         int lightColor = activity.getResources().getColor(theme.getLightColorRes(), null);
-        // Apply to FloatingActionButton
         FloatingActionButton fab = activity.findViewById(R.id.fab_add);
         if (fab != null) {
             fab.setBackgroundTintList(ColorStateList.valueOf(primaryColor));
         }
-        // Note: Filter buttons are now dynamically created by FilterManager
-        // and will inherit theme automatically from MaterialButton style
-        
-        // Apply to navigation icons
         ImageView btnMenu = activity.findViewById(R.id.btn_menu);
         if (btnMenu != null) {
             btnMenu.setColorFilter(primaryColor);
         }
-        // Apply to bottom navigation
+
         applyThemeToBottomNavigation(primaryColor);
-        // Update navigation drawer gradient
         updateNavigationDrawerTheme(theme);
-        // Apply theme to task items background (dynamically)
         updateTaskItemsTheme(lightColor);
     }
     private void applyThemeToButton(int buttonId, int primaryColor, int lightColor) {
         MaterialButton button = activity.findViewById(buttonId);
         if (button != null) {
-            // Set text color
             button.setTextColor(primaryColor);
-            // Set background tint for selected state
             ColorStateList backgroundTint = new ColorStateList(
                 new int[][]{
                     new int[]{android.R.attr.state_selected},
@@ -126,7 +116,6 @@ public class ThemeManager {
         }
     }
     private void applyThemeToBottomNavigation(int primaryColor) {
-        // Apply to bottom navigation icons
         View btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
         View btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         View btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
@@ -150,7 +139,6 @@ public class ThemeManager {
         }
     }
     private void updateNavigationDrawerTheme(ThemeColor theme) {
-        // Update the navigation drawer header background
         android.widget.RelativeLayout navHeader = activity.findViewById(R.id.nav_header_container);
         if (navHeader != null) {
             int gradientRes = getThemeGradientResource(theme);

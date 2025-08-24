@@ -84,10 +84,8 @@ public class UIManager {
         LinearLayout btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
-        // Use unified navigation helper with drawer initialization
         com.example.todolist.util.UnifiedNavigationHelper.setupBottomNavigation(
             activity, btnNavMenu, btnNavTasks, btnNavCalendar, null, "tasks");
-        // Initialize drawer for MainActivity
         androidx.drawerlayout.widget.DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
         if (drawerLayout != null && listener instanceof com.example.todolist.manager.NavigationDrawerManager.NavigationListener) {
             com.example.todolist.util.UnifiedNavigationHelper.initializeDrawerForActivity(
@@ -124,7 +122,6 @@ public class UIManager {
         categoryService.getAllCategories(new BaseRepository.RepositoryCallback<List<Category>>() {
             @Override
             public void onSuccess(List<Category> categories) {
-                // Debug: Print all categories from database
                 for (Category cat : categories) {
                 }
                 activity.runOnUiThread(() -> {

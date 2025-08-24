@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 public class FilterManager {
+    
     public interface FilterListener {
         void onFilterChanged(String filter);
         void onEmptyStateChanged(boolean isEmpty, String message);
@@ -168,7 +169,10 @@ public class FilterManager {
         params.setMargins(0, 0, 12, 0);
         categoryBtn.setLayoutParams(params);
         
-        categoryBtn.setOnClickListener(v -> filterTasks(category.getName()));
+        categoryBtn.setOnClickListener(v -> {
+            // Filter by category ID instead of name
+            filterTasks(category.getId());
+        });
         
         layoutCategoriesContainer.addView(categoryBtn);
         categoryButtons.add(categoryBtn);
@@ -221,6 +225,7 @@ public class FilterManager {
     
     private void filterByCategory(List<Task> source, List<Task> destination, String filter) {
         if (source == null) return;
+        
         for (Task task : source) {
             String taskCategory = task.getCategory();
             if (taskCategory != null && taskCategory.equalsIgnoreCase(filter)) {
@@ -229,19 +234,23 @@ public class FilterManager {
         }
     }
     private void highlightFilterButton(String filter) {
-        // Reset all buttons first
         resetAllFilterButtons();
         
-        // Find and highlight the matching button
         if (filter.equalsIgnoreCase("all") && btnAll != null) {
             setButtonSelected(btnAll);
         } else {
-            // Find category button by name
+            // Find category button by ID - need to match with categories list
             for (int i = 0; i < categoryButtons.size(); i++) {
                 MaterialButton button = categoryButtons.get(i);
-                if (button != btnAll && button.getText().toString().equalsIgnoreCase(filter)) {
-                    setButtonSelected(button);
-                    break;
+                if (button != btnAll) {
+                    int categoryIndex = i - 1; 
+                    if (categoryIndex >= 0 && categoryIndex < categories.size()) {
+                        Category category = categories.get(categoryIndex);
+                        if (category.getId().equals(filter)) {
+                            setButtonSelected(button);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -328,11 +337,7 @@ public class FilterManager {
             message = "";
         } else {
             layoutEmptyState.setVisibility(View.VISIBLE);
-            if (filter.equalsIgnoreCase("all")) {
-                message = context.getString(R.string.no_tasks_message);
-            } else {
-                message = context.getString(R.string.no_tasks_in_category_message, filter);
-            }
+            message = "Nhiệm vụ trống";
             tvEmptyTitle.setText(message);
         }
         if (listener != null) {

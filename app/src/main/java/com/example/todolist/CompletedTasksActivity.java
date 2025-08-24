@@ -65,11 +65,9 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             btnBack = findViewById(R.id.btn_back);
             ImageView btnDeleteAll = findViewById(R.id.btn_delete_all);
             recyclerCompletedTasks = findViewById(R.id.recycler_completed_tasks);
-            // Setup RecyclerView
             recyclerCompletedTasks.setLayoutManager(new LinearLayoutManager(this));
             completedTasksAdapter = new CompletedTasksAdapter(groupedTasks, this);
             recyclerCompletedTasks.setAdapter(completedTasksAdapter);
-            // Setup click listeners
             btnBack.setOnClickListener(v -> finish());
             btnDeleteAll.setOnClickListener(v -> {
                 new androidx.appcompat.app.AlertDialog.Builder(this)
@@ -127,7 +125,6 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             Collections.sort(tasks, new Comparator<Task>() {
                 @Override
                 public int compare(Task t1, Task t2) {
-                    // Sort by completion date descending (newer tasks first)
                     if (t1.getCompletionDate() != null && t2.getCompletionDate() != null) {
                         return t2.getCompletionDate().compareTo(t1.getCompletionDate());
                     }

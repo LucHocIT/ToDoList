@@ -70,13 +70,11 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                                   @NonNull RecyclerView.ViewHolder target) {
                 int fromPosition = viewHolder.getAdapterPosition();
                 int toPosition = target.getAdapterPosition();
-                
-                // Don't allow moving the "Add New" item (last item)
+
                 if (fromPosition == categories.size() - 1 || toPosition == categories.size() - 1) {
                     return false;
                 }
-                
-                // Don't allow moving items to invalid positions
+
                 if (fromPosition < 0 || toPosition < 0 || 
                     fromPosition >= categories.size() - 1 || toPosition >= categories.size() - 1) {
                     return false;
@@ -107,7 +105,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
     }
     private void loadCategories() {
         categoryService.loadCategories();
-        // Also load tasks to ensure task counts are updated
         if (taskService != null) {
             taskService.loadTasks();
         }
@@ -173,8 +170,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_category, null);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
-        
-        // Fix dialog position and background
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             dialog.getWindow().setGravity(Gravity.CENTER);
@@ -227,12 +222,9 @@ public class CategoryManagerActivity extends AppCompatActivity implements
         
         PopupMenu popup = new PopupMenu(this, anchorView);
         popup.getMenuInflater().inflate(R.menu.category_menu, popup.getMenu());
-        
-        // Allow deletion of all categories including default ones
-        // Users should be able to delete any category they want
         MenuItem deleteItem = popup.getMenu().findItem(R.id.action_delete_category);
         if (deleteItem != null) {
-            deleteItem.setVisible(true); // Always show delete option
+            deleteItem.setVisible(true);
         }
         
         popup.setOnMenuItemClickListener(item -> {
@@ -255,8 +247,7 @@ public class CategoryManagerActivity extends AppCompatActivity implements
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_category, null);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
-        
-        // Fix dialog position and background
+
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             dialog.getWindow().setGravity(Gravity.CENTER);
@@ -322,7 +313,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                     categoryService.deleteCategory(category, new CategoryService.CategoryOperationCallback() {
                         @Override
                         public void onSuccess() {
-                            // No toast needed, just delete silently
                         }
                         @Override
                         public void onError(String error) {
