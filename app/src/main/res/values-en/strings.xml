@@ -170,6 +170,12 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_save">Save</string>
     
+    <!-- Default Categories -->
+    <string name="category_all">All</string>
+    <string name="category_work">Work</string>
+    <string name="category_personal">Personal</string>
+    <string name="category_favorite">Favorite</string>
+    
     <!-- Contact Dialog -->
     <string name="contact_title">Contact</string>
     <string name="contact_subtitle">About the application</string>

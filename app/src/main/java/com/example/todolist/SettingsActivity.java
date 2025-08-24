@@ -79,28 +79,20 @@ public class SettingsActivity extends AppCompatActivity {
                 SettingsManager.setSoundEnabled(this, false);
             }
         });
-        // Language setting
         layoutLanguage.setOnClickListener(v -> showLanguageDialog());
-        // About & Support
         layoutAboutApp.setOnClickListener(v -> showAboutDialog());
         layoutPrivacyPolicy.setOnClickListener(v -> showPrivacyPolicy());
         layoutTerms.setOnClickListener(v -> showTermsOfService());
         layoutHelpSupport.setOnClickListener(v -> showHelpSupport());
-        // Advanced Settings
         layoutResetData.setOnClickListener(v -> showResetDataDialog());
     }
     private void loadCurrentSettings() {
-        // Sá»­a logic cĂ i Ä‘áº·t náº¿u cĂ³ váº¥n Ä‘á»
         SettingsManager.fixNotificationSettings(this);
-        // Ensure sound is disabled since we removed the sound UI
         SettingsManager.ensureSoundDisabledWhenNotificationsOff(this);
-        // Load notification settings using SettingsManager
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
         switchNotifications.setChecked(notificationsEnabled);
-        // Load language
         String language = SettingsManager.getLanguage(this);
         tvLanguageValue.setText(language);
-        // Load app version
         try {
             String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
             tvAppVersion.setText(getString(R.string.version_format, versionName));
@@ -116,7 +108,6 @@ public class SettingsActivity extends AppCompatActivity {
             String selectedLanguage = languages[which];
             tvLanguageValue.setText(selectedLanguage);
             SettingsManager.setLanguage(this, selectedLanguage);
-            // Apply language change by prompting user to restart
             applyLanguageChange(selectedLanguage);
             Toast.makeText(this, getString(R.string.language_changed_restart_prompt), Toast.LENGTH_LONG).show();
         });
@@ -175,11 +166,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
     private void performDataReset() {
         try {
-            // Reset database using CategoryService
             CategoryService categoryService = new CategoryService(this, null, new CategoryService.CategoryUpdateListener() {
                 @Override
                 public void onCategoriesUpdated() {
-                    // Reset complete
                 }
                 @Override
                 public void onError(String error) {
@@ -189,10 +178,8 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
             categoryService.clearAllDataAndReset();
-            // Reset app settings
             SettingsManager.resetAllSettings(this);
             Toast.makeText(this, getString(R.string.reset_success), Toast.LENGTH_LONG).show();
-            // Restart app to reflect changes
             Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

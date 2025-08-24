@@ -172,23 +172,18 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     }
     private void setSelectedCategoryInSpinner(String categoryId) {
         if (categoryAdapter != null) {
-            android.util.Log.d("TaskDetail", "setSelectedCategoryInSpinner called with categoryId: " + categoryId + ", isInitialSetup: " + isInitialCategorySetup);
+            android.util.Log.d("TaskDetail", "setSelectedCategoryInSpinner called with categoryId: " + categoryId + ", isInitialSetup: " + isInitialCategorySetup);            
+            isInitialCategorySetup = true;
             
-            isInitialCategorySetup = true; // Set flag trước khi thay đổi selection
-            
-            int positionToSelect = 0; // Default to "Không có thể loại"
-            
-            // Tìm vị trí của category trong adapter
+            int positionToSelect = 0; 
             for (int i = 0; i < categoryAdapter.getCount(); i++) {
                 Category category = categoryAdapter.getCategory(i);
                 if (category != null) {
-                    // Nếu task không có category (null) thì chọn default category (id="0")
                     if (categoryId == null && "0".equals(category.getId())) {
                         positionToSelect = i;
                         android.util.Log.d("TaskDetail", "Task has no category, selecting default at position: " + i);
                         break;
                     }
-                    // Nếu task có category thì tìm category đó
                     else if (categoryId != null && category.getId().equals(categoryId)) {
                         positionToSelect = i;
                         android.util.Log.d("TaskDetail", "Found category at position: " + i + ", category: " + category.getName());
@@ -199,8 +194,6 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             
             android.util.Log.d("TaskDetail", "Setting spinner selection to position: " + positionToSelect);
             spinnerCategory.setSelection(positionToSelect);
-            
-            // Reset flag sau khi set selection để cho phép user thay đổi
             spinnerCategory.post(() -> {
                 isInitialCategorySetup = false;
                 android.util.Log.d("TaskDetail", "isInitialCategorySetup reset to false");

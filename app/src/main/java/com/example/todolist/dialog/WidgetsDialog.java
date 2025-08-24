@@ -29,16 +29,12 @@ public class WidgetsDialog {
         setupClickListeners(dialogView);
     }
     private void setupClickListeners(View dialogView) {
-        // Close button
         ImageView btnClose = dialogView.findViewById(R.id.btn_close_dialog);
         btnClose.setOnClickListener(v -> dismiss());
-        // Click outside to dismiss
         dialogView.setOnClickListener(v -> dismiss());
-        // Prevent dialog content clicks from dismissing
         LinearLayout dialogContent = dialogView.findViewById(R.id.dialog_content);
         if (dialogContent != null) {
             dialogContent.setOnClickListener(v -> {
-                // Do nothing - prevent dismissal
             });
         }
     }

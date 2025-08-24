@@ -13,20 +13,14 @@ public class TodoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
-        // Initialize Firebase first
         initializeFirebase();
-        
-        // Create notification channel
         createNotificationChannel();
     }
     
     private void initializeFirebase() {
         try {
-            // Enable Firebase offline persistence
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         } catch (Exception e) {
-            // Handle exception if persistence is already enabled
             e.printStackTrace();
         }
     }

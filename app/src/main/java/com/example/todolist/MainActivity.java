@@ -367,14 +367,8 @@ public class MainActivity extends AppCompatActivity implements
     // CategoryService.CategoryUpdateListener implementation  
     @Override
     public void onCategoriesUpdated() {
-        runOnUiThread(() -> {
-            if (filterManager != null) {
-                // Use a delay to ensure buttons are fully created
-                new android.os.Handler().postDelayed(() -> {
-                    filterManager.setupAllCategoryClicks();
-                }, 100); // Reduced delay
-            }
-        });
+        // Category filtering is now handled by simple name matching
+        // No need to reload mapping or setup clicks
     }
     // SearchManager.SearchListener implementation
     @Override
@@ -475,6 +469,18 @@ public class MainActivity extends AppCompatActivity implements
                     .apply();
         }
     }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (taskService != null) {
+            taskService.cleanup();
+        }
+        if (categoryService != null) {
+            categoryService.cleanup();
+        }
+    }
+    
     @Override
     public void onBackPressed() {
         if (navigationDrawerManager.isDrawerOpen()) {

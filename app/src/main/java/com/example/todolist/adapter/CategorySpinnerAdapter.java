@@ -16,20 +16,15 @@ public class CategorySpinnerAdapter extends BaseAdapter {
     public CategorySpinnerAdapter(Context context, List<Category> categories) {
         this.context = context;
         this.categories = new ArrayList<>();
-        // Add debug logging
-        // Always add default "no category" option first
         Category defaultCategory = new Category("Không có thể loại", "#999999", 0, false);
         defaultCategory.setId("0");
         this.categories.add(defaultCategory);
-        // Add only non-duplicate categories from database
         if (categories != null) {
             for (Category category : categories) {
-                // Skip the default "no category" entry if it exists in database (case insensitive)
                 if (category.getName().equalsIgnoreCase("không có thể loại") || 
                     category.getName().equalsIgnoreCase("Khổng có thể loại")) {
                     continue;
                 }
-                // Skip if category name already exists (case insensitive)
                 boolean exists = false;
                 for (Category existing : this.categories) {
                     if (existing.getName().equalsIgnoreCase(category.getName())) {
@@ -72,13 +67,11 @@ public class CategorySpinnerAdapter extends BaseAdapter {
         TextView textCategoryName = convertView.findViewById(R.id.text_category_name);
         View colorIndicator = convertView.findViewById(R.id.category_color_indicator);
         textCategoryName.setText(category.getName());
-        // Set color for indicator
         if (colorIndicator != null) {
             try {
                 int color = android.graphics.Color.parseColor(category.getColor());
                 colorIndicator.getBackground().setTint(color);
             } catch (Exception e) {
-                // Default color if parsing fails
                 colorIndicator.getBackground().setTint(android.graphics.Color.parseColor("#999999"));
             }
         }
@@ -86,17 +79,14 @@ public class CategorySpinnerAdapter extends BaseAdapter {
     }
     public void updateCategories(List<Category> newCategories) {
         this.categories.clear();
-        // Always add default "no category" option first
         Category defaultCategory = new Category("Không có thể loại", "#999999", 0, false);
         defaultCategory.setId("0");
         this.categories.add(defaultCategory);
-        // Add only non-duplicate categories from new list
         if (newCategories != null) {
             List<String> addedNames = new ArrayList<>();
-            addedNames.add("không có thể loại"); // Already added above
+            addedNames.add("không có thể loại"); 
             for (Category category : newCategories) {
                 String categoryNameLower = category.getName().toLowerCase().trim();
-                // Skip if category name already exists (case insensitive)
                 boolean alreadyExists = false;
                 for (String addedName : addedNames) {
                     if (addedName.equalsIgnoreCase(categoryNameLower)) {
@@ -124,6 +114,6 @@ public class CategorySpinnerAdapter extends BaseAdapter {
                 return i;
             }
         }
-        return 0; // Default to "khĂ´ng cĂ³ thá»ƒ loáº¡i"
+        return 0; 
     }
 }

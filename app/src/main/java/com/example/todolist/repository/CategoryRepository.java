@@ -9,6 +9,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CategoryRepository extends BaseRepository {
@@ -55,8 +57,7 @@ public class CategoryRepository extends BaseRepository {
     public void getDefaultCategories(ListCallback<Category> callback) {
         queryRepository.getDefaultCategories(callback);
     }
-
-    // === REALTIME LISTENER OPERATIONS ===
+    
     public ValueEventListener addCategoriesRealtimeListener(ListCallback<Category> callback) {
         ValueEventListener listener = new ValueEventListener() {
             @Override
@@ -70,6 +71,20 @@ public class CategoryRepository extends BaseRepository {
                         categories.add(category);
                     }
                 }
+                Collections.sort(categories, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category c1, Category c2) {
+                        int order1 = c1.getSortOrder();
+                        int order2 = c2.getSortOrder();
+                        
+                        int orderComparison = Integer.compare(order1, order2);
+                        if (orderComparison != 0) {
+                            return orderComparison;
+                        }
+                        
+                        return c1.getName().compareTo(c2.getName());
+                    }
+                });
                 
                 if (callback != null) {
                     callback.onSuccess(categories);
@@ -118,20 +133,26 @@ public class CategoryRepository extends BaseRepository {
     private void createDefaultCategories(DatabaseCallback<Boolean> callback) {
         List<Category> defaultCategories = new ArrayList<>();
         
-        Category workCategory = new Category();
-        workCategory.setName("Công việc");
-        workCategory.setColor("#2196F3");
-        defaultCategories.add(workCategory);
-        
         Category personalCategory = new Category();
         personalCategory.setName("Cá nhân");
         personalCategory.setColor("#4CAF50");
+        personalCategory.setSortOrder(0);
+        personalCategory.setIsDefault(true);
         defaultCategories.add(personalCategory);
         
-        Category studyCategory = new Category();
-        studyCategory.setName("Học tập");
-        studyCategory.setColor("#FF9800");
-        defaultCategories.add(studyCategory);
+        Category favoriteCategory = new Category();
+        favoriteCategory.setName("Yêu thích");
+        favoriteCategory.setColor("#FF9800");
+        favoriteCategory.setSortOrder(1);
+        favoriteCategory.setIsDefault(true);
+        defaultCategories.add(favoriteCategory);
+        
+        Category workCategory = new Category();
+        workCategory.setName("Công việc");
+        workCategory.setColor("#2196F3");
+        workCategory.setSortOrder(2);
+        workCategory.setIsDefault(true);
+        defaultCategories.add(workCategory);
         
         addCategoriesSequentially(defaultCategories, 0, callback);
     }

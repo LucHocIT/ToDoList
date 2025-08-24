@@ -41,10 +41,17 @@ public class CategoryQueryRepository extends BaseRepository {
                     }
                 }
                 
-                // Sort categories by creation time
                 Collections.sort(categories, new Comparator<Category>() {
                     @Override
                     public int compare(Category c1, Category c2) {
+                        int order1 = c1.getSortOrder();
+                        int order2 = c2.getSortOrder();
+                        
+                        int orderComparison = Integer.compare(order1, order2);
+                        if (orderComparison != 0) {
+                            return orderComparison;
+                        }
+
                         return c1.getName().compareTo(c2.getName());
                     }
                 });
@@ -181,11 +188,11 @@ public class CategoryQueryRepository extends BaseRepository {
         if (category == null || category.getName() == null) return false;
         
         String name = category.getName().toLowerCase();
-        return name.equals("công việc") || 
-               name.equals("cá nhân") || 
-               name.equals("học tập") ||
-               name.equals("work") ||
+        return name.equals("cá nhân") || 
+               name.equals("yêu thích") || 
+               name.equals("công việc") ||
                name.equals("personal") ||
-               name.equals("study");
+               name.equals("favorite") ||
+               name.equals("work");
     }
 }

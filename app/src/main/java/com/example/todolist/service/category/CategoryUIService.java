@@ -41,7 +41,7 @@ public class CategoryUIService {
 
     private void addAllTasksButton(CategoryClickListener clickListener) {
         MaterialButton allTasksBtn = new MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        allTasksBtn.setText("Tất cả");
+        allTasksBtn.setText(context.getString(com.example.todolist.R.string.category_all));
         allTasksBtn.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_category));
         allTasksBtn.setIconGravity(MaterialButton.ICON_GRAVITY_START);
         

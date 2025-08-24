@@ -109,7 +109,6 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
     }
     @Override
     public void onTaskLongClick(Task task) {
-        // Show actions dialog on long click
         TaskActionsDialog actionsDialog = new TaskActionsDialog(this, task, new TaskActionsDialog.OnActionSelectedListener() {
             @Override
             public void onStarAction(Task task) {

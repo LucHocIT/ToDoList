@@ -88,11 +88,13 @@ public class CategoryManager {
         if (category == null || category.getName() == null) return false;
         
         String name = category.getName().toLowerCase();
-        return name.equals("công việc") || 
-               name.equals("cá nhân") || 
-               name.equals("học tập") ||
-               name.equals("work") ||
+        return name.equals("cá nhân") || 
+               name.equals("yêu thích") || 
+               name.equals("công việc") ||
                name.equals("personal") ||
+               name.equals("favorite") ||
+               name.equals("work") ||
+               name.equals("học tập") ||
                name.equals("study");
     }
 }

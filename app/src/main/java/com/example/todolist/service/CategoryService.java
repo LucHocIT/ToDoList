@@ -259,20 +259,57 @@ public class CategoryService {
         addCategory(category, callback);
     }
     
-    public void initializeDefaultCategories() {
+    public void initializeDefaultCategories(CategoryOperationCallback callback) {
         categoryManager.initializeDefaultCategories(new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                loadCategories();
+                if (callback != null) callback.onSuccess();
             }
 
             @Override
             public void onError(String error) {
-                if (listener != null) {
-                    listener.onError("Lỗi khởi tạo default categories: " + error);
-                }
+                if (callback != null) callback.onError(error);
             }
         });
+    }
+    
+    public void clearAllCategories(CategoryOperationCallback callback) {
+        getAllCategories(new BaseRepository.ListCallback<Category>() {
+            @Override
+            public void onSuccess(List<Category> categoriesList) {
+                clearCategoriesSequentially(categoriesList, 0, callback);
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) callback.onError(error);
+            }
+        });
+    }
+    
+    private void clearCategoriesSequentially(List<Category> categoriesList, int index, CategoryOperationCallback callback) {
+        if (index >= categoriesList.size()) {
+            if (callback != null) callback.onSuccess();
+            return;
+        }
+        
+        Category category = categoriesList.get(index);
+        deleteCategory(category, new CategoryOperationCallback() {
+            @Override
+            public void onSuccess() {
+                clearCategoriesSequentially(categoriesList, index + 1, callback);
+            }
+
+            @Override
+            public void onError(String error) {
+                // Continue with next category even if one fails
+                clearCategoriesSequentially(categoriesList, index + 1, callback);
+            }
+        });
+    }
+    
+    public void initializeDefaultCategories() {
+        initializeDefaultCategories(null);
     }
     
     public void clearAllDataAndReset() {

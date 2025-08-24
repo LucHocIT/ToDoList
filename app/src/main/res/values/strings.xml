@@ -197,6 +197,12 @@
     <string name="btn_cancel">Hủy</string>
     <string name="btn_save">Lưu</string>
     
+    <!-- Default Categories -->
+    <string name="category_all">Tất cả</string>
+    <string name="category_work">Công việc</string>
+    <string name="category_personal">Cá nhân</string>
+    <string name="category_favorite">Yêu thích</string>
+    
     <!-- Contact Dialog -->
     <string name="contact_title">Liên hệ</string>
     <string name="contact_subtitle">Thông tin về ứng dụng</string>

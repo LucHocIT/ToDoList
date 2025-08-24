@@ -12,9 +12,7 @@ import com.example.todolist.util.SortType;
 import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 public class FilterManager {
     public interface FilterListener {
         void onFilterChanged(String filter);
@@ -24,6 +22,7 @@ public class FilterManager {
     private FilterListener listener;
     private String currentFilter = "all";
     private SortType currentSortType = SortType.DATE_TIME;
+    
     // UI Components
     private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private LinearLayout layoutCategoriesContainer;
@@ -57,6 +56,7 @@ public class FilterManager {
         this.layoutEmptyState = layoutEmptyState;
         this.tvEmptyTitle = tvEmptyTitle;
         this.listener = listener;
+        
         initializeFilteredLists();
         setupFilterButtons();
     }
@@ -68,33 +68,10 @@ public class FilterManager {
     }
     private void setupFilterButtons() {
         btnAll.setOnClickListener(v -> filterTasks("all"));
-        btnWork.setOnClickListener(v -> filterTasks("công việc"));
-        btnPersonal.setOnClickListener(v -> filterTasks("cá nhân"));
-        btnFavorite.setOnClickListener(v -> filterTasks("yêu thích"));
-        // Setup dynamic category button clicks
-        setupDynamicCategoryClicks();
-    }
-    private void setupDynamicCategoryClicks() {
-        // This method should be called after category buttons are created
-        setupAllCategoryClicks();
-    }
-    public void setupAllCategoryClicks() {
-        // Setup clicks for all category buttons including dynamic ones
-        // Only setup for buttons that don't already have click listeners set
-        int childrenCount = layoutCategoriesContainer.getChildCount();
-        for (int i = 4; i < childrenCount; i++) {
-            View child = layoutCategoriesContainer.getChildAt(i);
-            if (child instanceof MaterialButton) {
-                MaterialButton button = (MaterialButton) child;
-                String categoryName = (String) button.getTag();
-                if (categoryName != null && !categoryName.isEmpty()) {
-                    // Clear any existing click listener to prevent multiple listeners
-                    button.setOnClickListener(null);
-                    // Set new click listener
-                    button.setOnClickListener(v -> filterTasks(categoryName));
-                }
-            }
-        }
+        // Use hardcoded strings to match exactly what tasks have in database
+        btnWork.setOnClickListener(v -> filterTasks("Công việc"));
+        btnPersonal.setOnClickListener(v -> filterTasks("Cá nhân"));
+        btnFavorite.setOnClickListener(v -> filterTasks("Yêu thích"));
     }
     public void setTaskLists(List<Task> overdueTasks, List<Task> todayTasks, 
                            List<Task> futureTasks, List<Task> completedTodayTasks) {
@@ -112,28 +89,26 @@ public class FilterManager {
     }
     public void filterTasks(String filter) {
         currentFilter = filter;
-        // Update button states
         resetFilterButtons();
         highlightFilterButton(filter);
-        // Filter tasks by category
+        
         filteredOverdueTasks.clear();
         filteredTodayTasks.clear();
         filteredFutureTasks.clear();
         filteredCompletedTodayTasks.clear();
+
         if (filter.equalsIgnoreCase("all")) {
-            // Show all tasks
             if (overdueTasks != null) filteredOverdueTasks.addAll(overdueTasks);
             if (todayTasks != null) filteredTodayTasks.addAll(todayTasks);
             if (futureTasks != null) filteredFutureTasks.addAll(futureTasks);
             if (completedTodayTasks != null) filteredCompletedTodayTasks.addAll(completedTodayTasks);
         } else {
-            // Filter by specific category
             filterByCategory(overdueTasks, filteredOverdueTasks, filter);
             filterByCategory(todayTasks, filteredTodayTasks, filter);
             filterByCategory(futureTasks, filteredFutureTasks, filter);
             filterByCategory(completedTodayTasks, filteredCompletedTodayTasks, filter);
         }
-        // Apply current sorting
+
         sortTasks();
         // Update adapters
         updateAdapters();
@@ -143,48 +118,30 @@ public class FilterManager {
             listener.onFilterChanged(filter);
         }
     }
+    
     private void filterByCategory(List<Task> source, List<Task> destination, String filter) {
         if (source == null) return;
         for (Task task : source) {
-            if (task.getCategory() != null && task.getCategory().equalsIgnoreCase(filter)) {
+            String taskCategory = task.getCategory();
+            if (taskCategory != null && taskCategory.equalsIgnoreCase(filter)) {
                 destination.add(task);
             }
         }
     }
     private void highlightFilterButton(String filter) {
-        switch (filter.toLowerCase(Locale.getDefault())) {
-            case "all":
-                setButtonSelected(btnAll);
-                break;
-            case "cĂ´ng viá»‡c":
-                setButtonSelected(btnWork);
-                break;
-            case "cĂ¡ nhĂ¢n":
-                setButtonSelected(btnPersonal);
-                break;
-            case "yĂªu thĂ­ch":
-                setButtonSelected(btnFavorite);
-                break;
-            default:
-                highlightDynamicCategoryButton(filter);
-                break;
+        if (filter.equalsIgnoreCase("all")) {
+            setButtonSelected(btnAll);
+        } else if (filter.equalsIgnoreCase("Công việc")) {
+            setButtonSelected(btnWork);
+        } else if (filter.equalsIgnoreCase("Cá nhân")) {
+            setButtonSelected(btnPersonal);
+        } else if (filter.equalsIgnoreCase("Yêu thích")) {
+            setButtonSelected(btnFavorite);
         }
     }
     private void setButtonSelected(MaterialButton button) {
         button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.primary_blue));
         button.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-    }
-    private void highlightDynamicCategoryButton(String categoryName) {
-        for (int i = 4; i < layoutCategoriesContainer.getChildCount(); i++) {
-            View child = layoutCategoriesContainer.getChildAt(i);
-            if (child instanceof MaterialButton) {
-                MaterialButton button = (MaterialButton) child;
-                if (button.getText().toString().equalsIgnoreCase(categoryName)) {
-                    setButtonSelected(button);
-                    break;
-                }
-            }
-        }
     }
     private void resetFilterButtons() {
         int grayColor = ContextCompat.getColor(context, R.color.light_gray);
@@ -193,14 +150,6 @@ public class FilterManager {
         setButtonUnselected(btnWork, grayColor, textColor);
         setButtonUnselected(btnPersonal, grayColor, textColor);
         setButtonUnselected(btnFavorite, grayColor, textColor);
-        // Reset dynamic category buttons
-        for (int i = 4; i < layoutCategoriesContainer.getChildCount(); i++) {
-            View child = layoutCategoriesContainer.getChildAt(i);
-            if (child instanceof MaterialButton) {
-                MaterialButton button = (MaterialButton) child;
-                setButtonUnselected(button, grayColor, textColor);
-            }
-        }
     }
     private void setButtonUnselected(MaterialButton button, int bgColor, int textColor) {
         button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.light_gray));

@@ -15,6 +15,7 @@
 
         <!-- Title -->
         <TextView
+            android:id="@+id/tv_dialog_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/create_category_title"
