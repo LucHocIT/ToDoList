@@ -1,13 +1,18 @@
 package com.example.todolist.manager;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import com.example.todolist.R;
 import com.example.todolist.adapter.TaskAdapter;
+import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
+import com.example.todolist.repository.BaseRepository;
+import com.example.todolist.repository.CategoryRepository;
 import com.example.todolist.util.SortType;
 import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
@@ -24,10 +29,15 @@ public class FilterManager {
     private SortType currentSortType = SortType.DATE_TIME;
     
     // UI Components
-    private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private LinearLayout layoutCategoriesContainer;
     private View layoutEmptyState;
     private TextView tvEmptyTitle;
+    
+    // Firebase
+    private CategoryRepository categoryRepository;
+    private List<Category> categories;
+    private MaterialButton btnAll;
+    private List<MaterialButton> categoryButtons;
     // Task lists (original)
     private List<Task> overdueTasks;
     private List<Task> todayTasks;
@@ -43,22 +53,21 @@ public class FilterManager {
     private TaskAdapter todayTasksAdapter;
     private TaskAdapter futureTasksAdapter;
     private TaskAdapter completedTodayTasksAdapter;
-    public FilterManager(Context context, MaterialButton btnAll, MaterialButton btnWork, 
-                        MaterialButton btnPersonal, MaterialButton btnFavorite,
-                        LinearLayout layoutCategoriesContainer, View layoutEmptyState, 
-                        TextView tvEmptyTitle, FilterListener listener) {
+    
+    public FilterManager(Context context, LinearLayout layoutCategoriesContainer, 
+                        View layoutEmptyState, TextView tvEmptyTitle, FilterListener listener) {
         this.context = context;
-        this.btnAll = btnAll;
-        this.btnWork = btnWork;
-        this.btnPersonal = btnPersonal;
-        this.btnFavorite = btnFavorite;
         this.layoutCategoriesContainer = layoutCategoriesContainer;
         this.layoutEmptyState = layoutEmptyState;
         this.tvEmptyTitle = tvEmptyTitle;
         this.listener = listener;
         
+        this.categoryRepository = new CategoryRepository();
+        this.categories = new ArrayList<>();
+        this.categoryButtons = new ArrayList<>();
+        
         initializeFilteredLists();
-        setupFilterButtons();
+        loadCategoriesFromFirebase();
     }
     private void initializeFilteredLists() {
         filteredOverdueTasks = new ArrayList<>();
@@ -66,12 +75,103 @@ public class FilterManager {
         filteredFutureTasks = new ArrayList<>();
         filteredCompletedTodayTasks = new ArrayList<>();
     }
-    private void setupFilterButtons() {
+    
+    private void loadCategoriesFromFirebase() {
+        categoryRepository.getAllCategories(new BaseRepository.ListCallback<Category>() {
+            @Override
+            public void onSuccess(List<Category> categoriesList) {
+                categories = categoriesList;
+                createFilterButtons();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(context, "Lỗi tải categories: " + error, Toast.LENGTH_SHORT).show();
+                // Create only "All Tasks" button in case of error
+                createDefaultButtons();
+            }
+        });
+    }
+    
+    private void createFilterButtons() {
+        if (layoutCategoriesContainer == null) return;
+        
+        // Clear existing buttons
+        layoutCategoriesContainer.removeAllViews();
+        categoryButtons.clear();
+        
+        // Create "All Tasks" button
+        createAllTasksButton();
+        
+        // Create buttons for each category from Firebase
+        for (Category category : categories) {
+            createCategoryButton(category);
+        }
+    }
+    
+    private void createDefaultButtons() {
+        if (layoutCategoriesContainer == null) return;
+        
+        layoutCategoriesContainer.removeAllViews();
+        categoryButtons.clear();
+        createAllTasksButton();
+    }
+    
+    private void createAllTasksButton() {
+        btnAll = new MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+        btnAll.setText(context.getString(R.string.category_all));
+        btnAll.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_category));
+        btnAll.setIconGravity(MaterialButton.ICON_GRAVITY_START);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 12, 0); // Right margin for horizontal layout
+        btnAll.setLayoutParams(params);
+        
+        // Apply default selected style
+        btnAll.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.primary_blue));
+        btnAll.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+        
         btnAll.setOnClickListener(v -> filterTasks("all"));
-        // Use hardcoded strings to match exactly what tasks have in database
-        btnWork.setOnClickListener(v -> filterTasks("Công việc"));
-        btnPersonal.setOnClickListener(v -> filterTasks("Cá nhân"));
-        btnFavorite.setOnClickListener(v -> filterTasks("Yêu thích"));
+        
+        layoutCategoriesContainer.addView(btnAll);
+        categoryButtons.add(btnAll);
+    }
+    
+    private void createCategoryButton(Category category) {
+        MaterialButton categoryBtn = new MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+        categoryBtn.setText(category.getName());
+        
+        // Set category color if available
+        if (category.getColor() != null && !category.getColor().isEmpty()) {
+            try {
+                int color = Color.parseColor(category.getColor());
+                categoryBtn.setStrokeColor(android.content.res.ColorStateList.valueOf(color));
+                categoryBtn.setTextColor(color);
+                categoryBtn.setIconTint(android.content.res.ColorStateList.valueOf(color));
+            } catch (Exception e) {
+                // Use default color if parsing fails
+                categoryBtn.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.light_gray));
+                categoryBtn.setTextColor(ContextCompat.getColor(context, R.color.text_gray));
+            }
+        } else {
+            categoryBtn.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.light_gray));
+            categoryBtn.setTextColor(ContextCompat.getColor(context, R.color.text_gray));
+        }
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 12, 0);
+        categoryBtn.setLayoutParams(params);
+        
+        categoryBtn.setOnClickListener(v -> filterTasks(category.getName()));
+        
+        layoutCategoriesContainer.addView(categoryBtn);
+        categoryButtons.add(categoryBtn);
     }
     public void setTaskLists(List<Task> overdueTasks, List<Task> todayTasks, 
                            List<Task> futureTasks, List<Task> completedTodayTasks) {
@@ -89,7 +189,7 @@ public class FilterManager {
     }
     public void filterTasks(String filter) {
         currentFilter = filter;
-        resetFilterButtons();
+        resetAllFilterButtons();
         highlightFilterButton(filter);
         
         filteredOverdueTasks.clear();
@@ -129,27 +229,35 @@ public class FilterManager {
         }
     }
     private void highlightFilterButton(String filter) {
-        if (filter.equalsIgnoreCase("all")) {
+        // Reset all buttons first
+        resetAllFilterButtons();
+        
+        // Find and highlight the matching button
+        if (filter.equalsIgnoreCase("all") && btnAll != null) {
             setButtonSelected(btnAll);
-        } else if (filter.equalsIgnoreCase("Công việc")) {
-            setButtonSelected(btnWork);
-        } else if (filter.equalsIgnoreCase("Cá nhân")) {
-            setButtonSelected(btnPersonal);
-        } else if (filter.equalsIgnoreCase("Yêu thích")) {
-            setButtonSelected(btnFavorite);
+        } else {
+            // Find category button by name
+            for (int i = 0; i < categoryButtons.size(); i++) {
+                MaterialButton button = categoryButtons.get(i);
+                if (button != btnAll && button.getText().toString().equalsIgnoreCase(filter)) {
+                    setButtonSelected(button);
+                    break;
+                }
+            }
+        }
+    }
+    
+    private void resetAllFilterButtons() {
+        int grayColor = ContextCompat.getColor(context, R.color.light_gray);
+        int textColor = ContextCompat.getColor(context, R.color.text_gray);
+        
+        for (MaterialButton button : categoryButtons) {
+            setButtonUnselected(button, grayColor, textColor);
         }
     }
     private void setButtonSelected(MaterialButton button) {
         button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.primary_blue));
         button.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-    }
-    private void resetFilterButtons() {
-        int grayColor = ContextCompat.getColor(context, R.color.light_gray);
-        int textColor = ContextCompat.getColor(context, R.color.text_gray);
-        setButtonUnselected(btnAll, grayColor, textColor);
-        setButtonUnselected(btnWork, grayColor, textColor);
-        setButtonUnselected(btnPersonal, grayColor, textColor);
-        setButtonUnselected(btnFavorite, grayColor, textColor);
     }
     private void setButtonUnselected(MaterialButton button, int bgColor, int textColor) {
         button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.light_gray));
@@ -231,6 +339,12 @@ public class FilterManager {
             listener.onEmptyStateChanged(!hasAnyTasks, message);
         }
     }
+    
+    // Method to refresh categories from Firebase
+    public void refreshCategories() {
+        loadCategoriesFromFirebase();
+    }
+    
     // Getters
     public String getCurrentFilter() { return currentFilter; }
     public SortType getCurrentSortType() { return currentSortType; }
@@ -238,4 +352,5 @@ public class FilterManager {
     public List<Task> getFilteredTodayTasks() { return filteredTodayTasks; }
     public List<Task> getFilteredFutureTasks() { return filteredFutureTasks; }
     public List<Task> getFilteredCompletedTodayTasks() { return filteredCompletedTodayTasks; }
+    public List<Category> getCategories() { return new ArrayList<>(categories); }
 }

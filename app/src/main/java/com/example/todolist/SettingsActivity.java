@@ -166,7 +166,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
     private void performDataReset() {
         try {
-            CategoryService categoryService = new CategoryService(this, null, new CategoryService.CategoryUpdateListener() {
+            CategoryService categoryService = new CategoryService(this, new CategoryService.CategoryUpdateListener() {
                 @Override
                 public void onCategoriesUpdated() {
                 }

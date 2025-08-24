@@ -50,7 +50,7 @@ public class CategoryManagerActivity extends AppCompatActivity implements
         recyclerCategories = findViewById(R.id.recycler_categories);
         
         categories = new ArrayList<>();
-        categoryService = new CategoryService(this, null, this);
+        categoryService = new CategoryService(this, this);
         taskService = new TaskService(this, this);
         
         btnBack.setOnClickListener(v -> finish());

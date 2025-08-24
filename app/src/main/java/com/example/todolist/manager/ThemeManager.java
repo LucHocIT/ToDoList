@@ -91,11 +91,9 @@ public class ThemeManager {
         if (fab != null) {
             fab.setBackgroundTintList(ColorStateList.valueOf(primaryColor));
         }
-        // Apply to filter buttons
-        applyThemeToButton(R.id.btn_all, primaryColor, lightColor);
-        applyThemeToButton(R.id.btn_work, primaryColor, lightColor);
-        applyThemeToButton(R.id.btn_personal, primaryColor, lightColor);
-        applyThemeToButton(R.id.btn_favorite, primaryColor, lightColor);
+        // Note: Filter buttons are now dynamically created by FilterManager
+        // and will inherit theme automatically from MaterialButton style
+        
         // Apply to navigation icons
         ImageView btnMenu = activity.findViewById(R.id.btn_menu);
         if (btnMenu != null) {

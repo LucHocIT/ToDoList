@@ -41,7 +41,7 @@ public class AddTaskHandler {
                 // Handle error
             }
         });
-        this.categoryService = new CategoryService(context, null, new CategoryService.CategoryUpdateListener() {
+        this.categoryService = new CategoryService(context, new CategoryService.CategoryUpdateListener() {
             @Override
             public void onCategoriesUpdated() {
                 // Handle in listener

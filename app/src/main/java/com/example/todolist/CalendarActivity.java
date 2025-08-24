@@ -57,7 +57,6 @@ public class CalendarActivity extends AppCompatActivity
         initCalendar();
         setupBottomNavigation();
         loadCalendar();
-        // Handle drawer open intent from other activities
         handleDrawerIntent();
     }
     private void initViews() {
@@ -79,11 +78,8 @@ public class CalendarActivity extends AppCompatActivity
         setupClickListeners();
     }
     private void initManagers() {
-        // Initialize NavigationDrawerManager
         navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
-        // Initialize ThemeManager
         themeManager = new ThemeManager(this, this);
-        // Apply current theme
         if (themeManager != null) {
             themeManager.applyCurrentTheme();
         }
@@ -112,17 +108,14 @@ public class CalendarActivity extends AppCompatActivity
         LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
-        // Use unified navigation helper
         UnifiedNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks,
                 btnNavCalendar, null, "calendar");
-        // Initialize drawer for CalendarActivity
         UnifiedNavigationHelper.initializeDrawerForActivity(this, drawerLayout, this);
     }
 
     private void handleDrawerIntent() {
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra("open_drawer", false)) {
-            // Má»Ÿ drawer sau khi layout Ä‘Ă£ sáºµn sĂ ng
             findViewById(android.R.id.content).post(() -> {
                 if (drawerLayout != null) {
                     drawerLayout.openDrawer(GravityCompat.START);
@@ -150,7 +143,7 @@ public class CalendarActivity extends AppCompatActivity
         String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
         CalendarTaskHelper.loadTasksForDate(this, dateString, this);
     }
-    // Implementation of CalendarViewHelper.OnDayClickListener
+
     @Override
     public void onDayClick(int day) {
         selectedDay = day;
@@ -167,7 +160,7 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
         loadCalendar();
     }
-    // Implementation of CalendarTaskHelper.TaskLoadListener
+
     @Override
     public void onTasksLoaded(List<Task> tasks) {
         tasksForSelectedDate = tasks;
@@ -226,7 +219,6 @@ public class CalendarActivity extends AppCompatActivity
     }
     @Override
     public void onThemeChanged(com.example.todolist.manager.ThemeManager.ThemeColor themeColor) {
-        // Recreate activity when theme changes
         recreate();
     }
 

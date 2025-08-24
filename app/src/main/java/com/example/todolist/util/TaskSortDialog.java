@@ -34,7 +34,6 @@ public class TaskSortDialog {
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_sort_tasks, null);
         builder.setView(dialogView);
         dialog = builder.create();
-        // Make dialog background transparent so custom background shows
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
@@ -81,7 +80,6 @@ public class TaskSortDialog {
     }
     private void selectOption(SortType sortType) {
         currentSortType = sortType;
-        // Use RadioGroup to ensure only one is selected
         switch (sortType) {
             case DATE_TIME:
                 radioGroupSortOptions.check(R.id.radio_date_time);

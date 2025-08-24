@@ -48,7 +48,7 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         setContentView(R.layout.activity_task_detail);
         isInitialCategorySetup = true;    
         taskService = new TaskService(this, this);
-        categoryService = new CategoryService(this, null, this);
+        categoryService = new CategoryService(this, this);
         initViews();
         loadTaskData();
         setupClickListeners();

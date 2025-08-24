@@ -80,7 +80,6 @@ public class TaskItemViewHelper {
             notificationIcon.setLayoutParams(iconParams);
             timeIconContainer.addView(notificationIcon);
         }
-        // Repeat icon
         if (task.isRepeating()) {
             ImageView repeatIcon = new ImageView(context);
             repeatIcon.setImageResource(R.drawable.ic_repeat);
@@ -91,7 +90,6 @@ public class TaskItemViewHelper {
         }
         contentContainer.addView(timeIconContainer);
         taskItem.addView(contentContainer);
-        // Star icon for important tasks
         if (task.isImportant()) {
             ImageView starIcon = new ImageView(context);
             starIcon.setImageResource(R.drawable.ic_star_filled);

@@ -46,61 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_all"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/all_tasks"
-                        android:textColor="@android:color/white"
-                        android:backgroundTint="#5B72D9"
-                        android:textSize="14sp"
-                        android:minWidth="100dp"
-                        android:paddingHorizontal="16dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_work"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/work_tasks"
-                        android:textColor="#666666"
-                        android:backgroundTint="#E8E8E8"
-                        android:textSize="14sp"
-                        android:minWidth="100dp"
-                        android:paddingHorizontal="16dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_personal"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/personal_tasks"
-                        android:textColor="#666666"
-                        android:backgroundTint="#E8E8E8"
-                        android:textSize="14sp"
-                        android:minWidth="100dp"
-                        android:paddingHorizontal="16dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_favorite"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/favorite_tasks"
-                        android:textColor="#666666"
-                        android:backgroundTint="#E8E8E8"
-                        android:textSize="14sp"
-                        android:minWidth="100dp"
-                        android:paddingHorizontal="16dp"/>
-
-                    <!-- Add more categories dynamically here -->
-
+                    <!-- Category buttons will be dynamically created by FilterManager -->
                 </LinearLayout>
 
             </HorizontalScrollView>

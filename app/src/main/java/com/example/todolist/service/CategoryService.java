@@ -7,7 +7,6 @@ import com.example.todolist.model.Category;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.CategoryRepository;
 import com.example.todolist.service.category.CategoryManager;
-import com.example.todolist.service.category.CategoryUIService;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +29,10 @@ public class CategoryService {
     private ValueEventListener realtimeListener;
 
     private CategoryManager categoryManager;     // CRUD operations
-    private CategoryUIService uiService;         // UI operations
     
     private List<Category> categories;
 
-    public CategoryService(Context context, LinearLayout categoriesContainer, CategoryUpdateListener listener) {
+    public CategoryService(Context context, CategoryUpdateListener listener) {
         this.context = context;
         this.listener = listener;
         this.categoryRepository = new CategoryRepository();
@@ -42,7 +40,6 @@ public class CategoryService {
         
         // Initialize sub-services
         this.categoryManager = new CategoryManager(context);
-        this.uiService = new CategoryUIService(context, categoriesContainer);
     }
 
     public void loadCategories() {
@@ -76,30 +73,6 @@ public class CategoryService {
             @Override
             public void onSuccess(List<Category> categoriesList) {
                 categories = categoriesList;
-                
-                // Display categories in UI
-                uiService.displayCategories(categories, new CategoryUIService.CategoryClickListener() {
-                    @Override
-                    public void onAllTasksClick() {
-                        if (listener != null) {
-                            listener.onCategoriesUpdated();
-                        }
-                    }
-
-                    @Override
-                    public void onCategoryClick(Category category) {
-                        if (listener != null) {
-                            listener.onCategoriesUpdated();
-                        }
-                    }
-
-                    @Override
-                    public void onCategoryLongClick(Category category) {
-                        if (listener != null) {
-                            listener.onCategoriesUpdated();
-                        }
-                    }
-                });
                 
                 if (listener != null) {
                     listener.onCategoriesUpdated();
@@ -205,40 +178,6 @@ public class CategoryService {
 
     public void validateCategoryName(String name, String currentCategoryId, BaseRepository.RepositoryCallback<Boolean> callback) {
         categoryManager.validateCategoryName(name, currentCategoryId, callback);
-    }
-
-    // === UI OPERATIONS - Delegate to CategoryUIService ===
-    public void displayCategories() {
-        uiService.displayCategories(categories, new CategoryUIService.CategoryClickListener() {
-            @Override
-            public void onAllTasksClick() {
-                if (listener != null) {
-                    listener.onCategoriesUpdated();
-                }
-            }
-
-            @Override
-            public void onCategoryClick(Category category) {
-                if (listener != null) {
-                    listener.onCategoriesUpdated();
-                }
-            }
-
-            @Override
-            public void onCategoryLongClick(Category category) {
-                if (listener != null) {
-                    listener.onCategoriesUpdated();
-                }
-            }
-        });
-    }
-
-    public void hideCategories() {
-        uiService.hideContainer();
-    }
-
-    public void showCategories() {
-        uiService.showContainer();
     }
 
     // === UTILITIES ===

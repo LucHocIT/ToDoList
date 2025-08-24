@@ -45,7 +45,6 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
         }
     }
     private void initDatabase() {
-        // Initialize Firebase TaskService instead of SQLite database
         taskService = new TaskService(this, new TaskService.TaskUpdateListener() {
             @Override
             public void onTasksUpdated() {
@@ -90,7 +89,6 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             @Override
             public void onSuccess(List<Task> tasks) {
                 allCompletedTasks = tasks;
-                // Group tasks by completion date
                 groupTasksByDate();
                 runOnUiThread(() -> {
                     completedTasksAdapter.updateGroupedTasks(groupedTasks);
@@ -124,7 +122,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             }
             groupedTasks.get(dateKey).add(task);
         }
-        // Sort tasks within each group by completion time (newest first)
+
         for (List<Task> tasks : groupedTasks.values()) {
             Collections.sort(tasks, new Comparator<Task>() {
                 @Override
@@ -139,12 +137,12 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
         }
     }
     private String getDateKey(Task task) {
-        // Use completion date instead of due date for completed tasks
+
         String completionDate = task.getCompletionDate();
         if (completionDate != null && !completionDate.isEmpty()) {
             return completionDate;
         }
-        // Fallback to current date if no completion date (shouldn't happen for completed tasks)
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return dateFormat.format(new Date());
     }
@@ -157,7 +155,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             taskService.deleteTask(task, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
-                    // Individual task deleted successfully
+
                 }
                 @Override
                 public void onError(String error) {
@@ -202,7 +200,6 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             runOnUiThread(() -> {
                 completedTasksAdapter.updateGroupedTasks(groupedTasks);
                 updateEmptyState();
-                // Removed unnecessary toast
             });
         }).start();
     }

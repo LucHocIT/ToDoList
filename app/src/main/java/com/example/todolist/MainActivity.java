@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements
     // Core UI Components
     private DrawerLayout drawerLayout;
     private FloatingActionButton fabAdd;
-    private MaterialButton btnAll, btnWork, btnPersonal, btnFavorite;
     private ImageView btnMenu;
     private LinearLayout layoutSearch;
     private LinearLayout layoutCategoriesContainer;
@@ -125,10 +124,6 @@ public class MainActivity extends AppCompatActivity implements
         // Core UI components
         drawerLayout = findViewById(R.id.drawer_layout);
         fabAdd = findViewById(R.id.fab_add);
-        btnAll = findViewById(R.id.btn_all);
-        btnWork = findViewById(R.id.btn_work);
-        btnPersonal = findViewById(R.id.btn_personal);
-        btnFavorite = findViewById(R.id.btn_favorite);
         btnMenu = findViewById(R.id.btn_menu);
         // Search components
         layoutSearch = findViewById(R.id.layout_search);
@@ -142,11 +137,11 @@ public class MainActivity extends AppCompatActivity implements
         // Initialize TaskService
         taskService = new TaskService(this, this);
         // Initialize CategoryService
-        categoryService = new CategoryService(this, layoutCategoriesContainer, this);
+        categoryService = new CategoryService(this, this);
         searchManager = new SearchManager(layoutSearch, findViewById(R.id.layout_filter_tabs), editSearch, btnCancelSearch, this);
         // Initialize FilterManager
-        filterManager = new FilterManager(this, btnAll, btnWork, btnPersonal, btnFavorite,
-                layoutCategoriesContainer, findViewById(R.id.layout_empty_state), tvEmptyTitle, this);
+        filterManager = new FilterManager(this, layoutCategoriesContainer, 
+                findViewById(R.id.layout_empty_state), tvEmptyTitle, this);
         // Initialize SectionManager
         sectionManager = new SectionManager(
                 findViewById(R.id.section_overdue_tasks),
@@ -367,8 +362,10 @@ public class MainActivity extends AppCompatActivity implements
     // CategoryService.CategoryUpdateListener implementation  
     @Override
     public void onCategoriesUpdated() {
-        // Category filtering is now handled by simple name matching
-        // No need to reload mapping or setup clicks
+        // Refresh filter buttons when categories are updated
+        if (filterManager != null) {
+            filterManager.refreshCategories();
+        }
     }
     // SearchManager.SearchListener implementation
     @Override

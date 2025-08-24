@@ -50,7 +50,7 @@ public class UIManager {
         this.textCheckAllCompleted = textCheckAllCompleted;
         this.listener = listener;
         this.taskService = new TaskService(activity, null);
-        this.categoryService = new CategoryService(activity, null, null);
+        this.categoryService = new CategoryService(activity, null);
         setupUIListeners();
     }
     private void setupUIListeners() {
