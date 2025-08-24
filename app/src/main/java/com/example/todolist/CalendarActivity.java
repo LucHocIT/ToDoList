@@ -19,6 +19,7 @@ import com.example.todolist.util.AddTaskHandler;
 import com.example.todolist.util.CalendarTaskHelper;
 import com.example.todolist.util.CalendarViewHelper;
 import com.example.todolist.util.SettingsManager;
+import com.example.todolist.util.UIOptimizer;
 import com.example.todolist.util.UnifiedNavigationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
@@ -134,8 +135,6 @@ public class CalendarActivity extends AppCompatActivity
         // Only load tasks if a day is selected
         if (selectedDay != -1) {
             loadTasksForSelectedDate();
-        } else {
-            android.util.Log.d("CalendarActivity", "No day selected (selectedDay = -1), not loading tasks");
         }
     }
     private void updateMonthYearDisplay() {
@@ -146,7 +145,6 @@ public class CalendarActivity extends AppCompatActivity
     }
     private void loadTasksForSelectedDate() {
         String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
-        android.util.Log.d("CalendarActivity", "Loading tasks for selected date: " + dateString + " (day: " + selectedDay + ")");
         CalendarTaskHelper.loadTasksForDate(this, dateString, this);
     }
 
@@ -169,13 +167,11 @@ public class CalendarActivity extends AppCompatActivity
 
     @Override
     public void onTasksLoaded(List<Task> tasks) {
-        android.util.Log.d("CalendarActivity", "Tasks loaded: " + tasks.size() + " tasks");
-        for (Task task : tasks) {
-            android.util.Log.d("CalendarActivity", "Loaded task: " + task.getTitle() + ", Due: " + task.getDueDate());
-        }
         tasksForSelectedDate = tasks;
-        runOnUiThread(() -> updateTaskDisplay());
+        // Use UIOptimizer for smooth task display updates
+        UIOptimizer.smoothUpdate(() -> updateTaskDisplay());
     }
+    
     private void updateTaskDisplay() {
         CalendarTaskHelper.updateTaskDisplay(this, taskInfoContainer, tasksForSelectedDate);
         if (isWeekView) {
@@ -183,6 +179,7 @@ public class CalendarActivity extends AppCompatActivity
         }
     }
     private void navigateMonth(int direction) {
+        // Add smooth navigation with UIOptimizer
         if (isWeekView) {
             selectedDate.add(Calendar.WEEK_OF_YEAR, direction);
             selectedDay = selectedDate.get(Calendar.DAY_OF_MONTH);
@@ -195,7 +192,9 @@ public class CalendarActivity extends AppCompatActivity
                 selectedDay = -1;
             }
         }
-        loadCalendar();
+        
+        // Use UIOptimizer for smooth calendar transitions
+        UIOptimizer.nextFrame(() -> loadCalendar());
     }
     private void toggleCalendarView() {
         isWeekView = !isWeekView;

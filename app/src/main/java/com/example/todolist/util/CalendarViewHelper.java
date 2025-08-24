@@ -39,12 +39,6 @@ public class CalendarViewHelper {
         database.getAllTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> allTasks) {
-                // Add debug logging to see what tasks we get
-                android.util.Log.d("CalendarViewHelper", "Successfully loaded " + allTasks.size() + " tasks from database");
-                for (Task task : allTasks) {
-                    android.util.Log.d("CalendarViewHelper", "Task: " + task.getTitle() + ", Due: " + task.getDueDate() + ", Completed: " + task.isCompleted());
-                }
-                
                 // Now create day views with task information
                 for (int day = 1; day <= daysInMonth; day++) {
                     boolean isToday = isCurrentMonth && day == today.get(Calendar.DAY_OF_MONTH);
@@ -116,12 +110,6 @@ public class CalendarViewHelper {
         database.getAllTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> allTasks) {
-                // Add debug logging to see what tasks we get
-                android.util.Log.d("CalendarViewHelper", "Week view: Successfully loaded " + allTasks.size() + " tasks from database");
-                for (Task task : allTasks) {
-                    android.util.Log.d("CalendarViewHelper", "Week view Task: " + task.getTitle() + ", Due: " + task.getDueDate() + ", Completed: " + task.isCompleted());
-                }
-                
                 // Now create week day views with task information
                 for (int i = 0; i < 7; i++) {
                     Calendar dayCalendar = (Calendar) weekStart.clone();
@@ -178,9 +166,7 @@ public class CalendarViewHelper {
                 textView.setBackgroundResource(R.drawable.calendar_day_normal);
             }
             
-            // Debug: Log khi có task
             if (hasTasks) {
-                Log.d("CalendarViewHelper", "Setting task indicator for day " + day);
                 textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.task_indicator_dot);
                 textView.setCompoundDrawablePadding(4);
             } else {
@@ -213,11 +199,7 @@ public class CalendarViewHelper {
         boolean hasTasksForDay = hasTasksForDate(allTasks, dayCalendar.get(Calendar.YEAR), 
                                         dayCalendar.get(Calendar.MONTH), day);
 
-        // Debug: Log cho week view
-        Log.d("CalendarViewHelper", "Week view - Day " + day + " has tasks: " + hasTasksForDay);
-
         if (hasTasksForDay) {
-            Log.d("CalendarViewHelper", "Setting task indicator for week day " + day);
             dayView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.task_indicator_dot);
             dayView.setCompoundDrawablePadding(4);
         } else {
@@ -263,22 +245,14 @@ public class CalendarViewHelper {
         return dayView;
     }
     private static boolean hasTasksForDate(List<Task> allTasks, int year, int month, int day) {
-        // Sửa format ngày để phù hợp với CalendarUtils.isTaskOnDate() (dd/MM/yyyy)
         String dateString = String.format("%02d/%02d/%04d", day, month + 1, year);
         
-        // Debug logging
-        android.util.Log.d("CalendarViewHelper", "Checking tasks for date: " + dateString);
-        android.util.Log.d("CalendarViewHelper", "Total tasks: " + allTasks.size());
-        
         for (Task task : allTasks) {
-            android.util.Log.d("CalendarViewHelper", "Task: " + task.getTitle() + ", Due: " + task.getDueDate());
             if (CalendarUtils.isTaskOnDate(task, dateString)) {
-                android.util.Log.d("CalendarViewHelper", "Found task on date " + dateString + ": " + task.getTitle());
                 return true;
             }
         }
         
-        android.util.Log.d("CalendarViewHelper", "No tasks found for date: " + dateString);
         return false;
     }
     public interface OnDayClickListener {
