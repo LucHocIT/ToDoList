@@ -22,7 +22,7 @@ public class TaskListService {
     
     public TaskListService() {
         this.taskRepository = new TaskRepository();
-        this.dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         initializeLists();
     }
     
@@ -68,38 +68,32 @@ public class TaskListService {
             Date today = dateFormat.parse(todayDateStr);
             
             if (taskDate.before(today)) {
-                return -1; // Overdue
+                return -1; 
             } else if (taskDate.equals(today)) {
-                return 0; // Today
+                return 0; 
             } else {
-                return 1; // Future
+                return 1;
             }
         } catch (Exception e) {
-            return 1; // Default to future if parsing fails
+            return 1;
         }
     }    
 
     private Date parseTaskDate(String dateString) throws Exception {
-        // First try yyyy/MM/dd format
         try {
             return dateFormat.parse(dateString);
         } catch (Exception e) {
-            // Then try dd/MM/yyyy format
-            SimpleDateFormat alternativeFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            return alternativeFormat.parse(dateString);
+            SimpleDateFormat legacyFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            return legacyFormat.parse(dateString);
         }
     }
     
     private boolean isTaskCompletedToday(Task task, String todayDateStr) {
         if (task.getCompletionDate() == null) return false;
         
-        try {
-            long completionTime = Long.parseLong(task.getCompletionDate());
-            String completionDateStr = dateFormat.format(new Date(completionTime));
-            return todayDateStr.equals(completionDateStr);
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String todayDisplayDate = displayFormat.format(new Date());
+        return todayDisplayDate.equals(task.getCompletionDate());
     }
     
     public void getTasksByDate(String date, BaseRepository.RepositoryCallback<List<Task>> callback) {

@@ -86,7 +86,7 @@ public class TaskManager {
         futureTasks.clear();
         completedTodayTasks.clear();
         Calendar now = Calendar.getInstance();
-        String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(now.getTime());
+        String todayDateStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(now.getTime());
         for (TodoTask task : allTasks) {
             if (task.isCompleted()) {
                 if (isTaskCompletedToday(task, todayDateStr)) {
@@ -120,7 +120,7 @@ public class TaskManager {
     private int getTaskTimeCategory(TodoTask task, Calendar now, String todayDateStr) {
         try {
             String taskDateStr = task.getDueDate();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date taskDate = dateFormat.parse(taskDateStr);
             Date todayDate = dateFormat.parse(todayDateStr);
             if (taskDate.before(todayDate)) {
@@ -138,7 +138,7 @@ public class TaskManager {
         task.setCompleted(isCompleted);
         // Set completion date when marking as completed, clear when marking as incomplete
         if (isCompleted) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             task.setCompletionDate(dateFormat.format(new Date()));
         } else {
             task.setCompletionDate(null);

@@ -109,7 +109,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
     private void showLanguageDialog() {
-        String[] languages = {"Tiáº¿ng Viá»‡t", "English"};
+        String[] languages = {"Tiếng Việt", "English"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.choose_language));
         builder.setItems(languages, (dialog, which) -> {
@@ -215,6 +215,5 @@ public class SettingsActivity extends AppCompatActivity {
         Configuration config = new Configuration();
         config.locale = locale;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        // Recreate activity to apply changes immediately
     }
 }

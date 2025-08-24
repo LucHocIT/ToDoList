@@ -33,8 +33,7 @@ public class ReminderScheduler {
             return;
         }
         try {
-            // Parse ngĂ y vĂ  giá»
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             String dateTimeString = dueDate + " " + dueTime;
             Date dueDateTime = dateTimeFormat.parse(dateTimeString);
             if (dueDateTime == null) return;
@@ -77,14 +76,14 @@ public class ReminderScheduler {
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.setAction(NotificationReceiver.ACTION_DUE);
         intent.putExtra(NotificationReceiver.EXTRA_TASK_ID, task.getId());
-        int requestCode = task.getId().hashCode() + 1; // Unique ID for due notification
+        int requestCode = task.getId().hashCode() + 1; 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
                 requestCode,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-        // LĂªn lá»‹ch alarm
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         } else {
@@ -127,13 +126,12 @@ public class ReminderScheduler {
     }
 
     public void scheduleReminder(int taskIntId, String title, String dueDate, String dueTime) {
-        // Convert parameters to Task object and schedule
         Task tempTask = new Task();
         tempTask.setId(String.valueOf(taskIntId));
         tempTask.setTitle(title);
         tempTask.setDueDate(dueDate);
         tempTask.setDueTime(dueTime);
-        tempTask.setReminder("5 phút trước"); // Default reminder
+        tempTask.setReminder("5 phút trước"); 
         scheduleTaskReminder(tempTask);
     }
 

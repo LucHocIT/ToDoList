@@ -113,8 +113,8 @@ public class CalendarWidgetHelper {
         return taskService.getAllTasks();
     }
     private static boolean hasTasksOnDay(List<Task> tasks, int day, int month, int year) {
-        // Use the same format as the main app: yyyy/MM/dd
-        String targetDate = String.format("%04d/%02d/%02d", year, month + 1, day);
+        // Use the same format as the main app: dd/MM/yyyy
+        String targetDate = String.format("%02d/%02d/%04d", day, month + 1, year);
         for (Task task : tasks) {
             if (com.example.todolist.util.CalendarUtils.isTaskOnDate(task, targetDate)) {
                 return true;

@@ -5,9 +5,6 @@ import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.util.FirebaseHelper;
 import com.google.firebase.database.DatabaseReference;
 
-/**
- * TaskCrudRepository - Xử lý các thao tác CRUD cơ bản cho Task
- */
 public class TaskCrudRepository extends BaseRepository {
     
     private final FirebaseHelper firebaseHelper;
@@ -97,8 +94,11 @@ public class TaskCrudRepository extends BaseRepository {
         taskRef.child(taskId).child("isCompleted").setValue(isCompleted)
             .addOnCompleteListener(firebaseTask -> {
                 if (firebaseTask.isSuccessful()) {
-                    // Update completion date
-                    String completionDate = isCompleted ? String.valueOf(System.currentTimeMillis()) : null;
+                    String completionDate = null;
+                    if (isCompleted) {
+                        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+                        completionDate = formatter.format(new java.util.Date());
+                    }
                     taskRef.child(taskId).child("completionDate").setValue(completionDate)
                         .addOnCompleteListener(dateTask -> {
                             if (dateTask.isSuccessful()) {

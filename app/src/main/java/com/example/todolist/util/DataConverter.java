@@ -84,14 +84,13 @@ public class DataConverter {
         long now = System.currentTimeMillis();
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTimeInMillis(now);
-        String dateStr = String.format("%04d/%02d/%02d",
-            cal.get(java.util.Calendar.YEAR),
+        String dateStr = String.format("%02d/%02d/%04d",
+            cal.get(java.util.Calendar.DAY_OF_MONTH),
             cal.get(java.util.Calendar.MONTH) + 1,
-            cal.get(java.util.Calendar.DAY_OF_MONTH)
+            cal.get(java.util.Calendar.YEAR)
         );
         task.setDueDate(dateStr);
-        task.setCreatedAt(now);
-        task.setUpdatedAt(now);
+        // createdAt and updatedAt are set in constructor
         return task;
     }
     /**
@@ -106,9 +105,7 @@ public class DataConverter {
         category.setColor(color);
         category.setSortOrder(0);
         category.setIsDefault(false);
-        long now = System.currentTimeMillis();
-        category.setCreatedAt(now);
-        category.setUpdatedAt(now);
+        // createdAt and updatedAt are set in constructor
         return category;
     }
     /**

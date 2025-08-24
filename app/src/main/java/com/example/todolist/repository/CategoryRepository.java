@@ -11,10 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Main CategoryRepository orchestrator - coordinates all category repository operations
- * Replaces the original long CategoryRepository by delegating to specialized sub-repositories
- */
 public class CategoryRepository extends BaseRepository {
     
     // Sub-repositories that handle specific functionality
@@ -125,19 +121,16 @@ public class CategoryRepository extends BaseRepository {
         Category workCategory = new Category();
         workCategory.setName("Công việc");
         workCategory.setColor("#2196F3");
-        workCategory.setCreatedAt(System.currentTimeMillis());
         defaultCategories.add(workCategory);
         
         Category personalCategory = new Category();
         personalCategory.setName("Cá nhân");
         personalCategory.setColor("#4CAF50");
-        personalCategory.setCreatedAt(System.currentTimeMillis() + 1);
         defaultCategories.add(personalCategory);
         
         Category studyCategory = new Category();
         studyCategory.setName("Học tập");
         studyCategory.setColor("#FF9800");
-        studyCategory.setCreatedAt(System.currentTimeMillis() + 2);
         defaultCategories.add(studyCategory);
         
         addCategoriesSequentially(defaultCategories, 0, callback);

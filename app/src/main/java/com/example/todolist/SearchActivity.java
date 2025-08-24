@@ -102,13 +102,8 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
     @Override
     public void onTaskComplete(Task task, boolean isCompleted) {
         task.setIsCompleted(isCompleted);
-        // Set completion date when marking as completed, clear when marking as incomplete
-        if (isCompleted) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            task.setCompletionDate(dateFormat.format(new Date()));
-        } else {
-            task.setCompletionDate(null);
-        }
+        task.setIsCompleted(isCompleted);
+        
         taskService.updateTask(task);
         runOnUiThread(() -> searchAdapter.notifyDataSetChanged());
     }

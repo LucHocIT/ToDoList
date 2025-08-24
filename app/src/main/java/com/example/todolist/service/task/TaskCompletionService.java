@@ -5,9 +5,6 @@ import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
 import java.util.List;
 
-/**
- * Task completion and status management
- */
 public class TaskCompletionService {
     
     private TaskRepository taskRepository;
@@ -17,13 +14,7 @@ public class TaskCompletionService {
     }
     
     public void completeTask(Task task, boolean isCompleted, BaseRepository.DatabaseCallback<Boolean> callback) {
-        // Update local state
         task.setCompleted(isCompleted);
-        if (isCompleted) {
-            task.setCompletionDate(String.valueOf(System.currentTimeMillis()));
-        } else {
-            task.setCompletionDate(null);
-        }
         
         // Update in database
         taskRepository.updateTask(task, callback);
@@ -74,20 +65,19 @@ public class TaskCompletionService {
         });
     }
     
-    public boolean isTaskCompletedToday(Task task) {
+    public boolean isCompletedToday(Task task) {
         if (task.getCompletionDate() == null) return false;
         
-        try {
-            long completionTime = Long.parseLong(task.getCompletionDate());
-            String completionDateStr = formatDate(new java.util.Date(completionTime));
-            String todayDateStr = formatDate(new java.util.Date());
-            return todayDateStr.equals(completionDateStr);
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        // Since completion date is now in dd/MM/yyyy format, compare directly
+        String todayDateStr = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(new java.util.Date());
+        return todayDateStr.equals(task.getCompletionDate());
+    }
+    
+    public boolean isTaskCompletedToday(Task task) {
+        return isCompletedToday(task);
     }
     
     private String formatDate(java.util.Date date) {
-        return new java.text.SimpleDateFormat("yyyy/MM/dd", java.util.Locale.getDefault()).format(date);
+        return new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(date);
     }
 }

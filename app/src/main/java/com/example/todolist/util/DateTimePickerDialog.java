@@ -31,7 +31,7 @@ public class DateTimePickerDialog {
     private String selectedTime;
     private String selectedReminder;
     private String selectedRepeat;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     public DateTimePickerDialog(Context context, OnDateTimeSelectedListener listener) {
         this.context = context;
         this.listener = listener;
@@ -71,11 +71,10 @@ public class DateTimePickerDialog {
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, dayOfMonth);
             selectedDate = dateFormat.format(calendar.getTime());
-            updateRepeatState(); // ÄĂ£ thĂªm á»Ÿ láº§n trÆ°á»›c
+            updateRepeatState(); 
         });
         // Time picker
         layoutTimePicker.setOnClickListener(v -> showTimePicker());
-        // Reminder picker - only enabled when time is set
         layoutReminderPicker.setOnClickListener(v -> {
             // Sá»­a chuá»—i cá»©ng "KhĂ´ng" thĂ nh tĂ i nguyĂªn chuá»—i
             if (selectedTime != null && !selectedTime.equals(context.getString(R.string.none))) {
@@ -103,7 +102,7 @@ public class DateTimePickerDialog {
             (view, hourOfDay, minute) -> {
                 selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
                 textSelectedTime.setText(selectedTime);
-                updateReminderState(); // Update reminder state when time changes
+                updateReminderState(); 
             },
             now.get(Calendar.HOUR_OF_DAY),
             now.get(Calendar.MINUTE),
@@ -139,11 +138,11 @@ public class DateTimePickerDialog {
     }
     private void showReminderPicker() {
         String[] reminderOptions = {
-                context.getString(R.string.none),                // "KhĂ´ng"
-                context.getString(R.string.reminder_5_min),  // "5 phĂºt trÆ°á»›c"
-                context.getString(R.string.reminder_15_min), // "15 phĂºt trÆ°á»›c"
-                context.getString(R.string.reminder_30_min), // "30 phĂºt trÆ°á»›c"
-                context.getString(R.string.reminder_1_hour)    // "1 giá» trÆ°á»›c"
+                context.getString(R.string.none),            
+                context.getString(R.string.reminder_5_min),  
+                context.getString(R.string.reminder_15_min),
+                context.getString(R.string.reminder_30_min), 
+                context.getString(R.string.reminder_1_hour)  
         };
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
         // Thay tháº¿ "Chá»n lá»i nháº¯c" báº±ng tĂ i nguyĂªn chuá»—i
@@ -156,11 +155,11 @@ public class DateTimePickerDialog {
     }
     private void showRepeatPicker() {
         String[] repeatOptions = {
-                context.getString(R.string.none),         // "KhĂ´ng"
-                context.getString(R.string.repeat_daily),   // "HĂ ng ngĂ y"
-                context.getString(R.string.repeat_weekly),  // "HĂ ng tuáº§n"
-                context.getString(R.string.repeat_monthly), // "HĂ ng thĂ¡ng"
-                context.getString(R.string.repeat_yearly)   // "HĂ ng nÄƒm"
+                context.getString(R.string.none),        
+                context.getString(R.string.repeat_daily),   
+                context.getString(R.string.repeat_weekly),
+                context.getString(R.string.repeat_monthly), 
+                context.getString(R.string.repeat_yearly)   
         };
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
         // Thay tháº¿ "Chá»n láº·p láº¡i" báº±ng tĂ i nguyĂªn chuá»—i
@@ -194,7 +193,6 @@ public class DateTimePickerDialog {
             selectedRepeat = repeat;
             textSelectedRepeat.setText(repeat);
         }
-        // Update reminder state based on time
         updateReminderState();
         updateRepeatState();
     }

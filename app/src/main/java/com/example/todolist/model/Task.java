@@ -1,12 +1,13 @@
 package com.example.todolist.model;
+
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-/**
- * Task model for Firebase Realtime Database
- * Clean, lightweight version without Room annotations
- * Implements Serializable for Firebase compatibility
- */
 public class Task implements Serializable {
     private String id;
     private String title;
@@ -22,14 +23,15 @@ public class Task implements Serializable {
     private String repeatType;
     private boolean isRepeating;
     private String completionDate;
-    private long createdAt;
-    private long updatedAt;
-    // Default constructor required for Firebase
+    private String createdAt;    
+    private String updatedAt;     
     public Task() {
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        this.createdAt = currentDate;
+        this.updatedAt = currentDate;
     }
-    // Primary constructor
+
     public Task(String title, String description, String dueDate, String dueTime) {
         this();
         this.title = title;
@@ -46,7 +48,7 @@ public class Task implements Serializable {
         this.isRepeating = false;
         this.completionDate = null;
     }
-    // Convert to Map for Firebase
+
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("id", id);
@@ -64,14 +66,15 @@ public class Task implements Serializable {
         result.put("isRepeating", isRepeating);
         result.put("completionDate", completionDate);
         result.put("createdAt", createdAt);
-        result.put("updatedAt", System.currentTimeMillis());
+        result.put("updatedAt", updatedAt);
         return result;
     }
-    // Update timestamp
+
     public void updateTimestamp() {
-        this.updatedAt = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        this.updatedAt = dateFormat.format(new Date());
     }
-    // Getters and Setters
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getTitle() { return title; }
@@ -98,13 +101,13 @@ public class Task implements Serializable {
     public void setIsCompleted(boolean completed) { 
         this.isCompleted = completed;
         if (completed) {
-            this.completionDate = String.valueOf(System.currentTimeMillis());
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.completionDate = formatter.format(new Date());
         } else {
             this.completionDate = null;
         }
         updateTimestamp();
     }
-    // Firebase compatibility setter (delegates to setIsCompleted)
     public void setCompleted(boolean completed) { 
         setIsCompleted(completed);
     }
@@ -113,7 +116,7 @@ public class Task implements Serializable {
         this.isImportant = important;
         updateTimestamp();
     }
-    // Firebase compatibility setter (delegates to setIsImportant)
+
     public void setImportant(boolean important) { 
         setIsImportant(important);
     }
@@ -147,20 +150,72 @@ public class Task implements Serializable {
         this.isRepeating = repeating;
         updateTimestamp();
     }
-    // Firebase compatibility setter (delegates to setIsRepeating)
     public void setRepeating(boolean repeating) { 
         setIsRepeating(repeating);
     }
     public String getCompletionDate() { return completionDate; }
-    public void setCompletionDate(String completionDate) { 
-        this.completionDate = completionDate;
+    
+    public void setCompletionDate(Object completionDate) { 
+        if (completionDate instanceof String) {
+            this.completionDate = (String) completionDate;
+        } else if (completionDate instanceof Long) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.completionDate = dateFormat.format(new Date((Long) completionDate));
+        } else if (completionDate != null) {
+            this.completionDate = completionDate.toString();
+        }
         updateTimestamp();
     }
-    public long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
-    public long getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
-    // Compatibility methods for existing code
+    
+    @Exclude
+    public void setCompletionDateFromLong(Long completionDate) { 
+        if (completionDate != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.completionDate = dateFormat.format(new Date(completionDate));
+        }
+    }
+    public String getCreatedAt() { return createdAt; }
+    
+    public void setCreatedAt(Object createdAt) { 
+        if (createdAt instanceof String) {
+            this.createdAt = (String) createdAt;
+        } else if (createdAt instanceof Long) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.createdAt = dateFormat.format(new Date((Long) createdAt));
+        } else if (createdAt != null) {
+            this.createdAt = createdAt.toString();
+        }
+    }
+    
+    @Exclude
+    public void setCreatedAtFromLong(Long createdAt) { 
+        if (createdAt != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.createdAt = dateFormat.format(new Date(createdAt));
+        }
+    }
+    
+    public String getUpdatedAt() { return updatedAt; }
+    
+    public void setUpdatedAt(Object updatedAt) { 
+        if (updatedAt instanceof String) {
+            this.updatedAt = (String) updatedAt;
+        } else if (updatedAt instanceof Long) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.updatedAt = dateFormat.format(new Date((Long) updatedAt));
+        } else if (updatedAt != null) {
+            this.updatedAt = updatedAt.toString();
+        }
+    }
+    
+    @Exclude
+    public void setUpdatedAtFromLong(Long updatedAt) { 
+        if (updatedAt != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.updatedAt = dateFormat.format(new Date(updatedAt));
+        }
+    }
+    
     public String getCategoryId() { return category; }
     public void setCategoryId(String categoryId) { 
         this.category = categoryId;
@@ -183,6 +238,7 @@ public class Task implements Serializable {
         this.repeatType = repeat;
         updateTimestamp();
     }
+    
     @Override
     public String toString() {
         return "Task{" +

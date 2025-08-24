@@ -81,7 +81,6 @@ public class CategoryManager {
         category.setName(name);
         category.setColor(color);
         category.setIcon(icon);
-        category.setCreatedAt(System.currentTimeMillis());
         return category;
     }
 

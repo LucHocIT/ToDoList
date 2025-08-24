@@ -1,11 +1,14 @@
 package com.example.todolist.model;
+
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-/**
- * Category model for Firebase Realtime Database
- * Clean version without Room annotations, implements Serializable
- */
+
 public class Category implements Serializable {
     private String id;
     private String name;
@@ -13,12 +16,13 @@ public class Category implements Serializable {
     private String icon;
     private int sortOrder;
     private boolean isDefault;
-    private long createdAt;
-    private long updatedAt;
-    // Default constructor required for Firebase
+    private String createdAt; 
+    private String updatedAt; 
     public Category() {
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        this.createdAt = currentDate;
+        this.updatedAt = currentDate;
     }
     public Category(String name, String color) {
         this();
@@ -46,14 +50,14 @@ public class Category implements Serializable {
         result.put("sortOrder", sortOrder);
         result.put("isDefault", isDefault);
         result.put("createdAt", createdAt);
-        result.put("updatedAt", System.currentTimeMillis());
+        result.put("updatedAt", updatedAt);
         return result;
     }
     // Update timestamp
     public void updateTimestamp() {
-        this.updatedAt = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        this.updatedAt = dateFormat.format(new Date());
     }
-    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getName() { return name; }
@@ -83,10 +87,47 @@ public class Category implements Serializable {
         this.isDefault = isDefault;
         updateTimestamp();
     }
-    public long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
-    public long getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
+    public String getCreatedAt() { return createdAt; }
+    
+    public void setCreatedAt(Object createdAt) { 
+        if (createdAt instanceof String) {
+            this.createdAt = (String) createdAt;
+        } else if (createdAt instanceof Long) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.createdAt = dateFormat.format(new Date((Long) createdAt));
+        } else if (createdAt != null) {
+            this.createdAt = createdAt.toString();
+        }
+    }
+    
+    @Exclude
+    public void setCreatedAtFromLong(Long createdAt) { 
+        if (createdAt != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.createdAt = dateFormat.format(new Date(createdAt));
+        }
+    }
+    
+    public String getUpdatedAt() { return updatedAt; }
+    
+    public void setUpdatedAt(Object updatedAt) { 
+        if (updatedAt instanceof String) {
+            this.updatedAt = (String) updatedAt;
+        } else if (updatedAt instanceof Long) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.updatedAt = dateFormat.format(new Date((Long) updatedAt));
+        } else if (updatedAt != null) {
+            this.updatedAt = updatedAt.toString();
+        }
+    }
+    
+    @Exclude
+    public void setUpdatedAtFromLong(Long updatedAt) { 
+        if (updatedAt != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            this.updatedAt = dateFormat.format(new Date(updatedAt));
+        }
+    }
     @Override
     public String toString() {
         return "Category{" +

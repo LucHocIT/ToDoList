@@ -75,15 +75,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
         public void bind(Task task) {
             textTaskTitle.setText(task.getTitle());
-            // Format date and time display
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
-            // Only show date/time if it's not empty or null and not default values
             if (dateTimeText != null && !dateTimeText.trim().isEmpty() && 
                 !dateTimeText.equals("null null") && !dateTimeText.contains("null") &&
                 !dateTimeText.equals("Không") && !dateTimeText.equals("null")) {
                 textTaskDateTime.setText(dateTimeText);
                 textTaskDateTime.setVisibility(View.VISIBLE);
-                // Check if task is overdue but still today
                 boolean isOverdueToday = isTaskOverdueToday(task);
                 if (isOverdueToday) {
                     textTaskDateTime.setTextColor(Color.RED);
@@ -93,22 +90,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             } else {
                 textTaskDateTime.setVisibility(View.GONE);
             }
-            // Set checkbox state without triggering listener - IMPORTANT: Clear listener first!
             checkboxComplete.setOnCheckedChangeListener(null);
-            // Store current task state for comparison
             boolean currentTaskCompleted = task.isCompleted();
             checkboxComplete.setChecked(currentTaskCompleted);
-            // Show/hide notification icon (bell) - only if has reminder AND has time
             boolean hasValidTime = task.getDueTime() != null && !task.getDueTime().trim().isEmpty() && !task.getDueTime().equals("null");
             iconNotification.setVisibility(task.isHasReminder() && hasValidTime ? View.VISIBLE : View.GONE);
-            // Show/hide repeat icon
             iconRepeat.setVisibility(task.isRepeating() && 
                                    task.getRepeatType() != null && 
                                    !task.getRepeatType().equals("Không") &&
                                    !task.getRepeatType().equals("Không có") ? View.VISIBLE : View.GONE);
-            // Show/hide star icon for importance
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
-            // Strike through text if completed
             if (task.isCompleted()) {
                 textTaskTitle.setPaintFlags(textTaskTitle.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
                 textTaskTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), android.R.color.darker_gray));
@@ -116,13 +107,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 textTaskTitle.setPaintFlags(textTaskTitle.getPaintFlags() & (~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG));
                 textTaskTitle.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.black));
             }
-            // Click listeners
+
             taskBackground.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onTaskClick(task);
                 }
             });
-            // Long click listener for action menu
+
             taskBackground.setOnLongClickListener(v -> {
                 if (listener != null) {
                     listener.onTaskLongClick(task);
@@ -130,54 +121,45 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 }
                 return false;
             });
-            // Set checkbox listener after setting the state - with improved validation
             checkboxComplete.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                // Strict validation to prevent false triggers
                 if (isChecked == currentTaskCompleted || isChecked == task.isCompleted()) {
-                    return; // No actual change, ignore
+                    return; 
                 }
                 if (listener != null) {
                     listener.onTaskComplete(task, isChecked);
                 }
             });            
-            // Reset item position on bind
             itemView.setTranslationX(0);
         }
         private String formatDateTime(String dueDate, String dueTime) {
             try {
-                // Check for null or empty values
                 if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("KhĂ´ng")) {
                     return ""; // No date set, only show title
                 }
                 // Get today's date
-                String todayDateStr = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(new Date());
-                // Check if it's today's date
+                String todayDateStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                 if (dueDate.equals(todayDateStr)) {
-                    // For today's tasks, only show time if available
                     if (dueTime != null && !dueTime.trim().isEmpty() && !dueTime.equals("null") && !dueTime.equals("KhĂ´ng")) {
-                        return dueTime; // Only show time for today's tasks
+                        return dueTime; 
                     } else {
-                        return ""; // Today's task without specific time, only show title
+                        return ""; 
                     }
                 }
-                // For other dates (not today)
                 if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("KhĂ´ng")) {
                     // Only date available, format: dd-mm
                     String[] dateParts = dueDate.split("/");
                     if (dateParts.length == 3) {
-                        return dateParts[2] + "-" + dateParts[1]; // dd-mm format
+                        return dateParts[2] + "-" + dateParts[1]; 
                     }
                     return dueDate;
                 }
-                // Both date and time available for other dates, format: dd-mm HH:mm
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
-                    return dateParts[2] + "-" + dateParts[1] + " " + dueTime; // dd-mm HH:mm format
+                    return dateParts[2] + "-" + dateParts[1] + " " + dueTime;
                 }
             } catch (Exception e) {
-                // Fallback for any parsing errors
+
             }
-            // Final fallback
             if ((dueDate == null || dueDate.equals("null") || dueDate.equals("Không")) && 
                 (dueTime == null || dueTime.equals("null") || dueTime.equals("Không"))) {
                 return "";
@@ -189,7 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             try {
                 // Get current date and time
                 Calendar now = Calendar.getInstance();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 String todayDateStr = dateFormat.format(now.getTime());
                 String currentTimeStr = timeFormat.format(now.getTime());

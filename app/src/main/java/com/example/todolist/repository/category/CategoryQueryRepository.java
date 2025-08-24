@@ -45,13 +45,7 @@ public class CategoryQueryRepository extends BaseRepository {
                 Collections.sort(categories, new Comparator<Category>() {
                     @Override
                     public int compare(Category c1, Category c2) {
-                        try {
-                            long time1 = c1.getCreatedAt();
-                            long time2 = c2.getCreatedAt();
-                            return Long.compare(time1, time2);
-                        } catch (Exception e) {
-                            return c1.getName().compareTo(c2.getName());
-                        }
+                        return c1.getName().compareTo(c2.getName());
                     }
                 });
                 

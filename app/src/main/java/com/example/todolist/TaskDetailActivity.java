@@ -41,12 +41,11 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private Category selectedCategory;
     private CategorySpinnerAdapter categoryAdapter;
     private List<Category> allCategories;
-    private boolean isInitialCategorySetup = true; // Flag to prevent automatic updates during initial setup
+    private boolean isInitialCategorySetup = true; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
-        // Initialize Firebase services
         taskService = new TaskService(this, this);
         categoryService = new CategoryService(this, null, this);
         initViews();
@@ -69,7 +68,6 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private void loadTaskData() {
         String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
         if (taskId != null && !taskId.isEmpty()) {
-            // Load task from Firebase
             taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
                 @Override
                 public void onSuccess(Task task) {
@@ -89,17 +87,13 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private void displayTaskData() {
         if (currentTask != null) {
             editDetailTitle.setText(currentTask.getTitle());
-            // Format due date as dd/MM/yyyy
             String formattedDate = formatDateDisplay(currentTask.getDueDate());
             textDueDate.setText(formattedDate != null ? formattedDate : "Không");
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
             textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
-            // Set priority
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");
-            // Set category selection if available
             if (categoryAdapter != null && currentTask.getCategoryId() != null) {
-                // Reset flag before setting category to avoid triggering updates
                 isInitialCategorySetup = true;
                 setSelectedCategoryInSpinner(currentTask.getCategoryId());
                 isInitialCategorySetup = false;
@@ -107,7 +101,6 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         }
     }
     private void setupCategorySpinner() {
-        // Load categories from Firebase
         categoryService.getAllCategories(new BaseRepository.RepositoryCallback<List<Category>>() {
             @Override
             public void onSuccess(List<Category> categories) {
@@ -115,33 +108,26 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                 runOnUiThread(() -> {
                     categoryAdapter = new CategorySpinnerAdapter(TaskDetailActivity.this, allCategories);
                     spinnerCategory.setAdapter(categoryAdapter);
-                    // Set up selection listener
                     spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            // Skip automatic updates during initial setup
                             if (isInitialCategorySetup) {
                                 return;
                             }
                             Category selectedCat = categoryAdapter.getCategory(position);
                             if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
                                 selectedCategory = selectedCat;
-                                // Only update if category actually changed
                                 String newCategoryId = "0".equals(selectedCat.getId()) ? null : selectedCat.getId();
                                 String currentCategoryId = currentTask.getCategoryId();
-                                // Compare category IDs properly (handle null cases)
                                 boolean categoryChanged = (newCategoryId == null && currentCategoryId != null) ||
                                                         (newCategoryId != null && !newCategoryId.equals(currentCategoryId));
                                 if (categoryChanged) {
-                                    // Update task category
                                     currentTask.setCategoryId(newCategoryId);
-                                    // Save to Firebase
                                     taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
                                         @Override
                                         public void onSuccess(Boolean result) {
                                             runOnUiThread(() -> {
                                                 setResult(RESULT_OK);
-                                                // Removed unnecessary success toast
                                             });
                                         }
                                         @Override
@@ -157,11 +143,11 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                         @Override
                         public void onNothingSelected(AdapterView<?> parent) {}
                     });
-                    // Set selected category if task is loaded
+
                     if (currentTask != null && currentTask.getCategoryId() != null) {
                         setSelectedCategoryInSpinner(currentTask.getCategoryId());
                     }
-                    // Enable category updates after initial setup is complete
+
                     isInitialCategorySetup = false;
                 });
             }
@@ -197,10 +183,8 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                 public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
                     currentTask.setDueDate(date);
                     currentTask.setDueTime(time);
-                    // Update UI
                     textDueDate.setText(formatDateDisplay(date));
-                    textTime.setText(time != null ? time : "KhĂ´ng");
-                    // Save to Firebase
+                    textTime.setText(time != null ? time : "Không");
                     taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean result) {
@@ -223,7 +207,6 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             String newTitle = editDetailTitle.getText().toString().trim();
             if (!newTitle.isEmpty() && !newTitle.equals(currentTask.getTitle())) {
                 currentTask.setTitle(newTitle);
-                // Save to Firebase
                 taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean result) {
@@ -244,16 +227,16 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                     textPriorityValue.setText("Cao");
                     textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                     break;
-                case "trung bĂ¬nh":
-                    textPriorityValue.setText("Trung bĂ¬nh");
+                case "trung bình":
+                    textPriorityValue.setText("Trung bình");
                     textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
                     break;
-                case "tháº¥p":
-                    textPriorityValue.setText("Tháº¥p");
+                case "thấp":
+                    textPriorityValue.setText("Thấp");
                     textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
                     break;
                 default:
-                    textPriorityValue.setText("KhĂ´ng");
+                    textPriorityValue.setText("Không");
                     textPriorityValue.setTextColor(getResources().getColor(android.R.color.darker_gray));
                     break;
             }
@@ -266,14 +249,7 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return null;
         }
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date date = inputFormat.parse(dateStr);
-            return outputFormat.format(date);
-        } catch (Exception e) {
-            return dateStr; // Return original if parsing fails
-        }
+        return dateStr;
     }
     @Override
     protected void onDestroy() {
@@ -285,10 +261,10 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             categoryService.cleanup();
         }
     }
-    // TaskService.TaskUpdateListener implementation
+
     @Override
     public void onTasksUpdated() {
-        // Handle task updates if needed
+
     }
     @Override
     public void onError(String error) {
@@ -296,10 +272,10 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             Toast.makeText(this, "TaskService error: " + error, Toast.LENGTH_SHORT).show()
         );
     }
-    // CategoryService.CategoryUpdateListener implementation
+
     @Override
     public void onCategoriesUpdated() {
-        // Handle category updates if needed
+
     }
     @Override
     protected void attachBaseContext(Context newBase) {

@@ -73,19 +73,17 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
             // Setup click listeners
             btnBack.setOnClickListener(v -> finish());
             btnDeleteAll.setOnClickListener(v -> {
-                // Show confirmation dialog and delete all completed tasks
                 new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.delete_all_title)) // Thay tháº¿ "XĂ³a táº¥t cáº£"
-                        .setMessage(getString(R.string.confirm_delete_all_completed_tasks)) // Thay tháº¿ "Báº¡n cĂ³ cháº¯c cháº¯n muá»‘n xĂ³a táº¥t cáº£ nhiá»‡m vá»¥ Ä‘Ă£ hoĂ n thĂ nh?"
-                        .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAllCompletedTasks()) // "XĂ³a"
-                        .setNegativeButton(getString(R.string.cancel), null) // "Há»§y"
+                        .setTitle(getString(R.string.delete_all_title)) 
+                        .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAllCompletedTasks()) 
+                        .setNegativeButton(getString(R.string.cancel), null) 
                         .show();
             });
         } catch (Exception e) {
         }
     }
     private void setupClickListeners() {
-        // Click listeners are now handled in initViews()
+
     }
     private void loadCompletedTasks() {
         taskService.getCompletedTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
@@ -133,13 +131,7 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 public int compare(Task t1, Task t2) {
                     // Sort by completion date descending (newer tasks first)
                     if (t1.getCompletionDate() != null && t2.getCompletionDate() != null) {
-                        try {
-                            long time1 = Long.parseLong(t1.getCompletionDate());
-                            long time2 = Long.parseLong(t2.getCompletionDate());
-                            return Long.compare(time2, time1); // Newer first
-                        } catch (NumberFormatException e) {
-                            return 0;
-                        }
+                        return t2.getCompletionDate().compareTo(t1.getCompletionDate());
                     }
                     return 0;
                 }
@@ -150,27 +142,10 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
         // Use completion date instead of due date for completed tasks
         String completionDate = task.getCompletionDate();
         if (completionDate != null && !completionDate.isEmpty()) {
-            try {
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-                Date date = inputFormat.parse(completionDate);
-                Calendar taskCal = Calendar.getInstance();
-                taskCal.setTime(date);
-                Calendar today = Calendar.getInstance();
-                Calendar yesterday = Calendar.getInstance();
-                yesterday.add(Calendar.DAY_OF_YEAR, -1);
-                if (isSameDay(taskCal, today)) {
-                    return completionDate; // Use actual completion date
-                } else if (isSameDay(taskCal, yesterday)) {
-                    return completionDate; // Use actual completion date
-                } else {
-                    return completionDate;
-                }
-            } catch (Exception e) {
-                return completionDate;
-            }
+            return completionDate;
         }
         // Fallback to current date if no completion date (shouldn't happen for completed tasks)
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return dateFormat.format(new Date());
     }
     private boolean isSameDay(Calendar cal1, Calendar cal2) {
@@ -192,27 +167,22 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 }
             });
         }
-        // Clear local lists and update UI
         runOnUiThread(() -> {
             allCompletedTasks.clear();
             groupedTasks.clear();
             completedTasksAdapter.updateGroupedTasks(groupedTasks);
             updateEmptyState();
-            finish(); // Go back to main activity
+            finish(); 
         });
     }
     @Override
     public void onCompletedTaskClick(Task task) {
-        // For completed tasks, don't allow editing - just show details in read-only mode
-        // We could create a read-only detail view or disable editing in TaskDetailActivity
     }
     @Override
     public void onCompletedTaskLongClick(Task task) {
-        // Show action dialog for completed tasks (maybe just delete option)
         TaskActionsDialog actionsDialog = new TaskActionsDialog(this, task, new TaskActionsDialog.OnActionSelectedListener() {
             @Override
             public void onStarAction(Task task) {
-                // Don't allow starring completed tasks
             }
             @Override
             public void onDeleteAction(Task task) {
@@ -223,10 +193,9 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     @Override
     public void onCompletedTaskUncheck(Task task) {
-        // Mark task as incomplete and remove completion date
         new Thread(() -> {
             task.setIsCompleted(false);
-            task.setCompletionDate(null); // Clear completion date when marking as incomplete
+            task.setCompletionDate(null); 
             taskService.updateTask(task);
             allCompletedTasks.remove(task);
             groupTasksByDate();
