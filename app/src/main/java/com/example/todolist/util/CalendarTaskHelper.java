@@ -14,22 +14,28 @@ import java.util.List;
 public class CalendarTaskHelper {
     public static void loadTasksForDate(Context context, String dateString, 
                                       TaskLoadListener listener) {
+        android.util.Log.d("CalendarTaskHelper", "Loading tasks for date: " + dateString);
         TaskService taskService = new TaskService(context, null);
         taskService.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> allTasks) {
+                android.util.Log.d("CalendarTaskHelper", "Retrieved " + allTasks.size() + " total tasks");
                 List<Task> tasksForDate = new ArrayList<>();
                 for (Task task : allTasks) {
+                    android.util.Log.d("CalendarTaskHelper", "Checking task: " + task.getTitle() + ", Date: " + task.getDueDate());
                     if (CalendarUtils.isTaskOnDate(task, dateString)) {
+                        android.util.Log.d("CalendarTaskHelper", "Task matches date: " + task.getTitle());
                         tasksForDate.add(task);
                     }
                 }
+                android.util.Log.d("CalendarTaskHelper", "Found " + tasksForDate.size() + " tasks for date " + dateString);
                 if (listener != null) {
                     listener.onTasksLoaded(tasksForDate);
                 }
             }
             @Override
             public void onError(String error) {
+                android.util.Log.e("CalendarTaskHelper", "Error loading tasks: " + error);
                 if (listener != null) {
                     listener.onTasksLoaded(new ArrayList<>());
                 }
@@ -38,11 +44,15 @@ public class CalendarTaskHelper {
     }
     public static void updateTaskDisplay(Context context, LinearLayout container, 
                                        List<Task> tasks) {
+        android.util.Log.d("CalendarTaskHelper", "Updating task display with " + tasks.size() + " tasks");
         container.removeAllViews();
         if (tasks.isEmpty()) {
+            android.util.Log.d("CalendarTaskHelper", "No tasks to display, showing empty message");
             addEmptyTaskMessage(context, container);
         } else {
+            android.util.Log.d("CalendarTaskHelper", "Displaying " + tasks.size() + " tasks");
             for (Task task : tasks) {
+                android.util.Log.d("CalendarTaskHelper", "Creating view for task: " + task.getTitle());
                 View taskItemView = TaskItemViewHelper.createTaskItemView(context, task);
                 container.addView(taskItemView);
             }
@@ -65,10 +75,10 @@ public class CalendarTaskHelper {
         container.addView(addTaskPrompt);
     }
     public static String formatSelectedDate(Calendar selectedDate, int selectedDay) {
-        return String.format("%04d/%02d/%02d", 
-            selectedDate.get(Calendar.YEAR),
+        return String.format("%02d/%02d/%04d", 
+            selectedDay,
             selectedDate.get(Calendar.MONTH) + 1,
-            selectedDay);
+            selectedDate.get(Calendar.YEAR));
     }
     public interface TaskLoadListener {
         void onTasksLoaded(List<Task> tasks);

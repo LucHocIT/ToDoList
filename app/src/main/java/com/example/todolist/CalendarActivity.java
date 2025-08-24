@@ -131,7 +131,12 @@ public class CalendarActivity extends AppCompatActivity
             CalendarViewHelper.loadMonthCalendar(this, calendarGrid, currentCalendar,
                     selectedDate, selectedDay, this);
         }
-        loadTasksForSelectedDate();
+        // Only load tasks if a day is selected
+        if (selectedDay != -1) {
+            loadTasksForSelectedDate();
+        } else {
+            android.util.Log.d("CalendarActivity", "No day selected (selectedDay = -1), not loading tasks");
+        }
     }
     private void updateMonthYearDisplay() {
         Calendar displayCalendar = isWeekView ? selectedDate : currentCalendar;
@@ -141,6 +146,7 @@ public class CalendarActivity extends AppCompatActivity
     }
     private void loadTasksForSelectedDate() {
         String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
+        android.util.Log.d("CalendarActivity", "Loading tasks for selected date: " + dateString + " (day: " + selectedDay + ")");
         CalendarTaskHelper.loadTasksForDate(this, dateString, this);
     }
 
@@ -163,6 +169,10 @@ public class CalendarActivity extends AppCompatActivity
 
     @Override
     public void onTasksLoaded(List<Task> tasks) {
+        android.util.Log.d("CalendarActivity", "Tasks loaded: " + tasks.size() + " tasks");
+        for (Task task : tasks) {
+            android.util.Log.d("CalendarActivity", "Loaded task: " + task.getTitle() + ", Due: " + task.getDueDate());
+        }
         tasksForSelectedDate = tasks;
         runOnUiThread(() -> updateTaskDisplay());
     }
