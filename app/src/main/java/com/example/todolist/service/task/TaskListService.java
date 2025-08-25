@@ -6,9 +6,6 @@ import com.example.todolist.repository.TaskRepository;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-/**
- * Task list management and categorization
- */
 public class TaskListService {
     
     private TaskRepository taskRepository;
@@ -48,19 +45,24 @@ public class TaskListService {
         }
     }
     
+    // Add missing updateTasks method
+    public void updateTasks(List<Task> tasks) {
+        categorizeTasks(tasks);
+    }
+    
     private void categorizeTaskByDate(Task task, String todayDateStr) {
         int timeCategory = getTaskTimeCategory(task, todayDateStr);
         
         switch (timeCategory) {
-            case -1: overdueTasks.add(task); break;    // Overdue
-            case 0:  todayTasks.add(task); break;      // Today
-            case 1:  futureTasks.add(task); break;     // Future
+            case -1: overdueTasks.add(task); break;    
+            case 0:  todayTasks.add(task); break;     
+            case 1:  futureTasks.add(task); break;     
         }
     }
     
     private int getTaskTimeCategory(Task task, String todayDateStr) {
         if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
-            return 1; // Future if no date
+            return 1; 
         }
 
         try {

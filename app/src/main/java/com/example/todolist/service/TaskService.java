@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.todolist.cache.TaskCache;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
@@ -16,7 +17,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-public class TaskService {
+
+public class TaskService implements TaskCache.TaskCacheListener {
     
     public interface TaskUpdateListener {
         void onTasksUpdated();
@@ -35,19 +37,26 @@ public class TaskService {
     private TaskManager taskManager;              
     private TaskCompletionService completionService;  
     private TaskListService listService;         
-
-    private Handler firebaseUpdateHandler;
-    private Runnable pendingFirebaseUpdate;
-    private static final long FIREBASE_UPDATE_DELAY = 500;
-    private long lastLocalUpdateTime = 0;
-    private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 2000;
+    private TaskCache taskCache;
     
+    // Thêm các variables bị thiếu
+    private Handler firebaseUpdateHandler;
     private List<Task> allTasks;
+    private Runnable pendingFirebaseUpdate;
+    private long lastLocalUpdateTime;
+    
+    // Constants
+    private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 1000; // 1 second
+    private static final long FIREBASE_UPDATE_DELAY = 500; // 0.5 second
 
     public TaskService(Context context, TaskUpdateListener listener) {
         this.context = context;
         this.listener = listener;
         this.taskRepository = new TaskRepository();
+        this.taskCache = TaskCache.getInstance();
+        
+        // Register cho cache updates
+        taskCache.addListener(this);
         this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
         this.taskManager = new TaskManager(context);
@@ -58,14 +67,33 @@ public class TaskService {
     }
 
     public void loadTasks() {
+        // Nếu đã có cache, return ngay
+        if (taskCache.isInitialized()) {
+            if (listener != null) {
+                listener.onTasksUpdated();
+            }
+            return;
+        }
+        
+        // Set loading state
+        taskCache.setLoading(true);
+        
+        // Load từ Firebase lần đầu
         realtimeListener = taskRepository.addTasksRealtimeListener(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
-                handleFirebaseTasksUpdate(tasks);
+                if (!taskCache.isInitialized()) {
+                    // Lần đầu tiên - load vào cache
+                    taskCache.loadFromFirebase(tasks);
+                } else {
+                    // Đã có cache - sync background
+                    taskCache.syncFromFirebase(tasks);
+                }
             }
 
             @Override
             public void onError(String error) {
+                taskCache.setLoading(false);
                 if (listener != null) {
                     listener.onError("Lỗi tải tasks: " + error);
                 }
@@ -112,40 +140,53 @@ public class TaskService {
     }
 
     public void addTask(Task task) {
-        taskManager.addTask(task, null);
+        addTask(task, null);
     }
     
     public void addTask(Task task, TaskOperationCallback callback) {
+        // 1. Optimistic update - cập nhật cache ngay
+        taskCache.addTaskOptimistic(task);
+        
+        // 2. Sync với Firebase ngầm
         taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String taskId) {
+                // Task đã được add thành công trên Firebase
+                // Cache sẽ được sync lại qua realtime listener
                 if (callback != null) callback.onSuccess();
             }
 
             @Override
             public void onError(String error) {
+                // Rollback optimistic update nếu Firebase fail
+                taskCache.deleteTaskOptimistic(task.getId());
                 if (callback != null) callback.onError(error);
             }
         });
     }
 
     public void updateTask(Task task) {
+        updateTask(task, null);
+    }
+    
+    public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
+        // 1. Optimistic update - cập nhật cache ngay  
+        taskCache.updateTaskOptimistic(task);
+        
+        // 2. Sync với Firebase ngầm
         taskManager.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
+                // Task đã được update thành công trên Firebase
+                if (callback != null) callback.onSuccess(result);
             }
 
             @Override
             public void onError(String error) {
-                if (listener != null) {
-                    listener.onError("Lỗi cập nhật task: " + error);
-                }
+                // TODO: Có thể rollback optimistic update nếu cần
+                if (callback != null) callback.onError(error);
             }
         });
-    }
-
-    public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
-        taskManager.updateTask(task, callback);
     }
 
     public void deleteTask(Task task) {
@@ -153,6 +194,10 @@ public class TaskService {
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc muốn xóa task này?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
+                    // 1. Optimistic update - xóa khỏi cache ngay
+                    taskCache.deleteTaskOptimistic(task.getId());
+                    
+                    // 2. Sync với Firebase ngầm
                     taskManager.deleteTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean result) {
@@ -210,16 +255,10 @@ public class TaskService {
     public void toggleTaskImportance(Task task) {
         completionService.toggleTaskImportance(task, null);
     }
-
-    public List<Task> getAllTasks() { return new ArrayList<>(allTasks); }
-    public List<Task> getOverdueTasks() { return listService.getOverdueTasks(); }
-    public List<Task> getTodayTasks() { return listService.getTodayTasks(); }
-    public List<Task> getFutureTasks() { return listService.getFutureTasks(); }
-    public List<Task> getCompletedTodayTasks() { return listService.getCompletedTodayTasks(); }
     
     public List<Task> getIncompleteTasks() { 
         List<Task> incomplete = new ArrayList<>();
-        for (Task task : allTasks) {
+        for (Task task : taskCache.getAllTasks()) {
             if (!task.isCompleted()) {
                 incomplete.add(task);
             }
@@ -289,5 +328,64 @@ public class TaskService {
         if (realtimeListener != null) {
             taskRepository.removeTasksListener(realtimeListener);
         }
+        // Unregister from cache
+        taskCache.removeListener(this);
+    }
+    
+    // === TaskCache.TaskCacheListener Implementation ===
+    
+    @Override
+    public void onTasksUpdated(List<Task> tasks) {
+        // Update listService với tasks mới từ cache
+        if (listService == null) {
+            listService = new TaskListService();
+        }
+        listService.updateTasks(tasks);
+        
+        // Cache đã cập nhật - notify UI
+        if (listener != null) {
+            listener.onTasksUpdated();
+        }
+        // Update widgets
+        WidgetUpdateHelper.updateAllWidgets(context);
+    }
+    
+    @Override
+    public void onTaskAdded(Task task) {
+        // Có thể thêm logic đặc biệt cho task mới được add
+    }
+    
+    @Override
+    public void onTaskUpdated(Task task) {
+        // Có thể thêm logic đặc biệt cho task được update
+    }
+    
+    @Override
+    public void onTaskDeleted(String taskId) {
+        // Có thể thêm logic đặc biệt cho task bị xóa
+    }
+
+    public List<Task> getAllTasks() {
+        return taskCache.getAllTasks();
+    }
+    
+    public List<Task> getTasksForDate(String date) {
+        return taskCache.getTasksForDate(date);
+    }
+
+    public List<Task> getTodayTasks() {
+        return listService != null ? listService.getTodayTasks() : taskCache.getAllTasks();
+    }
+    
+    public List<Task> getOverdueTasks() {
+        return listService != null ? listService.getOverdueTasks() : taskCache.getAllTasks();
+    }
+    
+    public List<Task> getFutureTasks() {
+        return listService != null ? listService.getFutureTasks() : taskCache.getAllTasks();
+    }
+    
+    public List<Task> getCompletedTodayTasks() {
+        return listService != null ? listService.getCompletedTodayTasks() : taskCache.getAllTasks();
     }
 }

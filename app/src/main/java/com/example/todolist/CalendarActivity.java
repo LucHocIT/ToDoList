@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import com.example.todolist.cache.TaskCache;
 import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.model.Task;
@@ -19,7 +20,6 @@ import com.example.todolist.util.AddTaskHandler;
 import com.example.todolist.util.CalendarTaskHelper;
 import com.example.todolist.util.CalendarViewHelper;
 import com.example.todolist.util.SettingsManager;
-import com.example.todolist.util.UIOptimizer;
 import com.example.todolist.util.UnifiedNavigationHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Locale; 
 public class CalendarActivity extends AppCompatActivity
         implements CalendarViewHelper.OnDayClickListener, CalendarTaskHelper.TaskLoadListener,
-        NavigationDrawerManager.NavigationListener, ThemeManager.ThemeChangeListener {
+        NavigationDrawerManager.NavigationListener, ThemeManager.ThemeChangeListener, 
+        TaskCache.TaskCacheListener {
     private TextView tvMonth, tvYear;
     private GridLayout calendarGrid;
     private LinearLayout taskInfoContainer, weekTaskInfoContainer;
@@ -45,6 +46,7 @@ public class CalendarActivity extends AppCompatActivity
     private SimpleDateFormat monthFormat;
     private SimpleDateFormat yearFormat;
     private TaskService taskService;
+    private TaskCache taskCache;
     private AddTaskHandler addTaskHandler;
     private int selectedDay = -1;
     private boolean isWeekView = false;
@@ -76,6 +78,12 @@ public class CalendarActivity extends AppCompatActivity
         weekViewContainer = findViewById(R.id.week_view_container);
         weekGrid = findViewById(R.id.week_grid);
         taskService = new TaskService(this, null);
+        taskCache = TaskCache.getInstance();
+        
+        // Register cho cache updates và load data từ TaskService
+        taskCache.addListener(this);
+        taskService.loadTasks(); // TaskService sẽ load và populate cache
+        
         setupClickListeners();
     }
     private void initManagers() {
@@ -88,7 +96,7 @@ public class CalendarActivity extends AppCompatActivity
     private void setupClickListeners() {
         addTaskHandler = new AddTaskHandler(this, task -> {
             loadCalendar();
-            loadTasksForSelectedDate();
+            loadTasksFromCache();
         });
         btnPrevMonth.setOnClickListener(v -> navigateMonth(-1));
         btnNextMonth.setOnClickListener(v -> navigateMonth(1));
@@ -132,10 +140,6 @@ public class CalendarActivity extends AppCompatActivity
             CalendarViewHelper.loadMonthCalendar(this, calendarGrid, currentCalendar,
                     selectedDate, selectedDay, this);
         }
-        // Only load tasks if a day is selected
-        if (selectedDay != -1) {
-            loadTasksForSelectedDate();
-        }
     }
     private void updateMonthYearDisplay() {
         Calendar displayCalendar = isWeekView ? selectedDate : currentCalendar;
@@ -154,22 +158,58 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
         selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH));
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
+        loadTasksFromCache();
         loadCalendar();
     }
+    
     @Override
     public void onWeekDayClick(int day, Calendar dayCalendar) {
         selectedDay = day;
         selectedDate.set(Calendar.YEAR, dayCalendar.get(Calendar.YEAR));
         selectedDate.set(Calendar.MONTH, dayCalendar.get(Calendar.MONTH));
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
+        loadTasksFromCache();
         loadCalendar();
+    }
+    
+    private void loadTasksFromCache() {
+        String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
+        tasksForSelectedDate = taskCache.getTasksForDate(dateString);
+        updateTaskDisplay();
     }
 
     @Override
     public void onTasksLoaded(List<Task> tasks) {
         tasksForSelectedDate = tasks;
-        // Use UIOptimizer for smooth task display updates
-        UIOptimizer.smoothUpdate(() -> updateTaskDisplay());
+        updateTaskDisplay();
+    }
+
+    @Override
+    public void onTasksUpdated(List<Task> allTasks) {
+        if (selectedDay != -1) {
+            loadTasksFromCache();
+        }
+    }
+
+    @Override
+    public void onTaskAdded(Task task) {
+        if (selectedDay != -1) {
+            loadTasksFromCache();
+        }
+    }
+
+    @Override
+    public void onTaskUpdated(Task task) {
+        if (selectedDay != -1) {
+            loadTasksFromCache();
+        }
+    }
+
+    @Override
+    public void onTaskDeleted(String taskId) {
+        if (selectedDay != -1) {
+            loadTasksFromCache();
+        }
     }
     
     private void updateTaskDisplay() {
@@ -193,8 +233,8 @@ public class CalendarActivity extends AppCompatActivity
             }
         }
         
-        // Use UIOptimizer for smooth calendar transitions
-        UIOptimizer.nextFrame(() -> loadCalendar());
+        // Load calendar immediately without UIOptimizer
+        loadCalendar();
     }
     private void toggleCalendarView() {
         isWeekView = !isWeekView;
@@ -257,6 +297,14 @@ public class CalendarActivity extends AppCompatActivity
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (taskCache != null) {
+            taskCache.removeListener(this);
         }
     }
 }

@@ -5,10 +5,6 @@ import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.notification.ReminderScheduler;
-
-/**
- * Core task operations: CRUD, reminders
- */
 public class TaskManager {
     
     private Context context;
@@ -121,7 +117,6 @@ public class TaskManager {
             ReminderScheduler scheduler = new ReminderScheduler(context);
             scheduler.cancelReminder(Integer.parseInt(task.getId().hashCode() + ""));
         } catch (Exception e) {
-            // Handle silently
         }
     }
 }

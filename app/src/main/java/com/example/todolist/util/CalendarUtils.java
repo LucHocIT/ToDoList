@@ -1,25 +1,23 @@
 package com.example.todolist.util;
-import android.util.Log;
 import com.example.todolist.model.Task;
 import java.util.Calendar;
 public class CalendarUtils {
     // Support cho Task model (Firebase)
     public static boolean isTaskOnDate(Task task, String targetDate) {
         try {
-            Log.d("CalendarUtils", "Checking task: " + task.getTitle() + " against date: " + targetDate);
-            
             if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
-                Log.d("CalendarUtils", "Task has no due date");
                 return false;
             }
             
-            Log.d("CalendarUtils", "Task due date: " + task.getDueDate());
+            // Quick check for non-repeating tasks
+            if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
+                return task.getDueDate().equals(targetDate);
+            }
             
             String[] taskDateParts = task.getDueDate().split("/");
             String[] targetDateParts = targetDate.split("/");
             
             if (taskDateParts.length != 3 || targetDateParts.length != 3) {
-                Log.d("CalendarUtils", "Invalid date format");
                 return false;
             }
 
@@ -35,30 +33,17 @@ public class CalendarUtils {
             targetCalendar.set(Calendar.YEAR, Integer.parseInt(targetDateParts[2]));
 
             if (targetCalendar.before(taskDate)) {
-                Log.d("CalendarUtils", "Target date is before task date");
                 return false;
             }
 
-            if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
-                boolean result = task.getDueDate().equals(targetDate);
-                Log.d("CalendarUtils", "Non-repeating task match: " + result);
-                return result;
-            }
-
-            Log.d("CalendarUtils", "Checking repeating task with type: " + task.getRepeatType());
-
             switch (task.getRepeatType()) {
                 case "Hằng ngày":
-                    boolean dailyResult = !targetCalendar.before(taskDate);
-                    Log.d("CalendarUtils", "Daily task result: " + dailyResult);
-                    return dailyResult;
+                    return !targetCalendar.before(taskDate);
                 case "Hằng tuần":
                     if (targetCalendar.get(Calendar.DAY_OF_WEEK) == taskDate.get(Calendar.DAY_OF_WEEK)) {
                         long diffInMillis = targetCalendar.getTimeInMillis() - taskDate.getTimeInMillis();
                         long diffInDays = diffInMillis / (24 * 60 * 60 * 1000);
-                        boolean weeklyResult = diffInDays >= 0 && diffInDays % 7 == 0;
-                        Log.d("CalendarUtils", "Weekly task result: " + weeklyResult);
-                        return weeklyResult;
+                        return diffInDays >= 0 && diffInDays % 7 == 0;
                     }
                     return false;
                 case "Hằng tháng":
@@ -68,18 +53,13 @@ public class CalendarUtils {
                         int targetYear = targetCalendar.get(Calendar.YEAR);
                         int targetMonth = targetCalendar.get(Calendar.MONTH);
                         int monthDiff = (targetYear - taskYear) * 12 + (targetMonth - taskMonth);
-                        boolean monthlyResult = monthDiff >= 0;
-                        Log.d("CalendarUtils", "Monthly task result: " + monthlyResult);
-                        return monthlyResult;
+                        return monthDiff >= 0;
                     }
                     return false;
                 default:
-                    boolean defaultResult = task.getDueDate().equals(targetDate);
-                    Log.d("CalendarUtils", "Default case result: " + defaultResult);
-                    return defaultResult;
+                    return task.getDueDate().equals(targetDate);
             }
         } catch (Exception e) {
-            Log.e("CalendarUtils", "Error checking task on date", e);
             return task.getDueDate().equals(targetDate);
         }
     }
