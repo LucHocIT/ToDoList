@@ -71,7 +71,6 @@ public class TaskService implements TaskCache.TaskCacheListener {
         realtimeListener = taskRepository.addTasksRealtimeListener(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
-                android.util.Log.d("TaskService", "Firebase realtime listener: received " + tasks.size() + " tasks");
                 if (!taskCache.isInitialized()) {
                     // Lần đầu tiên - load vào cache
                     taskCache.loadFromFirebase(tasks);
@@ -92,11 +91,6 @@ public class TaskService implements TaskCache.TaskCacheListener {
     }
     
     private void handleFirebaseTasksUpdate(List<Task> tasks) {
-        android.util.Log.d("TaskService", "Firebase tasks received: " + tasks.size());
-        for (Task task : tasks) {
-            android.util.Log.d("TaskService", "Task: " + task.getTitle() + ", Date: " + task.getDueDate() + ", Completed: " + task.isCompleted());
-        }
-        
         if (pendingFirebaseUpdate != null) {
             firebaseUpdateHandler.removeCallbacks(pendingFirebaseUpdate);
         }
@@ -110,10 +104,6 @@ public class TaskService implements TaskCache.TaskCacheListener {
             
             allTasks = tasks;
             listService.categorizeTasks(allTasks);
-            
-            android.util.Log.d("TaskService", "After categorization - Today: " + listService.getTodayTasks().size() + 
-                              ", Overdue: " + listService.getOverdueTasks().size() + 
-                              ", Future: " + listService.getFutureTasks().size());
             
             notifyListener();
             WidgetUpdateHelper.updateAllWidgets(context);
@@ -396,9 +386,7 @@ public class TaskService implements TaskCache.TaskCacheListener {
         List<Task> allTasks = taskCache.getAllTasks();
         if (listService != null) {
             listService.categorizeTasks(allTasks);
-            List<Task> result = listService.getTodayTasks();
-            android.util.Log.d("TaskService", "getTodayTasks from cache: " + result.size());
-            return result;
+            return listService.getTodayTasks();
         }
         return allTasks;
     }
@@ -407,9 +395,7 @@ public class TaskService implements TaskCache.TaskCacheListener {
         List<Task> allTasks = taskCache.getAllTasks();
         if (listService != null) {
             listService.categorizeTasks(allTasks);
-            List<Task> result = listService.getOverdueTasks();
-            android.util.Log.d("TaskService", "getOverdueTasks from cache: " + result.size());
-            return result;
+            return listService.getOverdueTasks();
         }
         return allTasks;
     }
@@ -418,9 +404,7 @@ public class TaskService implements TaskCache.TaskCacheListener {
         List<Task> allTasks = taskCache.getAllTasks();
         if (listService != null) {
             listService.categorizeTasks(allTasks);
-            List<Task> result = listService.getFutureTasks();
-            android.util.Log.d("TaskService", "getFutureTasks from cache: " + result.size());
-            return result;
+            return listService.getFutureTasks();
         }
         return allTasks;
     }
@@ -429,9 +413,7 @@ public class TaskService implements TaskCache.TaskCacheListener {
         List<Task> allTasks = taskCache.getAllTasks();
         if (listService != null) {
             listService.categorizeTasks(allTasks);
-            List<Task> result = listService.getCompletedTodayTasks();
-            android.util.Log.d("TaskService", "getCompletedTodayTasks from cache: " + result.size());
-            return result;
+            return listService.getCompletedTodayTasks();
         }
         return allTasks;
     }

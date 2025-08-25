@@ -45,7 +45,6 @@ public class TaskCache {
 
     public void addTaskOptimistic(Task task) {
         if (task != null && task.getId() != null) {
-            android.util.Log.d("TaskCache", "addTaskOptimistic: " + task.getId() + " - " + task.getTitle());
             taskMap.put(task.getId(), task);
             notifyTaskAdded(task);
             notifyTasksUpdated();
@@ -62,7 +61,6 @@ public class TaskCache {
 
     public void deleteTaskOptimistic(String taskId) {
         if (taskId != null) {
-            android.util.Log.d("TaskCache", "deleteTaskOptimistic: " + taskId);
             Task removedTask = taskMap.remove(taskId);
             if (removedTask != null) {
                 notifyTaskDeleted(taskId);
@@ -72,7 +70,6 @@ public class TaskCache {
     }
 
     public void loadFromFirebase(List<Task> firebaseTasks) {
-        android.util.Log.d("TaskCache", "loadFromFirebase: " + firebaseTasks.size() + " tasks");
         taskMap.clear();
         for (Task task : firebaseTasks) {
             taskMap.put(task.getId(), task);
@@ -107,7 +104,6 @@ public class TaskCache {
             taskMap.remove(taskId);
         }
 
-        android.util.Log.d("TaskCache", "syncFromFirebase completed: cache now has " + taskMap.size() + " tasks");
         notifyTasksUpdated();
     }
 
