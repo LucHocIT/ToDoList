@@ -4,21 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="6dp"
-    android:paddingStart="56dp"
-    android:paddingEnd="20dp">
+    android:paddingVertical="8dp"
+    android:paddingStart="64dp"
+    android:paddingEnd="24dp">
 
-    <!-- Simplified Task Item Card -->
+    <!-- Task Item -->
     <LinearLayout
         android:id="@+id/task_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@android:color/white"
-        android:padding="16dp"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="16dp"
         android:gravity="center_vertical"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        android:elevation="1dp">
 
         <!-- Completed Checkbox -->
         <ImageView
@@ -42,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:text="Task Title"
                 android:textSize="15sp"
-                android:textColor="#616161"
-                android:layout_marginBottom="4dp"
+                android:textColor="#424242"
+                android:layout_marginBottom="6dp"
                 android:maxLines="2"
                 android:ellipsize="end"/>
 
@@ -54,20 +56,20 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:src="@drawable/ic_schedule"
                     app:tint="#9E9E9E"
-                    android:layout_marginEnd="4dp"/>
+                    android:layout_marginEnd="6dp"/>
 
                 <TextView
                     android:id="@+id/text_task_datetime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="25-06 16:40"
-                    android:textSize="12sp"
-                    android:textColor="#9E9E9E"/>
+                    android:text="2025-08 Không"
+                    android:textSize="13sp"
+                    android:textColor="#757575"/>
 
             </LinearLayout>
 
@@ -83,8 +85,8 @@
 
             <ImageView
                 android:id="@+id/icon_notification"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_notification"
                 app:tint="#BDBDBD"
                 android:layout_marginEnd="6dp"
@@ -92,8 +94,8 @@
 
             <ImageView
                 android:id="@+id/icon_repeat"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_repeat"
                 app:tint="#BDBDBD"
                 android:layout_marginEnd="6dp"
@@ -101,8 +103,8 @@
 
             <ImageView
                 android:id="@+id/icon_star"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_star"
                 app:tint="#FFB74D"
                 android:visibility="gone"/>

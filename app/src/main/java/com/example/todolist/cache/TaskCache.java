@@ -3,6 +3,7 @@ package com.example.todolist.cache;
 import android.os.Handler;
 import android.os.Looper;
 import com.example.todolist.model.Task;
+import com.example.todolist.util.CalendarUtils;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -114,7 +115,7 @@ public class TaskCache {
     public List<Task> getTasksForDate(String date) {
         List<Task> tasksForDate = new ArrayList<>();
         for (Task task : taskMap.values()) {
-            if (isTaskOnDate(task, date)) {
+            if (CalendarUtils.isTaskOnDate(task, date)) {
                 tasksForDate.add(task);
             }
         }
@@ -168,65 +169,6 @@ public class TaskCache {
                 listener.onTaskDeleted(taskId);
             }
         });
-    }
-
-    private boolean isTaskOnDate(Task task, String targetDate) {
-      if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
-            return false;
-        }
-        
-        try {
-            String[] taskDateParts = task.getDueDate().split("/");
-            String[] targetDateParts = targetDate.split("/");
-            
-            if (taskDateParts.length != 3 || targetDateParts.length != 3) {
-                return false;
-            }
-            
-            Calendar taskDate = Calendar.getInstance();
-            taskDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(taskDateParts[0]));
-            taskDate.set(Calendar.MONTH, Integer.parseInt(taskDateParts[1]) - 1);
-            taskDate.set(Calendar.YEAR, Integer.parseInt(taskDateParts[2]));
-
-            Calendar targetCalendar = Calendar.getInstance();
-            targetCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(targetDateParts[0]));
-            targetCalendar.set(Calendar.MONTH, Integer.parseInt(targetDateParts[1]) - 1);
-            targetCalendar.set(Calendar.YEAR, Integer.parseInt(targetDateParts[2]));
-
-            if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
-                return task.getDueDate().equals(targetDate);
-            }
-
-            if (targetCalendar.before(taskDate)) {
-                return false;
-            }
-
-            switch (task.getRepeatType()) {
-                case "Hằng ngày":
-                    return !targetCalendar.before(taskDate);
-                case "Hằng tuần":
-                    if (targetCalendar.get(Calendar.DAY_OF_WEEK) == taskDate.get(Calendar.DAY_OF_WEEK)) {
-                        long diffInMillis = targetCalendar.getTimeInMillis() - taskDate.getTimeInMillis();
-                        long diffInDays = diffInMillis / (24 * 60 * 60 * 1000);
-                        return diffInDays >= 0 && diffInDays % 7 == 0;
-                    }
-                    return false;
-                case "Hằng tháng":
-                    if (targetCalendar.get(Calendar.DAY_OF_MONTH) == taskDate.get(Calendar.DAY_OF_MONTH)) {
-                        int taskYear = taskDate.get(Calendar.YEAR);
-                        int taskMonth = taskDate.get(Calendar.MONTH);
-                        int targetYear = targetCalendar.get(Calendar.YEAR);
-                        int targetMonth = targetCalendar.get(Calendar.MONTH);
-                        int monthDiff = (targetYear - taskYear) * 12 + (targetMonth - taskMonth);
-                        return monthDiff >= 0;
-                    }
-                    return false;
-                default:
-                    return task.getDueDate().equals(targetDate);
-            }
-        } catch (Exception e) {
-            return task.getDueDate().equals(targetDate);
-        }
     }
 
     public void clear() {

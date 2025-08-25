@@ -69,13 +69,25 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private void loadTaskData() {
         String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
         if (taskId != null && !taskId.isEmpty()) {
-            // Sử dụng cache để load task
             currentTask = taskService.getTaskByIdFromCache(taskId);
             if (currentTask != null) {
                 displayTaskData();
             } else {
-                Toast.makeText(TaskDetailActivity.this, "Không tìm thấy task", Toast.LENGTH_SHORT).show();
-                finish();
+                taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
+                    @Override
+                    public void onSuccess(Task task) {
+                        currentTask = task;
+                        runOnUiThread(() -> displayTaskData());
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(TaskDetailActivity.this, "Không tìm thấy task", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    }
+                });
             }
         }
     }

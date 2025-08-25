@@ -9,7 +9,9 @@ public class CalendarUtils {
                 return false;
             }
 
-            if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
+            // Nếu task không lặp lại, chỉ kiểm tra ngày chính xác
+            if (!task.isRepeating() || task.getRepeatType() == null || 
+                task.getRepeatType().equals("Không") || task.getRepeatType().equals("Không có")) {
                 return task.getDueDate().equals(targetDate);
             }
             
@@ -30,13 +32,29 @@ public class CalendarUtils {
             targetCalendar.set(Calendar.MONTH, Integer.parseInt(targetDateParts[1]) - 1);
             targetCalendar.set(Calendar.YEAR, Integer.parseInt(targetDateParts[2]));
 
+            if (task.isCompleted() && task.getCompletionDate() != null && !task.getCompletionDate().isEmpty()) {
+                String[] completionDateParts = task.getCompletionDate().split("/");
+                
+                if (completionDateParts.length == 3) {
+                    Calendar completionDate = Calendar.getInstance();
+                    completionDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(completionDateParts[0]));
+                    completionDate.set(Calendar.MONTH, Integer.parseInt(completionDateParts[1]) - 1);
+                    completionDate.set(Calendar.YEAR, Integer.parseInt(completionDateParts[2]));
+
+                    if (targetCalendar.after(completionDate)) {
+                        return false;
+                    }
+                }
+            }
             if (targetCalendar.before(taskDate)) {
                 return false;
             }
 
             switch (task.getRepeatType()) {
+                case "Hàng ngày":
                 case "Hằng ngày":
                     return !targetCalendar.before(taskDate);
+                case "Hàng tuần":
                 case "Hằng tuần":
                     if (targetCalendar.get(Calendar.DAY_OF_WEEK) == taskDate.get(Calendar.DAY_OF_WEEK)) {
                         long diffInMillis = targetCalendar.getTimeInMillis() - taskDate.getTimeInMillis();
@@ -44,6 +62,7 @@ public class CalendarUtils {
                         return diffInDays >= 0 && diffInDays % 7 == 0;
                     }
                     return false;
+                case "Hàng tháng":
                 case "Hằng tháng":
                     if (targetCalendar.get(Calendar.DAY_OF_MONTH) == taskDate.get(Calendar.DAY_OF_MONTH)) {
                         int taskYear = taskDate.get(Calendar.YEAR);
@@ -52,6 +71,13 @@ public class CalendarUtils {
                         int targetMonth = targetCalendar.get(Calendar.MONTH);
                         int monthDiff = (targetYear - taskYear) * 12 + (targetMonth - taskMonth);
                         return monthDiff >= 0;
+                    }
+                    return false;
+                case "Hàng năm":
+                case "Hằng năm":
+                    if (targetCalendar.get(Calendar.DAY_OF_MONTH) == taskDate.get(Calendar.DAY_OF_MONTH) &&
+                        targetCalendar.get(Calendar.MONTH) == taskDate.get(Calendar.MONTH)) {
+                        return targetCalendar.get(Calendar.YEAR) >= taskDate.get(Calendar.YEAR);
                     }
                     return false;
                 default:

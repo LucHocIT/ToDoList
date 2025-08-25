@@ -34,8 +34,29 @@ public class CalendarTaskHelper {
         if (tasks.isEmpty()) {
             addEmptyTaskMessage(context, container);
         } else {
+            // Sắp xếp: task chưa hoàn thành trước, task hoàn thành sau
+            List<Task> uncompletedTasks = new ArrayList<>();
+            List<Task> completedTasks = new ArrayList<>();
+            
             for (Task task : tasks) {
+                if (task.isCompleted()) {
+                    completedTasks.add(task);
+                } else {
+                    uncompletedTasks.add(task);
+                }
+            }
+            
+            // Hiển thị task chưa hoàn thành trước
+            for (Task task : uncompletedTasks) {
                 View taskItemView = TaskItemViewHelper.createTaskItemView(context, task);
+                container.addView(taskItemView);
+            }
+            
+            // Hiển thị task đã hoàn thành sau (với style khác)
+            for (Task task : completedTasks) {
+                View taskItemView = TaskItemViewHelper.createTaskItemView(context, task);
+                // Làm mờ task đã hoàn thành
+                taskItemView.setAlpha(0.6f);
                 container.addView(taskItemView);
             }
         }

@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskService implements TaskCache.TaskCacheListener {
+public class TaskService implements TaskCache.TaskCacheListener, com.example.todolist.service.task.TaskRepeatService.TaskCreator {
     
     public interface TaskUpdateListener {
         void onTasksUpdated();
@@ -128,16 +128,38 @@ public class TaskService implements TaskCache.TaskCacheListener {
             task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
         }
         
+        // 1. Optimistic update - thêm vào cache ngay lập tức
         taskCache.addTaskOptimistic(task);
+        
+        // 2. Đồng bộ với Firebase
         taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
-            public void onSuccess(String taskId) {
-                if (!task.getId().equals(taskId)) {
+            public void onSuccess(String firebaseTaskId) {
+                if (!task.getId().equals(firebaseTaskId)) {
+                    // Nếu Firebase tạo ID khác, cập nhật cache
                     taskCache.deleteTaskOptimistic(task.getId());
-                    task.setId(taskId);
+                    task.setId(firebaseTaskId);
                     taskCache.addTaskOptimistic(task);
                 }
-                if (callback != null) callback.onSuccess();
+                
+                // Tạo repeat instances nếu cần
+                if (com.example.todolist.service.task.TaskRepeatService.needsRepeatInstances(task)) {
+                    com.example.todolist.service.task.TaskRepeatService.createRepeatInstances(task, TaskService.this, new com.example.todolist.service.task.TaskRepeatService.RepeatTaskCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (callback != null) callback.onSuccess();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            // Log error nhưng vẫn báo success cho task chính
+                            android.util.Log.e("TaskService", "Error creating repeat instances: " + error);
+                            if (callback != null) callback.onSuccess();
+                        }
+                    });
+                } else {
+                    if (callback != null) callback.onSuccess();
+                }
             }
 
             @Override
@@ -148,26 +170,51 @@ public class TaskService implements TaskCache.TaskCacheListener {
             }
         });
     }
+    
+    public void addTaskWithoutRepeat(Task task) {
+        addTaskWithoutRepeat(task, null);
+    }
+    
+    @Override
+    public void addTaskWithoutRepeat(Task task, BaseRepository.DatabaseCallback<String> callback) {
+        if (task.getId() == null || task.getId().isEmpty()) {
+            task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
+        }
+        
+        taskCache.addTaskOptimistic(task);
+        taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
+            @Override
+            public void onSuccess(String firebaseTaskId) {
+                if (!task.getId().equals(firebaseTaskId)) {
+                    taskCache.deleteTaskOptimistic(task.getId());
+                    task.setId(firebaseTaskId);
+                    taskCache.addTaskOptimistic(task);
+                }
+                if (callback != null) callback.onSuccess(firebaseTaskId);
+            }
+
+            @Override
+            public void onError(String error) {
+                taskCache.deleteTaskOptimistic(task.getId());
+                if (callback != null) callback.onError(error);
+            }
+        });
+    }
 
     public void updateTask(Task task) {
         updateTask(task, null);
     }
     
-    public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
-        // 1. Optimistic update - cập nhật cache ngay  
+    public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) { 
         taskCache.updateTaskOptimistic(task);
-        
-        // 2. Sync với Firebase ngầm
         taskManager.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                // Task đã được update thành công trên Firebase
                 if (callback != null) callback.onSuccess(result);
             }
 
             @Override
             public void onError(String error) {
-                // TODO: Có thể rollback optimistic update nếu cần
                 if (callback != null) callback.onError(error);
             }
         });
@@ -178,14 +225,10 @@ public class TaskService implements TaskCache.TaskCacheListener {
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc muốn xóa task này?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    // 1. Optimistic update - xóa khỏi cache ngay
                     taskCache.deleteTaskOptimistic(task.getId());
-                    
-                    // 2. Sync với Firebase ngầm
                     taskManager.deleteTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean result) {
-                            // Success handled by Firebase listener
                         }
 
                         @Override
@@ -217,7 +260,6 @@ public class TaskService implements TaskCache.TaskCacheListener {
 
             @Override
             public void onError(String error) {
-                // Revert on error
                 task.setIsCompleted(!isCompleted);
                 task.setCompletionDate(isCompleted ? null : String.valueOf(System.currentTimeMillis()));
                 

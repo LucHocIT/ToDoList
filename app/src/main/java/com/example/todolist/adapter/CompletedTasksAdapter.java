@@ -106,10 +106,16 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     textDate.setText(date);
                 }
             }
-            // Hide line for last item
             int position = getAdapterPosition();
-            if (position == getItemCount() - 1 || 
-                (position < getItemCount() - 1 && items.get(position + 1) instanceof String)) {
+            boolean isLastDateHeader = true;
+            for (int i = position + 1; i < items.size(); i++) {
+                if (items.get(i) instanceof String) {
+                    isLastDateHeader = false;
+                    break;
+                }
+            }
+            
+            if (isLastDateHeader) {
                 timelineLine.setVisibility(View.GONE);
             } else {
                 timelineLine.setVisibility(View.VISIBLE);
