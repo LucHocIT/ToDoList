@@ -115,7 +115,7 @@ public class CalendarViewHelper {
             }
         } else {
             textView.setTextColor(Color.parseColor("#CCCCCC"));
-            textView.setBackgroundColor(Color.WHITE);
+            textView.setBackgroundColor(Color.TRANSPARENT);
             textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         textView.setClickable(isCurrentMonth);

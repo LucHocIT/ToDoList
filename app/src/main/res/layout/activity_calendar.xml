@@ -201,7 +201,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/background_calendar"
                 android:scaleType="centerInside"
-                android:alpha="0.15" />
+                android:alpha="0.4" />
 
             <!-- Calendar Grid -->
             <ScrollView
