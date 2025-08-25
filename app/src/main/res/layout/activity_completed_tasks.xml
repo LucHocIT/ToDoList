@@ -6,74 +6,55 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- Simplified Header -->
+    <!-- Simple Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#4CAF50"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
         android:paddingTop="32dp"
-        android:paddingBottom="20dp"
-        android:elevation="8dp">
+        android:paddingBottom="16dp"
+        android:background="@android:color/white">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:tint="#424242"/>
+
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="20dp">
+            android:layout_weight="1"
+            android:text="Thời gian hoàn thành"
+            android:textSize="18sp"
+            android:textColor="#424242"
+            android:layout_marginStart="16dp"/>
 
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_arrow_back"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"
-                app:tint="@android:color/white"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/completed_tasks_title"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/completed_history_title"
-                    android:textSize="13sp"
-                    android:textColor="#E3F2FD"
-                    android:layout_marginTop="2dp"/>
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/btn_delete_all"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_delete"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"
-                app:tint="@android:color/white"/>
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/btn_delete_all"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_delete"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:tint="#757575"/>
 
     </LinearLayout>
 
-    <!-- Content with simplified design -->
+    <!-- Content with timeline background -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!-- Timeline vertical line background -->
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="23dp"
+            android:background="#1976D2"/>
 
         <!-- Main Content -->
         <androidx.recyclerview.widget.RecyclerView

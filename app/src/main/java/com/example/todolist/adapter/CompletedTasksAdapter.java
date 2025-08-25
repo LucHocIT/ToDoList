@@ -21,7 +21,7 @@ import java.util.Map;
 public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_DATE_HEADER = 0;
     private static final int TYPE_TASK_ITEM = 1;
-    private List<Object> items; // Mix of String (dates) and Task objects
+    private List<Object> items; 
     private OnCompletedTaskClickListener listener;
     public interface OnCompletedTaskClickListener {
         void onCompletedTaskClick(Task task);
@@ -35,14 +35,13 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
     public void updateGroupedTasks(Map<String, List<Task>> groupedTasks) {
         items.clear();
-        // Sort dates in descending order (most recent first)
         List<String> sortedDates = new ArrayList<>(groupedTasks.keySet());
         sortedDates.sort((d1, d2) -> d2.compareTo(d1));
         for (String date : sortedDates) {
-            items.add(date); // Add date header
+            items.add(date);
             List<Task> tasks = groupedTasks.get(date);
             if (tasks != null) {
-                items.addAll(tasks); // Add tasks for this date
+                items.addAll(tasks);
             }
         }
         notifyDataSetChanged();
@@ -81,44 +80,43 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     class DateHeaderViewHolder extends RecyclerView.ViewHolder {
         private TextView textDate;
         private View timelineDot;
-        private View timelineLine;
+
         public DateHeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             textDate = itemView.findViewById(R.id.text_date);
             timelineDot = itemView.findViewById(R.id.timeline_dot);
-            timelineLine = itemView.findViewById(R.id.timeline_line);
         }
+
         public void bind(String date) {
-            // Format the date for display - dd/MM/yyyy
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date dateObj = inputFormat.parse(date);
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 textDate.setText(outputFormat.format(dateObj));
+                String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+                if (date.equals(today) || getAdapterPosition() == 1) {
+                    timelineDot.setBackgroundResource(R.drawable.timeline_dot_current);
+                } else {
+                    timelineDot.setBackgroundResource(R.drawable.timeline_dot);
+                }
             } catch (Exception e) {
-                // Try legacy format
                 try {
                     SimpleDateFormat legacyFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
                     Date dateObj = legacyFormat.parse(date);
                     SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                     textDate.setText(outputFormat.format(dateObj));
+
+                    String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+                    String formattedDate = outputFormat.format(dateObj);
+                    if (formattedDate.equals(today) || getAdapterPosition() == 1) {
+                        timelineDot.setBackgroundResource(R.drawable.timeline_dot_current);
+                    } else {
+                        timelineDot.setBackgroundResource(R.drawable.timeline_dot);
+                    }
                 } catch (Exception ex) {
                     textDate.setText(date);
+                    timelineDot.setBackgroundResource(R.drawable.timeline_dot);
                 }
-            }
-            int position = getAdapterPosition();
-            boolean isLastDateHeader = true;
-            for (int i = position + 1; i < items.size(); i++) {
-                if (items.get(i) instanceof String) {
-                    isLastDateHeader = false;
-                    break;
-                }
-            }
-            
-            if (isLastDateHeader) {
-                timelineLine.setVisibility(View.GONE);
-            } else {
-                timelineLine.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -142,7 +140,6 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         public void bind(Task task) {
             textTaskTitle.setText(task.getTitle());
-            // Show due date and time if available
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
             if (dateTimeText != null && !dateTimeText.trim().isEmpty()) {
                 textTaskDateTime.setText(dateTimeText);
@@ -150,19 +147,15 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             } else {
                 textTaskDateTime.setVisibility(View.GONE);
             }
-            // Always checked for completed tasks, but can be unchecked by clicking
-            // checkboxComplete is now an ImageView with check circle icon
             checkboxComplete.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onCompletedTaskUncheck(task);
                 }
             });
-            // Show icons based on task properties
+
             iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);
             iconRepeat.setVisibility(task.isRepeating() ? View.VISIBLE : View.GONE);
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
-            // Gray out completed tasks - already handled by XML colors
-            // Click listeners - disabled for completed tasks
             taskBackground.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onCompletedTaskClick(task);

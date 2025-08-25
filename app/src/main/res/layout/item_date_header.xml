@@ -4,61 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingTop="24dp"
-    android:paddingBottom="8dp"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="4dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
     android:gravity="center_vertical">
 
-    <!-- Timeline -->
-    <LinearLayout
+    <!-- Timeline Dot -->
+    <View
+        android:id="@+id/timeline_dot"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/timeline_dot"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- Date Text Only -->
+    <TextView
+        android:id="@+id/text_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:text="25/08/2025"
+        android:textSize="16sp"
+        android:textColor="#1976D2"
+        android:textStyle="bold"/>
 
-        <!-- Timeline Dot -->
-        <View
-            android:id="@+id/timeline_dot"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/timeline_dot"/>
-
-        <!-- Timeline Line -->
-        <View
-            android:id="@+id/timeline_line"
-            android:layout_width="2dp"
-            android:layout_height="40dp"
-            android:background="#E3F2FD"
-            android:layout_marginTop="8dp"/>
-
-    </LinearLayout>
-
-    <!-- Date Info -->
-    <LinearLayout
+    <!-- Hidden timeline line view for positioning -->
+    <View
+        android:id="@+id/timeline_line"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="24dp">
-
-        <TextView
-            android:id="@+id/text_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="25/06/2025"
-            android:textSize="16sp"
-            android:textColor="#1976D2"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ngày hoàn thành"
-            android:textSize="13sp"
-            android:textColor="#757575"
-            android:layout_marginTop="2dp"/>
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

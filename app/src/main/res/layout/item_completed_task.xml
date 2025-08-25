@@ -4,23 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="8dp"
-    android:paddingStart="64dp"
-    android:paddingEnd="24dp">
+    android:paddingVertical="6dp"
+    android:paddingStart="40dp"
+    android:paddingEnd="16dp">
 
-    <!-- Task Item -->
+    <!-- Task Item Background -->
     <LinearLayout
         android:id="@+id/task_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@android:color/white"
-        android:paddingVertical="16dp"
+        android:background="#F8F8F8"
+        android:paddingVertical="12dp"
         android:paddingHorizontal="16dp"
         android:gravity="center_vertical"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:elevation="1dp">
+        android:foreground="?android:attr/selectableItemBackground">
 
         <!-- Completed Checkbox -->
         <ImageView
@@ -45,7 +44,7 @@
                 android:text="Task Title"
                 android:textSize="15sp"
                 android:textColor="#424242"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="4dp"
                 android:maxLines="2"
                 android:ellipsize="end"/>
 
