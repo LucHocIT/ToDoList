@@ -36,7 +36,6 @@ public class FocusActivity extends AppCompatActivity {
         initViews();
         setupFromIntent();
         setupClickListeners();
-        startTimer();
     }
     
     private void initViews() {
@@ -52,8 +51,7 @@ public class FocusActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String taskTitle = intent.getStringExtra(EXTRA_TASK_TITLE);
         long duration = intent.getLongExtra(EXTRA_FOCUS_DURATION, DEFAULT_FOCUS_TIME);
-        
-        // Set task title instead of default
+
         tvTaskTitle.setText(taskTitle != null ? taskTitle : getString(R.string.focus_session_title));
         timeLeftInMillis = duration;
         totalTimeInMillis = duration;
@@ -61,7 +59,6 @@ public class FocusActivity extends AppCompatActivity {
         progressTimer.setProgress((int) (duration / 1000));
         
         updateTimerText();
-        // Start with active message since timer starts automatically
         tvMessage.setText(getString(R.string.focus_message_active));
     }
     
@@ -77,12 +74,15 @@ public class FocusActivity extends AppCompatActivity {
         btnStop.setOnClickListener(v -> {
             showExitConfirmDialog();
         });
-        
-        // Auto start timer when activity opens
+
         startTimer();
     }
     
     private void startTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -105,8 +105,6 @@ public class FocusActivity extends AppCompatActivity {
         timerPaused = false;
         btnPause.setText(getString(R.string.btn_pause));
         tvMessage.setText(getString(R.string.focus_message_active));
-        
-        // Hide stop button when running
         btnStop.setText(getString(R.string.btn_stop));
         btnStop.setVisibility(View.GONE);
     }
@@ -114,15 +112,13 @@ public class FocusActivity extends AppCompatActivity {
     private void pauseTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
+            countDownTimer = null; 
         }
+        
         timerRunning = false;
         timerPaused = true;
-        
-        // Update UI for paused state
         btnPause.setText(getString(R.string.btn_continue));
         tvMessage.setText(getString(R.string.focus_message_paused));
-        
-        // Show stop button as "KẾT THÚC" in paused state
         btnStop.setText("KẾT THÚC");
         btnStop.setVisibility(View.VISIBLE);
     }
@@ -130,6 +126,7 @@ public class FocusActivity extends AppCompatActivity {
     private void stopTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
+            countDownTimer = null;
         }
         timerRunning = false;
     }
@@ -169,7 +166,6 @@ public class FocusActivity extends AppCompatActivity {
     
     @Override
     public void onBackPressed() {
-        // Prevent back press during focus session - user must use stop button
-        super.onBackPressed(); // Call super to avoid lint error
+        super.onBackPressed();
     }
 }

@@ -52,15 +52,11 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
                     spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            android.util.Log.d("TaskDetail", "onItemSelected called - position: " + position + ", isInitialSetup: " + isInitialCategorySetup);
-                            
                             if (isInitialCategorySetup) {
-                                android.util.Log.d("TaskDetail", "Skipping onItemSelected because isInitialCategorySetup = true");
                                 return;
                             }
                             
                             Category selectedCat = categoryAdapter.getCategory(position);
-                            android.util.Log.d("TaskDetail", "Selected category: " + (selectedCat != null ? selectedCat.getName() + " (id: " + selectedCat.getId() + ")" : "null"));
                             
                             Task currentTask = taskUpdateCallback.getCurrentTask();
                             if (selectedCat != null && currentTask != null && !currentTask.isCompleted()) {
@@ -68,15 +64,10 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
                                 String newCategoryId = "0".equals(selectedCat.getId()) ? null : selectedCat.getId();
                                 String currentCategoryId = currentTask.getCategoryId();
                                 
-                                android.util.Log.d("TaskDetail", "Category comparison - current: " + currentCategoryId + ", new: " + newCategoryId);
-                                
                                 boolean categoryChanged = (newCategoryId == null && currentCategoryId != null) ||
                                                         (newCategoryId != null && !newCategoryId.equals(currentCategoryId));
                                 
-                                android.util.Log.d("TaskDetail", "Category changed: " + categoryChanged);
-                                
                                 if (categoryChanged) {
-                                    android.util.Log.d("TaskDetail", "Updating task category from " + currentCategoryId + " to " + newCategoryId);
                                     currentTask.setCategoryId(newCategoryId);
 
                                     taskUpdateCallback.updateTask(currentTask);
@@ -107,7 +98,6 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
 
     public void setSelectedCategoryInSpinner(String categoryId) {
         if (categoryAdapter != null) {
-            android.util.Log.d("TaskDetail", "setSelectedCategoryInSpinner called with categoryId: " + categoryId + ", isInitialSetup: " + isInitialCategorySetup);            
             isInitialCategorySetup = true;
             
             int positionToSelect = 0; 
@@ -116,22 +106,18 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
                 if (category != null) {
                     if (categoryId == null && "0".equals(category.getId())) {
                         positionToSelect = i;
-                        android.util.Log.d("TaskDetail", "Task has no category, selecting default at position: " + i);
                         break;
                     }
                     else if (categoryId != null && category.getId().equals(categoryId)) {
                         positionToSelect = i;
-                        android.util.Log.d("TaskDetail", "Found category at position: " + i + ", category: " + category.getName());
                         break;
                     }
                 }
             }                   
             
-            android.util.Log.d("TaskDetail", "Setting spinner selection to position: " + positionToSelect);
             spinnerCategory.setSelection(positionToSelect);
             spinnerCategory.post(() -> {
                 isInitialCategorySetup = false;
-                android.util.Log.d("TaskDetail", "isInitialCategorySetup reset to false");
             });
         }
     }
@@ -145,7 +131,7 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
 
     @Override
     public void onCategoriesUpdated() {
-        // Handle category updates if needed
+
     }
 
     @Override

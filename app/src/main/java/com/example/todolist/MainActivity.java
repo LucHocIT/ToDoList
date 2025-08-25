@@ -295,8 +295,6 @@ public class MainActivity extends AppCompatActivity implements
             filterManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),
                     taskService.getFutureTasks(), taskService.getCompletedTodayTasks());
             filterManager.filterTasks(filterManager.getCurrentFilter());
-            Log.d("MainActivity", "UI updated - Today tasks: " + taskService.getTodayTasks().size() + 
-                  ", Completed today: " + taskService.getCompletedTodayTasks().size());
             sectionManager.updateSectionVisibility(
                     filterManager.getFilteredOverdueTasks(),
                     filterManager.getFilteredTodayTasks(),

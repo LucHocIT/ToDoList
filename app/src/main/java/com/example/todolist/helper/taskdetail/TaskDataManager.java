@@ -98,8 +98,6 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
             updateCompletionStatus();
-            
-            android.util.Log.d("TaskDetail", "Displaying task: " + currentTask.getTitle() + ", categoryId: " + currentTask.getCategoryId());
         }
     }
 

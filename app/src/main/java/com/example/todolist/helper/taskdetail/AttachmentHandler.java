@@ -586,7 +586,7 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
                 }
             }
         } catch (Exception e) {
-            // Return default size if can't get actual size
+
         }
         return 0;
     }
