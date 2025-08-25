@@ -160,6 +160,8 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
         selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH));
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
+        // Reload calendar để cập nhật visual selection
+        loadCalendar();
         loadTasksFromCache();
         updateTaskDisplay();
     }
