@@ -61,6 +61,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private TextView textTaskDateTime;
         private ImageView iconNotification;
         private ImageView iconRepeat;
+        private ImageView iconNotes;
+        private ImageView iconAttachment;
         private ImageView iconStar;
         private LinearLayout taskBackground;
         public TaskViewHolder(@NonNull View itemView) {
@@ -70,11 +72,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textTaskDateTime = itemView.findViewById(R.id.text_task_datetime);
             iconNotification = itemView.findViewById(R.id.icon_notification);
             iconRepeat = itemView.findViewById(R.id.icon_repeat);
+            iconNotes = itemView.findViewById(R.id.icon_notes);
+            iconAttachment = itemView.findViewById(R.id.icon_attachment);
             iconStar = itemView.findViewById(R.id.icon_star);
             taskBackground = itemView.findViewById(R.id.task_background);
         }
         public void bind(Task task) {
             textTaskTitle.setText(task.getTitle());
+            
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
             if (dateTimeText != null && !dateTimeText.trim().isEmpty() && 
                 !dateTimeText.equals("null null") && !dateTimeText.contains("null") &&
@@ -90,6 +95,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             } else {
                 textTaskDateTime.setVisibility(View.GONE);
             }
+            
             checkboxComplete.setOnCheckedChangeListener(null);
             boolean currentTaskCompleted = task.isCompleted();
             checkboxComplete.setChecked(currentTaskCompleted);
@@ -99,6 +105,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                                    task.getRepeatType() != null && 
                                    !task.getRepeatType().equals("Không") &&
                                    !task.getRepeatType().equals("Không có") ? View.VISIBLE : View.GONE);
+            iconNotes.setVisibility(task.getDescription() != null && 
+                                   !task.getDescription().trim().isEmpty() ? View.VISIBLE : View.GONE);
+            iconAttachment.setVisibility(task.hasAttachments() ? View.VISIBLE : View.GONE);
+            
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
             if (task.isCompleted()) {
                 textTaskTitle.setPaintFlags(textTaskTitle.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);

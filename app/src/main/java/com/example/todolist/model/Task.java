@@ -2,10 +2,15 @@ package com.example.todolist.model;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 public class Task implements Serializable {
@@ -245,6 +250,56 @@ public class Task implements Serializable {
         this.repeatType = repeat;
         this.isRepeating = repeat != null && !repeat.equals("Không");
         updateTimestamp();
+    }
+    
+    // Attachment helper methods
+    @Exclude
+    public List<Attachment> getAttachmentList() {
+        if (attachments == null || attachments.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        try {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<Attachment>>(){}.getType();
+            return gson.fromJson(attachments, listType);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+    
+    @Exclude
+    public void setAttachmentList(List<Attachment> attachmentList) {
+        if (attachmentList == null || attachmentList.isEmpty()) {
+            this.attachments = "";
+        } else {
+            try {
+                Gson gson = new Gson();
+                this.attachments = gson.toJson(attachmentList);
+            } catch (Exception e) {
+                this.attachments = "";
+            }
+        }
+        updateTimestamp();
+    }
+    
+    @Exclude
+    public void addAttachment(Attachment attachment) {
+        List<Attachment> currentList = getAttachmentList();
+        attachment.setId(String.valueOf(System.currentTimeMillis()));
+        currentList.add(attachment);
+        setAttachmentList(currentList);
+    }
+    
+    @Exclude
+    public void removeAttachment(String attachmentId) {
+        List<Attachment> currentList = getAttachmentList();
+        currentList.removeIf(attachment -> attachmentId.equals(attachment.getId()));
+        setAttachmentList(currentList);
+    }
+    
+    @Exclude
+    public boolean hasAttachments() {
+        return !getAttachmentList().isEmpty();
     }
     
     @Override

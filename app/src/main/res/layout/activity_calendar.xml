@@ -189,32 +189,33 @@
         </LinearLayout>
 
         <!-- Calendar Container -->
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/calendar_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <!-- Background Image -->
-            <ImageView
+            <!-- Calendar Grid Section với background image -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/background_calendar"
-                android:scaleType="centerInside"
-                android:alpha="0.4" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-            <!-- Calendar Grid -->
-            <ScrollView
-                android:id="@+id/calendar_scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:elevation="2dp">
-
-                <LinearLayout
+                <!-- Background Image chỉ cho phần calendar -->
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:src="@drawable/background_calendar"
+                    android:scaleType="centerInside"
+                    android:alpha="0.4" />
+
+                <!-- Calendar Grid trong ScrollView -->
+                <ScrollView
+                    android:id="@+id/calendar_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent">
 
                     <GridLayout
                         android:id="@+id/calendar_grid"
@@ -227,55 +228,68 @@
                         android:paddingBottom="16dp"
                         android:background="@drawable/calendar_overlay" />
 
-                    <!-- Task info section -->
+                </ScrollView>
+
+                <!-- Week view (initially hidden) -->
+                <LinearLayout
+                    android:id="@+id/week_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@android:color/transparent"
+                    android:elevation="2dp"
+                    android:visibility="gone">
+
+                    <!-- Week grid -->
                     <LinearLayout
-                        android:id="@+id/task_info_container"
+                        android:id="@+id/week_grid"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="120dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:background="@drawable/calendar_overlay" />
 
                 </LinearLayout>
 
+            </FrameLayout>
+
+            <!-- Task info section với background trắng riêng biệt -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@android:color/white">
+
+                <LinearLayout
+                    android:id="@+id/task_info_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp" />
+
             </ScrollView>
 
-            <!-- Week view (initially hidden) -->
-            <LinearLayout
-                android:id="@+id/week_view_container"
+            <!-- Week task info section (initially hidden) -->
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/transparent"
-                android:elevation="2dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
                 android:visibility="gone">
 
-                <!-- Week grid -->
-                <LinearLayout
-                    android:id="@+id/week_grid"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:background="@drawable/calendar_overlay" />
-
-                <!-- Week task info section -->
                 <LinearLayout
                     android:id="@+id/week_task_info_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/calendar_overlay" />
+                    android:padding="16dp" />
 
-            </LinearLayout>
+            </ScrollView>
 
-        </FrameLayout>
+        </LinearLayout>
 
         <!-- Bottom navigation -->
         <LinearLayout

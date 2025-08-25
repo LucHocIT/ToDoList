@@ -126,6 +126,8 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView textTaskDateTime;
         private ImageView iconNotification;
         private ImageView iconRepeat;
+        private ImageView iconNotes;
+        private ImageView iconAttachment;
         private ImageView iconStar;
         private LinearLayout taskBackground;
         public CompletedTaskViewHolder(@NonNull View itemView) {
@@ -135,6 +137,8 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             textTaskDateTime = itemView.findViewById(R.id.text_task_datetime);
             iconNotification = itemView.findViewById(R.id.icon_notification);
             iconRepeat = itemView.findViewById(R.id.icon_repeat);
+            iconNotes = itemView.findViewById(R.id.icon_notes);
+            iconAttachment = itemView.findViewById(R.id.icon_attachment);
             iconStar = itemView.findViewById(R.id.icon_star);
             taskBackground = itemView.findViewById(R.id.task_background);
         }
@@ -155,6 +159,9 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             iconNotification.setVisibility(task.isHasReminder() ? View.VISIBLE : View.GONE);
             iconRepeat.setVisibility(task.isRepeating() ? View.VISIBLE : View.GONE);
+            iconNotes.setVisibility(task.getDescription() != null && 
+                                   !task.getDescription().trim().isEmpty() ? View.VISIBLE : View.GONE);
+            iconAttachment.setVisibility(task.hasAttachments() ? View.VISIBLE : View.GONE);           
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
             taskBackground.setOnClickListener(v -> {
                 if (listener != null) {

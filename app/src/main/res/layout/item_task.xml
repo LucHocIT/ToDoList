@@ -79,6 +79,24 @@
                     android:layout_marginStart="4dp"
                     android:visibility="gone"/>
 
+                <!-- Notes icon -->
+                <ImageView
+                    android:id="@+id/icon_notes"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_note"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
+                <!-- Attachment icon -->
+                <ImageView
+                    android:id="@+id/icon_attachment"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_attachment"
+                    android:layout_marginStart="4dp"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
         </LinearLayout>

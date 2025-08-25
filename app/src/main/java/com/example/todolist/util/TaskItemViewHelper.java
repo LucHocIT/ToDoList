@@ -88,13 +88,34 @@ public class TaskItemViewHelper {
             timeIconContainer.addView(notificationIcon);
         }
 
+        // Repeat icon
         if (task.isRepeating()) {
             ImageView repeatIcon = new ImageView(context);
             repeatIcon.setImageResource(R.drawable.ic_repeat);
             repeatIcon.setColorFilter(Color.parseColor("#666666"));
             LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(CalendarUtils.dpToPx(context, 18), CalendarUtils.dpToPx(context, 18));
+            iconParams.setMarginEnd(CalendarUtils.dpToPx(context, 6));
             repeatIcon.setLayoutParams(iconParams);
             timeIconContainer.addView(repeatIcon);
+        }
+
+        if (task.getDescription() != null && !task.getDescription().trim().isEmpty()) {
+            ImageView notesIcon = new ImageView(context);
+            notesIcon.setImageResource(R.drawable.ic_note);
+            notesIcon.setColorFilter(Color.parseColor("#666666"));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(CalendarUtils.dpToPx(context, 18), CalendarUtils.dpToPx(context, 18));
+            iconParams.setMarginEnd(CalendarUtils.dpToPx(context, 6));
+            notesIcon.setLayoutParams(iconParams);
+            timeIconContainer.addView(notesIcon);
+        }
+
+        if (task.hasAttachments()) {
+            ImageView attachmentIcon = new ImageView(context);
+            attachmentIcon.setImageResource(R.drawable.ic_attachment);
+            attachmentIcon.setColorFilter(Color.parseColor("#666666"));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(CalendarUtils.dpToPx(context, 18), CalendarUtils.dpToPx(context, 18));
+            attachmentIcon.setLayoutParams(iconParams);
+            timeIconContainer.addView(attachmentIcon);
         }
 
         contentContainer.addView(timeIconContainer);

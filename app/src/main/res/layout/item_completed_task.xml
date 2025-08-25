@@ -101,6 +101,24 @@
                 android:visibility="gone"/>
 
             <ImageView
+                android:id="@+id/icon_notes"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_note"
+                app:tint="#BDBDBD"
+                android:layout_marginEnd="6dp"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/icon_attachment"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_attachment"
+                app:tint="#BDBDBD"
+                android:layout_marginEnd="6dp"
+                android:visibility="gone"/>
+
+            <ImageView
                 android:id="@+id/icon_star"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
