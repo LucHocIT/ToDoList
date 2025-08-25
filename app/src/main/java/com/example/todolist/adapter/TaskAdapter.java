@@ -133,28 +133,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
         private String formatDateTime(String dueDate, String dueTime) {
             try {
-                if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("KhĂ´ng")) {
+                if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("Không")) {
                     return ""; // No date set, only show title
                 }
                 String todayDateStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                 if (dueDate.equals(todayDateStr)) {
-                    if (dueTime != null && !dueTime.trim().isEmpty() && !dueTime.equals("null") && !dueTime.equals("KhĂ´ng")) {
+                    if (dueTime != null && !dueTime.trim().isEmpty() && !dueTime.equals("null") && !dueTime.equals("Không")) {
                         return dueTime; 
                     } else {
-                        return ""; 
+                        return ""; // Don't show "Không" for today's tasks without time
                     }
                 }
-                if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("KhĂ´ng")) {
-                    // Only date available, format: dd-mm
+                if (dueTime == null || dueTime.trim().isEmpty() || dueTime.equals("null") || dueTime.equals("Không")) {
+                    // Only date available, format: dd-MM
                     String[] dateParts = dueDate.split("/");
                     if (dateParts.length == 3) {
-                        return dateParts[2] + "-" + dateParts[1]; 
+                        return dateParts[0] + "-" + dateParts[1]; // Use dd-MM format instead of yyyy-MM
                     }
                     return dueDate;
                 }
+                // Both date and time available, format: dd-MM HH:mm  
                 String[] dateParts = dueDate.split("/");
                 if (dateParts.length == 3) {
-                    return dateParts[2] + "-" + dateParts[1] + " " + dueTime;
+                    return dateParts[0] + "-" + dateParts[1] + " " + dueTime; // Use dd-MM format instead of yyyy-MM
                 }
             } catch (Exception e) {
 

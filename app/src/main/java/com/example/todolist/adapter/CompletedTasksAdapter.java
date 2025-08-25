@@ -91,7 +91,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             try {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date dateObj = inputFormat.parse(date);
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM", Locale.getDefault());
                 textDate.setText(outputFormat.format(dateObj));
                 String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                 if (date.equals(today) || getAdapterPosition() == 1) {
@@ -103,11 +103,11 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 try {
                     SimpleDateFormat legacyFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
                     Date dateObj = legacyFormat.parse(date);
-                    SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM", Locale.getDefault());
                     textDate.setText(outputFormat.format(dateObj));
 
                     String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-                    String formattedDate = outputFormat.format(dateObj);
+                    String formattedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(dateObj);
                     if (formattedDate.equals(today) || getAdapterPosition() == 1) {
                         timelineDot.setBackgroundResource(R.drawable.timeline_dot_current);
                     } else {
@@ -173,18 +173,29 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (dueDate == null || dueDate.equals("null") || dueDate.trim().isEmpty()) {
                 return null;
             }
-            if (dueTime == null || dueTime.equals("null") || dueTime.trim().isEmpty() || dueTime.equals("KhĂ´ng")) {
-                // Only date, format as dd-mm
-                String[] dateParts = dueDate.split("/");
-                if (dateParts.length == 3) {
-                    return dateParts[2] + "-" + dateParts[1]; // dd-mm format
+            
+            // Check if time is empty, null, or "Không"
+            if (dueTime == null || dueTime.equals("null") || dueTime.trim().isEmpty() || dueTime.equals("Không")) {
+                // Only date, format as dd-MM
+                try {
+                    String[] dateParts = dueDate.split("/");
+                    if (dateParts.length == 3) {
+                        return dateParts[0] + "-" + dateParts[1]; // dd-MM format
+                    }
+                } catch (Exception e) {
+                    // Fallback to original date format
                 }
                 return dueDate;
             }
-            // Both date and time, format as dd-mm HH:mm
-            String[] dateParts = dueDate.split("/");
-            if (dateParts.length == 3) {
-                return dateParts[2] + "-" + dateParts[1] + " " + dueTime; // dd-mm HH:mm format
+            
+            // Both date and time, format as dd-MM HH:mm
+            try {
+                String[] dateParts = dueDate.split("/");
+                if (dateParts.length == 3) {
+                    return dateParts[0] + "-" + dateParts[1] + " " + dueTime; // dd-MM HH:mm format
+                }
+            } catch (Exception e) {
+                // Fallback
             }
             return dueDate + " " + dueTime;
         }

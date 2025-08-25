@@ -161,7 +161,7 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH));
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
         loadTasksFromCache();
-        loadCalendar();
+        updateTaskDisplay();
     }
     
     @Override
@@ -170,8 +170,15 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.YEAR, dayCalendar.get(Calendar.YEAR));
         selectedDate.set(Calendar.MONTH, dayCalendar.get(Calendar.MONTH));
         selectedDate.set(Calendar.DAY_OF_MONTH, day);
+        currentCalendar.set(Calendar.YEAR, dayCalendar.get(Calendar.YEAR));
+        currentCalendar.set(Calendar.MONTH, dayCalendar.get(Calendar.MONTH));
+        currentCalendar.set(Calendar.DAY_OF_MONTH, day);
+        if (isWeekView) {
+            CalendarViewHelper.loadWeekView(this, weekGrid, selectedDate, selectedDay, this);
+        }
+        
         loadTasksFromCache();
-        loadCalendar();
+        updateTaskDisplay();
     }
     
     private void loadTasksFromCache() {
@@ -238,6 +245,12 @@ public class CalendarActivity extends AppCompatActivity
     }
     private void toggleCalendarView() {
         isWeekView = !isWeekView;
+        if (selectedDay != -1) {
+            currentCalendar.set(Calendar.YEAR, selectedDate.get(Calendar.YEAR));
+            currentCalendar.set(Calendar.MONTH, selectedDate.get(Calendar.MONTH));
+            currentCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+        }
+        
         if (isWeekView) {
             calendarScrollView.setVisibility(View.GONE);
             weekViewContainer.setVisibility(View.VISIBLE);

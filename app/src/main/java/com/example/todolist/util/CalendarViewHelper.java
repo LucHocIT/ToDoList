@@ -65,10 +65,13 @@ public class CalendarViewHelper {
                                   OnDayClickListener listener) {
         weekGrid.removeAllViews();
         Calendar weekStart = (Calendar) selectedDate.clone();
-        weekStart.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        int dayOfWeek = weekStart.get(Calendar.DAY_OF_WEEK);
+        int daysToSubtract = (dayOfWeek - Calendar.SUNDAY + 7) % 7;
+        weekStart.add(Calendar.DAY_OF_MONTH, -daysToSubtract);
         
         TaskCache taskCache = TaskCache.getInstance();
         List<Task> allTasks = taskCache.getAllTasks();
+        
         for (int i = 0; i < 7; i++) {
             Calendar dayCalendar = (Calendar) weekStart.clone();
             dayCalendar.add(Calendar.DAY_OF_MONTH, i);
@@ -131,7 +134,10 @@ public class CalendarViewHelper {
         dayView.setLayoutParams(params);
         dayView.setPadding(8, 16, 8, 16);
 
-        boolean isSelected = CalendarUtils.isSameDay(dayCalendar, selectedDate);
+        boolean isSelected = (dayCalendar.get(Calendar.YEAR) == selectedDate.get(Calendar.YEAR) &&
+                             dayCalendar.get(Calendar.MONTH) == selectedDate.get(Calendar.MONTH) &&
+                             dayCalendar.get(Calendar.DAY_OF_MONTH) == selectedDate.get(Calendar.DAY_OF_MONTH));
+        
         boolean hasTasksForDay = hasTasksForDate(allTasks, dayCalendar.get(Calendar.YEAR), 
                                         dayCalendar.get(Calendar.MONTH), day);
 
