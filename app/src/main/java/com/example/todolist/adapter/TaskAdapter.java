@@ -136,7 +136,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (dueDate == null || dueDate.trim().isEmpty() || dueDate.equals("null") || dueDate.equals("KhĂ´ng")) {
                     return ""; // No date set, only show title
                 }
-                // Get today's date
                 String todayDateStr = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                 if (dueDate.equals(todayDateStr)) {
                     if (dueTime != null && !dueTime.trim().isEmpty() && !dueTime.equals("null") && !dueTime.equals("KhĂ´ng")) {
@@ -169,15 +168,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
         private boolean isTaskOverdueToday(Task task) {
             try {
-                // Get current date and time
                 Calendar now = Calendar.getInstance();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 String todayDateStr = dateFormat.format(now.getTime());
                 String currentTimeStr = timeFormat.format(now.getTime());
-                // Check if task is today
                 if (task.getDueDate().equals(todayDateStr)) {
-                    // Compare time
                     return task.getDueTime().compareTo(currentTimeStr) < 0;
                 }
                 return false;

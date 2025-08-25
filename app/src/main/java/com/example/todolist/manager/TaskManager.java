@@ -41,27 +41,17 @@ public class TaskManager {
         completedTodayTasks = new ArrayList<>();
     }
     public void loadTasks() {
-        taskService.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
-            @Override
-            public void onSuccess(List<Task> tasks) {
-                // Convert Task to TodoTask for compatibility
-                allTasks.clear();
-                for (Task task : tasks) {
-                    TodoTask todoTask = convertTaskToTodoTask(task);
-                    allTasks.add(todoTask);
-                }
-                updateTaskLists();
-                if (listener != null) {
-                    listener.onTasksUpdated();
-                }
-                // Update widget whenever tasks are loaded
-                WidgetUpdateHelper.updateAllWidgets(context);
-            }
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        List<Task> tasks = taskService.getAllTasksFromCache();
+        allTasks.clear();
+        for (Task task : tasks) {
+            TodoTask todoTask = convertTaskToTodoTask(task);
+            allTasks.add(todoTask);
+        }
+        updateTaskLists();
+        if (listener != null) {
+            listener.onTasksUpdated();
+        }
+        WidgetUpdateHelper.updateAllWidgets(context);
     }
     private TodoTask convertTaskToTodoTask(Task task) {
         TodoTask todoTask = new TodoTask();
@@ -77,7 +67,6 @@ public class TaskManager {
         todoTask.setHasReminder(task.isHasReminder());
         todoTask.setAttachments(task.getAttachments());
         todoTask.setRepeatType(task.getRepeatType());
-        // Handle other fields as needed
         return todoTask;
     }
     private void updateTaskLists() {
@@ -95,13 +84,13 @@ public class TaskManager {
             } else {
                 int timeCategory = getTaskTimeCategory(task, now, todayDateStr);
                 switch (timeCategory) {
-                    case 0: // Overdue
+                    case 0: 
                         overdueTasks.add(task);
                         break;
-                    case 1: // Today
+                    case 1: 
                         todayTasks.add(task);
                         break;
-                    case 2: // Future
+                    case 2: 
                         futureTasks.add(task);
                         break;
                 }
@@ -109,12 +98,10 @@ public class TaskManager {
         }
     }
     private boolean isTaskCompletedToday(TodoTask task, String todayDateStr) {
-        // Check if task was completed today by comparing completion date
         String completionDate = task.getCompletionDate();
         if (completionDate == null || completionDate.isEmpty()) {
-            return false; // No completion date means not completed or very old completion
+            return false; 
         }
-        // Compare completion date with today's date
         return completionDate.equals(todayDateStr);
     }
     private int getTaskTimeCategory(TodoTask task, Calendar now, String todayDateStr) {
@@ -124,19 +111,18 @@ public class TaskManager {
             Date taskDate = dateFormat.parse(taskDateStr);
             Date todayDate = dateFormat.parse(todayDateStr);
             if (taskDate.before(todayDate)) {
-                return 0; // Overdue
+                return 0;
             } else if (taskDate.equals(todayDate)) {
-                return 1; // Today
+                return 1; 
             } else {
-                return 2; // Future
+                return 2; 
             }
         } catch (Exception e) {
-            return 1; // Default to today
+            return 1; 
         }
     }
     public void completeTask(TodoTask task, boolean isCompleted) {
         task.setCompleted(isCompleted);
-        // Set completion date when marking as completed, clear when marking as incomplete
         if (isCompleted) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             task.setCompletionDate(dateFormat.format(new Date()));
@@ -145,34 +131,22 @@ public class TaskManager {
         }
         // Convert TodoTask to Task for update
         Task taskToUpdate = convertTodoTaskToTask(task);
-        taskService.updateTask(taskToUpdate, new BaseRepository.DatabaseCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                // Handle reminder scheduling based on completion status
-                ReminderScheduler scheduler = new ReminderScheduler(context);
-                if (isCompleted) {
-                    // Cancel reminders for completed tasks
-                    try {
-                        int taskId = Integer.parseInt(task.getId());
-                        scheduler.cancelTaskReminders(taskId);
-                    } catch (NumberFormatException e) {
-                        // Handle invalid task ID
-                    }
-                } else {
-                    // Reschedule reminders for uncompleted tasks
-                    if (task.isHasReminder()) {
-                        // Create Task object for scheduler
-                        Task taskForScheduler = convertTodoTaskToTask(task);
-                        scheduler.scheduleTaskReminder(taskForScheduler);
-                    }
-                }
-                loadTasks();
+        taskService.updateTask(taskToUpdate);
+        ReminderScheduler scheduler = new ReminderScheduler(context);
+        if (isCompleted) {
+            try {
+                int taskId = Integer.parseInt(task.getId());
+                scheduler.cancelTaskReminders(taskId);
+            } catch (NumberFormatException e) {
+
             }
-            @Override
-            public void onError(String error) {
-                // Handle error
+        } else {
+            if (task.isHasReminder()) {
+                Task taskForScheduler = convertTodoTaskToTask(task);
+                scheduler.scheduleTaskReminder(taskForScheduler);
             }
-        });
+        }
+        loadTasks();
     }
     private Task convertTodoTaskToTask(TodoTask todoTask) {
         Task task = new Task();
@@ -188,23 +162,13 @@ public class TaskManager {
         task.setHasReminder(todoTask.isHasReminder());
         task.setAttachments(todoTask.getAttachments());
         task.setRepeatType(todoTask.getRepeatType());
-        // Handle other fields as needed
         return task;
     }
     public void toggleTaskImportant(TodoTask task) {
         task.setImportant(!task.isImportant());
-        // Convert TodoTask to Task for update
         Task taskToUpdate = convertTodoTaskToTask(task);
-        taskService.updateTask(taskToUpdate, new BaseRepository.DatabaseCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                loadTasks();
-            }
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        taskService.updateTask(taskToUpdate);
+        loadTasks();
         String message = task.isImportant() ? "Đã đánh dấu quan trọng" : "Đã bỏ đánh dấu quan trọng";
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
@@ -212,47 +176,29 @@ public class TaskManager {
         new AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.delete_task_title))
                 .setMessage(context.getString(R.string.confirm_delete_task_message))
-                .setPositiveButton(context.getString(R.string.delete_button_text), (dialog, which) -> { // Thay thế "Xóa"
+                .setPositiveButton(context.getString(R.string.delete_button_text), (dialog, which) -> { 
                     Task taskToDelete = convertTodoTaskToTask(task);
-                    taskService.deleteTask(taskToDelete, new BaseRepository.DatabaseCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean result) {
-                            loadTasks();
-                        }
-                        @Override
-                        public void onError(String error) {
-                            // Handle error
-                        }
-                    });
-                    Toast.makeText(context, context.getString(R.string.task_deleted_toast), Toast.LENGTH_SHORT).show(); // Thay thế "Đã xóa nhiệm vụ"
+                    taskService.deleteTask(taskToDelete);
+                    loadTasks();
+                    Toast.makeText(context, context.getString(R.string.task_deleted_toast), Toast.LENGTH_SHORT).show(); 
                 })
-                .setNegativeButton(context.getString(R.string.cancel_button_text), null) // Thay thế "Hủy"
+                .setNegativeButton(context.getString(R.string.cancel_button_text), null) 
                 .show();
     }
-    // Getters
+
     public List<TodoTask> getAllTasks() { return allTasks; }
     public List<TodoTask> getOverdueTasks() { return overdueTasks; }
     public List<TodoTask> getTodayTasks() { return todayTasks; }
     public List<TodoTask> getFutureTasks() { return futureTasks; }
     public List<TodoTask> getCompletedTodayTasks() { return completedTodayTasks; }
-    /**
-     * Lên lịch lại tất cả thông báo cho các task chưa hoàn thành
-     */
     public void rescheduleAllReminders() {
-        taskService.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
-            @Override
-            public void onSuccess(List<Task> tasks) {
-                ReminderScheduler scheduler = new ReminderScheduler(context);
-                for (Task task : tasks) {
-                    if (!task.isCompleted() && task.isHasReminder()) {
-                        scheduler.scheduleTaskReminder(task);
-                    }
-                }
+        List<Task> tasks = taskService.getAllTasksFromCache();
+        
+        ReminderScheduler scheduler = new ReminderScheduler(context);
+        for (Task task : tasks) {
+            if (!task.isCompleted() && task.isHasReminder()) {
+                scheduler.scheduleTaskReminder(task);
             }
-            @Override
-            public void onError(String error) {
-                // Handle error
-            }
-        });
+        }
     }
 }

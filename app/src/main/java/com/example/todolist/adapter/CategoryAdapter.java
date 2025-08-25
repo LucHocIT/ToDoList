@@ -112,34 +112,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         
         private void updateTaskCount(Category category) {
             if (taskService != null) {
-                taskService.getTasksByCategory(category.getId(), new BaseRepository.RepositoryCallback<List<com.example.todolist.model.Task>>() {
-                    @Override
-                    public void onSuccess(List<com.example.todolist.model.Task> tasks) {
-                        // Count only uncompleted tasks
-                        int activeTaskCount = 0;
-                        for (com.example.todolist.model.Task task : tasks) {
-                            if (!task.isCompleted()) {
-                                activeTaskCount++;
-                            }
-                        }
-                        final int finalActiveTaskCount = activeTaskCount;
-                        
-                        // Update UI on main thread
-                        if (tvTaskCount != null) {
-                            tvTaskCount.post(() -> {
-                                String taskCountText = finalActiveTaskCount + " nhiệm vụ";
-                                tvTaskCount.setText(taskCountText);
-                            });
-                        }
-                    }
+                List<com.example.todolist.model.Task> tasks = taskService.getTasksByCategoryFromCache(category.getId());
 
-                    @Override
-                    public void onError(String error) {
-                        if (tvTaskCount != null) {
-                            tvTaskCount.post(() -> tvTaskCount.setText("0 nhiệm vụ"));
-                        }
+                int activeTaskCount = 0;
+                for (com.example.todolist.model.Task task : tasks) {
+                    if (!task.isCompleted()) {
+                        activeTaskCount++;
                     }
-                });
+                }
+                final int finalActiveTaskCount = activeTaskCount;
+                if (tvTaskCount != null) {
+                    tvTaskCount.post(() -> {
+                        String taskCountText = finalActiveTaskCount + " nhiệm vụ";
+                        tvTaskCount.setText(taskCountText);
+                    });
+                }
             } else {
                 tvTaskCount.setText("0 nhiệm vụ");
             }

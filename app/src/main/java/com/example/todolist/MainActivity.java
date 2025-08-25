@@ -180,25 +180,18 @@ public class MainActivity extends AppCompatActivity implements
             int taskId = intent.getIntExtra(NotificationHelper.EXTRA_TASK_ID, -1);
             String action = intent.getStringExtra("action");
             if (taskId != -1) {
-                taskService.getTaskById(String.valueOf(taskId), new com.example.todolist.repository.BaseRepository.RepositoryCallback<Task>() {
-                    @Override
-                    public void onSuccess(Task task) {
-                        if (task != null) {
-                            Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);
-                            detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
-                            startActivityForResult(detailIntent, REQUEST_TASK_DETAIL);
-                            if (NotificationHelper.ACTION_REMINDER.equals(action)) {
-                                Toast.makeText(MainActivity.this, "Bạn có lời nhắc cho: " + task.getTitle(), Toast.LENGTH_LONG).show();
-                            } else if (NotificationHelper.ACTION_DUE.equals(action)) {
-                                Toast.makeText(MainActivity.this, "Nhiệm vụ đã đến hạn: " + task.getTitle(), Toast.LENGTH_LONG).show();
-                            }
-                        }
+                // Sử dụng cache-based method
+                Task task = taskService.getTaskByIdFromCache(String.valueOf(taskId));
+                if (task != null) {
+                    Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);
+                    detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
+                    startActivityForResult(detailIntent, REQUEST_TASK_DETAIL);
+                    if (NotificationHelper.ACTION_REMINDER.equals(action)) {
+                        Toast.makeText(MainActivity.this, "Bạn có lời nhắc cho: " + task.getTitle(), Toast.LENGTH_LONG).show();
+                    } else if (NotificationHelper.ACTION_DUE.equals(action)) {
+                        Toast.makeText(MainActivity.this, "Nhiệm vụ đã đến hạn: " + task.getTitle(), Toast.LENGTH_LONG).show();
                     }
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                });
+                }
             }
         }
     }

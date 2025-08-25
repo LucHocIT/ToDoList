@@ -12,8 +12,6 @@ public class TaskCache {
     private final Map<String, Task> taskMap = new ConcurrentHashMap<>();
     private final Set<TaskCacheListener> listeners = new HashSet<>();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    
-    // State flags
     private boolean isInitialized = false;
     private boolean isLoading = false;
     
@@ -44,93 +42,79 @@ public class TaskCache {
     public void removeListener(TaskCacheListener listener) {
         listeners.remove(listener);
     }
-    
-    // === OPTIMISTIC OPERATIONS ===
-    
-    /**
-     * Thêm task mới - optimistic update
-     */
+
     public void addTaskOptimistic(Task task) {
-        // 1. Update local cache ngay lập tức
-        taskMap.put(task.getId(), task);
-        
-        // 2. Notify UI update
-        notifyTaskAdded(task);
-        notifyTasksUpdated();
-    }
-    
-    /**
-     * Cập nhật task - optimistic update
-     */
-    public void updateTaskOptimistic(Task updatedTask) {
-        // 1. Update local cache ngay lập tức
-        taskMap.put(updatedTask.getId(), updatedTask);
-        
-        // 2. Notify UI update
-        notifyTaskUpdated(updatedTask);
-        notifyTasksUpdated();
-    }
-    
-    /**
-     * Xóa task - optimistic update
-     */
-    public void deleteTaskOptimistic(String taskId) {
-        // 1. Remove từ local cache ngay lập tức
-        Task removedTask = taskMap.remove(taskId);
-        
-        // 2. Notify UI update
-        if (removedTask != null) {
-            notifyTaskDeleted(taskId);
+        if (task != null && task.getId() != null) {
+            android.util.Log.d("TaskCache", "addTaskOptimistic: " + task.getId() + " - " + task.getTitle());
+            taskMap.put(task.getId(), task);
+            notifyTaskAdded(task);
             notifyTasksUpdated();
         }
     }
-    
-    // === FIREBASE SYNC ===
-    
-    /**
-     * Load initial data từ Firebase và cache
-     */
+
+    public void updateTaskOptimistic(Task updatedTask) {
+        if (updatedTask != null && updatedTask.getId() != null) {
+            taskMap.put(updatedTask.getId(), updatedTask);
+            notifyTaskUpdated(updatedTask);
+            notifyTasksUpdated();
+        }
+    }
+
+    public void deleteTaskOptimistic(String taskId) {
+        if (taskId != null) {
+            android.util.Log.d("TaskCache", "deleteTaskOptimistic: " + taskId);
+            Task removedTask = taskMap.remove(taskId);
+            if (removedTask != null) {
+                notifyTaskDeleted(taskId);
+                notifyTasksUpdated();
+            }
+        }
+    }
+
     public void loadFromFirebase(List<Task> firebaseTasks) {
-        // Clear cache và load fresh data
+        android.util.Log.d("TaskCache", "loadFromFirebase: " + firebaseTasks.size() + " tasks");
         taskMap.clear();
         for (Task task : firebaseTasks) {
             taskMap.put(task.getId(), task);
-        }
-        
+        }        
         isInitialized = true;
         isLoading = false;
-        
-        // Notify UI
         notifyTasksUpdated();
     }
 
     public void syncFromFirebase(List<Task> firebaseTasks) {
-        // Merge Firebase data với local cache
-        Map<String, Task> newTaskMap = new ConcurrentHashMap<>();
+        Map<String, Task> firebaseTaskMap = new HashMap<>();
         for (Task task : firebaseTasks) {
-            newTaskMap.put(task.getId(), task);
+            firebaseTaskMap.put(task.getId(), task);
         }
-        
-        // Replace cache
-        taskMap.clear();
-        taskMap.putAll(newTaskMap);
-        
-        // Notify UI update
+        for (Task firebaseTask : firebaseTasks) {
+            Task localTask = taskMap.get(firebaseTask.getId());
+            if (localTask == null) {
+                taskMap.put(firebaseTask.getId(), firebaseTask);
+            } else {
+
+                taskMap.put(firebaseTask.getId(), firebaseTask);
+            }
+        }
+
+        Set<String> toRemove = new HashSet<>();
+        for (String localTaskId : taskMap.keySet()) {
+            if (!firebaseTaskMap.containsKey(localTaskId)) {
+                toRemove.add(localTaskId);
+            }
+        }
+        for (String taskId : toRemove) {
+            taskMap.remove(taskId);
+        }
+
+        android.util.Log.d("TaskCache", "syncFromFirebase completed: cache now has " + taskMap.size() + " tasks");
         notifyTasksUpdated();
     }
-    
-    // === GETTERS ===
-    
-    /**
-     * Get all tasks từ cache
-     */
+
     public List<Task> getAllTasks() {
         return new ArrayList<>(taskMap.values());
     }
-    
-    /**
-     * Get tasks cho ngày cụ thể
-     */
+
     public List<Task> getTasksForDate(String date) {
         List<Task> tasksForDate = new ArrayList<>();
         for (Task task : taskMap.values()) {
@@ -140,16 +124,11 @@ public class TaskCache {
         }
         return tasksForDate;
     }
-    
-    /**
-     * Get single task by ID
-     */
+
     public Task getTask(String taskId) {
         return taskMap.get(taskId);
     }
-    
-    // === STATE ===
-    
+
     public boolean isInitialized() {
         return isInitialized;
     }
@@ -161,9 +140,7 @@ public class TaskCache {
     public void setLoading(boolean loading) {
         this.isLoading = loading;
     }
-    
-    // === NOTIFICATIONS ===
-    
+
     private void notifyTasksUpdated() {
         mainHandler.post(() -> {
             List<Task> allTasks = getAllTasks();
@@ -196,12 +173,9 @@ public class TaskCache {
             }
         });
     }
-    
-    // === HELPER ===
-    
+
     private boolean isTaskOnDate(Task task, String targetDate) {
-        // Simple date check - có thể optimize thêm
-        if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
+      if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
             return false;
         }
         
@@ -227,7 +201,6 @@ public class TaskCache {
                 return task.getDueDate().equals(targetDate);
             }
 
-            // Handle repeating tasks
             if (targetCalendar.before(taskDate)) {
                 return false;
             }
@@ -259,10 +232,7 @@ public class TaskCache {
             return task.getDueDate().equals(targetDate);
         }
     }
-    
-    /**
-     * Clear cache (for logout/reset)
-     */
+
     public void clear() {
         taskMap.clear();
         listeners.clear();

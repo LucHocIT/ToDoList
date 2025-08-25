@@ -5,10 +5,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.example.todolist.model.Task;
-/**
- * TaskActionsDialog - Firebase version
- * Shows action options for tasks (star/unstar, delete)
- */
+
 public class TaskActionsDialog {
     public interface OnActionSelectedListener {
         void onStarAction(Task task);
@@ -36,14 +33,13 @@ public class TaskActionsDialog {
         dialog = builder.create();
     }
     private void setupViews(View view) {
-        // Use standard Android layout views
         TextView titleText = new TextView(context);
         titleText.setText(task.getTitle());
         titleText.setTextSize(18);
         titleText.setPadding(20, 20, 20, 10);
         TextView starText = new TextView(context);
         TextView deleteText = new TextView(context);
-        // Setup star action
+
         if (task.isImportant()) {
             starText.setText("â­ Bật đánh dấu quan trọng");
         } else {
@@ -54,7 +50,6 @@ public class TaskActionsDialog {
         deleteText.setText("đŸ—‘ï¸ Xóa");
         deleteText.setPadding(20, 10, 20, 20);
         deleteText.setTextSize(16);
-        // Set click listeners
         starText.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onStarAction(task);

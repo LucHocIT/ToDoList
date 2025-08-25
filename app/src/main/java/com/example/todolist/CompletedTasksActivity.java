@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.CompletedTasksAdapter;
+import com.example.todolist.cache.TaskCache;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.util.SettingsManager;
@@ -25,11 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-public class CompletedTasksActivity extends AppCompatActivity implements CompletedTasksAdapter.OnCompletedTaskClickListener {
+public class CompletedTasksActivity extends AppCompatActivity implements CompletedTasksAdapter.OnCompletedTaskClickListener, TaskCache.TaskCacheListener {
     private ImageView btnBack;
     private RecyclerView recyclerCompletedTasks;
     private CompletedTasksAdapter completedTasksAdapter;
     private TaskService taskService;
+    private TaskCache taskCache;
     private List<Task> allCompletedTasks;
     private Map<String, List<Task>> groupedTasks;
     @Override
@@ -57,6 +59,9 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
                 );
             }
         });
+        taskCache = TaskCache.getInstance();
+        taskCache.addListener(this);
+        
         allCompletedTasks = new ArrayList<>();
         groupedTasks = new HashMap<>();
     }
@@ -83,22 +88,11 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
 
     }
     private void loadCompletedTasks() {
-        taskService.getCompletedTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
-            @Override
-            public void onSuccess(List<Task> tasks) {
-                allCompletedTasks = tasks;
-                groupTasksByDate();
-                runOnUiThread(() -> {
-                    completedTasksAdapter.updateGroupedTasks(groupedTasks);
-                    updateEmptyState();
-                });
-            }
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> 
-                    Toast.makeText(CompletedTasksActivity.this, "Lỗi tải completed tasks: " + error, Toast.LENGTH_SHORT).show()
-                );
-            }
+      allCompletedTasks = taskService.getCompletedTasksFromCache();
+        groupTasksByDate();
+        runOnUiThread(() -> {
+            completedTasksAdapter.updateGroupedTasks(groupedTasks);
+            updateEmptyState();
         });
     }
     private void updateEmptyState() {
@@ -149,24 +143,10 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     private void deleteAllCompletedTasks() {
         for (Task task : new ArrayList<>(allCompletedTasks)) {
-            taskService.deleteTask(task, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
-                @Override
-                public void onSuccess(Boolean result) {
-
-                }
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() ->
-                        Toast.makeText(CompletedTasksActivity.this, "Lỗi xóa task: " + error, Toast.LENGTH_SHORT).show()
-                    );
-                }
-            });
+            // Sử dụng optimistic delete - UI sẽ được cập nhật qua TaskCache listener
+            taskService.deleteTask(task);
         }
         runOnUiThread(() -> {
-            allCompletedTasks.clear();
-            groupedTasks.clear();
-            completedTasksAdapter.updateGroupedTasks(groupedTasks);
-            updateEmptyState();
             finish(); 
         });
     }
@@ -188,44 +168,47 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     @Override
     public void onCompletedTaskUncheck(Task task) {
-        new Thread(() -> {
-            task.setIsCompleted(false);
-            task.setCompletionDate(null); 
-            taskService.updateTask(task);
-            allCompletedTasks.remove(task);
-            groupTasksByDate();
-            runOnUiThread(() -> {
-                completedTasksAdapter.updateGroupedTasks(groupedTasks);
-                updateEmptyState();
-            });
-        }).start();
+        task.setIsCompleted(false);
+        task.setCompletionDate(null); 
+        // Sử dụng optimistic update - UI sẽ được cập nhật qua TaskCache listener
+        taskService.updateTask(task);
     }
     private void deleteTask(Task task) {
-        taskService.deleteTask(task, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                allCompletedTasks.remove(task);
-                groupTasksByDate();
-                runOnUiThread(() -> {
-                    completedTasksAdapter.updateGroupedTasks(groupedTasks);
-                    updateEmptyState();
-                });
-            }
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() ->
-                    Toast.makeText(CompletedTasksActivity.this, "Lỗi xóa task: " + error, Toast.LENGTH_SHORT).show()
-                );
-            }
-        });
+        // Sử dụng optimistic delete - UI sẽ được cập nhật qua TaskCache listener
+        taskService.deleteTask(task);
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (taskCache != null) {
+            taskCache.removeListener(this);
+        }
         if (taskService != null) {
             taskService.cleanup();
         }
     }
+    @Override
+    public void onTasksUpdated(List<Task> tasks) {
+        loadCompletedTasks();
+    }
+
+    @Override
+    public void onTaskAdded(Task task) {
+        if (task.isCompleted()) {
+            loadCompletedTasks();
+        }
+    }
+
+    @Override
+    public void onTaskUpdated(Task task) {
+        loadCompletedTasks();
+    }
+
+    @Override
+    public void onTaskDeleted(String taskId) {
+        loadCompletedTasks();
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(updateBaseContextLocale(newBase));

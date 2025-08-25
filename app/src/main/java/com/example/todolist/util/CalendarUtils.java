@@ -8,8 +8,7 @@ public class CalendarUtils {
             if (task.getDueDate() == null || task.getDueDate().isEmpty()) {
                 return false;
             }
-            
-            // Quick check for non-repeating tasks
+
             if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không có")) {
                 return task.getDueDate().equals(targetDate);
             }
@@ -22,7 +21,6 @@ public class CalendarUtils {
             }
 
             Calendar taskDate = Calendar.getInstance();
-            // Assume dd/MM/yyyy format (new format)
             taskDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(taskDateParts[0]));
             taskDate.set(Calendar.MONTH, Integer.parseInt(taskDateParts[1]) - 1);
             taskDate.set(Calendar.YEAR, Integer.parseInt(taskDateParts[2]));

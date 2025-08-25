@@ -38,24 +38,18 @@ public class TaskService implements TaskCache.TaskCacheListener {
     private TaskCompletionService completionService;  
     private TaskListService listService;         
     private TaskCache taskCache;
-    
-    // Thêm các variables bị thiếu
     private Handler firebaseUpdateHandler;
     private List<Task> allTasks;
     private Runnable pendingFirebaseUpdate;
     private long lastLocalUpdateTime;
-    
-    // Constants
-    private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 1000; // 1 second
-    private static final long FIREBASE_UPDATE_DELAY = 500; // 0.5 second
+    private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 1000;
+    private static final long FIREBASE_UPDATE_DELAY = 500; 
 
     public TaskService(Context context, TaskUpdateListener listener) {
         this.context = context;
         this.listener = listener;
         this.taskRepository = new TaskRepository();
         this.taskCache = TaskCache.getInstance();
-        
-        // Register cho cache updates
         taskCache.addListener(this);
         this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
@@ -67,21 +61,17 @@ public class TaskService implements TaskCache.TaskCacheListener {
     }
 
     public void loadTasks() {
-        // Nếu đã có cache, return ngay
         if (taskCache.isInitialized()) {
             if (listener != null) {
                 listener.onTasksUpdated();
             }
             return;
         }
-        
-        // Set loading state
         taskCache.setLoading(true);
-        
-        // Load từ Firebase lần đầu
         realtimeListener = taskRepository.addTasksRealtimeListener(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
+                android.util.Log.d("TaskService", "Firebase realtime listener: received " + tasks.size() + " tasks");
                 if (!taskCache.isInitialized()) {
                     // Lần đầu tiên - load vào cache
                     taskCache.loadFromFirebase(tasks);
@@ -144,15 +134,19 @@ public class TaskService implements TaskCache.TaskCacheListener {
     }
     
     public void addTask(Task task, TaskOperationCallback callback) {
-        // 1. Optimistic update - cập nhật cache ngay
-        taskCache.addTaskOptimistic(task);
+        if (task.getId() == null || task.getId().isEmpty()) {
+            task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
+        }
         
-        // 2. Sync với Firebase ngầm
+        taskCache.addTaskOptimistic(task);
         taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String taskId) {
-                // Task đã được add thành công trên Firebase
-                // Cache sẽ được sync lại qua realtime listener
+                if (!task.getId().equals(taskId)) {
+                    taskCache.deleteTaskOptimistic(task.getId());
+                    task.setId(taskId);
+                    taskCache.addTaskOptimistic(task);
+                }
                 if (callback != null) callback.onSuccess();
             }
 
@@ -278,8 +272,27 @@ public class TaskService implements TaskCache.TaskCacheListener {
         listService.getTasksByCategory(categoryId, callback);
     }
     
+    public List<Task> getTasksByCategoryFromCache(String categoryId) {
+        List<Task> allTasks = taskCache.getAllTasks();
+        List<Task> categoryTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            if (categoryId.equals(task.getCategoryId())) {
+                categoryTasks.add(task);
+            }
+        }
+        return categoryTasks;
+    }
+    
     public void getTaskById(String taskId, BaseRepository.RepositoryCallback<Task> callback) {
         taskManager.getTaskById(taskId, callback);
+    }
+
+    public Task getTaskByIdFromCache(String taskId) {
+        return taskCache.getTask(taskId);
+    }
+    
+    public List<Task> getAllTasksFromCache() {
+        return taskCache.getAllTasks();
     }
     
     public void getTasksByDate(String date, BaseRepository.RepositoryCallback<List<Task>> callback) {
@@ -289,12 +302,22 @@ public class TaskService implements TaskCache.TaskCacheListener {
     public void getCompletedTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
         completionService.getCompletedTasks(callback);
     }
+
+    public List<Task> getCompletedTasksFromCache() {
+        List<Task> allTasks = taskCache.getAllTasks();
+        List<Task> completedTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            if (task.isCompleted()) {
+                completedTasks.add(task);
+            }
+        }
+        return completedTasks;
+    }
     
     public void getUncompletedTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
         completionService.getIncompleteTasks(callback);
     }
-    
-    // === UTILITIES ===
+
     private void updateTaskInList(Task updatedTask) {
         if (allTasks != null && updatedTask.getId() != null) {
             for (int i = 0; i < allTasks.size(); i++) {
@@ -331,18 +354,14 @@ public class TaskService implements TaskCache.TaskCacheListener {
         // Unregister from cache
         taskCache.removeListener(this);
     }
-    
-    // === TaskCache.TaskCacheListener Implementation ===
-    
+
     @Override
     public void onTasksUpdated(List<Task> tasks) {
-        // Update listService với tasks mới từ cache
         if (listService == null) {
             listService = new TaskListService();
         }
         listService.updateTasks(tasks);
-        
-        // Cache đã cập nhật - notify UI
+
         if (listener != null) {
             listener.onTasksUpdated();
         }
@@ -374,18 +393,46 @@ public class TaskService implements TaskCache.TaskCacheListener {
     }
 
     public List<Task> getTodayTasks() {
-        return listService != null ? listService.getTodayTasks() : taskCache.getAllTasks();
+        List<Task> allTasks = taskCache.getAllTasks();
+        if (listService != null) {
+            listService.categorizeTasks(allTasks);
+            List<Task> result = listService.getTodayTasks();
+            android.util.Log.d("TaskService", "getTodayTasks from cache: " + result.size());
+            return result;
+        }
+        return allTasks;
     }
     
     public List<Task> getOverdueTasks() {
-        return listService != null ? listService.getOverdueTasks() : taskCache.getAllTasks();
+        List<Task> allTasks = taskCache.getAllTasks();
+        if (listService != null) {
+            listService.categorizeTasks(allTasks);
+            List<Task> result = listService.getOverdueTasks();
+            android.util.Log.d("TaskService", "getOverdueTasks from cache: " + result.size());
+            return result;
+        }
+        return allTasks;
     }
     
     public List<Task> getFutureTasks() {
-        return listService != null ? listService.getFutureTasks() : taskCache.getAllTasks();
+        List<Task> allTasks = taskCache.getAllTasks();
+        if (listService != null) {
+            listService.categorizeTasks(allTasks);
+            List<Task> result = listService.getFutureTasks();
+            android.util.Log.d("TaskService", "getFutureTasks from cache: " + result.size());
+            return result;
+        }
+        return allTasks;
     }
     
     public List<Task> getCompletedTodayTasks() {
-        return listService != null ? listService.getCompletedTodayTasks() : taskCache.getAllTasks();
+        List<Task> allTasks = taskCache.getAllTasks();
+        if (listService != null) {
+            listService.categorizeTasks(allTasks);
+            List<Task> result = listService.getCompletedTodayTasks();
+            android.util.Log.d("TaskService", "getCompletedTodayTasks from cache: " + result.size());
+            return result;
+        }
+        return allTasks;
     }
 }

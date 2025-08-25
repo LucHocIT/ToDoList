@@ -18,8 +18,7 @@ public class CalendarViewHelper {
         tempCal.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfWeek = tempCal.get(Calendar.DAY_OF_WEEK);
         int daysInMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        
-        // Add empty cells for days before month starts
+
         int startOffset = (firstDayOfWeek == Calendar.SUNDAY) ? 0 : firstDayOfWeek - 1;
         Calendar prevMonth = (Calendar) currentCalendar.clone();
         prevMonth.add(Calendar.MONTH, -1);
@@ -109,13 +108,11 @@ public class CalendarViewHelper {
                 textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.task_indicator_dot);
                 textView.setCompoundDrawablePadding(4);
             } else {
-                // Đảm bảo clear drawable nếu không có task
                 textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
         } else {
             textView.setTextColor(Color.parseColor("#CCCCCC"));
             textView.setBackgroundColor(Color.WHITE);
-            // Clear drawable cho những ngày không thuộc tháng hiện tại
             textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         textView.setClickable(isCurrentMonth);
@@ -142,7 +139,6 @@ public class CalendarViewHelper {
             dayView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.task_indicator_dot);
             dayView.setCompoundDrawablePadding(4);
         } else {
-            // Clear drawable nếu không có task
             dayView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
         

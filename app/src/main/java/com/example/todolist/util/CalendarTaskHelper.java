@@ -15,26 +15,18 @@ public class CalendarTaskHelper {
     public static void loadTasksForDate(Context context, String dateString, 
                                       TaskLoadListener listener) {
         TaskService taskService = new TaskService(context, null);
-        taskService.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
-            @Override
-            public void onSuccess(List<Task> allTasks) {
-                List<Task> tasksForDate = new ArrayList<>();
-                for (Task task : allTasks) {
-                    if (CalendarUtils.isTaskOnDate(task, dateString)) {
-                        tasksForDate.add(task);
-                    }
-                }
-                if (listener != null) {
-                    listener.onTasksLoaded(tasksForDate);
-                }
+        // Sử dụng cache để load tasks
+        List<Task> allTasks = taskService.getAllTasksFromCache();
+        
+        List<Task> tasksForDate = new ArrayList<>();
+        for (Task task : allTasks) {
+            if (CalendarUtils.isTaskOnDate(task, dateString)) {
+                tasksForDate.add(task);
             }
-            @Override
-            public void onError(String error) {
-                if (listener != null) {
-                    listener.onTasksLoaded(new ArrayList<>());
-                }
-            }
-        });
+        }
+        if (listener != null) {
+            listener.onTasksLoaded(tasksForDate);
+        }
     }
     public static void updateTaskDisplay(Context context, LinearLayout container, 
                                        List<Task> tasks) {

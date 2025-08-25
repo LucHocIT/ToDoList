@@ -79,10 +79,8 @@ public class CalendarActivity extends AppCompatActivity
         weekGrid = findViewById(R.id.week_grid);
         taskService = new TaskService(this, null);
         taskCache = TaskCache.getInstance();
-        
-        // Register cho cache updates và load data từ TaskService
         taskCache.addListener(this);
-        taskService.loadTasks(); // TaskService sẽ load và populate cache
+        taskService.loadTasks(); 
         
         setupClickListeners();
     }
@@ -232,8 +230,6 @@ public class CalendarActivity extends AppCompatActivity
                 selectedDay = -1;
             }
         }
-        
-        // Load calendar immediately without UIOptimizer
         loadCalendar();
     }
     private void toggleCalendarView() {

@@ -33,40 +33,31 @@ public class UserStatsManager {
     public void calculateUserStats(StatsCallback callback) {
         UserStats stats = new UserStats();
         try {
-            // Get all tasks using Firebase service
-            taskService.getAllTasks(new com.example.todolist.repository.BaseRepository.RepositoryCallback<List<Task>>() {
-                @Override
-                public void onSuccess(List<Task> allTasks) {
-                    List<Task> completedTasks = new ArrayList<>();
-                    for (Task task : allTasks) {
-                        if (task.isCompleted()) {
-                            completedTasks.add(task);
-                        }
-                    }
-                    stats.totalTasks = allTasks.size();
-                    stats.completedTasks = completedTasks.size();
-                stats.pendingTasks = stats.totalTasks - stats.completedTasks;
-                stats.productivityScore = stats.totalTasks > 0 ? 
-                    (stats.completedTasks * 100) / stats.totalTasks : 0;
-                stats.currentStreak = calculateCurrentStreak(completedTasks);
-                stats.longestStreak = calculateLongestStreak(completedTasks);
-                // Calculate time-based statistics
-                stats.tasksCompletedToday = calculateTasksCompletedInPeriod(completedTasks, 0);
-                stats.tasksCompletedThisWeek = calculateTasksCompletedInPeriod(completedTasks, 7);
-                stats.tasksCompletedThisMonth = calculateTasksCompletedInPeriod(completedTasks, 30);
-                updatePreferences(stats);
-                // Return stats via callback
-                if (callback != null) {
-                    callback.onStatsCalculated(stats);
+            // Sử dụng cache để get all tasks
+            List<Task> allTasks = taskService.getAllTasksFromCache();
+            
+            List<Task> completedTasks = new ArrayList<>();
+            for (Task task : allTasks) {
+                if (task.isCompleted()) {
+                    completedTasks.add(task);
                 }
             }
-            @Override
-            public void onError(String error) {
-                if (callback != null) {
-                    callback.onStatsCalculated(getDefaultStats());
-                }
+            stats.totalTasks = allTasks.size();
+            stats.completedTasks = completedTasks.size();
+            stats.pendingTasks = stats.totalTasks - stats.completedTasks;
+            stats.productivityScore = stats.totalTasks > 0 ? 
+                (stats.completedTasks * 100) / stats.totalTasks : 0;
+            stats.currentStreak = calculateCurrentStreak(completedTasks);
+            stats.longestStreak = calculateLongestStreak(completedTasks);
+            // Calculate time-based statistics
+            stats.tasksCompletedToday = calculateTasksCompletedInPeriod(completedTasks, 0);
+            stats.tasksCompletedThisWeek = calculateTasksCompletedInPeriod(completedTasks, 7);
+            stats.tasksCompletedThisMonth = calculateTasksCompletedInPeriod(completedTasks, 30);
+            updatePreferences(stats);
+            // Return stats via callback
+            if (callback != null) {
+                callback.onStatsCalculated(stats);
             }
-        });
         } catch (Exception e) {
             e.printStackTrace();
             // Return default stats on error
@@ -90,10 +81,9 @@ public class UserStatsManager {
     private int calculateTasksCompletedInPeriod(List<Task> completedTasks, int daysBack) {
 
         if (daysBack == 0) {
-            return Math.min(completedTasks.size() / 7, 5); // Assume 1/7 of tasks completed today, max 5
+            return Math.min(completedTasks.size() / 7, 5);
         } else if (daysBack == 7) {
-            // Tasks completed this week
-            return Math.min(completedTasks.size(), 20); // Max 20 tasks per week
+            return Math.min(completedTasks.size(), 20);
         } else {
             // Tasks completed this month
             return completedTasks.size();

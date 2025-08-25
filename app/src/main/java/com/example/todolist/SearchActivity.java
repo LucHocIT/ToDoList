@@ -66,17 +66,8 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
         });
     }
     private void loadTasks() {
-        taskService.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
-            @Override
-            public void onSuccess(List<Task> tasks) {
-                allTasks.clear();
-                allTasks.addAll(tasks);
-            }
-            @Override
-            public void onError(String error) {
-                // Handle error if needed
-            }
-        });
+        allTasks.clear();
+        allTasks.addAll(taskService.getAllTasksFromCache());
     }
     private void performSearch(String query) {
         if (query.trim().isEmpty()) {
@@ -94,7 +85,7 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
         }
         runOnUiThread(() -> searchAdapter.updateTasks(searchResults));
     }
-    // TaskAdapter.OnTaskClickListener implementation
+    
     @Override
     public void onTaskClick(Task task) {
         // Handle task click

@@ -69,20 +69,14 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private void loadTaskData() {
         String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
         if (taskId != null && !taskId.isEmpty()) {
-            taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
-                @Override
-                public void onSuccess(Task task) {
-                    currentTask = task;
-                    runOnUiThread(() -> displayTaskData());
-                }
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(TaskDetailActivity.this, "Lỗi tải task: " + error, Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                }
-            });
+            // Sử dụng cache để load task
+            currentTask = taskService.getTaskByIdFromCache(taskId);
+            if (currentTask != null) {
+                displayTaskData();
+            } else {
+                Toast.makeText(TaskDetailActivity.this, "Không tìm thấy task", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
     private void displayTaskData() {
@@ -136,19 +130,10 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                                 if (categoryChanged) {
                                     android.util.Log.d("TaskDetail", "Updating task category from " + currentCategoryId + " to " + newCategoryId);
                                     currentTask.setCategoryId(newCategoryId);
-                                    taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
-                                        @Override
-                                        public void onSuccess(Boolean result) {
-                                            runOnUiThread(() -> {
-                                                setResult(RESULT_OK);
-                                            });
-                                        }
-                                        @Override
-                                        public void onError(String error) {
-                                            runOnUiThread(() ->
-                                                Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật category: " + error, Toast.LENGTH_SHORT).show()
-                                            );
-                                        }
+
+                                    taskService.updateTask(currentTask);
+                                    runOnUiThread(() -> {
+                                        setResult(RESULT_OK);
                                     });
                                 }
                             }
@@ -217,18 +202,8 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                     currentTask.setDueTime(time);
                     textDueDate.setText(formatDateDisplay(date));
                     textTime.setText(time != null ? time : "Không");
-                    taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean result) {
-                            runOnUiThread(() -> setResult(RESULT_OK));
-                        }
-                        @Override
-                        public void onError(String error) {
-                            runOnUiThread(() ->
-                                Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật ngày giờ: " + error, Toast.LENGTH_SHORT).show()
-                            );
-                        }
-                    });
+                    taskService.updateTask(currentTask);
+                    runOnUiThread(() -> setResult(RESULT_OK));
                 }
             });
             dialog.show();
@@ -239,16 +214,8 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             String newTitle = editDetailTitle.getText().toString().trim();
             if (!newTitle.isEmpty() && !newTitle.equals(currentTask.getTitle())) {
                 currentTask.setTitle(newTitle);
-                taskService.updateTask(currentTask, new com.example.todolist.repository.BaseRepository.DatabaseCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        setResult(RESULT_OK);
-                    }
-                    @Override
-                    public void onError(String error) {
-                        Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật title: " + error, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                taskService.updateTask(currentTask);
+                setResult(RESULT_OK);
             }
         }
     }
