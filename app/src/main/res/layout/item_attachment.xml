@@ -11,57 +11,98 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical">
 
-        <!-- File type icon -->
-        <ImageView
-            android:id="@+id/icon_file_type"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_attachment"
-            android:layout_marginEnd="12dp"/>
+        <!-- Image/Video preview section -->
+        <RelativeLayout
+            android:id="@+id/preview_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:visibility="gone">
 
-        <!-- File info -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/text_file_name"
+            <ImageView
+                android:id="@+id/image_preview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="document.pdf"
-                android:textSize="14sp"
-                android:textColor="#333333"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="middle"/>
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/text_file_size"
-                android:layout_width="wrap_content"
+            <!-- Video preview with play overlay -->
+            <ImageView
+                android:id="@+id/video_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/play_overlay"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_play_arrow"
+                android:background="@drawable/bg_play_button"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <!-- File info section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <!-- File type icon (for non-preview files) -->
+            <ImageView
+                android:id="@+id/icon_file_type"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_attachment"
+                android:layout_marginEnd="12dp"/>
+
+            <!-- File info -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="2.5 MB"
-                android:textSize="12sp"
-                android:textColor="#666666"
-                android:layout_marginTop="2dp"/>
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_file_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="document.pdf"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="middle"/>
+
+                <TextView
+                    android:id="@+id/text_file_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.5 MB"
+                    android:textSize="12sp"
+                    android:textColor="#666666"
+                    android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <!-- Delete button -->
+            <ImageView
+                android:id="@+id/btn_delete_attachment"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_close"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:clickable="true"
+                android:layout_marginStart="8dp"/>
 
         </LinearLayout>
-
-        <!-- Delete button -->
-        <ImageView
-            android:id="@+id/btn_delete_attachment"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_close"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            android:clickable="true"
-            android:layout_marginStart="8dp"/>
 
     </LinearLayout>
 

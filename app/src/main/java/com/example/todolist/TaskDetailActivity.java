@@ -1,13 +1,19 @@
 package com.example.todolist;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -16,9 +22,14 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.AttachmentAdapter;
@@ -41,6 +52,12 @@ import java.util.List;
 import java.util.Locale;
 public class TaskDetailActivity extends AppCompatActivity implements TaskService.TaskUpdateListener, CategoryService.CategoryUpdateListener, AttachmentAdapter.OnAttachmentActionListener {
     public static final String EXTRA_TASK_ID = "task_id";
+    
+    // Permission request codes
+    private static final int PERMISSION_REQUEST_CAMERA = 1001;
+    private static final int PERMISSION_REQUEST_AUDIO = 1002;
+    private static final int PERMISSION_REQUEST_STORAGE = 1003;
+    
     private EditText editDetailTitle;
     private EditText editDescription;
     private TextView textDueDate;
@@ -64,7 +81,16 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     private List<Category> allCategories;
     private boolean isInitialCategorySetup = true;
     private AttachmentAdapter attachmentAdapter;
-    private ActivityResultLauncher<Intent> filePickerLauncher; 
+    
+    // Activity result launchers
+    private ActivityResultLauncher<Intent> filePickerLauncher;
+    private ActivityResultLauncher<Intent> imageCaptureForActivityResult;
+    private ActivityResultLauncher<Intent> videoCaptureForActivityResult;
+    private ActivityResultLauncher<Intent> audioRecordingForActivityResult;
+    private Uri capturedImageUri;
+    private Uri capturedVideoUri;
+    private MediaRecorder mediaRecorder;
+    private String audioFileName; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,13 +99,13 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         taskService = new TaskService(this, this);
         categoryService = new CategoryService(this, this);
         attachmentService = new AttachmentService(this);
-        initFilePickerLauncher();
+        initActivityResultLaunchers();
         initViews();
         loadTaskData();
         setupClickListeners();
     }
     
-    private void initFilePickerLauncher() {
+    private void initActivityResultLaunchers() {
         filePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -87,6 +113,39 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                     Uri fileUri = result.getData().getData();
                     if (fileUri != null) {
                         handleSelectedFile(fileUri);
+                    }
+                }
+            }
+        );
+
+        imageCaptureForActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && capturedImageUri != null) {
+                    handleSelectedFile(capturedImageUri);
+                }
+            }
+        );
+        
+        // Video capture launcher
+        videoCaptureForActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && capturedVideoUri != null) {
+                    handleSelectedFile(capturedVideoUri);
+                }
+            }
+        );
+        
+        // Audio recording launcher
+        audioRecordingForActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && audioFileName != null) {
+                    File audioFile = new File(audioFileName);
+                    if (audioFile.exists()) {
+                        Uri audioUri = Uri.fromFile(audioFile);
+                        handleSelectedFile(audioUri);
                     }
                 }
             }
@@ -257,11 +316,252 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         
         btnAddAttachment.setOnClickListener(v -> {
             if (currentTask != null && !currentTask.isCompleted()) {
-                openFilePicker();
+                showFileTypeDialog();
             } else {
                 Toast.makeText(this, "Không thể thêm tệp tin vào nhiệm vụ đã hoàn thành", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    private void showFileTypeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_file_type_chooser, null);
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        
+        // Set up click listeners for each option
+        dialogView.findViewById(R.id.btn_choose_image).setOnClickListener(v -> {
+            dialog.dismiss();
+            checkPermissionAndChooseImage();
+        });
+        
+        dialogView.findViewById(R.id.btn_choose_video).setOnClickListener(v -> {
+            dialog.dismiss();
+            checkPermissionAndChooseVideo();
+        });
+        
+        dialogView.findViewById(R.id.btn_record_audio).setOnClickListener(v -> {
+            dialog.dismiss();
+            checkPermissionAndRecordAudio();
+        });
+        
+        dialogView.findViewById(R.id.btn_choose_file).setOnClickListener(v -> {
+            dialog.dismiss();
+            openFilePicker();
+        });
+        
+        dialog.show();
+    }
+    
+    // Permission checking methods
+    private void checkPermissionAndChooseImage() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, 
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 
+                PERMISSION_REQUEST_CAMERA);
+        } else {
+            showImageChooserDialog();
+        }
+    }
+    
+    private void checkPermissionAndChooseVideo() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, 
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 
+                PERMISSION_REQUEST_CAMERA);
+        } else {
+            showVideoChooserDialog();
+        }
+    }
+    
+    private void checkPermissionAndRecordAudio() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, 
+                new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 
+                PERMISSION_REQUEST_AUDIO);
+        } else {
+            startAudioRecording();
+        }
+    }
+    
+    // Image chooser methods
+    private void showImageChooserDialog() {
+        String[] options = {"Chụp ảnh", "Chọn từ thư viện"};
+        new AlertDialog.Builder(this)
+            .setTitle("Chọn ảnh")
+            .setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    captureImage();
+                } else {
+                    chooseImageFromGallery();
+                }
+            })
+            .show();
+    }
+    
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = createImageFile();
+            if (photoFile != null) {
+                capturedImageUri = FileProvider.getUriForFile(this,
+                    "com.example.todolist.fileprovider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedImageUri);
+                imageCaptureForActivityResult.launch(intent);
+            }
+        }
+    }
+    
+    private void chooseImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        filePickerLauncher.launch(intent);
+    }
+    
+    // Video chooser methods
+    private void showVideoChooserDialog() {
+        String[] options = {"Quay video", "Chọn từ thư viện"};
+        new AlertDialog.Builder(this)
+            .setTitle("Chọn video")
+            .setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    captureVideo();
+                } else {
+                    chooseVideoFromGallery();
+                }
+            })
+            .show();
+    }
+    
+    private void captureVideo() {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File videoFile = createVideoFile();
+            if (videoFile != null) {
+                capturedVideoUri = FileProvider.getUriForFile(this,
+                    "com.example.todolist.fileprovider", videoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedVideoUri);
+                videoCaptureForActivityResult.launch(intent);
+            }
+        }
+    }
+    
+    private void chooseVideoFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("video/*");
+        filePickerLauncher.launch(intent);
+    }
+    
+    // Audio recording methods
+    private void startAudioRecording() {
+        showAudioRecordingDialog();
+    }
+    
+    private void showAudioRecordingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ghi âm")
+            .setMessage("Nhấn 'Bắt đầu' để bắt đầu ghi âm")
+            .setPositiveButton("Bắt đầu", (dialog, which) -> {
+                startRecording();
+            })
+            .setNegativeButton("Hủy", null)
+            .show();
+    }
+    
+    private void startRecording() {
+        try {
+            audioFileName = createAudioFile().getAbsolutePath();
+            
+            mediaRecorder = new MediaRecorder();
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mediaRecorder.setOutputFile(audioFileName);
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+            
+            showRecordingDialog();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi bắt đầu ghi âm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void showRecordingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Đang ghi âm...")
+            .setMessage("Nhấn 'Dừng' để kết thúc ghi âm")
+            .setPositiveButton("Dừng", (dialog, which) -> {
+                stopRecording();
+            })
+            .setCancelable(false)
+            .show();
+    }
+    
+    private void stopRecording() {
+        if (mediaRecorder != null) {
+            try {
+                mediaRecorder.stop();
+                mediaRecorder.release();
+                mediaRecorder = null;
+                
+                // Add the recorded audio file as attachment
+                File audioFile = new File(audioFileName);
+                if (audioFile.exists()) {
+                    Uri audioUri = Uri.fromFile(audioFile);
+                    handleSelectedFile(audioUri);
+                }
+                
+                Toast.makeText(this, "Ghi âm hoàn tất", Toast.LENGTH_SHORT).show();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Lỗi khi dừng ghi âm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    
+    // File creation helper methods
+    private File createImageFile() {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            return File.createTempFile(imageFileName, ".jpg", storageDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    private File createVideoFile() {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String videoFileName = "MP4_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+            return File.createTempFile(videoFileName, ".mp4", storageDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    private File createAudioFile() {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String audioFileName = "AUDIO_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+            return File.createTempFile(audioFileName, ".3gp", storageDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     private void openFilePicker() {
@@ -272,6 +572,41 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             filePickerLauncher.launch(Intent.createChooser(intent, "Chọn tệp tin"));
         } catch (android.content.ActivityNotFoundException e) {
             Toast.makeText(this, "Không tìm thấy ứng dụng quản lý tệp tin", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    // Handle permission results
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Check if this was for image or video
+                    if (permissions[0].equals(Manifest.permission.CAMERA)) {
+                        showImageChooserDialog(); // Default to image, you might want to track which was requested
+                    }
+                } else {
+                    Toast.makeText(this, "Cần quyền truy cập camera để chụp ảnh/quay video", Toast.LENGTH_SHORT).show();
+                }
+                break;
+                
+            case PERMISSION_REQUEST_AUDIO:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startAudioRecording();
+                } else {
+                    Toast.makeText(this, "Cần quyền ghi âm để ghi âm thanh", Toast.LENGTH_SHORT).show();
+                }
+                break;
+                
+            case PERMISSION_REQUEST_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openFilePicker();
+                } else {
+                    Toast.makeText(this, "Cần quyền truy cập bộ nhớ để chọn tệp tin", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
     private void showDateTimePicker() {
@@ -406,6 +741,16 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         if (categoryService != null) {
             categoryService.cleanup();
         }
+        // Cleanup MediaRecorder if still recording
+        if (mediaRecorder != null) {
+            try {
+                mediaRecorder.stop();
+                mediaRecorder.release();
+                mediaRecorder = null;
+            } catch (Exception e) {
+                // Ignore errors during cleanup
+            }
+        }
     }
 
     @Override
@@ -460,7 +805,31 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
     }
     
     private void setupAttachmentRecyclerView() {
-        recyclerAttachments.setLayoutManager(new LinearLayoutManager(this));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (currentTask != null && currentTask.getAttachmentList() != null && 
+                    position < currentTask.getAttachmentList().size()) {
+                    Attachment attachment = currentTask.getAttachmentList().get(position);
+                    String fileName = attachment.getFileName().toLowerCase();
+                    
+                    // Ảnh và video chiếm 1 span (3 cột)
+                    if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || 
+                        fileName.endsWith(".png") || fileName.endsWith(".gif") ||
+                        fileName.endsWith(".mp4") || fileName.endsWith(".avi") || 
+                        fileName.endsWith(".mov") || fileName.endsWith(".wmv") ||
+                        fileName.endsWith(".mkv")) {
+                        return 1; // 1/3 của row
+                    } else {
+                        // File âm thanh và tài liệu chiếm toàn bộ row (3 span)
+                        return 3;
+                    }
+                }
+                return 1;
+            }
+        });
+        recyclerAttachments.setLayoutManager(gridLayoutManager);
         attachmentAdapter = new AttachmentAdapter(this, currentTask != null ? currentTask.getAttachmentList() : null, this);
         recyclerAttachments.setAdapter(attachmentAdapter);
     }
