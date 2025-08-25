@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -125,7 +124,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                     @Override
                     public void onError(String error) {
                         runOnUiThread(() -> {
-                            Toast.makeText(CategoryManagerActivity.this, "Lỗi tạo danh mục mặc định: " + error, Toast.LENGTH_SHORT).show();
                         });
                     }
                 });
@@ -134,7 +132,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(CategoryManagerActivity.this, "Lỗi xóa danh mục: " + error, Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -207,12 +204,10 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                     @Override
                     public void onError(String error) {
                         runOnUiThread(() -> {
-                            Toast.makeText(CategoryManagerActivity.this, "Lỗi tạo thể loại: " + error, Toast.LENGTH_SHORT).show();
                         });
                     }
                 });
             } else {
-                Toast.makeText(this, getString(R.string.category_name_required_toast), Toast.LENGTH_SHORT).show();
             }
         });
         dialog.show();
@@ -290,12 +285,10 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                     @Override
                     public void onError(String error) {
                         runOnUiThread(() -> {
-                            Toast.makeText(CategoryManagerActivity.this, "Lỗi cập nhật: " + error, Toast.LENGTH_SHORT).show();
                         });
                     }
                 });
             } else if (newCategoryName.isEmpty()) {
-                Toast.makeText(this, getString(R.string.category_name_required_toast), Toast.LENGTH_SHORT).show();
             } else {
                 dialog.dismiss();
             }
@@ -317,7 +310,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
                         @Override
                         public void onError(String error) {
                             runOnUiThread(() -> {
-                                Toast.makeText(CategoryManagerActivity.this, "Lỗi xóa danh mục: " + error, Toast.LENGTH_SHORT).show();
                             });
                         }
                     });
@@ -361,7 +353,6 @@ public class CategoryManagerActivity extends AppCompatActivity implements
     @Override
     public void onError(String error) {
         runOnUiThread(() -> {
-            Toast.makeText(this, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
         });
     }
     @Override

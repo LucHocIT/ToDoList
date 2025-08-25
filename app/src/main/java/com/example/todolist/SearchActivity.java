@@ -46,11 +46,9 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
         editSearch = findViewById(R.id.edit_search);
         recyclerSearchResults = findViewById(R.id.recycler_search_results);
         btnBack.setOnClickListener(v -> finish());
-        // Setup RecyclerView
         recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
         searchAdapter = new TaskAdapter(searchResults, this);
         recyclerSearchResults.setAdapter(searchAdapter);
-        // Focus on search input
         editSearch.requestFocus();
     }
     private void setupSearch() {
@@ -85,10 +83,10 @@ public class SearchActivity extends AppCompatActivity implements TaskAdapter.OnT
         }
         runOnUiThread(() -> searchAdapter.updateTasks(searchResults));
     }
-    
+
     @Override
     public void onTaskClick(Task task) {
-        // Handle task click
+
     }
     @Override
     public void onTaskComplete(Task task, boolean isCompleted) {

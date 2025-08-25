@@ -143,7 +143,6 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     }
     private void deleteAllCompletedTasks() {
         for (Task task : new ArrayList<>(allCompletedTasks)) {
-            // Sử dụng optimistic delete - UI sẽ được cập nhật qua TaskCache listener
             taskService.deleteTask(task);
         }
         runOnUiThread(() -> {
@@ -170,11 +169,9 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
     public void onCompletedTaskUncheck(Task task) {
         task.setIsCompleted(false);
         task.setCompletionDate(null); 
-        // Sử dụng optimistic update - UI sẽ được cập nhật qua TaskCache listener
         taskService.updateTask(task);
     }
     private void deleteTask(Task task) {
-        // Sử dụng optimistic delete - UI sẽ được cập nhật qua TaskCache listener
         taskService.deleteTask(task);
     }
     @Override

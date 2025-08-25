@@ -62,7 +62,6 @@ public class TaskActionsDialog {
             }
             dismiss();
         });
-        // Add views to container
         ((LinearLayout) view).addView(titleText);
         ((LinearLayout) view).addView(starText);  
         ((LinearLayout) view).addView(deleteText);

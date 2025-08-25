@@ -1,8 +1,10 @@
 package com.example.todolist.service;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import com.example.todolist.cache.CategoryCache;
 import com.example.todolist.model.Category;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.CategoryRepository;
@@ -11,13 +13,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryService {
-    
+public class CategoryService implements CategoryCache.CategoryCacheListener {    
     public interface CategoryUpdateListener {
         void onCategoriesUpdated();
         void onError(String error);
     }
-
     public interface CategoryOperationCallback {
         void onSuccess();
         void onError(String error);
@@ -27,27 +27,34 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
     private CategoryUpdateListener listener;
     private ValueEventListener realtimeListener;
-
-    private CategoryManager categoryManager;     // CRUD operations
-    
-    private List<Category> categories;
+    private CategoryManager categoryManager;    
+    private CategoryCache categoryCache;       
+    private Handler firebaseUpdateHandler;
+    private List<Category> allCategories;
+    private Runnable pendingFirebaseUpdate;
+    private long lastLocalUpdateTime;
+    private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 1000;
+    private static final long FIREBASE_UPDATE_DELAY = 500;
 
     public CategoryService(Context context, CategoryUpdateListener listener) {
         this.context = context;
         this.listener = listener;
         this.categoryRepository = new CategoryRepository();
-        this.categories = new ArrayList<>();
+        this.categoryCache = CategoryCache.getInstance();
+        categoryCache.addListener(this);
+        this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
         // Initialize sub-services
         this.categoryManager = new CategoryManager(context);
+        this.allCategories = new ArrayList<>();
     }
 
     public void loadCategories() {
-        // First clean up any duplicate categories
+        categoryCache.setLoading(true);
+ 
         categoryManager.removeDuplicateCategories(new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                // Initialize default categories after cleanup
                 categoryManager.initializeDefaultCategories(new BaseRepository.DatabaseCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean initResult) {
@@ -72,15 +79,12 @@ public class CategoryService {
         realtimeListener = categoryRepository.addCategoriesRealtimeListener(new BaseRepository.ListCallback<Category>() {
             @Override
             public void onSuccess(List<Category> categoriesList) {
-                categories = categoriesList;
-                
-                if (listener != null) {
-                    listener.onCategoriesUpdated();
-                }
+                handleFirebaseCategoriesUpdate(categoriesList);
             }
 
             @Override
             public void onError(String error) {
+                categoryCache.setLoading(false);
                 if (listener != null) {
                     listener.onError("Lỗi tải categories: " + error);
                 }
@@ -88,23 +92,59 @@ public class CategoryService {
         });
     }
 
-    // === CRUD OPERATIONS - Delegate to CategoryManager ===
+    private void handleFirebaseCategoriesUpdate(List<Category> categories) {
+        if (pendingFirebaseUpdate != null) {
+            firebaseUpdateHandler.removeCallbacks(pendingFirebaseUpdate);
+        }
+        
+        pendingFirebaseUpdate = () -> {
+            long timeSinceLastLocalUpdate = System.currentTimeMillis() - lastLocalUpdateTime;
+            if (timeSinceLastLocalUpdate < LOCAL_UPDATE_PRIORITY_WINDOW) {
+                pendingFirebaseUpdate = null;
+                return;
+            }
+            
+            allCategories = categories;
+            categoryCache.syncFromFirebase(categories);
+            pendingFirebaseUpdate = null;
+        };
+        
+        firebaseUpdateHandler.postDelayed(pendingFirebaseUpdate, FIREBASE_UPDATE_DELAY);
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.onCategoriesUpdated();
+        }
+    }
+
     public void addCategory(Category category) {
         addCategory(category, null);
     }
     
     public void addCategory(Category category, CategoryOperationCallback callback) {
+        if (category.getId() == null || category.getId().isEmpty()) {
+            category.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
+        }
+        
+        lastLocalUpdateTime = System.currentTimeMillis();
+        categoryCache.addCategoryOptimistic(category);
+        
         categoryManager.addCategory(category, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String categoryId) {
+                if (!category.getId().equals(categoryId)) {
+                    categoryCache.deleteCategoryOptimistic(category.getId());
+                    category.setId(categoryId);
+                    categoryCache.addCategoryOptimistic(category);
+                }
                 if (callback != null) callback.onSuccess();
-                showToast("Thêm category thành công");
             }
 
             @Override
             public void onError(String error) {
+                categoryCache.deleteCategoryOptimistic(category.getId());
                 if (callback != null) callback.onError(error);
-                showToast("Lỗi thêm category: " + error);
             }
         });
     }
@@ -114,17 +154,18 @@ public class CategoryService {
     }
     
     public void updateCategory(Category category, CategoryOperationCallback callback) {
+        lastLocalUpdateTime = System.currentTimeMillis();
+        categoryCache.updateCategoryOptimistic(category);
+        
         categoryManager.updateCategory(category, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 if (callback != null) callback.onSuccess();
-                showToast("Cập nhật category thành công");
             }
 
             @Override
             public void onError(String error) {
                 if (callback != null) callback.onError(error);
-                showToast("Lỗi cập nhật category: " + error);
             }
         });
     }
@@ -134,22 +175,24 @@ public class CategoryService {
     }
     
     public void deleteCategory(Category category, CategoryOperationCallback callback) {
+        lastLocalUpdateTime = System.currentTimeMillis();
+        categoryCache.deleteCategoryOptimistic(category.getId());
+        
         categoryManager.deleteCategory(category, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 if (callback != null) callback.onSuccess();
-                showToast("Xóa category thành công");
             }
 
             @Override
             public void onError(String error) {
+                // Rollback optimistic update
+                categoryCache.addCategoryOptimistic(category);
                 if (callback != null) callback.onError(error);
-                showToast("Lỗi xóa category: " + error);
             }
         });
     }
 
-    // === QUERY OPERATIONS - Delegate to CategoryManager ===
     public void getAllCategories(BaseRepository.ListCallback<Category> callback) {
         categoryManager.getAllCategories(callback);
     }
@@ -172,8 +215,16 @@ public class CategoryService {
         categoryManager.getCategoryById(categoryId, callback);
     }
 
+    public Category getCategoryByIdFromCache(String categoryId) {
+        return categoryCache.getCategory(categoryId);
+    }
+
     public void searchCategories(String query, BaseRepository.RepositoryCallback<List<Category>> callback) {
         categoryManager.searchCategories(query, callback);
+    }
+
+    public List<Category> searchCategoriesFromCache(String query) {
+        return categoryCache.searchCategories(query);
     }
 
     public void validateCategoryName(String name, String currentCategoryId, BaseRepository.RepositoryCallback<Boolean> callback) {
@@ -182,7 +233,19 @@ public class CategoryService {
 
     // === UTILITIES ===
     public List<Category> getCategories() {
-        return new ArrayList<>(categories);
+        return categoryCache.getAllCategories();
+    }
+
+    public List<Category> getAllCategoriesFromCache() {
+        return categoryCache.getAllCategories();
+    }
+
+    public List<Category> getCategoriesByColorFromCache(String color) {
+        return categoryCache.getCategoriesByColor(color);
+    }
+
+    public List<Category> getDefaultCategoriesFromCache() {
+        return categoryCache.getDefaultCategories();
     }
 
     public boolean isDefaultCategory(Category category) {
@@ -267,15 +330,40 @@ public class CategoryService {
         });
     }
 
-    private void showToast(String message) {
-        if (context != null) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public void cleanup() {
         if (realtimeListener != null) {
             categoryRepository.removeCategoriesListener(realtimeListener);
+        }
+        categoryCache.removeListener(this);
+    }
+
+    // === CategoryCache.CategoryCacheListener Implementation ===
+    @Override
+    public void onCategoriesUpdated(List<Category> categories) {
+        if (listener != null) {
+            listener.onCategoriesUpdated();
+        }
+    }
+    
+    @Override
+    public void onCategoryAdded(Category category) {
+        // Có thể thêm logic đặc biệt cho category mới được add
+    }
+    
+    @Override
+    public void onCategoryUpdated(Category category) {
+        // Có thể thêm logic đặc biệt cho category được update
+    }
+    
+    @Override
+    public void onCategoryDeleted(String categoryId) {
+        // Có thể thêm logic đặc biệt cho category được delete
+    }
+
+    private void cancelPendingFirebaseUpdates() {
+        if (pendingFirebaseUpdate != null) {
+            firebaseUpdateHandler.removeCallbacks(pendingFirebaseUpdate);
+            pendingFirebaseUpdate = null;
         }
     }
 }
