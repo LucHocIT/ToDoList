@@ -1,16 +1,20 @@
-package com.example.todolist.util;
+package com.example.todolist.helper.calendar;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.example.todolist.R;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
-import com.example.todolist.repository.BaseRepository;
+import com.example.todolist.util.TaskItemViewHelper;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 public class CalendarTaskHelper {
     public static void loadTasksForDate(Context context, String dateString, 
                                       TaskLoadListener listener) {
@@ -28,9 +32,11 @@ public class CalendarTaskHelper {
             listener.onTasksLoaded(tasksForDate);
         }
     }
+    
     public static void updateTaskDisplay(Context context, LinearLayout container, 
                                        List<Task> tasks) {
         container.removeAllViews();
+        
         if (tasks.isEmpty()) {
             addEmptyTaskMessage(context, container);
         } else {
@@ -61,6 +67,7 @@ public class CalendarTaskHelper {
             }
         }
     }
+    
     private static void addEmptyTaskMessage(Context context, LinearLayout container) {
         TextView noTasksView = new TextView(context);
         noTasksView.setText(context.getString(R.string.no_tasks_today_message));
@@ -69,6 +76,7 @@ public class CalendarTaskHelper {
         noTasksView.setGravity(android.view.Gravity.CENTER);
         noTasksView.setPadding(16, 32, 16, 8);
         container.addView(noTasksView);
+        
         TextView addTaskPrompt = new TextView(context);
         addTaskPrompt.setText(context.getString(R.string.add_task_prompt));
         addTaskPrompt.setTextSize(14);
@@ -77,12 +85,14 @@ public class CalendarTaskHelper {
         addTaskPrompt.setPadding(16, 0, 16, 32);
         container.addView(addTaskPrompt);
     }
+    
     public static String formatSelectedDate(Calendar selectedDate, int selectedDay) {
         return String.format("%02d/%02d/%04d", 
             selectedDay,
             selectedDate.get(Calendar.MONTH) + 1,
             selectedDate.get(Calendar.YEAR));
     }
+    
     public interface TaskLoadListener {
         void onTasksLoaded(List<Task> tasks);
     }

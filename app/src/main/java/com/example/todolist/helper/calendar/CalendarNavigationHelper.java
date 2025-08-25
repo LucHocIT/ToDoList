@@ -1,6 +1,9 @@
-package com.example.todolist.util;
+package com.example.todolist.helper.calendar;
+
 import android.content.Context;
 import android.widget.LinearLayout;
+import com.example.todolist.util.UnifiedNavigationHelper;
+
 public class CalendarNavigationHelper {
     public static void setupBottomNavigation(Context context, 
                                            LinearLayout btnNavMenu,

@@ -1,6 +1,8 @@
-package com.example.todolist.util;
+package com.example.todolist.helper.calendar;
+
 import com.example.todolist.model.Task;
 import java.util.Calendar;
+
 public class CalendarUtils {
     // Support cho Task model (Firebase)
     public static boolean isTaskOnDate(Task task, String targetDate) {
@@ -46,6 +48,7 @@ public class CalendarUtils {
                     }
                 }
             }
+            
             if (targetCalendar.before(taskDate)) {
                 return false;
             }
@@ -87,17 +90,21 @@ public class CalendarUtils {
             return task.getDueDate().equals(targetDate);
         }
     }
+    
     public static boolean isTimeOverdue(String taskTime) {
         try {
             Calendar now = Calendar.getInstance();
             int currentHour = now.get(Calendar.HOUR_OF_DAY);
             int currentMinute = now.get(Calendar.MINUTE);
+            
             String[] timeParts = taskTime.split(":");
             if (timeParts.length == 2) {
                 int taskHour = Integer.parseInt(timeParts[0]);
                 int taskMinute = Integer.parseInt(timeParts[1]);
+                
                 int currentTotalMinutes = currentHour * 60 + currentMinute;
                 int taskTotalMinutes = taskHour * 60 + taskMinute;
+                
                 return taskTotalMinutes < currentTotalMinutes;
             }
         } catch (Exception e) {
@@ -105,10 +112,12 @@ public class CalendarUtils {
         }
         return false;
     }
+    
     public static boolean isSameDay(Calendar cal1, Calendar cal2) {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
+    
     public static int dpToPx(android.content.Context context, int dp) {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round(dp * density);

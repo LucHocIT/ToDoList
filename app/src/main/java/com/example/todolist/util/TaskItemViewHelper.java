@@ -1,4 +1,5 @@
 package com.example.todolist.util;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.example.todolist.R;
 import com.example.todolist.TaskDetailActivity;
+import com.example.todolist.helper.calendar.CalendarUtils;
 import com.example.todolist.model.Task;
 
 public class TaskItemViewHelper {
@@ -130,7 +132,6 @@ public class TaskItemViewHelper {
             taskItem.addView(starIcon);
         }
 
-        // Click listener
         taskItem.setOnClickListener(v -> {
             Intent intent = new Intent(context, TaskDetailActivity.class);
             intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());

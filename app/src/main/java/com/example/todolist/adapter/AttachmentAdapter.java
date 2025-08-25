@@ -54,7 +54,6 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_attachment, parent, false);
             return new FileViewHolder(view);
-            }
         }
     }
     
@@ -291,3 +290,4 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         }
     }
+}

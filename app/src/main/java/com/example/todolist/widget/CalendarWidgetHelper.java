@@ -116,7 +116,7 @@ public class CalendarWidgetHelper {
         // Use the same format as the main app: dd/MM/yyyy
         String targetDate = String.format("%02d/%02d/%04d", day, month + 1, year);
         for (Task task : tasks) {
-            if (com.example.todolist.util.CalendarUtils.isTaskOnDate(task, targetDate)) {
+            if (com.example.todolist.helper.calendar.CalendarUtils.isTaskOnDate(task, targetDate)) {
                 return true;
             }
         }
