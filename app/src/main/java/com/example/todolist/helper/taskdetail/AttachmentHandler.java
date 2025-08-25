@@ -9,10 +9,18 @@ import android.database.Cursor;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,7 +29,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +37,9 @@ import com.example.todolist.adapter.AttachmentAdapter;
 import com.example.todolist.model.Attachment;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.AttachmentService;
+import com.example.todolist.view.WaveformView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,7 +48,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionListener {
-    private static final int PERMISSION_REQUEST_CAMERA = 1001;
     private static final int PERMISSION_REQUEST_AUDIO = 1002;
     private static final int PERMISSION_REQUEST_STORAGE = 1003;
 
@@ -50,12 +59,24 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
     
     // Activity result launchers
     private ActivityResultLauncher<Intent> filePickerLauncher;
-    private ActivityResultLauncher<Intent> imageCaptureForActivityResult;
-    private ActivityResultLauncher<Intent> videoCaptureForActivityResult;
-    private Uri capturedImageUri;
-    private Uri capturedVideoUri;
     private MediaRecorder mediaRecorder;
     private String audioFileName;
+    
+    // Audio recording UI
+    private AlertDialog audioRecordingDialog;
+    private TextView timerText;
+    private WaveformView waveformView;
+    private FloatingActionButton btnStartRecording, btnCancelRecording, btnPauseResume, btnSaveRecording;
+    private View recordingControls, recordingStatus;
+    
+    // Recording state
+    private boolean isRecording = false;
+    private boolean isPaused = false;
+    private long recordingStartTime = 0;
+    private Handler timerHandler;
+    private Runnable timerRunnable;
+    private Handler waveformHandler;
+    private Runnable waveformRunnable;
 
     public interface TaskUpdateCallback {
         void updateTask(Task task);
@@ -86,24 +107,6 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
                     if (fileUri != null) {
                         handleSelectedFile(fileUri);
                     }
-                }
-            }
-        );
-
-        imageCaptureForActivityResult = activity.registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == AppCompatActivity.RESULT_OK && capturedImageUri != null) {
-                    handleSelectedFile(capturedImageUri);
-                }
-            }
-        );
-        
-        videoCaptureForActivityResult = activity.registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == AppCompatActivity.RESULT_OK && capturedVideoUri != null) {
-                    handleSelectedFile(capturedVideoUri);
                 }
             }
         );
@@ -148,15 +151,20 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
             builder.setView(dialogView);
             
             AlertDialog dialog = builder.create();
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setGravity(Gravity.BOTTOM);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
             
             dialogView.findViewById(R.id.btn_choose_image).setOnClickListener(v -> {
                 dialog.dismiss();
-                checkPermissionAndChooseImage();
+                chooseImageFromGallery();
             });
             
             dialogView.findViewById(R.id.btn_choose_video).setOnClickListener(v -> {
                 dialog.dismiss();
-                checkPermissionAndChooseVideo();
+                chooseVideoFromGallery();
             });
             
             dialogView.findViewById(R.id.btn_record_audio).setOnClickListener(v -> {
@@ -175,28 +183,6 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         }
     }
 
-    private void checkPermissionAndChooseImage() {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, 
-                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 
-                PERMISSION_REQUEST_CAMERA);
-        } else {
-            showImageChooserDialog();
-        }
-    }
-    
-    private void checkPermissionAndChooseVideo() {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, 
-                new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 
-                PERMISSION_REQUEST_CAMERA);
-        } else {
-            showVideoChooserDialog();
-        }
-    }
-    
     private void checkPermissionAndRecordAudio() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -208,64 +194,10 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         }
     }
 
-    private void showImageChooserDialog() {
-        String[] options = {"Chụp ảnh", "Chọn từ thư viện"};
-        new AlertDialog.Builder(activity)
-            .setTitle("Chọn ảnh")
-            .setItems(options, (dialog, which) -> {
-                if (which == 0) {
-                    captureImage();
-                } else {
-                    chooseImageFromGallery();
-                }
-            })
-            .show();
-    }
-
-    private void showVideoChooserDialog() {
-        String[] options = {"Quay video", "Chọn từ thư viện"};
-        new AlertDialog.Builder(activity)
-            .setTitle("Chọn video")
-            .setItems(options, (dialog, which) -> {
-                if (which == 0) {
-                    captureVideo();
-                } else {
-                    chooseVideoFromGallery();
-                }
-            })
-            .show();
-    }
-
-    private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(activity.getPackageManager()) != null) {
-            File photoFile = createImageFile();
-            if (photoFile != null) {
-                capturedImageUri = FileProvider.getUriForFile(activity,
-                    "com.example.todolist.fileprovider", photoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedImageUri);
-                imageCaptureForActivityResult.launch(intent);
-            }
-        }
-    }
-
     private void chooseImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         filePickerLauncher.launch(intent);
-    }
-
-    private void captureVideo() {
-        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (intent.resolveActivity(activity.getPackageManager()) != null) {
-            File videoFile = createVideoFile();
-            if (videoFile != null) {
-                capturedVideoUri = FileProvider.getUriForFile(activity,
-                    "com.example.todolist.fileprovider", videoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedVideoUri);
-                videoCaptureForActivityResult.launch(intent);
-            }
-        }
     }
 
     private void chooseVideoFromGallery() {
@@ -275,16 +207,45 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
     }
 
     private void startAudioRecording() {
-        showAudioRecordingDialog();
+        showNewAudioRecordingDialog();
     }
     
-    private void showAudioRecordingDialog() {
+    private void showNewAudioRecordingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Ghi âm")
-            .setMessage("Nhấn 'Bắt đầu' để bắt đầu ghi âm")
-            .setPositiveButton("Bắt đầu", (dialog, which) -> startRecording())
-            .setNegativeButton("Hủy", null)
-            .show();
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_audio_recorder, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        
+        audioRecordingDialog = builder.create();
+        
+        // Đặt dialog ở cuối màn hình
+        if (audioRecordingDialog.getWindow() != null) {
+            audioRecordingDialog.getWindow().setGravity(Gravity.BOTTOM);
+            audioRecordingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            audioRecordingDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        
+        // Initialize UI elements
+        timerText = dialogView.findViewById(R.id.text_timer);
+        waveformView = dialogView.findViewById(R.id.waveform_view);
+        btnStartRecording = dialogView.findViewById(R.id.btn_start_recording);
+        btnCancelRecording = dialogView.findViewById(R.id.btn_cancel_recording);
+        btnPauseResume = dialogView.findViewById(R.id.btn_pause_resume);
+        btnSaveRecording = dialogView.findViewById(R.id.btn_save_recording);
+        recordingControls = dialogView.findViewById(R.id.layout_recording_controls);
+        recordingStatus = dialogView.findViewById(R.id.text_recording_status);
+        
+        // Set click listeners
+        btnStartRecording.setOnClickListener(v -> startRecording());
+        btnCancelRecording.setOnClickListener(v -> cancelRecording());
+        btnPauseResume.setOnClickListener(v -> togglePauseResume());
+        btnSaveRecording.setOnClickListener(v -> stopAndSaveRecording());
+        
+        // Initialize handlers
+        timerHandler = new Handler(Looper.getMainLooper());
+        waveformHandler = new Handler(Looper.getMainLooper());
+        
+        audioRecordingDialog.show();
     }
     
     private void startRecording() {
@@ -300,7 +261,22 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
             mediaRecorder.prepare();
             mediaRecorder.start();
             
-            showRecordingDialog();
+            // Update UI to recording state
+            isRecording = true;
+            isPaused = false;
+            recordingStartTime = System.currentTimeMillis();
+            
+            btnStartRecording.setVisibility(View.GONE);
+            recordingStatus.setVisibility(View.GONE);
+            timerText.setVisibility(View.VISIBLE);
+            waveformView.setVisibility(View.VISIBLE);
+            recordingControls.setVisibility(View.VISIBLE);
+            
+            // Start timer
+            startTimer();
+            
+            // Start waveform animation
+            startWaveformAnimation();
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -308,34 +284,184 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         }
     }
     
-    private void showRecordingDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Đang ghi âm...")
-            .setMessage("Nhấn 'Dừng' để kết thúc ghi âm")
-            .setPositiveButton("Dừng", (dialog, which) -> stopRecording())
-            .setCancelable(false)
-            .show();
+    private void startTimer() {
+        timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isRecording && !isPaused) {
+                    long elapsed = System.currentTimeMillis() - recordingStartTime;
+                    updateTimerDisplay(elapsed);
+                    timerHandler.postDelayed(this, 1000);
+                }
+            }
+        };
+        timerHandler.post(timerRunnable);
+    }
+    
+    private void updateTimerDisplay(long elapsed) {
+        int seconds = (int) (elapsed / 1000) % 60;
+        int minutes = (int) (elapsed / (1000 * 60)) % 60;
+        String timeString = String.format("%02d:%02d", minutes, seconds);
+        timerText.setText(timeString);
+    }
+    
+    private void startWaveformAnimation() {
+        waveformRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isRecording && !isPaused) {
+                    waveformView.simulateRecording();
+                    waveformHandler.postDelayed(this, 100);
+                }
+            }
+        };
+        waveformHandler.post(waveformRunnable);
+    }
+    
+    private void togglePauseResume() {
+        if (isPaused) {
+            // Resume recording
+            isPaused = false;
+            btnPauseResume.setImageResource(android.R.drawable.ic_media_pause);
+            startTimer();
+            startWaveformAnimation();
+        } else {
+            // Pause recording
+            isPaused = true;
+            btnPauseResume.setImageResource(android.R.drawable.ic_media_play);
+            if (timerRunnable != null) {
+                timerHandler.removeCallbacks(timerRunnable);
+            }
+            if (waveformRunnable != null) {
+                waveformHandler.removeCallbacks(waveformRunnable);
+            }
+        }
+    }
+    
+    private void cancelRecording() {
+        stopRecording();
+        
+        // Delete the recorded file
+        if (audioFileName != null) {
+            File file = new File(audioFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        
+        audioRecordingDialog.dismiss();
+        resetRecordingState();
+    }
+    
+    private void stopAndSaveRecording() {
+        stopRecording();
+        audioRecordingDialog.dismiss();
+        showAudioNameDialog();
     }
     
     private void stopRecording() {
+        isRecording = false;
+        
         if (mediaRecorder != null) {
             try {
                 mediaRecorder.stop();
                 mediaRecorder.release();
                 mediaRecorder = null;
-                
-                File audioFile = new File(audioFileName);
-                if (audioFile.exists()) {
-                    Uri audioUri = Uri.fromFile(audioFile);
-                    handleSelectedFile(audioUri);
-                }
-                
-                taskUpdateCallback.showToast("Ghi âm hoàn tất");
-                
             } catch (Exception e) {
-                e.printStackTrace();
-                taskUpdateCallback.showToast("Lỗi khi dừng ghi âm: " + e.getMessage());
+                // Ignore errors during stop
             }
+        }
+        
+        // Stop timers
+        if (timerRunnable != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
+        if (waveformRunnable != null) {
+            waveformHandler.removeCallbacks(waveformRunnable);
+        }
+    }
+    
+    private void showAudioNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_audio_name, null);
+        builder.setView(dialogView);
+        
+        AlertDialog nameDialog = builder.create();
+        
+        TextInputEditText editAudioName = dialogView.findViewById(R.id.edit_audio_name);
+        TextView textCharCount = dialogView.findViewById(R.id.text_char_count);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel_name);
+        Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_name);
+        
+        // Set default name with timestamp
+        String defaultName = "Ghi âm " + new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
+        editAudioName.setText(defaultName);
+        editAudioName.setSelection(editAudioName.getText().length());
+        
+        // Character counter
+        editAudioName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                textCharCount.setText(s.length() + "/50");
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        
+        textCharCount.setText(defaultName.length() + "/50");
+        
+        btnCancel.setOnClickListener(v -> {
+            nameDialog.dismiss();
+            // Delete the recorded file
+            if (audioFileName != null) {
+                File file = new File(audioFileName);
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+            resetRecordingState();
+        });
+        
+        btnConfirm.setOnClickListener(v -> {
+            String audioName = editAudioName.getText().toString().trim();
+            if (audioName.isEmpty()) {
+                taskUpdateCallback.showToast("Vui lòng nhập tên cho bản ghi âm");
+                return;
+            }
+            
+            nameDialog.dismiss();
+            uploadAudioFile(audioName);
+        });
+        
+        nameDialog.show();
+    }
+    
+    private void uploadAudioFile(String fileName) {
+        if (audioFileName != null) {
+            File audioFile = new File(audioFileName);
+            if (audioFile.exists()) {
+                Uri fileUri = Uri.fromFile(audioFile);
+                String finalFileName = fileName + ".3gp";
+                long fileSize = audioFile.length();
+                
+                handleSelectedFile(fileUri, finalFileName, "audio/3gpp", fileSize);
+            }
+        }
+        resetRecordingState();
+    }
+    
+    private void resetRecordingState() {
+        isRecording = false;
+        isPaused = false;
+        recordingStartTime = 0;
+        audioFileName = null;
+        
+        if (waveformView != null) {
+            waveformView.clear();
         }
     }
 
@@ -350,30 +476,6 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         }
     }
 
-    private File createImageFile() {
-        try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            return File.createTempFile(imageFileName, ".jpg", storageDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    private File createVideoFile() {
-        try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String videoFileName = "MP4_" + timeStamp + "_";
-            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-            return File.createTempFile(videoFileName, ".mp4", storageDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
     private File createAudioFile() {
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -387,10 +489,14 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
     }
 
     private void handleSelectedFile(Uri fileUri) {
+        handleSelectedFile(fileUri, null, null, 0);
+    }
+    
+    private void handleSelectedFile(Uri fileUri, String customFileName, String customFileType, long customFileSize) {
         try {
-            String fileName = getFileName(fileUri);
-            String fileType = activity.getContentResolver().getType(fileUri);
-            long fileSize = getFileSize(fileUri);
+            String fileName = customFileName != null ? customFileName : getFileName(fileUri);
+            String fileType = customFileType != null ? customFileType : activity.getContentResolver().getType(fileUri);
+            long fileSize = customFileSize > 0 ? customFileSize : getFileSize(fileUri);
             
             Task currentTask = taskUpdateCallback.getCurrentTask();
             if (currentTask != null && !currentTask.isCompleted()) {
@@ -487,14 +593,6 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
 
     public void handlePermissionResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_REQUEST_CAMERA:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    showImageChooserDialog();
-                } else {
-                    taskUpdateCallback.showToast("Cần quyền truy cập camera để chụp ảnh/quay video");
-                }
-                break;
-                
             case PERMISSION_REQUEST_AUDIO:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startAudioRecording();
@@ -568,5 +666,16 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
                 // Ignore errors during cleanup
             }
         }
+        
+        // Cleanup handlers
+        if (timerHandler != null && timerRunnable != null) {
+            timerHandler.removeCallbacks(timerRunnable);
+        }
+        if (waveformHandler != null && waveformRunnable != null) {
+            waveformHandler.removeCallbacks(waveformRunnable);
+        }
+        
+        // Reset recording state
+        resetRecordingState();
     }
 }

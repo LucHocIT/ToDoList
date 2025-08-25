@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đặt tên cho bản ghi âm của bạn"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:hint="">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_audio_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLength="50"
+            android:singleLine="true"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/text_char_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0/50"
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:gravity="end"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btn_cancel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NHÃY"
+            android:textColor="#2196F3"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginEnd="16dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <Button
+            android:id="@+id/btn_confirm_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XONG"
+            android:textColor="#2196F3"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+    </LinearLayout>
+
+</LinearLayout>

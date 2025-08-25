@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <!-- Timer Display -->
+    <TextView
+        android:id="@+id/text_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone"/>
+
+    <!-- Waveform Visualization -->
+    <com.example.todolist.view.WaveformView
+        android:id="@+id/waveform_view"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
+        android:background="#F5F5F5"
+        android:visibility="gone"/>
+
+    <!-- Recording Status Text -->
+    <TextView
+        android:id="@+id/text_recording_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nhấn để bắt đầu ghi"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- Control Buttons Container -->
+    <LinearLayout
+        android:id="@+id/layout_recording_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone">
+
+        <!-- Cancel Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_cancel_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="@android:color/white"
+            app:backgroundTint="#F44336"
+            app:fabSize="normal"/>
+
+        <!-- Pause/Resume Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_pause_resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:src="@android:drawable/ic_media_pause"
+            app:tint="@android:color/white"
+            app:backgroundTint="#2196F3"
+            app:fabSize="normal"/>
+
+        <!-- Save Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_save_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_save"
+            app:tint="@android:color/white"
+            app:backgroundTint="#4CAF50"
+            app:fabSize="normal"/>
+
+    </LinearLayout>
+
+    <!-- Start Recording Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_start_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_volume_up"
+        app:tint="@android:color/white"
+        app:backgroundTint="#F44336"
+        app:fabSize="normal"/>
+
+</LinearLayout>

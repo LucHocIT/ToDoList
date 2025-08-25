@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <!-- Header with back button -->
         <LinearLayout
@@ -17,8 +17,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:id="@+id/btn_back_detail"
@@ -51,15 +51,15 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
                 <Spinner
                     android:id="@+id/spinner_category"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_margin="8dp"
+                    android:layout_height="44dp"
+                    android:layout_margin="6dp"
                     android:background="@android:color/transparent"
                     android:dropDownWidth="match_parent"/>
 
@@ -69,7 +69,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
@@ -80,7 +80,7 @@
                     android:text="Chúc ngủ ngon, đã đến giờ đi ngủ"
                     android:textSize="18sp"
                     android:textColor="#333333"
-                    android:padding="16dp"
+                    android:padding="12dp"
                     android:background="@android:color/transparent"
                     android:hint="@string/task_title_hint"
                     android:inputType="textMultiLine"
@@ -97,8 +97,8 @@
                 android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -139,8 +139,8 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -211,8 +211,8 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -250,7 +250,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
@@ -258,7 +258,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -306,7 +306,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
@@ -314,7 +314,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -365,11 +365,13 @@
 
                     </LinearLayout>
 
-                    <!-- RecyclerView for attachments -->
+                    <!-- RecyclerView for attachments với flexible height -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_attachments"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
                         android:visibility="gone"/>
 
                     <!-- Empty state for attachments -->
@@ -381,7 +383,7 @@
                         android:textSize="14sp"
                         android:textColor="#999999"
                         android:gravity="center"
-                        android:padding="16dp"/>
+                        android:padding="12dp"/>
 
                 </LinearLayout>
 
@@ -394,8 +396,8 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="@android:color/white"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+                android:padding="12dp"
+                android:layout_marginBottom="8dp">
 
                 <ImageView
                     android:layout_width="24dp"
