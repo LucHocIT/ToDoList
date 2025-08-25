@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/menu_mark_as_done"
+        android:title="@string/menu_mark_as_done"
+        android:icon="@drawable/ic_check" />
+    
+    <item
+        android:id="@+id/menu_start_focus"
+        android:title="@string/menu_start_focus"
+        android:icon="@drawable/ic_play" />
+    
+    <item
+        android:id="@+id/menu_share"
+        android:title="@string/menu_share"
+        android:icon="@drawable/ic_share" />
+    
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/menu_delete"
+        android:icon="@drawable/ic_delete" />
+    
+</menu>

@@ -297,5 +297,25 @@
     <string name="delete_all_title">Xóa tất cả</string>
     <string name="confirm_delete_all_completed_tasks">Bạn có chắc chắn muốn xóa tất cả nhiệm vụ đã hoàn thành?</string>
 
+    <!-- Focus Activity strings -->
+    <string name="focus_session_title">Tập trung</string>
+    <string name="focus_message_active">Đang tập trung</string>
+    <string name="focus_message_paused">Đã tạm dừng</string>
+    <string name="focus_message_completed">Thời gian tập trung đã kết thúc!</string>
+    <string name="btn_pause">TẠM NGỪNG</string>
+    <string name="btn_continue">TIẾP TỤC</string>
+    <string name="btn_stop">DỪNG</string>
+    <string name="btn_complete">Hoàn thành</string>
+    
+    <!-- Menu strings -->
+    <string name="menu_mark_as_done">Đánh dấu là xong</string>
+    <string name="menu_start_focus">Bắt đầu tập trung</string>
+    <string name="menu_share">Chia sẻ</string>
+    <string name="menu_delete">Xoá</string>
+    <string name="task_marked_completed">Nhiệm vụ đã được đánh dấu hoàn thành</string>
+    <string name="task_deleted">Nhiệm vụ đã được xóa</string>
+    <string name="confirm_delete_task">Bạn có chắc chắn muốn xóa nhiệm vụ này?</string>
+    <string name="share_task_title">Chia sẻ nhiệm vụ</string>
+
    
 </resources>

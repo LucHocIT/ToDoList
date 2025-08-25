@@ -270,4 +270,24 @@
     <string name="delete_all_title">Delete All</string>
     <string name="confirm_delete_all_completed_tasks">Are you sure you want to delete all completed tasks?</string>
 
+    <!-- Focus Activity strings -->
+    <string name="focus_session_title">Focus</string>
+    <string name="focus_message_active">Stay focused</string>
+    <string name="focus_message_paused">Paused</string>
+    <string name="focus_message_completed">Focus session completed!</string>
+    <string name="btn_pause">PAUSE</string>
+    <string name="btn_continue">CONTINUE</string>
+    <string name="btn_stop">STOP</string>
+    <string name="btn_complete">Complete</string>
+    
+    <!-- Menu strings -->
+    <string name="menu_mark_as_done">Mark as done</string>
+    <string name="menu_start_focus">Start focus</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_delete">Delete</string>
+    <string name="task_marked_completed">Task marked as completed</string>
+    <string name="task_deleted">Task deleted</string>
+    <string name="confirm_delete_task">Are you sure you want to delete this task?</string>
+    <string name="share_task_title">Share task</string>
+
 </resources>

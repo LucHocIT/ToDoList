@@ -268,6 +268,12 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
     public Task getCurrentTask() {
         return currentTask;
     }
+    
+    public void deleteTask(String taskId) {
+        if (currentTask != null && currentTask.getId().equals(taskId)) {
+            taskService.deleteTask(currentTask);
+        }
+    }
 
     @Override
     public void onTasksUpdated() {

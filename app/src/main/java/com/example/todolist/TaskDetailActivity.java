@@ -1,14 +1,18 @@
 package com.example.todolist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +40,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private LinearLayout layoutDatePicker;
     private LinearLayout btnAddAttachment;
     private ImageView btnBack;
+    private ImageView btnMenuOptions;
     private RecyclerView recyclerAttachments;
     private TextView textNoAttachments; 
     
@@ -69,6 +74,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
         spinnerCategory = findViewById(R.id.spinner_category);
         layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
+        btnMenuOptions = findViewById(R.id.btn_menu_options);
         btnAddAttachment = findViewById(R.id.btn_add_attachment);
         recyclerAttachments = findViewById(R.id.recycler_attachments);
         textNoAttachments = findViewById(R.id.text_no_attachments);
@@ -98,6 +104,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
             taskDataManager.updateTaskTitle();
             finish();
         });
+        
+        btnMenuOptions.setOnClickListener(v -> showOptionsMenu(v));
         
         layoutDatePicker.setOnClickListener(v -> taskDataManager.showDateTimePicker());
         
@@ -132,6 +140,94 @@ public class TaskDetailActivity extends AppCompatActivity implements
     @Override
     public void finish() {
         super.finish();
+    }
+    
+    private void showOptionsMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.task_detail_menu, popup.getMenu());
+        
+        popup.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.menu_mark_as_done) {
+                markTaskAsCompleted();
+                return true;
+            } else if (itemId == R.id.menu_start_focus) {
+                startFocusSession();
+                return true;
+            } else if (itemId == R.id.menu_share) {
+                shareTask();
+                return true;
+            } else if (itemId == R.id.menu_delete) {
+                showDeleteConfirmation();
+                return true;
+            }
+            return false;
+        });
+        
+        popup.show();
+    }
+    
+    private void markTaskAsCompleted() {
+        if (currentTask != null) {
+            currentTask.setCompleted(true);
+            taskDataManager.updateTask(currentTask);
+            showToast(getString(R.string.task_marked_completed));
+            finish();
+        }
+    }
+    
+    private void startFocusSession() {
+        if (currentTask != null) {
+            TimeSelectionDialog dialog = new TimeSelectionDialog(this, new TimeSelectionDialog.OnTimeSelectedListener() {
+                @Override
+                public void onTimeSelected(int minutes) {
+                    Intent intent = new Intent(TaskDetailActivity.this, FocusActivity.class);
+                    intent.putExtra(FocusActivity.EXTRA_TASK_TITLE, currentTask.getTitle());
+                    intent.putExtra(FocusActivity.EXTRA_FOCUS_DURATION, minutes * 60 * 1000L);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onCancel() {
+                    // User cancelled, do nothing
+                }
+            });
+            dialog.show();
+        }
+    }
+    
+    private void shareTask() {
+        if (currentTask != null) {
+            String shareText = "Nhiệm vụ: " + currentTask.getTitle();
+            if (currentTask.getDescription() != null && !currentTask.getDescription().isEmpty()) {
+                shareText += "\nMô tả: " + currentTask.getDescription();
+            }
+            if (currentTask.getDueDate() != null) {
+                shareText += "\nHạn: " + currentTask.getDueDate();
+            }
+            
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_task_title)));
+        }
+    }
+    
+    private void showDeleteConfirmation() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.menu_delete))
+                .setMessage(getString(R.string.confirm_delete_task))
+                .setPositiveButton(getString(R.string.delete_button_text), (dialog, which) -> deleteTask())
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
+    }
+    
+    private void deleteTask() {
+        if (currentTask != null) {
+            taskDataManager.deleteTask(currentTask.getId());
+            showToast(getString(R.string.task_deleted));
+            finish();
+        }
     }
     
     @Override
