@@ -1,9 +1,12 @@
 package com.example.todolist.util;
+
 import android.app.AlertDialog;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.example.todolist.R;
 import com.example.todolist.model.Task;
 
 public class TaskActionsDialog {
@@ -11,66 +14,66 @@ public class TaskActionsDialog {
         void onStarAction(Task task);
         void onDeleteAction(Task task);
     }
+    
     private Context context;
     private Task task;
     private OnActionSelectedListener listener;
     private AlertDialog dialog;
+    
     public TaskActionsDialog(Context context, Task task, OnActionSelectedListener listener) {
         this.context = context;
         this.task = task;
         this.listener = listener;
         createDialog();
     }
+    
     private void createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        // Create simple LinearLayout
-        LinearLayout view = new LinearLayout(context);
-        view.setOrientation(LinearLayout.VERTICAL);
-        view.setPadding(20, 20, 20, 20);
-        // Setup views
-        setupViews(view);
-        builder.setView(view);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_task_actions, null);
+        
+        setupViews(dialogView);
+        
+        builder.setView(dialogView);
         dialog = builder.create();
-    }
-    private void setupViews(View view) {
-        TextView titleText = new TextView(context);
-        titleText.setText(task.getTitle());
-        titleText.setTextSize(18);
-        titleText.setPadding(20, 20, 20, 10);
-        TextView starText = new TextView(context);
-        TextView deleteText = new TextView(context);
 
-        if (task.isImportant()) {
-            starText.setText("â­ Bật đánh dấu quan trọng");
-        } else {
-            starText.setText("â˜† Đánh dấu quan trọng");
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
-        starText.setPadding(20, 10, 20, 10);
-        starText.setTextSize(16);
-        deleteText.setText("đŸ—‘ï¸ Xóa");
-        deleteText.setPadding(20, 10, 20, 20);
-        deleteText.setTextSize(16);
-        starText.setOnClickListener(v -> {
+    }
+    
+    private void setupViews(View dialogView) {
+        LinearLayout starLayout = dialogView.findViewById(R.id.layout_action_star);
+        LinearLayout deleteLayout = dialogView.findViewById(R.id.layout_action_delete);
+        TextView starText = dialogView.findViewById(R.id.tv_star_text);
+        TextView deleteText = dialogView.findViewById(R.id.tv_cl_text);
+        if (task.isImportant()) {
+            starText.setText("Bỏ đánh dấu quan trọng");
+        } else {
+            starText.setText("Đánh dấu quan trọng");
+        }
+        
+        starLayout.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onStarAction(task);
             }
             dismiss();
         });
-        deleteText.setOnClickListener(v -> {
+        
+        deleteLayout.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteAction(task);
             }
             dismiss();
         });
-        ((LinearLayout) view).addView(titleText);
-        ((LinearLayout) view).addView(starText);  
-        ((LinearLayout) view).addView(deleteText);
     }
+    
     public void show() {
         if (dialog != null) {
             dialog.show();
         }
     }
+    
     public void dismiss() {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

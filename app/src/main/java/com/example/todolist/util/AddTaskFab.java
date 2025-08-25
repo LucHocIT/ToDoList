@@ -21,7 +21,6 @@ public class AddTaskFab extends FloatingActionButton {
         init();
     }
     private void init() {
-        // Thiáº¿t láº­p listener máº·c Ä‘á»‹nh
         setOnClickListener(v -> {
             if (addTaskHandler != null) {
                 addTaskHandler.showAddTaskDialog(prefilledDate, prefilledCategory);

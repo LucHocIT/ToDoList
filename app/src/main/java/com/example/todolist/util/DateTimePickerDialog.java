@@ -82,7 +82,11 @@ public class DateTimePickerDialog {
             }
         });
         // Repeat picker
-        layoutRepeatPicker.setOnClickListener(v -> showRepeatPicker());
+        layoutRepeatPicker.setOnClickListener(v -> {
+            if (selectedDate != null && !selectedDate.isEmpty()) {
+                showRepeatPicker();
+            }
+        });
         // Action buttons
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnSave.setOnClickListener(v -> {
@@ -114,10 +118,6 @@ public class DateTimePickerDialog {
         boolean hasTime = selectedTime != null && !selectedTime.equals(context.getString(R.string.none));
         layoutReminderPicker.setEnabled(hasTime);
         layoutReminderPicker.setAlpha(hasTime ? 1.0f : 0.5f);
-        if (hasTime && selectedReminder.equals(context.getString(R.string.none))) {
-            selectedReminder = context.getString(R.string.reminder_5_min);
-            textSelectedReminder.setText(selectedReminder);
-        }
         if (!hasTime) {
             selectedReminder = context.getString(R.string.none);
             textSelectedReminder.setText(selectedReminder);
@@ -127,10 +127,6 @@ public class DateTimePickerDialog {
         boolean hasDate = selectedDate != null && !selectedDate.isEmpty();
         layoutRepeatPicker.setEnabled(hasDate);
         layoutRepeatPicker.setAlpha(hasDate ? 1.0f : 0.5f);
-        if (hasDate && selectedRepeat.equals(context.getString(R.string.none))) {
-            selectedRepeat = context.getString(R.string.repeat_daily);
-            textSelectedRepeat.setText(selectedRepeat);
-        }
         if (!hasDate) {
             selectedRepeat = context.getString(R.string.none);
             textSelectedRepeat.setText(selectedRepeat);
@@ -171,7 +167,7 @@ public class DateTimePickerDialog {
         builder.show();
     }
     public void setInitialValues(String date, String time, String reminder, String repeat) {
-        if (date != null && !date.isEmpty()) {
+        if (date != null && !date.isEmpty() && !date.equals("Không")) {
             selectedDate = date;
             try {
                 Calendar calendar = Calendar.getInstance();
@@ -181,18 +177,22 @@ public class DateTimePickerDialog {
                 e.printStackTrace();
             }
         }
-        if (time != null && !time.isEmpty()) {
+        
+        if (time != null && !time.isEmpty() && !time.equals("Không")) {
             selectedTime = time;
             textSelectedTime.setText(time);
         }
-        if (reminder != null && !reminder.isEmpty()) {
+        
+        if (reminder != null && !reminder.isEmpty() && !reminder.equals("Không")) {
             selectedReminder = reminder;
             textSelectedReminder.setText(reminder);
         }
-        if (repeat != null && !repeat.isEmpty()) {
+        
+        if (repeat != null && !repeat.isEmpty() && !repeat.equals("Không")) {
             selectedRepeat = repeat;
             textSelectedRepeat.setText(repeat);
         }
+        
         updateReminderState();
         updateRepeatState();
     }

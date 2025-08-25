@@ -88,6 +88,7 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
             textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
+            updateCompletionStatus();        
             android.util.Log.d("TaskDetail", "Displaying task: " + currentTask.getTitle() + ", categoryId: " + currentTask.getCategoryId());
             if (categoryAdapter != null) {
                 setSelectedCategoryInSpinner(currentTask.getCategoryId());
@@ -200,12 +201,43 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
                 public void onDateTimeSelected(String date, String time, String reminder, String repeat) {
                     currentTask.setDueDate(date);
                     currentTask.setDueTime(time);
+                    
+                    // Cập nhật reminder và repeat
+                    if (reminder != null && !reminder.equals("Không")) {
+                        currentTask.setReminder(reminder);
+                        currentTask.setHasReminder(true);
+                    } else {
+                        currentTask.setReminder("Không");
+                        currentTask.setHasReminder(false);
+                    }
+                    
+                    if (repeat != null && !repeat.equals("Không")) {
+                        currentTask.setRepeat(repeat);
+                        currentTask.setIsRepeating(true);
+                    } else {
+                        currentTask.setRepeat("Không");
+                        currentTask.setIsRepeating(false);
+                    }
+                    
+                    // Cập nhật UI
                     textDueDate.setText(formatDateDisplay(date));
                     textTime.setText(time != null ? time : "Không");
+                    textReminderValue.setText(reminder != null ? reminder : "Không");
+                    textRepeatValue.setText(repeat != null ? repeat : "Không");
+                    
                     taskService.updateTask(currentTask);
                     runOnUiThread(() -> setResult(RESULT_OK));
                 }
             });
+            
+            // Set initial values if available
+            dialog.setInitialValues(
+                currentTask.getDueDate(), 
+                currentTask.getDueTime(), 
+                currentTask.getReminder(), 
+                currentTask.getRepeat()
+            );
+            
             dialog.show();
         }
     }
@@ -220,6 +252,9 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         }
     }
     private void setPriorityDisplay(String priority) {
+        // Cập nhật label luôn hiển thị "Độ ưu tiên"
+        textPriorityLabel.setText("Độ ưu tiên");
+        
         if (priority != null) {
             switch (priority.toLowerCase()) {
                 case "cao":
@@ -242,6 +277,38 @@ public class TaskDetailActivity extends AppCompatActivity implements TaskService
         } else {
             textPriorityValue.setText("Không");
             textPriorityValue.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+    }
+    
+    private void updateCompletionStatus() {
+        if (currentTask != null) {
+            if (currentTask.isCompleted()) {
+                // Làm mờ giao diện khi task đã hoàn thành
+                editDetailTitle.setEnabled(false);
+                editDetailTitle.setAlpha(0.6f);
+                layoutDatePicker.setEnabled(false);
+                layoutDatePicker.setAlpha(0.6f);
+                spinnerCategory.setEnabled(false);
+                spinnerCategory.setAlpha(0.6f);
+                
+                // Hiển thị thông tin hoàn thành
+                if (textPriorityLabel != null) {
+                    textPriorityLabel.setText("Trạng thái");
+                    textPriorityValue.setText("Đã hoàn thành");
+                    textPriorityValue.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                }
+            } else {
+                // Khôi phục giao diện bình thường
+                editDetailTitle.setEnabled(true);
+                editDetailTitle.setAlpha(1.0f);
+                layoutDatePicker.setEnabled(true);
+                layoutDatePicker.setAlpha(1.0f);
+                spinnerCategory.setEnabled(true);
+                spinnerCategory.setAlpha(1.0f);
+                
+                // Hiển thị độ ưu tiên bình thường
+                setPriorityDisplay(currentTask.getPriority());
+            }
         }
     }
     private String formatDateDisplay(String dateStr) {

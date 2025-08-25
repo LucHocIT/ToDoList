@@ -3,8 +3,6 @@ package com.example.todolist.service;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.LinearLayout;
-import com.example.todolist.cache.CategoryCache;
 import com.example.todolist.model.Category;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.CategoryRepository;
@@ -13,11 +11,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryService implements CategoryCache.CategoryCacheListener {    
+public class CategoryService {
+    
     public interface CategoryUpdateListener {
         void onCategoriesUpdated();
         void onError(String error);
     }
+
     public interface CategoryOperationCallback {
         void onSuccess();
         void onError(String error);
@@ -27,8 +27,7 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     private CategoryRepository categoryRepository;
     private CategoryUpdateListener listener;
     private ValueEventListener realtimeListener;
-    private CategoryManager categoryManager;    
-    private CategoryCache categoryCache;       
+    private CategoryManager categoryManager;
     private Handler firebaseUpdateHandler;
     private List<Category> allCategories;
     private Runnable pendingFirebaseUpdate;
@@ -40,8 +39,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
         this.context = context;
         this.listener = listener;
         this.categoryRepository = new CategoryRepository();
-        this.categoryCache = CategoryCache.getInstance();
-        categoryCache.addListener(this);
         this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
         // Initialize sub-services
@@ -50,8 +47,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     }
 
     public void loadCategories() {
-        categoryCache.setLoading(true);
- 
         categoryManager.removeDuplicateCategories(new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -84,9 +79,8 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
 
             @Override
             public void onError(String error) {
-                categoryCache.setLoading(false);
                 if (listener != null) {
-                    listener.onError("Lỗi tải categories: " + error);
+                    listener.onError("Loi tai categories: " + error);
                 }
             }
         });
@@ -105,7 +99,7 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
             }
             
             allCategories = categories;
-            categoryCache.syncFromFirebase(categories);
+            notifyListener();
             pendingFirebaseUpdate = null;
         };
         
@@ -128,22 +122,18 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
         }
         
         lastLocalUpdateTime = System.currentTimeMillis();
-        categoryCache.addCategoryOptimistic(category);
         
         categoryManager.addCategory(category, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String categoryId) {
                 if (!category.getId().equals(categoryId)) {
-                    categoryCache.deleteCategoryOptimistic(category.getId());
                     category.setId(categoryId);
-                    categoryCache.addCategoryOptimistic(category);
                 }
                 if (callback != null) callback.onSuccess();
             }
 
             @Override
             public void onError(String error) {
-                categoryCache.deleteCategoryOptimistic(category.getId());
                 if (callback != null) callback.onError(error);
             }
         });
@@ -155,7 +145,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     
     public void updateCategory(Category category, CategoryOperationCallback callback) {
         lastLocalUpdateTime = System.currentTimeMillis();
-        categoryCache.updateCategoryOptimistic(category);
         
         categoryManager.updateCategory(category, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
@@ -176,7 +165,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     
     public void deleteCategory(Category category, CategoryOperationCallback callback) {
         lastLocalUpdateTime = System.currentTimeMillis();
-        categoryCache.deleteCategoryOptimistic(category.getId());
         
         categoryManager.deleteCategory(category, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
@@ -186,8 +174,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
 
             @Override
             public void onError(String error) {
-                // Rollback optimistic update
-                categoryCache.addCategoryOptimistic(category);
                 if (callback != null) callback.onError(error);
             }
         });
@@ -216,7 +202,13 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     }
 
     public Category getCategoryByIdFromCache(String categoryId) {
-        return categoryCache.getCategory(categoryId);
+        // Return from allCategories list instead of cache
+        for (Category category : allCategories) {
+            if (category.getId().equals(categoryId)) {
+                return category;
+            }
+        }
+        return null;
     }
 
     public void searchCategories(String query, BaseRepository.RepositoryCallback<List<Category>> callback) {
@@ -224,7 +216,13 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
     }
 
     public List<Category> searchCategoriesFromCache(String query) {
-        return categoryCache.searchCategories(query);
+        List<Category> result = new ArrayList<>();
+        for (Category category : allCategories) {
+            if (category.getName().toLowerCase().contains(query.toLowerCase())) {
+                result.add(category);
+            }
+        }
+        return result;
     }
 
     public void validateCategoryName(String name, String currentCategoryId, BaseRepository.RepositoryCallback<Boolean> callback) {
@@ -233,19 +231,31 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
 
     // === UTILITIES ===
     public List<Category> getCategories() {
-        return categoryCache.getAllCategories();
+        return new ArrayList<>(allCategories);
     }
 
     public List<Category> getAllCategoriesFromCache() {
-        return categoryCache.getAllCategories();
+        return new ArrayList<>(allCategories);
     }
 
     public List<Category> getCategoriesByColorFromCache(String color) {
-        return categoryCache.getCategoriesByColor(color);
+        List<Category> result = new ArrayList<>();
+        for (Category category : allCategories) {
+            if (category.getColor().equals(color)) {
+                result.add(category);
+            }
+        }
+        return result;
     }
 
     public List<Category> getDefaultCategoriesFromCache() {
-        return categoryCache.getDefaultCategories();
+        List<Category> result = new ArrayList<>();
+        for (Category category : allCategories) {
+            if (category.isDefault()) {
+                result.add(category);
+            }
+        }
+        return result;
     }
 
     public boolean isDefaultCategory(Category category) {
@@ -324,7 +334,7 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
             @Override
             public void onError(String error) {
                 if (listener != null) {
-                    listener.onError("Lỗi reset data: " + error);
+                    listener.onError("Loi reset data: " + error);
                 }
             }
         });
@@ -334,30 +344,6 @@ public class CategoryService implements CategoryCache.CategoryCacheListener {
         if (realtimeListener != null) {
             categoryRepository.removeCategoriesListener(realtimeListener);
         }
-        categoryCache.removeListener(this);
-    }
-
-    // === CategoryCache.CategoryCacheListener Implementation ===
-    @Override
-    public void onCategoriesUpdated(List<Category> categories) {
-        if (listener != null) {
-            listener.onCategoriesUpdated();
-        }
-    }
-    
-    @Override
-    public void onCategoryAdded(Category category) {
-        // Có thể thêm logic đặc biệt cho category mới được add
-    }
-    
-    @Override
-    public void onCategoryUpdated(Category category) {
-        // Có thể thêm logic đặc biệt cho category được update
-    }
-    
-    @Override
-    public void onCategoryDeleted(String categoryId) {
-        // Có thể thêm logic đặc biệt cho category được delete
     }
 
     private void cancelPendingFirebaseUpdates() {

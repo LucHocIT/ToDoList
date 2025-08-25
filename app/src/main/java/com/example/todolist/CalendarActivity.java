@@ -60,6 +60,7 @@ public class CalendarActivity extends AppCompatActivity
         initCalendar();
         setupBottomNavigation();
         loadCalendar();
+        loadTasksFromCache(); 
         handleDrawerIntent();
     }
     private void initViews() {
@@ -110,6 +111,9 @@ public class CalendarActivity extends AppCompatActivity
         monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
         yearFormat = new SimpleDateFormat("yyyy", Locale.getDefault());
         selectedDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+        selectedDate.set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR));
+        selectedDate.set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH)); 
+        selectedDate.set(Calendar.DAY_OF_MONTH, selectedDay);
     }
     private void setupBottomNavigation() {
         LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);

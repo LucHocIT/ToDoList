@@ -221,11 +221,15 @@ public class Task implements Serializable {
         this.category = categoryId;
         updateTimestamp();
     }
-    public String getReminder() { return reminderType; }
+    public String getReminder() { 
+        return reminderType != null ? reminderType : "Không"; 
+    }
     public void setReminder(String reminder) { 
         this.reminderType = reminder;
+        this.hasReminder = reminder != null && !reminder.equals("Không");
         updateTimestamp();
     }
+    
     public String getPriority() { 
         return isImportant ? "Cao" : "Thấp"; 
     }
@@ -233,9 +237,13 @@ public class Task implements Serializable {
         this.isImportant = "Cao".equals(priority);
         updateTimestamp();
     }
-    public String getRepeat() { return repeatType; }
+    
+    public String getRepeat() { 
+        return repeatType != null ? repeatType : "Không"; 
+    }
     public void setRepeat(String repeat) { 
         this.repeatType = repeat;
+        this.isRepeating = repeat != null && !repeat.equals("Không");
         updateTimestamp();
     }
     
