@@ -83,14 +83,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             imgCategoryIcon = itemView.findViewById(R.id.img_category_icon);
             btnCategoryMenu = itemView.findViewById(R.id.btn_category_menu);
             imgDragHandle = itemView.findViewById(R.id.img_drag_handle);
-            iconBackground = (FrameLayout) imgCategoryIcon.getParent();
+            iconBackground = itemView.findViewById(R.id.category_color_indicator);
         }
 
         public void bind(Category category) {
             tvCategoryName.setText(category.getName());
             updateTaskCount(category);
-            
-            // Set background color
             try {
                 iconBackground.getBackground().setTint(Color.parseColor(category.getColor()));
             } catch (Exception e) {

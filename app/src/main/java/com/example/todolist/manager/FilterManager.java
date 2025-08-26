@@ -88,7 +88,6 @@ public class FilterManager {
             @Override
             public void onError(String error) {
                 Toast.makeText(context, "Lỗi tải categories: " + error, Toast.LENGTH_SHORT).show();
-                // Create only "All Tasks" button in case of error
                 createDefaultButtons();
             }
         });
@@ -96,15 +95,9 @@ public class FilterManager {
     
     private void createFilterButtons() {
         if (layoutCategoriesContainer == null) return;
-        
-        // Clear existing buttons
         layoutCategoriesContainer.removeAllViews();
         categoryButtons.clear();
-        
-        // Create "All Tasks" button
         createAllTasksButton();
-        
-        // Create buttons for each category from Firebase
         for (Category category : categories) {
             createCategoryButton(category);
         }
@@ -126,10 +119,11 @@ public class FilterManager {
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                120 
         );
-        params.setMargins(0, 0, 12, 0); // Right margin for horizontal layout
+        params.setMargins(0, 0, 20, 0); 
         btnAll.setLayoutParams(params);
+        btnAll.setPadding(24, 8, 24, 8);
         
         // Apply default selected style
         btnAll.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.primary_blue));
@@ -164,10 +158,11 @@ public class FilterManager {
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                120  
         );
-        params.setMargins(0, 0, 12, 0);
+        params.setMargins(0, 0, 20, 0); 
         categoryBtn.setLayoutParams(params);
+        categoryBtn.setPadding(24, 8, 24, 8);
         
         categoryBtn.setOnClickListener(v -> {
             // Filter by category ID instead of name
@@ -214,7 +209,7 @@ public class FilterManager {
         }
 
         sortTasks();
-        // Update adapters
+
         updateAdapters();
         // Check empty state
         updateEmptyState(filter);

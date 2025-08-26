@@ -185,6 +185,9 @@ public class CalendarActivity extends AppCompatActivity
     }
     
     private void loadTasksFromCache() {
+        // Load subtasks for all tasks
+        taskService.loadSubTasksForAllTasks();
+        
         String dateString = CalendarTaskHelper.formatSelectedDate(selectedDate, selectedDay);
         tasksForSelectedDate = taskCache.getTasksForDate(dateString);
         updateTaskDisplay();

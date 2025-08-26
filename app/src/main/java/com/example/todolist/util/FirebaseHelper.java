@@ -51,6 +51,17 @@ public class FirebaseHelper {
         categoriesRef.keepSynced(true); // Keep synced offline
         return categoriesRef;
     }
+    
+    /**
+     * Get reference to user's subtasks
+     * @return DatabaseReference to subtasks
+     */
+    public DatabaseReference getSubTasksReference() {
+        String userId = getCurrentUserId();
+        DatabaseReference subTasksRef = database.getReference("users").child(userId).child("subtasks");
+        subTasksRef.keepSynced(true); // Keep synced offline
+        return subTasksRef;
+    }
     /**
      * Get reference to specific task
      * @param taskId Task ID

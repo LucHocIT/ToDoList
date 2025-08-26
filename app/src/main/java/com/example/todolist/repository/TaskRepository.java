@@ -1,5 +1,6 @@
 package com.example.todolist.repository;
 
+import androidx.annotation.NonNull;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.task.TaskCrudRepository;
 import com.example.todolist.repository.task.TaskQueryRepository;
@@ -118,5 +119,30 @@ public class TaskRepository extends BaseRepository {
                 callback.onError(error);
             }
         });
+    }
+    
+    // === SUBTASK OPERATIONS ===
+    public void getSubTasks(String taskId, ListCallback<com.example.todolist.model.SubTask> callback) {
+        com.example.todolist.util.FirebaseHelper firebaseHelper = com.example.todolist.util.FirebaseHelper.getInstance();
+        firebaseHelper.getSubTasksReference().child(taskId)
+                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                        java.util.List<com.example.todolist.model.SubTask> subTasks = new java.util.ArrayList<>();
+                        for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
+                            com.example.todolist.model.SubTask subTask = child.getValue(com.example.todolist.model.SubTask.class);
+                            if (subTask != null) {
+                                subTask.setId(child.getKey());
+                                subTasks.add(subTask);
+                            }
+                        }
+                        callback.onSuccess(subTasks);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull com.google.firebase.database.DatabaseError error) {
+                        callback.onError(error.getMessage());
+                    }
+                });
     }
 }

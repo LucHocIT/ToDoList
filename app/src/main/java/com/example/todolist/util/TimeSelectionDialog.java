@@ -15,7 +15,7 @@ public class TimeSelectionDialog extends Dialog {
     
     private OnTimeSelectedListener listener;
     private NumberPicker numberPicker;
-    private int[] timeValues = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 90, 120, 150}; // Available time options
+    private int[] timeValues = {5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 90, 120, 150};
 
     public TimeSelectionDialog(Context context, OnTimeSelectedListener listener) {
         super(context);

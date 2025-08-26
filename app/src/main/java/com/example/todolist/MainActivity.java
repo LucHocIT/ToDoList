@@ -290,6 +290,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTasksUpdated() {
         runOnUiThread(() -> {
+            // Load subtasks for all tasks
+            taskService.loadSubTasksForAllTasks();
+            
             searchManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),
                     taskService.getFutureTasks(), taskService.getCompletedTodayTasks());
             filterManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),

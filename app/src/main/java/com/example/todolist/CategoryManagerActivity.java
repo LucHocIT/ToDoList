@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -163,18 +164,65 @@ public class CategoryManagerActivity extends AppCompatActivity implements
         showCategoryMenu(category, anchorView);
     }
     private void showCreateCategoryDialog() {
+        showCategoryDialog(null);
+    }
+    
+    private void showCategoryDialog(Category existingCategory) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_category, null);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
+        
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             dialog.getWindow().setGravity(Gravity.CENTER);
         }
+
+        TextView tvDialogTitle = dialogView.findViewById(R.id.tv_dialog_title);
         EditText editCategoryName = dialogView.findViewById(R.id.edit_category_name);
         TextView btnCancel = dialogView.findViewById(R.id.btn_cancel);
         TextView btnSave = dialogView.findViewById(R.id.btn_save);
         TextView tvCharCount = dialogView.findViewById(R.id.tv_char_count);
+        TextView tvDefaultLabel = dialogView.findViewById(R.id.tv_default_label);
+
+        View colorSelector = dialogView.findViewById(R.id.color_selector);
+        View selectedColorView = dialogView.findViewById(R.id.selected_color_view);
+        LinearLayout colorPalette = dialogView.findViewById(R.id.color_palette);
+
+        View colorRed = dialogView.findViewById(R.id.color_red);
+        View colorOrange = dialogView.findViewById(R.id.color_orange);
+        View colorGreen = dialogView.findViewById(R.id.color_green);
+        View colorTeal = dialogView.findViewById(R.id.color_teal);
+        View colorBlue = dialogView.findViewById(R.id.color_blue);
+        View colorPurple = dialogView.findViewById(R.id.color_purple);
+        View colorDefault = dialogView.findViewById(R.id.color_default);
+        final String[] colorValues = {
+            "#F44336", 
+            "#FF9800", 
+            "#4CAF50", 
+            "#009688", 
+            "#2196F3", 
+            "#9C27B0", 
+            "#4285F4"  
+        };
+        
+        final String[] selectedColor = {colorValues[6]}; 
+        if (existingCategory != null) {
+            tvDialogTitle.setText("Chỉnh sửa danh mục");
+            editCategoryName.setText(existingCategory.getName());
+            tvCharCount.setText(existingCategory.getName().length() + "/50");
+            if (existingCategory.getColor() != null) {
+                selectedColor[0] = existingCategory.getColor();
+                selectedColorView.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor(existingCategory.getColor())));
+                // Ẩn chữ "Mặc định" nếu không phải màu mặc định
+                if (!existingCategory.getColor().equals(colorValues[6])) {
+                    tvDefaultLabel.setVisibility(View.GONE);
+                }
+            }
+        }
+        
+        // Text change listener
         editCategoryName.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -185,31 +233,110 @@ public class CategoryManagerActivity extends AppCompatActivity implements
             @Override
             public void afterTextChanged(android.text.Editable s) {}
         });
+        
+        // Color selector click listener
+        colorSelector.setOnClickListener(v -> {
+            if (colorPalette.getVisibility() == View.GONE) {
+                colorPalette.setVisibility(View.VISIBLE);
+            } else {
+                colorPalette.setVisibility(View.GONE);
+            }
+        });
+        
+        // Color option click listeners
+        View.OnClickListener colorClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String color = "";
+                boolean isDefault = false;
+                
+                if (v == colorRed) color = colorValues[0];
+                else if (v == colorOrange) color = colorValues[1];
+                else if (v == colorGreen) color = colorValues[2];
+                else if (v == colorTeal) color = colorValues[3];
+                else if (v == colorBlue) color = colorValues[4];
+                else if (v == colorPurple) color = colorValues[5];
+                else if (v == colorDefault) {
+                    color = colorValues[6];
+                    isDefault = true;
+                }
+                
+                selectedColor[0] = color;
+                selectedColorView.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor(color)));
+                if (isDefault) {
+                    tvDefaultLabel.setVisibility(View.VISIBLE);
+                } else {
+                    tvDefaultLabel.setVisibility(View.GONE);
+                }
+                
+                colorPalette.setVisibility(View.GONE);
+            }
+        };
+        
+        colorRed.setOnClickListener(colorClickListener);
+        colorOrange.setOnClickListener(colorClickListener);
+        colorGreen.setOnClickListener(colorClickListener);
+        colorTeal.setOnClickListener(colorClickListener);
+        colorBlue.setOnClickListener(colorClickListener);
+        colorPurple.setOnClickListener(colorClickListener);
+        colorDefault.setOnClickListener(colorClickListener);
+
+        // Button listeners
         btnCancel.setOnClickListener(v -> dialog.dismiss());
+        
         btnSave.setOnClickListener(v -> {
             String categoryName = editCategoryName.getText().toString().trim();
             if (!categoryName.isEmpty()) {
-                Category newCategory = new Category();
-                newCategory.setName(categoryName);
-                newCategory.setColor("#4285F4");
-                newCategory.setSortOrder(categories.size() - 1);
-                newCategory.setIsDefault(false);
-                categoryService.createCategory(newCategory, new CategoryService.CategoryOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        runOnUiThread(() -> {
-                            dialog.dismiss();
-                        });
-                    }
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> {
-                        });
-                    }
-                });
-            } else {
+                if (existingCategory != null) {
+                    // Update existing category
+                    existingCategory.setName(categoryName);
+                    existingCategory.setColor(selectedColor[0]);
+                    categoryService.updateCategory(existingCategory, new CategoryService.CategoryOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> {
+                                loadCategories();
+                                dialog.dismiss();
+                            });
+                        }
+                        
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                android.widget.Toast.makeText(CategoryManagerActivity.this, 
+                                    "Lỗi cập nhật danh mục: " + error, android.widget.Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                } else {
+                    // Create new category
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    newCategory.setColor(selectedColor[0]);
+                    newCategory.setSortOrder(categories.size() - 1);
+                    newCategory.setIsDefault(false);
+                    categoryService.createCategory(newCategory, new CategoryService.CategoryOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> {
+                                loadCategories();
+                                dialog.dismiss();
+                            });
+                        }
+                        
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                android.widget.Toast.makeText(CategoryManagerActivity.this, 
+                                    "Lỗi tạo danh mục: " + error, android.widget.Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                }
             }
         });
+        
         dialog.show();
     }
     private void showCategoryMenu(Category category, View anchorView) {
@@ -238,63 +365,7 @@ public class CategoryManagerActivity extends AppCompatActivity implements
     }
     
     private void showEditCategoryDialog(Category category) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_category, null);
-        builder.setView(dialogView);
-        AlertDialog dialog = builder.create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            dialog.getWindow().setGravity(Gravity.CENTER);
-        }
-        
-        EditText editCategoryName = dialogView.findViewById(R.id.edit_category_name);
-        TextView btnCancel = dialogView.findViewById(R.id.btn_cancel);
-        TextView btnSave = dialogView.findViewById(R.id.btn_save);
-        TextView tvCharCount = dialogView.findViewById(R.id.tv_char_count);
-        TextView titleText = dialogView.findViewById(R.id.tv_dialog_title);
-        
-        editCategoryName.setText(category.getName());
-        titleText.setText("Chỉnh sửa danh mục");
-        btnSave.setText("Cập nhật");
-        tvCharCount.setText(category.getName().length() + "/50");
-        
-        editCategoryName.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                tvCharCount.setText(s.length() + "/50");
-            }
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
-        });
-        
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        btnSave.setOnClickListener(v -> {
-            String newCategoryName = editCategoryName.getText().toString().trim();
-            if (!newCategoryName.isEmpty() && !newCategoryName.equals(category.getName())) {
-                category.setName(newCategoryName);
-                categoryService.updateCategory(category, new CategoryService.CategoryOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        runOnUiThread(() -> {
-                            dialog.dismiss();
-                        });
-                    }
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> {
-                        });
-                    }
-                });
-            } else if (newCategoryName.isEmpty()) {
-            } else {
-                dialog.dismiss();
-            }
-        });
-        
-        dialog.show();
+        showCategoryDialog(category);
     }
     
     private void showDeleteCategoryDialog(Category category) {

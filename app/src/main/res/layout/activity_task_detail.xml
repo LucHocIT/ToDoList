@@ -97,6 +97,80 @@
 
             </androidx.cardview.widget.CardView>
 
+            <!-- SubTasks -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_subtask"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nhiệm vụ phụ"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333"/>
+
+                        <LinearLayout
+                            android:id="@+id/btn_add_subtask_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:padding="8dp">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_add"
+                                android:layout_marginEnd="4dp"
+                                app:tint="#4285F4"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Thêm"
+                                android:textSize="12sp"
+                                android:textColor="#4285F4"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_subtasks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <!-- Date picker -->
             <LinearLayout
                 android:id="@+id/layout_date_picker"
@@ -380,19 +454,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never"
-                        android:visibility="gone"/>
-
-                    <!-- Empty state for attachments -->
-                    <TextView
-                        android:id="@+id/text_no_attachments"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Chưa có tệp tin đính kèm"
-                        android:textSize="14sp"
-                        android:textColor="#999999"
-                        android:gravity="center"
-                        android:padding="12dp"/>
+                        android:overScrollMode="never"/>
 
                 </LinearLayout>
 

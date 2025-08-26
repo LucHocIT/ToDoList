@@ -53,7 +53,160 @@
             android:textSize="12sp"
             android:textColor="#999999"
             android:gravity="end"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Color selection section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Màu sắc thể loại"
+                android:textSize="16sp"
+                android:textColor="#333333"/>
+
+            <TextView
+                android:id="@+id/tv_default_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mặc định"
+                android:textSize="14sp"
+                android:textColor="#999999"
+                android:layout_marginEnd="8dp"/>
+
+            <FrameLayout
+                android:id="@+id/color_selector"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/color_selector_background">
+
+                <View
+                    android:id="@+id/selected_color_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#4285F4"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- Color palette (initially hidden) -->
+        <LinearLayout
+            android:id="@+id/color_palette"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:id="@+id/color_red"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#F44336"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_orange"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#FF9800"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_green"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#4CAF50"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_teal"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#009688"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_blue"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#2196F3"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_purple"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <View
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/color_circle"
+                    android:backgroundTint="#9C27B0"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/color_default"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/color_selector_background">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_default_color"
+                    android:background="@drawable/color_circle_outline"/>
+            </FrameLayout>
+
+        </LinearLayout>
 
         <!-- Buttons -->
         <LinearLayout
@@ -66,9 +219,9 @@
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="@string/btn_cancel"
+                android:text="HỦY"
                 android:textSize="14sp"
-                android:textColor="#4285F4"
+                android:textColor="#666666"
                 android:gravity="center"
                 android:paddingHorizontal="16dp"
                 android:background="?android:attr/selectableItemBackground"
@@ -78,7 +231,7 @@
                 android:id="@+id/btn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="@string/btn_save"
+                android:text="LƯU"
                 android:textSize="14sp"
                 android:textColor="#4285F4"
                 android:textStyle="bold"

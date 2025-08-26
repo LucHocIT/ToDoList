@@ -29,12 +29,14 @@ public class Task implements Serializable {
     private boolean isRepeating;
     private String completionDate;
     private String createdAt;    
-    private String updatedAt;     
+    private String updatedAt;
+    private List<SubTask> subTasks;     
     public Task() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
         this.createdAt = currentDate;
         this.updatedAt = currentDate;
+        this.subTasks = new ArrayList<>();
     }
 
     public Task(String title, String description, String dueDate, String dueTime) {
@@ -72,6 +74,7 @@ public class Task implements Serializable {
         result.put("completionDate", completionDate);
         result.put("createdAt", createdAt);
         result.put("updatedAt", updatedAt);
+        result.put("subTasks", subTasks);
         return result;
     }
 
@@ -300,6 +303,31 @@ public class Task implements Serializable {
     @Exclude
     public boolean hasAttachments() {
         return !getAttachmentList().isEmpty();
+    }
+    
+    // SubTasks getter/setter
+    public List<SubTask> getSubTasks() {
+        return subTasks != null ? subTasks : new ArrayList<>();
+    }
+    
+    public void setSubTasks(List<SubTask> subTasks) {
+        this.subTasks = subTasks;
+        updateTimestamp();
+    }
+    
+    public void addSubTask(SubTask subTask) {
+        if (this.subTasks == null) {
+            this.subTasks = new ArrayList<>();
+        }
+        this.subTasks.add(subTask);
+        updateTimestamp();
+    }
+    
+    public void removeSubTask(SubTask subTask) {
+        if (this.subTasks != null) {
+            this.subTasks.remove(subTask);
+            updateTimestamp();
+        }
     }
     
     @Override

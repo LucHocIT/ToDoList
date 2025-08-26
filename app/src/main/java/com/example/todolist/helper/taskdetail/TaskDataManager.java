@@ -33,6 +33,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
         void onTaskLoaded(Task task);
         void showToast(String message);
         void finish();
+        void onTaskCompletionChanged(boolean isCompleted);
     }
 
     private TaskUpdateCallback callback;
@@ -237,6 +238,11 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
                 editDescription.setEnabled(false);
                 editDescription.setAlpha(0.6f);
                 
+                // Thông báo cho Activity để disable thêm UI
+                if (callback != null) {
+                    callback.onTaskCompletionChanged(true);
+                }
+                
                 // Hiển thị thông tin hoàn thành
                 if (textPriorityLabel != null) {
                     textPriorityLabel.setText("Trạng thái");
@@ -250,7 +256,11 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
                 editDescription.setEnabled(true);
                 editDescription.setAlpha(1.0f);
                 
-                // Hiển thị độ ưu tiên bình thường
+                // Thông báo cho Activity để enable UI
+                if (callback != null) {
+                    callback.onTaskCompletionChanged(false);
+                }
+                
                 setPriorityDisplay(currentTask.getPriority());
             }
         }

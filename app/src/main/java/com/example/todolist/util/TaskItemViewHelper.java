@@ -116,8 +116,18 @@ public class TaskItemViewHelper {
             attachmentIcon.setImageResource(R.drawable.ic_attachment);
             attachmentIcon.setColorFilter(Color.parseColor("#666666"));
             LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(CalendarUtils.dpToPx(context, 18), CalendarUtils.dpToPx(context, 18));
+            iconParams.setMarginEnd(CalendarUtils.dpToPx(context, 6));
             attachmentIcon.setLayoutParams(iconParams);
             timeIconContainer.addView(attachmentIcon);
+        }
+
+        if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
+            ImageView subtaskIcon = new ImageView(context);
+            subtaskIcon.setImageResource(R.drawable.ic_subtask);
+            subtaskIcon.setColorFilter(Color.parseColor("#666666"));
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(CalendarUtils.dpToPx(context, 18), CalendarUtils.dpToPx(context, 18));
+            subtaskIcon.setLayoutParams(iconParams);
+            timeIconContainer.addView(subtaskIcon);
         }
 
         contentContainer.addView(timeIconContainer);

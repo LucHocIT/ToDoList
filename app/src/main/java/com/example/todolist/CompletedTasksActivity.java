@@ -88,7 +88,11 @@ public class CompletedTasksActivity extends AppCompatActivity implements Complet
 
     }
     private void loadCompletedTasks() {
-      allCompletedTasks = taskService.getCompletedTasksFromCache();
+        allCompletedTasks = taskService.getCompletedTasksFromCache();
+        
+        // Load subtasks for all completed tasks
+        taskService.loadSubTasksForAllTasks();
+        
         groupTasksByDate();
         runOnUiThread(() -> {
             completedTasksAdapter.updateGroupedTasks(groupedTasks);

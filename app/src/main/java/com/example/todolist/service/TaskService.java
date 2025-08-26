@@ -12,6 +12,7 @@ import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.service.task.TaskManager;
 import com.example.todolist.service.task.TaskCompletionService;
 import com.example.todolist.service.task.TaskListService;
+import com.example.todolist.service.task.SubTaskService;
 import com.example.todolist.widget.WidgetUpdateHelper;
 import com.google.firebase.database.ValueEventListener;
 
@@ -34,9 +35,10 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     private TaskRepository taskRepository;
     private TaskUpdateListener listener;
     private ValueEventListener realtimeListener;
-    private TaskManager taskManager;              
-    private TaskCompletionService completionService;  
-    private TaskListService listService;         
+    private TaskManager taskManager;
+    private TaskCompletionService completionService;
+    private TaskListService listService;
+    private SubTaskService subTaskService;
     private TaskCache taskCache;
     private Handler firebaseUpdateHandler;
     private List<Task> allTasks;
@@ -56,6 +58,7 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
         this.taskManager = new TaskManager(context);
         this.completionService = new TaskCompletionService();
         this.listService = new TaskListService();
+        this.subTaskService = new SubTaskService(context);
         
         this.allTasks = new ArrayList<>();
     }
@@ -127,11 +130,8 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
         if (task.getId() == null || task.getId().isEmpty()) {
             task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
         }
-        
-        // 1. Optimistic update - thêm vào cache ngay lập tức
+
         taskCache.addTaskOptimistic(task);
-        
-        // 2. Đồng bộ với Firebase
         taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String firebaseTaskId) {
@@ -250,6 +250,15 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     public void completeTask(Task task, boolean isCompleted) {
         lastLocalUpdateTime = System.currentTimeMillis();
         cancelPendingFirebaseUpdates();
+        if (isCompleted && task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
+            for (com.example.todolist.model.SubTask subTask : task.getSubTasks()) {
+                if (!subTask.isCompleted()) {
+                    subTask.setCompleted(true);
+                    subTaskService.updateSubTask(task.getId(), subTask, null);
+                }
+            }
+        }
+        
         completionService.completeTask(task, isCompleted, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
@@ -262,6 +271,11 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
             public void onError(String error) {
                 task.setIsCompleted(!isCompleted);
                 task.setCompletionDate(isCompleted ? null : String.valueOf(System.currentTimeMillis()));
+                if (isCompleted && task.getSubTasks() != null) {
+                    for (com.example.todolist.model.SubTask subTask : task.getSubTasks()) {
+                        subTask.setCompleted(false);
+                    }
+                }
                 
                 updateTaskInList(task);
                 listService.categorizeTasks(allTasks);
@@ -458,5 +472,38 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
             return listService.getCompletedTodayTasks();
         }
         return allTasks;
+    }
+    
+    public void loadSubTasksForTask(String taskId, TaskOperationCallback callback) {
+        taskRepository.getSubTasks(taskId, new BaseRepository.ListCallback<com.example.todolist.model.SubTask>() {
+            @Override
+            public void onSuccess(List<com.example.todolist.model.SubTask> subTasks) {
+                // Cập nhật subtasks cho task trong cache
+                List<Task> cachedTasks = taskCache.getAllTasks();
+                for (Task task : cachedTasks) {
+                    if (task.getId().equals(taskId)) {
+                        task.setSubTasks(subTasks);
+                        break;
+                    }
+                }
+                if (callback != null) {
+                    callback.onSuccess();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) {
+                    callback.onError(error);
+                }
+            }
+        });
+    }
+    
+    public void loadSubTasksForAllTasks() {
+        List<Task> allTasks = taskCache.getAllTasks();
+        for (Task task : allTasks) {
+            loadSubTasksForTask(task.getId(), null);
+        }
     }
 }

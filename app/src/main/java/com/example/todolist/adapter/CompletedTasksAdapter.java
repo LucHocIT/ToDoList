@@ -128,6 +128,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private ImageView iconRepeat;
         private ImageView iconNotes;
         private ImageView iconAttachment;
+        private ImageView iconSubtask;
         private ImageView iconStar;
         private LinearLayout taskBackground;
         public CompletedTaskViewHolder(@NonNull View itemView) {
@@ -139,6 +140,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             iconRepeat = itemView.findViewById(R.id.icon_repeat);
             iconNotes = itemView.findViewById(R.id.icon_notes);
             iconAttachment = itemView.findViewById(R.id.icon_attachment);
+            iconSubtask = itemView.findViewById(R.id.icon_subtask);
             iconStar = itemView.findViewById(R.id.icon_star);
             taskBackground = itemView.findViewById(R.id.task_background);
         }
@@ -162,6 +164,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             iconNotes.setVisibility(task.getDescription() != null && 
                                    !task.getDescription().trim().isEmpty() ? View.VISIBLE : View.GONE);
             iconAttachment.setVisibility(task.hasAttachments() ? View.VISIBLE : View.GONE);           
+            iconSubtask.setVisibility(task.getSubTasks() != null && !task.getSubTasks().isEmpty() ? View.VISIBLE : View.GONE);
             iconStar.setVisibility(task.isImportant() ? View.VISIBLE : View.GONE);
             taskBackground.setOnClickListener(v -> {
                 if (listener != null) {
