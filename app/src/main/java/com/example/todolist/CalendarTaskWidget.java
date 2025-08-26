@@ -168,7 +168,12 @@ public class CalendarTaskWidget extends AppWidgetProvider {
             }
             
             if (hasTasksForDate(context, currentYear, currentMonth, dayCounter)) {
-                views.setTextViewText(dayIds[i], dayCounter + "•");
+                String dayWithDot = dayCounter + "\n•"; 
+                views.setTextViewText(dayIds[i], dayWithDot);
+                views.setTextColor(dayIds[i], 0xFF1565C0); 
+            } else {
+                views.setTextViewText(dayIds[i], String.valueOf(dayCounter));
+                views.setTextColor(dayIds[i], 0xFF333333); 
             }
             
             Intent dayClickIntent = new Intent(context, CalendarTaskWidget.class);
