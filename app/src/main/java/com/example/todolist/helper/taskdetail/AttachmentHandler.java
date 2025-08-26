@@ -500,43 +500,125 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
             
             Task currentTask = taskUpdateCallback.getCurrentTask();
             if (currentTask != null && !currentTask.isCompleted()) {
-                ProgressDialog progressDialog = new ProgressDialog(activity);
-                progressDialog.setMessage("Đang upload tệp tin...");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setMax(100);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                
-                attachmentService.uploadAttachment(fileUri, fileName, fileType, fileSize, 
-                    new AttachmentService.AttachmentUploadCallback() {
-                        @Override
-                        public void onSuccess(Attachment attachment) {
-                            activity.runOnUiThread(() -> {
-                                progressDialog.dismiss();
-                                currentTask.addAttachment(attachment);
-                                taskUpdateCallback.updateTask(currentTask);
-                                updateAttachmentView();
-                                taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
-                            });
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            activity.runOnUiThread(() -> {
-                                progressDialog.dismiss();
-                                taskUpdateCallback.showToast("Lỗi upload: " + error);
-                            });
-                        }
-
-                        @Override
-                        public void onProgress(int progress) {
-                            activity.runOnUiThread(() -> progressDialog.setProgress(progress));
-                        }
-                    });
+                // Create custom upload dialog
+                showUploadProgressDialog(fileName, fileSize, fileUri, fileType);
             }
             
         } catch (Exception e) {
             taskUpdateCallback.showToast("Lỗi khi thêm tệp tin: " + e.getMessage());
+        }
+    }
+    
+    private void showUploadProgressDialog(String fileName, long fileSize, Uri fileUri, String fileType) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_upload_progress, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        
+        AlertDialog progressDialog = builder.create();
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Initialize views
+        TextView textFileName = dialogView.findViewById(R.id.text_file_name);
+        TextView textFileSize = dialogView.findViewById(R.id.text_file_size);
+        TextView textProgressPercent = dialogView.findViewById(R.id.text_progress_percent);
+        TextView textStatus = dialogView.findViewById(R.id.text_status);
+        com.example.todolist.view.CircularProgressView circularProgress = dialogView.findViewById(R.id.circular_progress);
+        
+        android.widget.ImageView dinosaur = dialogView.findViewById(R.id.dinosaur);
+        android.widget.ImageView elephant = dialogView.findViewById(R.id.elephant); 
+        android.view.View progressLine = dialogView.findViewById(R.id.progress_line);
+        
+        // Start animations
+        android.view.animation.Animation dinosaurAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_walk);
+        android.view.animation.Animation elephantAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.elephant_walk);
+        dinosaur.startAnimation(dinosaurAnim);
+        elephant.startAnimation(elephantAnim);
+        
+        // Set file info
+        textFileName.setText(fileName);
+        textFileSize.setText(formatFileSize(fileSize));
+        textProgressPercent.setText("0%");
+        // Ẩn text status, chỉ hiển thị animation
+        textStatus.setVisibility(android.view.View.GONE);
+        circularProgress.setProgress(0);
+        
+        progressDialog.show();
+        
+        // Start upload
+        Task currentTask = taskUpdateCallback.getCurrentTask();
+        attachmentService.uploadAttachment(fileUri, fileName, fileType, fileSize, 
+            new AttachmentService.AttachmentUploadCallback() {
+                @Override
+                public void onSuccess(Attachment attachment) {
+                    activity.runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        currentTask.addAttachment(attachment);
+                        taskUpdateCallback.updateTask(currentTask);
+                        updateAttachmentView();
+                        taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    activity.runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        taskUpdateCallback.showToast("Lỗi upload: " + error);
+                    });
+                }
+
+                @Override
+                public void onProgress(int progress) {
+                    activity.runOnUiThread(() -> {
+                        circularProgress.setProgress(progress);
+                        textProgressPercent.setText(progress + "%");
+                        
+                        // Update progress line width
+                        android.view.ViewGroup.LayoutParams params = progressLine.getLayoutParams();
+                        if (params instanceof android.widget.RelativeLayout.LayoutParams) {
+                            android.widget.RelativeLayout.LayoutParams relParams = (android.widget.RelativeLayout.LayoutParams) params;
+                            // Calculate width based on progress (max width minus margins)
+                            int maxWidth = dialogView.getWidth() - 64 * 2; // 32dp margins on each side
+                            relParams.width = (int) (maxWidth * progress / 100f);
+                            progressLine.setLayoutParams(relParams);
+                        }
+                        
+                        // Move elephant along the treestreet road based on progress
+                        android.view.ViewGroup.LayoutParams elephantParams = elephant.getLayoutParams();
+                        if (elephantParams instanceof android.widget.RelativeLayout.LayoutParams) {
+                            android.widget.RelativeLayout.LayoutParams elephantRelParams = (android.widget.RelativeLayout.LayoutParams) elephantParams;
+                            // Calculate elephant position based on progress
+                            // Start at 32dp margin (left side), move to right side minus elephant width
+                            int startMargin = 32; // dp converted to pixels
+                            int containerWidth = dialogView.getWidth() - 64; // Total available width minus margins
+                            int elephantWidth = 32; // Elephant width in dp
+                            int maxPosition = containerWidth - elephantWidth;
+                            
+                            int elephantPosition = startMargin + (int) (maxPosition * progress / 100f);
+                            elephantRelParams.leftMargin = elephantPosition;
+                            elephant.setLayoutParams(elephantRelParams);
+                        }
+                        
+                        // Chỉ cập nhật khi hoàn thành
+                        if (progress >= 100) {
+                            // Play eat animation - khủng long ăn voi
+                            dinosaur.clearAnimation();
+                            android.view.animation.Animation eatAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.elephant_eaten);
+                            elephant.startAnimation(eatAnim);
+                        }
+                    });
+                }
+            });
+    }
+    
+    private String formatFileSize(long fileSize) {
+        if (fileSize < 1024) {
+            return fileSize + " B";
+        } else if (fileSize < 1024 * 1024) {
+            return String.format("%.1f KB", fileSize / 1024.0);
+        } else {
+            return String.format("%.1f MB", fileSize / (1024.0 * 1024.0));
         }
     }
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Checked state - màu xám nhẹ với dấu V trắng -->
+    <item android:state_checked="true">
+        <layer-list>
+            <!-- Background circle -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#D5D5D5"/>
+                    <size android:width="20dp" android:height="20dp"/>
+                </shape>
+            </item>
+            <!-- Check mark -->
+            <item android:drawable="@drawable/ic_check_white_small"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+    
+    <!-- Unchecked state -->
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="2dp" android:color="#E0E0E0"/>
+            <solid android:color="@android:color/transparent"/>
+            <size android:width="20dp" android:height="20dp"/>
+        </shape>
+    </item>
+    
+</selector>

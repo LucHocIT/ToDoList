@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <!-- Animation container -->
+    <RelativeLayout
+        android:id="@+id/animation_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginVertical="8dp">
+
+        <!-- Grass track line với treestreet background -->
+        <ImageView
+            android:id="@+id/track_line"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="32dp"
+            android:src="@drawable/treestreet"
+            android:scaleType="fitXY"/>
+
+        <!-- Progress grass line -->
+        <ImageView
+            android:id="@+id/progress_line"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="32dp"
+            android:src="@drawable/treestreet"
+            android:scaleType="fitXY"
+            android:alpha="0.8"/>
+
+        <!-- Dinosaur -->
+        <ImageView
+            android:id="@+id/dinosaur"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/diranosaurus"
+            android:scaleType="fitCenter"/>
+
+        <!-- Elephant (voi sẽ di chuyển theo progress) -->
+        <ImageView
+            android:id="@+id/elephant"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="-15dp"
+            android:src="@drawable/elephant"
+            android:scaleType="fitCenter"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

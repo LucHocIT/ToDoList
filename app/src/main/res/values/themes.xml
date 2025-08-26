@@ -4,9 +4,22 @@
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/light_sky_blue</item>
         <item name="colorAccent">@color/sky_blue</item>
+        <!-- Force disable checkbox tinting -->
+        <item name="colorControlNormal">@android:color/transparent</item>
+        <item name="colorControlActivated">@android:color/transparent</item>
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="android:colorControlNormal">@android:color/transparent</item>
+        <item name="android:colorControlActivated">@android:color/transparent</item>
     </style>
 
     <style name="Theme.ToDoList" parent="Base.Theme.ToDoList" />
+    
+    <!-- Custom checkbox style -->
+    <style name="CustomCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/subtask_checkbox_selector</item>
+        <item name="android:buttonTint">@null</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
     
     <!-- Custom Calendar Theme -->
     <style name="CustomCalendarTheme" parent="android:Theme.Material.Light">

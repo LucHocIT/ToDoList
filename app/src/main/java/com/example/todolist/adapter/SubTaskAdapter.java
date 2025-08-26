@@ -77,14 +77,19 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             checkBoxSubTask.setChecked(subTask.isCompleted());
             editTextSubTask.setText(subTask.getTitle());
             
-            // Disable UI nếu task chính đã hoàn thành
-            checkBoxSubTask.setEnabled(!isTaskCompleted);
+            // FORCE sử dụng drawable tùy chỉnh - loại bỏ mọi tint
+            checkBoxSubTask.setButtonDrawable(R.drawable.subtask_checkbox_selector);
+            checkBoxSubTask.setButtonTintList(null);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                checkBoxSubTask.setButtonTintMode(null);
+            }
+            // Clear any background tint
+            checkBoxSubTask.setBackgroundTintList(null);
+            
             editTextSubTask.setEnabled(!isTaskCompleted);
             btnDeleteSubTask.setEnabled(!isTaskCompleted);
-            
-            // Set alpha dựa trên trạng thái
+
             float alpha = isTaskCompleted ? 0.6f : (subTask.isCompleted() ? 0.6f : 1.0f);
-            checkBoxSubTask.setAlpha(alpha);
             editTextSubTask.setAlpha(alpha);
             btnDeleteSubTask.setAlpha(alpha);
             
@@ -97,15 +102,14 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     (~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG));
             }
             
-            // Checkbox change listener (chỉ hoạt động khi task chưa hoàn thành)
             checkBoxSubTask.setOnCheckedChangeListener(null);
-            if (!isTaskCompleted) {
-                checkBoxSubTask.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (listener != null) {
-                        listener.onSubTaskStatusChanged(subTask, isChecked);
-                    }
-                });
-            }
+            checkBoxSubTask.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (!isTaskCompleted && listener != null) {
+                    listener.onSubTaskStatusChanged(subTask, isChecked);
+                } else if (isTaskCompleted) {
+                    buttonView.setChecked(subTask.isCompleted());
+                }
+            });
             
             // Text change listener (chỉ hoạt động khi task chưa hoàn thành)
             editTextSubTask.setOnFocusChangeListener(null);

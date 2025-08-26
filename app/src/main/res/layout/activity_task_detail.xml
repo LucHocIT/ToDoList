@@ -17,17 +17,18 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp"
+            android:layout_marginTop="8dp"
             android:background="#FFFFFF">
 
             <ImageView
                 android:id="@+id/btn_back_detail"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_arrow_back"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
+                android:padding="6dp"
                 android:clickable="true"/>
 
             <View
@@ -37,11 +38,11 @@
 
             <ImageView
                 android:id="@+id/btn_menu_options"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_more_vert"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
+                android:padding="6dp"
                 android:clickable="true"/>
 
         </LinearLayout>

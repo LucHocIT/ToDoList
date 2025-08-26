@@ -7,14 +7,13 @@
     android:paddingVertical="8dp"
     android:paddingHorizontal="0dp">
 
-    <!-- Circle Checkbox -->
+    <!-- Circle Checkbox with white checkmark -->
     <CheckBox
         android:id="@+id/checkBox_subtask"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginEnd="12dp"
-        android:button="@drawable/circle_checkbox_with_tick"
-        android:background="@android:color/transparent" />
+        style="@style/CustomCheckBox" />
 
     <EditText
         android:id="@+id/editText_subtask"

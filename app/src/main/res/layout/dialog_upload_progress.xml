@@ -60,49 +60,38 @@
 
     </LinearLayout>
 
-    <!-- Progress bar -->
-    <LinearLayout
+    <!-- Loading animation với khủng long và cá -->
+    <include layout="@layout/loading_animation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <!-- Progress section với circular progress -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center">
+
+        <!-- Custom Circular Progress -->
+        <com.example.todolist.view.CircularProgressView
+            android:id="@+id/circular_progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"/>
+
+        <!-- Percentage text in center -->
+        <TextView
+            android:id="@+id/text_progress_percent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_centerInParent="true"
+            android:text="0%"
+            android:textSize="18sp"
+            android:textColor="#4285F4"
+            android:textStyle="bold"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Tiến độ"
-                android:textSize="14sp"
-                android:textColor="#666666"/>
-
-            <TextView
-                android:id="@+id/text_progress_percent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0%"
-                android:textSize="14sp"
-                android:textColor="#4285F4"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:max="100"
-            android:progress="0"
-            android:progressTint="#4285F4"
-            android:progressBackgroundTint="#E0E0E0"/>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <!-- Status text -->
     <TextView
