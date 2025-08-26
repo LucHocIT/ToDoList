@@ -2,6 +2,9 @@
     <string name="app_name">ToDoList</string>
     <string name="action_settings">Settings</string>
     
+    <!-- Task Detail strings -->
+    <string name="task_description_hint">Mô tả nhiệm vụ...</string>
+    
     <!-- Settings strings -->
     <string name="settings_title">Cài đặt</string>
     <string name="settings_notifications">THÔNG BÁO</string>

@@ -2,6 +2,7 @@ package com.example.todolist.helper.taskdetail;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,10 +96,39 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
             String formattedDate = formatDateDisplay(currentTask.getDueDate());
             textDueDate.setText(formattedDate != null ? formattedDate : "Không");
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
-            textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
+
+            String reminderTime = calculateReminderTime(currentTask.getDueTime());
+            textReminderValue.setText(reminderTime);
+            
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
-            updateCompletionStatus();
+            // updateCompletionStatus(); // TODO: Implement if needed
+        }
+    }
+
+    private String calculateReminderTime(String dueTime) {
+        if (dueTime == null || dueTime.isEmpty() || dueTime.equals("Không")) {
+            return "Không";
+        }
+        
+        try {
+            String[] timeParts = dueTime.split(":");
+            int hours = Integer.parseInt(timeParts[0]);
+            int minutes = Integer.parseInt(timeParts[1]);
+            
+            // Subtract 30 minutes
+            minutes -= 30;
+            if (minutes < 0) {
+                minutes += 60;
+                hours -= 1;
+            }
+            if (hours < 0) {
+                hours += 24;
+            }
+            
+            return String.format("%02d:%02d", hours, minutes);
+        } catch (Exception e) {
+            return "Không";
         }
     }
 
@@ -201,7 +231,11 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
     }
 
     private void setPriorityDisplay(String priority) {
-        // Cập nhật label luôn hiển thị "Độ ưu tiên"
+        if (textPriorityLabel == null || textPriorityValue == null) {
+            Log.w("TaskDataManager", "Priority TextViews are null");
+            return;
+        }
+        
         textPriorityLabel.setText("Độ ưu tiên");
         
         if (priority != null) {
@@ -219,49 +253,9 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
                     textPriorityValue.setTextColor(activity.getResources().getColor(android.R.color.holo_green_dark));
                     break;
                 default:
-                    textPriorityValue.setText("Không");
-                    textPriorityValue.setTextColor(activity.getResources().getColor(android.R.color.darker_gray));
+                    textPriorityValue.setText(priority);
+                    textPriorityValue.setTextColor(activity.getResources().getColor(android.R.color.black));
                     break;
-            }
-        } else {
-            textPriorityValue.setText("Không");
-            textPriorityValue.setTextColor(activity.getResources().getColor(android.R.color.darker_gray));
-        }
-    }
-    
-    private void updateCompletionStatus() {
-        if (currentTask != null) {
-            if (currentTask.isCompleted()) {
-                // Làm mờ giao diện khi task đã hoàn thành
-                editDetailTitle.setEnabled(false);
-                editDetailTitle.setAlpha(0.6f);
-                editDescription.setEnabled(false);
-                editDescription.setAlpha(0.6f);
-                
-                // Thông báo cho Activity để disable thêm UI
-                if (callback != null) {
-                    callback.onTaskCompletionChanged(true);
-                }
-                
-                // Hiển thị thông tin hoàn thành
-                if (textPriorityLabel != null) {
-                    textPriorityLabel.setText("Trạng thái");
-                    textPriorityValue.setText("Đã hoàn thành");
-                    textPriorityValue.setTextColor(activity.getResources().getColor(android.R.color.holo_green_dark));
-                }
-            } else {
-                // Khôi phục giao diện bình thường
-                editDetailTitle.setEnabled(true);
-                editDetailTitle.setAlpha(1.0f);
-                editDescription.setEnabled(true);
-                editDescription.setAlpha(1.0f);
-                
-                // Thông báo cho Activity để enable UI
-                if (callback != null) {
-                    callback.onTaskCompletionChanged(false);
-                }
-                
-                setPriorityDisplay(currentTask.getPriority());
             }
         }
     }

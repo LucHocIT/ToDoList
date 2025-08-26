@@ -22,6 +22,7 @@ import com.example.todolist.helper.taskdetail.AttachmentHandler;
 import com.example.todolist.helper.taskdetail.CategoryHandler;
 import com.example.todolist.helper.taskdetail.TaskDataManager;
 import com.example.todolist.helper.taskdetail.UIHelper;
+import com.example.todolist.helper.subtask.SubTaskManager;
 import com.example.todolist.model.SubTask;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.task.SubTaskService;
@@ -31,7 +32,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     AttachmentHandler.TaskUpdateCallback, 
     CategoryHandler.TaskUpdateCallback, 
     TaskDataManager.TaskUpdateCallback,
-    SubTaskAdapter.OnSubTaskListener,
+    SubTaskManager.SubTaskManagerCallback,
     TaskService.TaskUpdateListener {
     
     public static final String EXTRA_TASK_ID = "task_id";
@@ -47,20 +48,18 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private Spinner spinnerCategory;
     private LinearLayout layoutDatePicker;
     private LinearLayout btnAddAttachment;
-    private LinearLayout btnAddSubTaskHeader;
+    private LinearLayout btnAddSubtask;
+    private LinearLayout layoutNotes;
+    private LinearLayout layoutAttachments;
     private ImageView btnBack;
     private ImageView btnMenuOptions;
     private RecyclerView recyclerAttachments;
-    private RecyclerView recyclerSubTasks;
-    private TextView textNoAttachments; 
-    
-    // Helper classes
+    private RecyclerView recyclerSubTasks; 
     private TaskDataManager taskDataManager;
     private CategoryHandler categoryHandler;
     private AttachmentHandler attachmentHandler;
     private UIHelper uiHelper;
-    private SubTaskAdapter subTaskAdapter;
-    private SubTaskService subTaskService;
+    private SubTaskManager subTaskManager;
     private TaskService taskService;
     
     private Task currentTask; 
@@ -88,10 +87,11 @@ public class TaskDetailActivity extends AppCompatActivity implements
         layoutDatePicker = findViewById(R.id.layout_date_picker);
         btnBack = findViewById(R.id.btn_back_detail);
         btnMenuOptions = findViewById(R.id.btn_menu_options);
-        btnAddAttachment = findViewById(R.id.btn_add_attachment);
+        btnAddSubtask = findViewById(R.id.btn_add_subtask);
+        layoutNotes = findViewById(R.id.layout_notes);
+        layoutAttachments = findViewById(R.id.layout_attachments);
         recyclerAttachments = findViewById(R.id.recycler_attachments);
         recyclerSubTasks = findViewById(R.id.recycler_subtasks);
-        textNoAttachments = findViewById(R.id.text_no_attachments);
     }
     
     private void initHelpers() {
@@ -102,13 +102,11 @@ public class TaskDetailActivity extends AppCompatActivity implements
         
         categoryHandler = new CategoryHandler(this, spinnerCategory, this);
         
-        attachmentHandler = new AttachmentHandler(this, recyclerAttachments, textNoAttachments, this);
+        attachmentHandler = new AttachmentHandler(this, recyclerAttachments, null, this);
         
-        subTaskService = new SubTaskService(this);
         taskService = new TaskService(this, this);
-        
-        // Initialize subtask adapter
-        setupSubTaskRecyclerView();
+
+        subTaskManager = new SubTaskManager(this, recyclerSubTasks, taskDataManager, this);
         
         uiHelper = new UIHelper(this);
         uiHelper.initViews(layoutDatePicker, spinnerCategory);
@@ -129,12 +127,24 @@ public class TaskDetailActivity extends AppCompatActivity implements
         
         layoutDatePicker.setOnClickListener(v -> taskDataManager.showDateTimePicker());
         
-        btnAddAttachment.setOnClickListener(v -> attachmentHandler.showFileTypeDialog());
+        layoutAttachments.setOnClickListener(v -> attachmentHandler.showFileTypeDialog());
+        
+        layoutNotes.setOnClickListener(v -> {
+            // TODO: Implement notes functionality
+            showToast("Chức năng ghi chú sẽ được phát triển");
+        });
+        
+        btnAddSubtask.setOnClickListener(v -> subTaskManager.onAddNewSubTask());
     }
     
     @Override
     public void updateTask(Task task) {
         this.currentTask = task;
+        taskDataManager.updateTask(task);
+    }
+    
+    @Override
+    public void onTaskUpdated(Task task) {
         taskDataManager.updateTask(task);
     }
     
@@ -147,8 +157,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-    
-    // Implementation of TaskDataManager.TaskUpdateCallback
+
     @Override
     public void onTaskLoaded(Task task) {
         this.currentTask = task;
@@ -156,89 +165,28 @@ public class TaskDetailActivity extends AppCompatActivity implements
         attachmentHandler.updateAttachmentView();
         uiHelper.updateCompletionStatus(task);
         
-        // Load subtasks from Firebase
-        if (task.getId() != null) {
-            subTaskService.getSubTasks(task.getId(), new com.example.todolist.repository.BaseRepository.ListCallback<SubTask>() {
-                @Override
-                public void onSuccess(java.util.List<SubTask> subTasks) {
-                    runOnUiThread(() -> {
-                        task.setSubTasks(subTasks);
-                        refreshSubTasks();
-                    });
-                }
-
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        // If no subtasks found, just refresh with empty list
-                        if (task.getSubTasks() == null) {
-                            task.setSubTasks(new java.util.ArrayList<>());
-                        }
-                        refreshSubTasks();
-                    });
-                }
-            });
-        } else {
-            refreshSubTasks();
-        }
+        // Set task for subtask manager and load subtasks
+        subTaskManager.setCurrentTask(task);
+        subTaskManager.loadSubTasksFromDatabase();
     }
     
     @Override
     public void onTaskCompletionChanged(boolean isCompleted) {
-        // Vô hiệu hóa/kích hoạt các UI components
         spinnerCategory.setEnabled(!isCompleted);
         spinnerCategory.setAlpha(isCompleted ? 0.6f : 1.0f);
         
         layoutDatePicker.setEnabled(!isCompleted);
         layoutDatePicker.setAlpha(isCompleted ? 0.6f : 1.0f);
-        
-        btnAddAttachment.setEnabled(!isCompleted);
-        btnAddAttachment.setAlpha(isCompleted ? 0.6f : 1.0f);
-        
-        // Disable subtasks khi task hoàn thành
-        if (recyclerSubTasks != null) {
-            recyclerSubTasks.setEnabled(!isCompleted);
-            recyclerSubTasks.setAlpha(isCompleted ? 0.6f : 1.0f);
-        }
-        if (isCompleted && currentTask != null && currentTask.getSubTasks() != null) {
-            for (SubTask subTask : currentTask.getSubTasks()) {
-                if (!subTask.isCompleted()) {
-                    subTask.setCompleted(true);
-                    // Update từng subtask trong Firebase
-                    subTaskService.updateSubTask(currentTask.getId(), subTask, null);
-                }
-            }
-        }
-        
-        // Refresh subtasks để cập nhật UI
-        if (subTaskAdapter != null) {
-            subTaskAdapter.setTaskCompleted(isCompleted);
-            subTaskAdapter.notifyDataSetChanged();
-        }
+
+        layoutAttachments.setEnabled(!isCompleted);
+        layoutAttachments.setAlpha(isCompleted ? 0.6f : 1.0f);
+
+        subTaskManager.onTaskCompletionChanged(isCompleted);
     }
     
     @Override
     public void finish() {
-        // Cleanup subtasks rỗng trước khi thoát
-        if (currentTask != null && currentTask.getSubTasks() != null) {
-            java.util.List<SubTask> emptySubTasks = new java.util.ArrayList<>();
-            for (SubTask subTask : currentTask.getSubTasks()) {
-                if (subTask.getTitle() == null || subTask.getTitle().trim().isEmpty()) {
-                    emptySubTasks.add(subTask);
-                }
-            }
-            
-            // Xóa các subtasks rỗng
-            for (SubTask emptySubTask : emptySubTasks) {
-                subTaskService.deleteSubTask(currentTask.getId(), emptySubTask.getId(), null);
-                currentTask.removeSubTask(emptySubTask);
-            }
-            
-            if (!emptySubTasks.isEmpty()) {
-                taskDataManager.updateTask(currentTask);
-            }
-        }
-        
+        subTaskManager.cleanupEmptySubTasks();
         super.finish();
     }
     
@@ -269,28 +217,12 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     private void markTaskAsCompleted() {
         if (currentTask != null) {
-            // Log để debug
             android.util.Log.d("TaskDetail", "Marking task as completed. Current subtasks count: " + 
                 (currentTask.getSubTasks() != null ? currentTask.getSubTasks().size() : 0));
             
             currentTask.setCompleted(true);
-            if (currentTask.getSubTasks() != null && !currentTask.getSubTasks().isEmpty()) {
-                android.util.Log.d("TaskDetail", "Auto-completing " + currentTask.getSubTasks().size() + " subtasks");
-                
-                for (SubTask subTask : currentTask.getSubTasks()) {
-                    if (!subTask.isCompleted()) {
-                        android.util.Log.d("TaskDetail", "Completing subtask: " + subTask.getTitle());
-                        subTask.setCompleted(true);
-                        // Update từng subtask trong Firebase
-                        subTaskService.updateSubTask(currentTask.getId(), subTask, null);
-                    }
-                }
-                
-                // Refresh UI để hiển thị subtasks đã completed
-                runOnUiThread(() -> refreshSubTasks());
-            }
-            
-            // Sử dụng taskService.completeTask thay vì taskDataManager.updateTask
+            subTaskManager.markAllSubTasksAsCompleted();
+
             taskService.completeTask(currentTask, true);
             showToast(getString(R.string.task_marked_completed));
             finish();
@@ -379,115 +311,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
         super.attachBaseContext(uiHelper.updateBaseContextLocale(newBase));
     }
     
-    // SubTask methods
-    private void setupSubTaskRecyclerView() {
-        subTaskAdapter = new SubTaskAdapter(
-            currentTask != null ? currentTask.getSubTasks() : new java.util.ArrayList<>(), 
-            this
-        );
-        if (currentTask != null) {
-            subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
-        }
-        recyclerSubTasks.setLayoutManager(new LinearLayoutManager(this));
-        recyclerSubTasks.setAdapter(subTaskAdapter);
-    }
-    
-    @Override
-    public void onSubTaskStatusChanged(SubTask subTask, boolean isCompleted) {
-        subTask.setCompleted(isCompleted);
-        if (currentTask != null) {
-            subTaskService.updateSubTask(currentTask.getId(), subTask, new SubTaskService.SubTaskOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    // Then update task
-                    taskDataManager.updateTask(currentTask);
-                    runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
-                }
-
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật subtask: " + error, Toast.LENGTH_SHORT).show();
-                        // Revert changes
-                        subTask.setCompleted(!isCompleted);
-                        subTaskAdapter.notifyDataSetChanged();
-                    });
-                }
-            });
-        }
-    }
-    
-    @Override
-    public void onSubTaskTextChanged(SubTask subTask, String newText) {
-        if (!newText.isEmpty()) {
-            subTask.setTitle(newText);
-            if (currentTask != null) {
-                subTaskService.saveSubTask(currentTask.getId(), subTask, new SubTaskService.SubTaskOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        // Then update task
-                        taskDataManager.updateTask(currentTask);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(TaskDetailActivity.this, "Lỗi cập nhật subtask: " + error, Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
-            }
-        } else {
-            // Nếu text rỗng, xóa subtask
-            onSubTaskDeleted(subTask);
-        }
-    }
-    
-    @Override
-    public void onSubTaskDeleted(SubTask subTask) {
-        if (currentTask != null) {
-            // Delete from Firebase first
-            subTaskService.deleteSubTask(currentTask.getId(), subTask.getId(), new SubTaskService.SubTaskOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    // Then remove from local task
-                    currentTask.removeSubTask(subTask);
-                    taskDataManager.updateTask(currentTask);
-                    runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
-                }
-
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(TaskDetailActivity.this, "Lỗi xóa subtask: " + error, Toast.LENGTH_SHORT).show();
-                    });
-                }
-            });
-        }
-    }
-    
-    @Override
-    public void onAddNewSubTask() {
-        if (currentTask != null) {
-            SubTask newSubTask = new SubTask("", currentTask.getId());
-            newSubTask.setId(java.util.UUID.randomUUID().toString());
-            currentTask.addSubTask(newSubTask);
-            runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
-        }
-    }
-    
-    private void refreshSubTasks() {
-        if (subTaskAdapter != null && currentTask != null) {
-            subTaskAdapter = new SubTaskAdapter(currentTask.getSubTasks(), this);
-            subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
-            recyclerSubTasks.setAdapter(subTaskAdapter);
-        }
-    }
-
-    // TaskService.TaskUpdateListener methods
     @Override
     public void onTasksUpdated() {
-        // Không cần làm gì vì đây là detail activity, không quản lý danh sách tasks
     }
 
     @Override

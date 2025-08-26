@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F8F9FA">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:orientation="vertical">
 
-        <!-- Header with back button -->
+        <!-- Header with back button and menu only -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp">
+            android:padding="16dp"
+            android:background="#FFFFFF">
 
             <ImageView
                 android:id="@+id/btn_back_detail"
@@ -29,15 +28,10 @@
                 android:padding="4dp"
                 android:clickable="true"/>
 
-            <TextView
+            <View
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/task_detail_title"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginStart="16dp"/>
+                android:layout_weight="1"/>
 
             <ImageView
                 android:id="@+id/btn_menu_options"
@@ -54,456 +48,403 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp">
 
-            <!-- Category dropdown -->
-            <androidx.cardview.widget.CardView
+            <!-- Compact Category Dropdown -->
+            <Spinner
+                android:id="@+id/spinner_category"
+                android:layout_width="120dp"
+                android:layout_height="36dp"
+                android:layout_gravity="start"
+                android:background="@drawable/spinner_background"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Task Title -->
+            <EditText
+                android:id="@+id/edit_detail_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                android:hint="@string/task_title_hint"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:textColorHint="#9E9E9E"
+                android:background="@null"
+                android:padding="0dp"
+                android:layout_marginBottom="24dp"/>
 
-                <Spinner
-                    android:id="@+id/spinner_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:layout_margin="6dp"
-                    android:background="@android:color/transparent"
-                    android:dropDownWidth="match_parent"/>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Task title -->
-            <androidx.cardview.widget.CardView
+            <!-- SubTasks RecyclerView (no header, no timeline) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_subtasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                android:nestedScrollingEnabled="false" 
+                android:layout_marginBottom="8dp"/>
 
-                <EditText
-                    android:id="@+id/edit_detail_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Chúc ngủ ngon, đã đến giờ đi ngủ"
-                    android:textSize="18sp"
-                    android:textColor="#333333"
-                    android:padding="12dp"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/task_title_hint"
-                    android:inputType="textMultiLine"
-                    android:minLines="2"/>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- SubTasks -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_subtask"
-                            android:layout_marginEnd="8dp"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Nhiệm vụ phụ"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#333333"/>
-
-                        <LinearLayout
-                            android:id="@+id/btn_add_subtask_header"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:padding="8dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/ic_add"
-                                android:layout_marginEnd="4dp"
-                                app:tint="#4285F4"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Thêm"
-                                android:textSize="12sp"
-                                android:textColor="#4285F4"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_subtasks"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Date picker -->
+            <!-- Add Subtask Button -->
             <LinearLayout
-                android:id="@+id/layout_date_picker"
-                android:layout_width="match_parent"
+                android:id="@+id/btn_add_subtask"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
+                android:paddingVertical="8dp"
+                android:layout_marginBottom="24dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_calendar"
-                    android:layout_marginEnd="12dp"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_add"
+                    android:layout_marginEnd="8dp"
+                    app:tint="#4285F4"/>
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/due_date_label"
-                        android:textSize="14sp"
-                        android:textColor="#666666"/>
-
-                    <TextView
-                        android:id="@+id/text_due_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2025/06/26"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        android:layout_marginTop="2dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Time and reminder -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@android:color/white"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_time"
-                    android:layout_marginEnd="12dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/time_label"
-                        android:textSize="14sp"
-                        android:textColor="#666666"/>
-
-                    <TextView
-                        android:id="@+id/text_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="22:00"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        android:layout_marginTop="2dp"/>
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="40dp"
-                    android:background="#E0E0E0"
-                    android:layout_marginHorizontal="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/reminder_label"
-                        android:textSize="14sp"
-                        android:textColor="#666666"/>
-
-                    <TextView
-                        android:id="@+id/text_reminder_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/reminder_none"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        android:layout_marginTop="2dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Repeat section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@android:color/white"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_repeat"
-                    android:layout_marginEnd="12dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/repeat_label"
-                        android:textSize="14sp"
-                        android:textColor="#666666"/>
-
-                    <TextView
-                        android:id="@+id/text_repeat_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/repeat_none"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        android:layout_marginTop="2dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Task description (Notes) -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_note"
-                            android:layout_marginEnd="8dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ghi chú"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#333333"/>
-
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/edit_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:hint="Thêm ghi chú cho nhiệm vụ..."
-                        android:inputType="textMultiLine"
-                        android:minLines="1"
-                        android:maxLines="8"
-                        android:textSize="14sp"
-                        android:textColor="#333333"
-                        android:textColorHint="#999999"
-                        android:gravity="top"
-                        android:scrollbars="vertical"/>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Attachments -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_attachment"
-                            android:layout_marginEnd="8dp"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Tệp tin đính kèm"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#333333"/>
-
-                        <LinearLayout
-                            android:id="@+id/btn_add_attachment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:padding="8dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/ic_add"
-                                android:layout_marginEnd="4dp"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Thêm"
-                                android:textSize="12sp"
-                                android:textColor="#007AFF"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- RecyclerView for attachments với flexible height -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_attachments"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never"/>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Priority section (moved to bottom) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@android:color/white"
-                android:padding="12dp"
-                android:layout_marginBottom="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_priority"
-                    android:layout_marginEnd="12dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/text_priority_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/priority_no"
-                        android:textSize="14sp"
-                        android:textColor="#666666"/>
-
-                    <TextView
-                        android:id="@+id/text_priority_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/priority_label"
-                        android:textSize="16sp"
-                        android:textColor="#333333"
-                        android:layout_marginTop="2dp"/>
-
-                </LinearLayout>
+                    android:text="Thêm nhiệm vụ phụ"
+                    android:textSize="16sp"
+                    android:textColor="#4285F4"/>
 
             </LinearLayout>
 
         </LinearLayout>
+
+        <!-- Timeline sections start here -->
+        
+        <!-- Due Date Section -->
+        <LinearLayout
+            android:id="@+id/layout_date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:clickable="true"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendar"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                app:tint="#666666"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ngày đến hạn"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/text_due_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2025/07/06"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"/>
+
+        </LinearLayout>
+
+        <!-- Time & Reminder Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_schedule"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                app:tint="#666666"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thời gian &amp; Lời nhắc"
+                    android:textSize="16sp"
+                    android:textColor="#666666"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhắc nhở lúc"
+                    android:textSize="14sp"
+                    android:textColor="#999999"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/text_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="22:30"
+                    android:textSize="16sp"
+                    android:textColor="#1A1A1A"/>
+
+                <TextView
+                    android:id="@+id/text_reminder_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="22:25"
+                    android:textSize="14sp"
+                    android:textColor="#999999"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Notification Type Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:layout_marginTop="1dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Loại lời nhắc"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginStart="40dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thông báo"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"/>
+
+        </LinearLayout>
+
+        <!-- Repeat Task Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_repeat"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                app:tint="#666666"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lặp lại nhiệm vụ"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/text_repeat_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Không"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"/>
+
+        </LinearLayout>
+
+        <!-- Priority Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_priority"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                app:tint="#666666"/>
+
+            <TextView
+                android:id="@+id/text_priority_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Độ ưu tiên"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/text_priority_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thấp"
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"/>
+
+        </LinearLayout>
+
+        <!-- Notes Section -->
+        <LinearLayout
+            android:id="@+id/layout_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginTop="1dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_note"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"
+                app:tint="#666666"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ghi chú"
+                android:textSize="16sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THÊM"
+                android:textSize="14sp"
+                android:textColor="#4285F4"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <!-- Description EditText in Notes Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="16dp">
+
+            <EditText
+                android:id="@+id/edit_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Thêm mô tả..."
+                android:textSize="16sp"
+                android:textColor="#1A1A1A"
+                android:textColorHint="#9E9E9E"
+                android:background="@null"
+                android:padding="0dp"
+                android:minLines="3"
+                android:gravity="top"
+                android:layout_marginStart="40dp"/>
+
+        </LinearLayout>
+
+        <!-- Attachments Section -->
+        <LinearLayout
+            android:id="@+id/layout_attachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginTop="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_attachment"
+                    android:layout_marginEnd="16dp"
+                    app:tint="#666666"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tệp tin đính kèm"
+                    android:textSize="16sp"
+                    android:textColor="#666666"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="THÊM"
+                    android:textSize="14sp"
+                    android:textColor="#4285F4"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_attachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
+        <!-- Bottom spacing -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
 
     </LinearLayout>
 

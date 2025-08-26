@@ -4,16 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="8dp">
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="20dp">
 
+    <!-- Circle Checkbox -->
     <CheckBox
         android:id="@+id/checkBox_subtask"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="12dp"
-        android:button="@drawable/custom_checkbox"
-        android:scaleX="0.8"
-        android:scaleY="0.8" />
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="16dp"
+        android:button="@drawable/circle_checkbox"
+        android:background="@android:color/transparent" />
 
     <EditText
         android:id="@+id/editText_subtask"
@@ -22,10 +23,10 @@
         android:layout_weight="1"
         android:background="@android:color/transparent"
         android:hint="Nhập nhiệm vụ phụ..."
-        android:textSize="14sp"
-        android:textColor="#333333"
-        android:textColorHint="#999999"
-        android:padding="4dp"
+        android:textSize="16sp"
+        android:textColor="#1A1A1A"
+        android:textColorHint="#9E9E9E"
+        android:padding="0dp"
         android:maxLines="1"
         android:singleLine="true" />
 

@@ -545,10 +545,14 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         if (currentTask != null) {
             List<Attachment> attachments = currentTask.getAttachmentList();
             if (attachments.isEmpty()) {
-                textNoAttachments.setVisibility(View.VISIBLE);
+                if (textNoAttachments != null) {
+                    textNoAttachments.setVisibility(View.VISIBLE);
+                }
                 recyclerAttachments.setVisibility(View.GONE);
             } else {
-                textNoAttachments.setVisibility(View.GONE);
+                if (textNoAttachments != null) {
+                    textNoAttachments.setVisibility(View.GONE);
+                }
                 recyclerAttachments.setVisibility(View.VISIBLE);
                 attachmentAdapter.updateAttachments(attachments);
             }
