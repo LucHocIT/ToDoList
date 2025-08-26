@@ -21,7 +21,7 @@ public class TaskItemViewHelper {
         taskItem.setBackgroundResource(R.drawable.task_item_background);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            CalendarUtils.dpToPx(context, 72) // Fix cứng chiều cao 72dp cho mọi task
         );
         params.setMargins(CalendarUtils.dpToPx(context, 8), 0, CalendarUtils.dpToPx(context, 8), CalendarUtils.dpToPx(context, 4));
         taskItem.setLayoutParams(params);
