@@ -50,7 +50,10 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private LinearLayout btnAddAttachment;
     private LinearLayout btnAddSubtask;
     private LinearLayout layoutNotes;
+    private LinearLayout layoutNotesInput;
     private LinearLayout layoutAttachments;
+    private TextView textNotesAction;
+    private TextView textExistingNotes;
     private ImageView btnBack;
     private ImageView btnMenuOptions;
     private RecyclerView recyclerAttachments;
@@ -89,6 +92,9 @@ public class TaskDetailActivity extends AppCompatActivity implements
         btnMenuOptions = findViewById(R.id.btn_menu_options);
         btnAddSubtask = findViewById(R.id.btn_add_subtask);
         layoutNotes = findViewById(R.id.layout_notes);
+        layoutNotesInput = findViewById(R.id.layout_notes_input);
+        textNotesAction = findViewById(R.id.text_notes_action);
+        textExistingNotes = findViewById(R.id.text_existing_notes);
         layoutAttachments = findViewById(R.id.layout_attachments);
         recyclerAttachments = findViewById(R.id.recycler_attachments);
         recyclerSubTasks = findViewById(R.id.recycler_subtasks);
@@ -130,11 +136,17 @@ public class TaskDetailActivity extends AppCompatActivity implements
         layoutAttachments.setOnClickListener(v -> attachmentHandler.showFileTypeDialog());
         
         layoutNotes.setOnClickListener(v -> {
-            // TODO: Implement notes functionality
-            showToast("Chức năng ghi chú sẽ được phát triển");
+            toggleNotesInput();
         });
         
-        btnAddSubtask.setOnClickListener(v -> subTaskManager.onAddNewSubTask());
+        btnAddSubtask.setOnClickListener(v -> {
+            android.util.Log.d("TaskDetail", "Add subtask button clicked");
+            if (currentTask != null) {
+                android.util.Log.d("TaskDetail", "Current task has subtasks: " + 
+                    (currentTask.getSubTasks() != null ? currentTask.getSubTasks().size() : 0));
+            }
+            subTaskManager.onAddNewSubTask();
+        });
     }
     
     @Override
@@ -164,10 +176,41 @@ public class TaskDetailActivity extends AppCompatActivity implements
         categoryHandler.updateCategorySelection();
         attachmentHandler.updateAttachmentView();
         uiHelper.updateCompletionStatus(task);
-        
-        // Set task for subtask manager and load subtasks
         subTaskManager.setCurrentTask(task);
         subTaskManager.loadSubTasksFromDatabase();
+        updateNotesDisplay();
+    }
+    
+    private void updateNotesDisplay() {
+        if (currentTask != null && currentTask.getDescription() != null && !currentTask.getDescription().trim().isEmpty()) {
+            textExistingNotes.setText(currentTask.getDescription());
+            textExistingNotes.setVisibility(View.VISIBLE);
+            textNotesAction.setText("SỬA");
+            editDescription.setText(currentTask.getDescription());
+        } else {
+            textExistingNotes.setVisibility(View.GONE);
+            textNotesAction.setText("THÊM");
+            editDescription.setText("");
+        }
+    }
+    
+    private void toggleNotesInput() {
+        if (layoutNotesInput.getVisibility() == View.GONE) {
+            // Show input
+            layoutNotesInput.setVisibility(View.VISIBLE);
+            textExistingNotes.setVisibility(View.GONE);
+            textNotesAction.setText("LƯU");
+            editDescription.requestFocus();
+        } else {
+            // Save and hide input
+            String noteText = editDescription.getText().toString().trim();
+            if (currentTask != null) {
+                currentTask.setDescription(noteText);
+                taskDataManager.updateTask(currentTask);
+            }
+            layoutNotesInput.setVisibility(View.GONE);
+            updateNotesDisplay();
+        }
     }
     
     @Override
@@ -180,6 +223,9 @@ public class TaskDetailActivity extends AppCompatActivity implements
 
         layoutAttachments.setEnabled(!isCompleted);
         layoutAttachments.setAlpha(isCompleted ? 0.6f : 1.0f);
+        
+        btnAddSubtask.setEnabled(!isCompleted);
+        btnAddSubtask.setAlpha(isCompleted ? 0.6f : 1.0f);
 
         subTaskManager.onTaskCompletionChanged(isCompleted);
     }

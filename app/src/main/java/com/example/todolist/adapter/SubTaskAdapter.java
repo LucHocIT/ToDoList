@@ -39,36 +39,26 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     
     @Override
     public int getItemViewType(int position) {
-        return position == subTasks.size() ? TYPE_ADD_NEW : TYPE_SUBTASK;
+        return TYPE_SUBTASK; 
     }
     
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_ADD_NEW) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_add_subtask, parent, false);
-            return new AddNewViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_subtask, parent, false);
-            return new SubTaskViewHolder(view);
-        }
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_subtask, parent, false);
+        return new SubTaskViewHolder(view);
     }
     
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof SubTaskViewHolder) {
-            SubTask subTask = subTasks.get(position);
-            ((SubTaskViewHolder) holder).bind(subTask);
-        } else if (holder instanceof AddNewViewHolder) {
-            ((AddNewViewHolder) holder).bind();
-        }
+        SubTask subTask = subTasks.get(position);
+        ((SubTaskViewHolder) holder).bind(subTask);
     }
     
     @Override
     public int getItemCount() {
-        return subTasks.size() + 1; // +1 for "Add new" item
+        return subTasks.size(); 
     }
     
     class SubTaskViewHolder extends RecyclerView.ViewHolder {

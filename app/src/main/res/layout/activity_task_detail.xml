@@ -16,7 +16,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:padding="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
             android:background="#FFFFFF">
 
             <ImageView
@@ -51,18 +53,25 @@
             android:orientation="vertical"
             android:background="#FFFFFF"
             android:paddingHorizontal="20dp"
-            android:paddingTop="8dp">
+            android:paddingTop="16dp">
 
-            <!-- Compact Category Dropdown -->
-            <Spinner
-                android:id="@+id/spinner_category"
-                android:layout_width="120dp"
-                android:layout_height="36dp"
-                android:layout_gravity="start"
-                android:background="@drawable/spinner_background"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="8dp"
-                android:layout_marginBottom="16dp"/>
+            <!-- Compact Category Dropdown with proper sizing -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <Spinner
+                    android:id="@+id/spinner_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="120dp"
+                    android:background="@drawable/spinner_background"
+                    android:paddingHorizontal="8dp"/>
+
+            </LinearLayout>
 
             <!-- Task Title -->
             <EditText
@@ -76,9 +85,9 @@
                 android:textColorHint="#9E9E9E"
                 android:background="@null"
                 android:padding="0dp"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <!-- SubTasks RecyclerView (no header, no timeline) -->
+            <!-- SubTasks RecyclerView (aligned with title) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_subtasks"
                 android:layout_width="match_parent"
@@ -86,7 +95,7 @@
                 android:nestedScrollingEnabled="false" 
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Add Subtask Button -->
+            <!-- Add Subtask Button (aligned with subtasks) -->
             <LinearLayout
                 android:id="@+id/btn_add_subtask"
                 android:layout_width="wrap_content"
@@ -95,21 +104,21 @@
                 android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:paddingVertical="8dp"
-                android:layout_marginBottom="24dp">
+                android:paddingVertical="6dp"
+                android:layout_marginBottom="16dp">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:src="@drawable/ic_add"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="6dp"
                     app:tint="#4285F4"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Thêm nhiệm vụ phụ"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColor="#4285F4"/>
 
             </LinearLayout>
@@ -325,66 +334,87 @@
 
         </LinearLayout>
 
-        <!-- Notes Section -->
+        <!-- Notes Section with dynamic container -->
         <LinearLayout
             android:id="@+id/layout_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingHorizontal="20dp"
             android:paddingVertical="16dp"
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground"
             android:layout_marginTop="1dp">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_note"
-                android:layout_marginEnd="16dp"
-                android:layout_gravity="center_vertical"
-                app:tint="#666666"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ghi chú"
-                android:textSize="16sp"
-                android:textColor="#666666"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="THÊM"
-                android:textSize="14sp"
-                android:textColor="#4285F4"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <!-- Description EditText in Notes Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="16dp">
-
-            <EditText
-                android:id="@+id/edit_description"
+            <!-- Notes header -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Thêm mô tả..."
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_note"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical"
+                    app:tint="#666666"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ghi chú"
+                    android:textSize="16sp"
+                    android:textColor="#666666"/>
+
+                <TextView
+                    android:id="@+id/text_notes_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="THÊM"
+                    android:textSize="14sp"
+                    android:textColor="#4285F4"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <!-- Description EditText (initially hidden) -->
+            <LinearLayout
+                android:id="@+id/layout_notes_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="40dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/edit_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Thêm mô tả..."
+                    android:textSize="16sp"
+                    android:textColor="#1A1A1A"
+                    android:textColorHint="#9E9E9E"
+                    android:background="@null"
+                    android:padding="0dp"
+                    android:minLines="2"
+                    android:gravity="top"/>
+
+            </LinearLayout>
+
+            <!-- Display existing notes (if any) -->
+            <TextView
+                android:id="@+id/text_existing_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="40dp"
                 android:textSize="16sp"
                 android:textColor="#1A1A1A"
-                android:textColorHint="#9E9E9E"
-                android:background="@null"
-                android:padding="0dp"
-                android:minLines="3"
-                android:gravity="top"
-                android:layout_marginStart="40dp"/>
+                android:visibility="gone"/>
 
         </LinearLayout>
 

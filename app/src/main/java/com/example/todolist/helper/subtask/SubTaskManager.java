@@ -145,11 +145,13 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
 
     private void refreshSubTasks() {
         if (subTaskAdapter != null && currentTask != null) {
-            subTaskAdapter = new SubTaskAdapter(currentTask.getSubTasks(), this);
-            if (currentTask != null) {
-                subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
-            }
+            // Update the adapter's data instead of creating a new adapter
+            List<SubTask> subTasks = currentTask.getSubTasks() != null ? currentTask.getSubTasks() : new ArrayList<>();
+            subTaskAdapter = new SubTaskAdapter(subTasks, this);
+            subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
             recyclerSubTasks.setAdapter(subTaskAdapter);
+            
+            android.util.Log.d("SubTaskManager", "Refreshed subtasks count: " + subTasks.size());
         }
     }
 
@@ -251,11 +253,15 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     @Override
     public void onAddNewSubTask() {
         if (currentTask != null) {
+            android.util.Log.d("SubTaskManager", "Adding new subtask to task: " + currentTask.getId());
             SubTask newSubTask = new SubTask("", currentTask.getId());
             newSubTask.setId(UUID.randomUUID().toString());
             currentTask.addSubTask(newSubTask);
+            
             if (context instanceof android.app.Activity) {
-                ((android.app.Activity) context).runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
+                ((android.app.Activity) context).runOnUiThread(() -> {
+                    refreshSubTasks();
+                });
             }
         }
     }
