@@ -1,11 +1,11 @@
-package com.example.todolist;
+package com.example.todolist.widget;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import com.example.todolist.R;
 import com.example.todolist.cache.TaskCache;
 import com.example.todolist.helper.calendar.CalendarUtils;
 import com.example.todolist.model.Task;
@@ -100,22 +100,6 @@ class CalendarTaskRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             views.setTextColor(R.id.widget_task_checkbox, 0xFF666666); // Gray circle
             views.setInt(R.id.widget_task_checkbox, "setBackgroundResource", android.R.color.transparent);
         }
-
-        // Set click intent to open task details
-        Intent taskDetailIntent = new Intent(context, MainActivity.class);
-        taskDetailIntent.putExtra("task_id", task.getId());
-        taskDetailIntent.putExtra("open_task_detail", true);
-        taskDetailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-            context, 
-            task.getId().hashCode(), 
-            taskDetailIntent, 
-            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-        
-        // Make the entire item clickable
-        views.setOnClickPendingIntent(R.id.widget_task_title, pendingIntent);
         
         return views;
     }
@@ -167,61 +151,29 @@ class CalendarTaskRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             }
         }
         
-        tasks = new ArrayList<>();
-        
-        if (allTasks != null && allTasks.size() > 0) {
-            for (Task task : allTasks) {
-                boolean isMatch = CalendarUtils.isTaskOnDate(task, dateString);
-                if (isMatch) {
-                    tasks.add(task);
-                }
-            }
-        } else {
-            List<Task> directCacheTasks = taskCache.getAllTasks();
-            if (directCacheTasks != null && directCacheTasks.size() > 0) {
-                for (Task task : directCacheTasks) {
-                    boolean isMatch = CalendarUtils.isTaskOnDate(task, dateString);
-                    if (isMatch) {
-                        tasks.add(task);
-                    }
-                }
-            }
+        if (allTasks == null) {
+            allTasks = new ArrayList<>();
         }
-
-        // Sort tasks: uncompleted first, then completed
-        List<Task> uncompletedTasks = new ArrayList<>();
-        List<Task> completedTasks = new ArrayList<>();
         
-        for (Task task : tasks) {
-            if (task.isCompleted()) {
-                completedTasks.add(task);
-            } else {
-                uncompletedTasks.add(task);
-            }
-        }
-
         tasks.clear();
-        tasks.addAll(uncompletedTasks);
-        tasks.addAll(completedTasks);
+        for (Task task : allTasks) {
+            if (CalendarUtils.isTaskOnDate(task, dateString)) {
+                tasks.add(task);
+            }
+        }
     }
     
     private int getPriorityColor(String priority) {
-        if (priority == null) {
-            return 0xFF4CAF50; // Green for no priority
-        }
+        if (priority == null) return 0xFF4CAF50; // Default green
         
         switch (priority.toLowerCase()) {
-            case "cao":
             case "high":
-                return 0xFFFF5252; // Red
-            case "trung bình":
+                return 0xFFFF4444; 
             case "medium":
-                return 0xFFFF9800; // Orange
-            case "thấp":
+                return 0xFFFF8800; 
             case "low":
-                return 0xFF4CAF50; // Green
             default:
-                return 0xFF4CAF50; // Green
+                return 0xFF4CAF50; 
         }
     }
 }

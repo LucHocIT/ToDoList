@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.RemoteViews;
+import com.example.todolist.R;
 import com.example.todolist.cache.TaskCache;
 import com.example.todolist.helper.calendar.CalendarUtils;
 import com.example.todolist.model.Task;
@@ -49,11 +50,12 @@ public class CalendarTaskWidget extends AppWidgetProvider {
         int currentYear = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
         int currentMonth = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
         int selectedDay = prefs.getInt(PREF_SELECTED_DAY, calendar.get(Calendar.DAY_OF_MONTH));
-        
+
         if (DAY_CLICK_ACTION.equals(intent.getAction())) {
-            selectedDay = intent.getIntExtra("day", 1);
-            currentMonth = intent.getIntExtra("month", 0);
-            currentYear = intent.getIntExtra("year", 2025);
+            // Handle day selection
+            selectedDay = intent.getIntExtra("day", selectedDay);
+            currentMonth = intent.getIntExtra("month", currentMonth);
+            currentYear = intent.getIntExtra("year", currentYear);
             
             // Save updated values
             SharedPreferences.Editor editor = prefs.edit();
@@ -70,9 +72,9 @@ public class CalendarTaskWidget extends AppWidgetProvider {
                 updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
             }
         } else if (PREV_MONTH_ACTION.equals(intent.getAction())) {
-            // Navigate to previous month (direction = -1)
+            // Navigate to previous month
             calendar.set(currentYear, currentMonth, 1);
-            calendar.add(Calendar.MONTH, -1);  // ← Trừ 1 tháng
+            calendar.add(Calendar.MONTH, -1);
             currentYear = calendar.get(Calendar.YEAR);
             currentMonth = calendar.get(Calendar.MONTH);
             selectedDay = 1; // Reset to first day of month
@@ -92,9 +94,9 @@ public class CalendarTaskWidget extends AppWidgetProvider {
                 updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
             }
         } else if (NEXT_MONTH_ACTION.equals(intent.getAction())) {
-            // Navigate to next month (direction = +1)
+            // Navigate to next month
             calendar.set(currentYear, currentMonth, 1);
-            calendar.add(Calendar.MONTH, 1);   // ← Cộng 1 tháng
+            calendar.add(Calendar.MONTH, 1);
             currentYear = calendar.get(Calendar.YEAR);
             currentMonth = calendar.get(Calendar.MONTH);
             selectedDay = 1; // Reset to first day of month
@@ -192,6 +194,12 @@ public class CalendarTaskWidget extends AppWidgetProvider {
 
     private void updateTaskList(Context context, RemoteViews views, int appWidgetId, 
                                int currentYear, int currentMonth, int selectedDay) {
+        // Update selected date text
+        String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String selectedDateText = monthNames[currentMonth] + " " + selectedDay + ", " + currentYear;
+        views.setTextViewText(R.id.selected_date_text, selectedDateText);
+        
         Intent serviceIntent = new Intent(context, CalendarTaskWidgetService.class);
         serviceIntent.putExtra("extra_day", selectedDay);
         serviceIntent.putExtra("extra_month", currentMonth);
@@ -205,6 +213,7 @@ public class CalendarTaskWidget extends AppWidgetProvider {
             views.setRemoteAdapter(R.id.task_list, serviceIntent);
             views.setEmptyView(R.id.task_list, R.id.empty_text);
         } catch (Exception e) {
+            // Handle exception silently
         }
         
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -221,26 +230,31 @@ public class CalendarTaskWidget extends AppWidgetProvider {
     }
 
     private void setupNavigationButtons(Context context, RemoteViews views) {
-        // Setup Previous Month button
+        // Previous month button
         Intent prevMonthIntent = new Intent(context, CalendarTaskWidget.class);
         prevMonthIntent.setAction(PREV_MONTH_ACTION);
         PendingIntent prevMonthPendingIntent = PendingIntent.getBroadcast(context, 
-            10001, prevMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            0, prevMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.btn_prev_month, prevMonthPendingIntent);
         
-        // Setup Next Month button
+        // Next month button
         Intent nextMonthIntent = new Intent(context, CalendarTaskWidget.class);
         nextMonthIntent.setAction(NEXT_MONTH_ACTION);
         PendingIntent nextMonthPendingIntent = PendingIntent.getBroadcast(context, 
-            10002, nextMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            1, nextMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         views.setOnClickPendingIntent(R.id.btn_next_month, nextMonthPendingIntent);
     }
-
+    
     private boolean hasTasksForDate(Context context, int year, int month, int day) {
         String dateString = String.format("%02d/%02d/%04d", day, month + 1, year);
         
-        TaskService taskService = new TaskService(context, null);
-        List<Task> allTasks = taskService.getAllTasksFromCache();
+        TaskCache taskCache = TaskCache.getInstance();
+        List<Task> allTasks = taskCache.getAllTasks();
+        
+        if (allTasks == null || allTasks.isEmpty()) {
+            TaskService taskService = new TaskService(context, null);
+            allTasks = taskService.getAllTasksFromCache();
+        }
         
         if (allTasks != null) {
             for (Task task : allTasks) {

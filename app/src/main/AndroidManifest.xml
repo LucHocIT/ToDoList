@@ -131,7 +131,7 @@
 
         <!-- Calendar Task Widget 4x2 -->
         <receiver
-            android:name=".CalendarTaskWidget"
+            android:name=".widget.CalendarTaskWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -144,7 +144,7 @@
 
         <!-- Calendar Task Widget Service -->
         <service
-            android:name=".CalendarTaskWidgetService"
+            android:name=".widget.CalendarTaskWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
 
