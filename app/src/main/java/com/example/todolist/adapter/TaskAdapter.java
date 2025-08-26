@@ -78,6 +78,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             iconStar = itemView.findViewById(R.id.icon_star);
             textSubtaskProgress = itemView.findViewById(R.id.text_subtask_progress);
             taskBackground = itemView.findViewById(R.id.task_background);
+            
+            // Thiết lập custom styling cho checkbox để tránh conflict với Material theme
+            if (checkboxComplete != null) {
+                checkboxComplete.setButtonDrawable(ContextCompat.getDrawable(itemView.getContext(), R.drawable.subtask_checkbox_selector));
+                checkboxComplete.setButtonTintList(null); // Loại bỏ tint của Material theme
+            }
         }
         public void bind(Task task) {
             textTaskTitle.setText(task.getTitle());
