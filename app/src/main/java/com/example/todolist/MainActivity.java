@@ -177,10 +177,24 @@ public class MainActivity extends AppCompatActivity implements
     private void handleNotificationIntent() {
         Intent intent = getIntent();
         if (intent != null) {
+            if (intent.getBooleanExtra("open_task_detail", false)) {
+                String taskId = intent.getStringExtra("task_id");
+                if (taskId != null) {
+                    findViewById(android.R.id.content).post(() -> {
+                        Task task = taskService.getTaskByIdFromCache(taskId);
+                        if (task != null) {
+                            Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);
+                            detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
+                            startActivityForResult(detailIntent, REQUEST_TASK_DETAIL);
+                        }
+                    });
+                }
+                return;
+            }
+
             int taskId = intent.getIntExtra(NotificationHelper.EXTRA_TASK_ID, -1);
             String action = intent.getStringExtra("action");
             if (taskId != -1) {
-                // Sử dụng cache-based method
                 Task task = taskService.getTaskByIdFromCache(String.valueOf(taskId));
                 if (task != null) {
                     Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);

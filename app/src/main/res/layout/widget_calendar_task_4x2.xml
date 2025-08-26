@@ -25,6 +25,18 @@
             android:gravity="center_vertical"
             android:paddingBottom="4dp">
 
+            <!-- Previous Month Button -->
+            <TextView
+                android:id="@+id/btn_prev_month"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:text="◀"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true" />
+
             <TextView
                 android:id="@+id/month_year_text"
                 android:layout_width="0dp"
@@ -35,6 +47,18 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:gravity="center" />
+
+            <!-- Next Month Button -->
+            <TextView
+                android:id="@+id/btn_next_month"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:text="▶"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true" />
 
         </LinearLayout>
 

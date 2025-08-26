@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 import com.example.todolist.cache.TaskCache;
 import com.example.todolist.helper.calendar.CalendarUtils;
@@ -17,8 +16,9 @@ import java.util.List;
 
 public class CalendarTaskWidget extends AppWidgetProvider {
     
-    private static final String TAG = "CalendarTaskWidget";
     private static final String DAY_CLICK_ACTION = "com.example.todolist.DAY_CLICK";
+    private static final String PREV_MONTH_ACTION = "com.example.todolist.PREV_MONTH";
+    private static final String NEXT_MONTH_ACTION = "com.example.todolist.NEXT_MONTH";
     
     private int currentYear;
     private int currentMonth;
@@ -26,9 +26,6 @@ public class CalendarTaskWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(TAG, "onUpdate() called");
-        
-        // Initialize current date
         Calendar calendar = Calendar.getInstance();
         currentYear = calendar.get(Calendar.YEAR);
         currentMonth = calendar.get(Calendar.MONTH);
@@ -43,14 +40,42 @@ public class CalendarTaskWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         
-        Log.d(TAG, "onReceive() called with action: " + intent.getAction());
-        
         if (DAY_CLICK_ACTION.equals(intent.getAction())) {
             selectedDay = intent.getIntExtra("day", 1);
             currentMonth = intent.getIntExtra("month", 0);
             currentYear = intent.getIntExtra("year", 2025);
             
-            Log.d(TAG, "Day clicked: " + selectedDay + "/" + (currentMonth + 1) + "/" + currentYear);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new android.content.ComponentName(context, CalendarTaskWidget.class));
+            
+            for (int appWidgetId : appWidgetIds) {
+                updateWidget(context, appWidgetManager, appWidgetId);
+            }
+        } else if (PREV_MONTH_ACTION.equals(intent.getAction())) {
+            // Navigate to previous month
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(currentYear, currentMonth, 1);
+            calendar.add(Calendar.MONTH, -1);
+            currentYear = calendar.get(Calendar.YEAR);
+            currentMonth = calendar.get(Calendar.MONTH);
+            selectedDay = 1; // Reset to first day of month
+            
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new android.content.ComponentName(context, CalendarTaskWidget.class));
+            
+            for (int appWidgetId : appWidgetIds) {
+                updateWidget(context, appWidgetManager, appWidgetId);
+            }
+        } else if (NEXT_MONTH_ACTION.equals(intent.getAction())) {
+            // Navigate to next month
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(currentYear, currentMonth, 1);
+            calendar.add(Calendar.MONTH, 1);
+            currentYear = calendar.get(Calendar.YEAR);
+            currentMonth = calendar.get(Calendar.MONTH);
+            selectedDay = 1; // Reset to first day of month
             
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
@@ -63,30 +88,30 @@ public class CalendarTaskWidget extends AppWidgetProvider {
     }
 
     private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        Log.d(TAG, "updateWidget() called for widget ID: " + appWidgetId);
-        
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_calendar_task_4x2);
         
-        // Update calendar view
         updateCalendarView(context, views);
-        
-        // Update task list
         updateTaskList(context, views, appWidgetId);
         
         appWidgetManager.updateAppWidget(appWidgetId, views);
-        Log.d(TAG, "Widget updated successfully");
     }
 
     private void updateCalendarView(Context context, RemoteViews views) {
-        Log.d(TAG, "updateCalendarView() called for " + (currentMonth + 1) + "/" + currentYear);
-        
         Calendar calendar = Calendar.getInstance();
         calendar.set(currentYear, currentMonth, 1);
+        
+        // Update month/year display
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                              "July", "August", "September", "October", "November", "December"};
+        String monthYearText = monthNames[currentMonth] + " " + currentYear;
+        views.setTextViewText(R.id.month_year_text, monthYearText);
+        
+        // Setup navigation buttons
+        setupNavigationButtons(context, views);
         
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         
-        // Calendar day IDs array
         int[] dayIds = {
             R.id.day_1, R.id.day_2, R.id.day_3, R.id.day_4, R.id.day_5, R.id.day_6, R.id.day_7,
             R.id.day_8, R.id.day_9, R.id.day_10, R.id.day_11, R.id.day_12, R.id.day_13, R.id.day_14,
@@ -96,7 +121,6 @@ public class CalendarTaskWidget extends AppWidgetProvider {
             R.id.day_36, R.id.day_37, R.id.day_38, R.id.day_39, R.id.day_40, R.id.day_41, R.id.day_42
         };
         
-        // Clear all day views first
         for (int dayId : dayIds) {
             views.setTextViewText(dayId, "");
             views.setInt(dayId, "setBackgroundResource", android.R.color.transparent);
@@ -104,23 +128,19 @@ public class CalendarTaskWidget extends AppWidgetProvider {
         
         int dayCounter = 1;
         
-        // Fill in the calendar days
         for (int i = firstDayOfWeek; i < firstDayOfWeek + daysInMonth && i < dayIds.length; i++) {
             views.setTextViewText(dayIds[i], String.valueOf(dayCounter));
             
-            // Highlight selected day
             if (dayCounter == selectedDay) {
                 views.setInt(dayIds[i], "setBackgroundResource", R.drawable.selected_day_bg);
             } else {
                 views.setInt(dayIds[i], "setBackgroundResource", android.R.color.transparent);
             }
             
-            // Check if day has tasks and add indicator
             if (hasTasksForDate(context, currentYear, currentMonth, dayCounter)) {
                 views.setTextViewText(dayIds[i], dayCounter + "•");
             }
             
-            // Set click listener for day
             Intent dayClickIntent = new Intent(context, CalendarTaskWidget.class);
             dayClickIntent.setAction(DAY_CLICK_ACTION);
             dayClickIntent.putExtra("day", dayCounter);
@@ -133,51 +153,51 @@ public class CalendarTaskWidget extends AppWidgetProvider {
             
             dayCounter++;
         }
-        
-        Log.d(TAG, "Calendar view updated with " + daysInMonth + " days");
     }
 
     private void updateTaskList(Context context, RemoteViews views, int appWidgetId) {
-        Log.d(TAG, "updateTaskList() called for date: " + selectedDay + "/" + (currentMonth + 1) + "/" + currentYear);
-        
-        // Set up the remote adapter for the ListView
         Intent serviceIntent = new Intent(context, CalendarTaskWidgetService.class);
         serviceIntent.putExtra("extra_day", selectedDay);
         serviceIntent.putExtra("extra_month", currentMonth);
         serviceIntent.putExtra("extra_year", currentYear);
-        serviceIntent.putExtra("widget_id", appWidgetId); // Add widget ID for better tracking
+        serviceIntent.putExtra("widget_id", appWidgetId);
         
-        // Create unique URI based on date to force factory recreation
         String uniqueUri = "content://widget/calendar/" + selectedDay + "/" + currentMonth + "/" + currentYear + "/" + appWidgetId;
         serviceIntent.setData(Uri.parse(uniqueUri));
-        
-        Log.d(TAG, "Setting remote adapter with intent extras - day: " + selectedDay + ", month: " + currentMonth + ", year: " + currentYear);
-        Log.d(TAG, "Intent URI: " + uniqueUri);
         
         try {
             views.setRemoteAdapter(R.id.task_list, serviceIntent);
             views.setEmptyView(R.id.task_list, R.id.empty_text);
-            Log.d(TAG, "Remote adapter set successfully");
         } catch (Exception e) {
-            Log.e(TAG, "Error setting remote adapter: " + e.getMessage());
         }
         
-        // Force refresh the list view multiple times to ensure data is loaded
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.task_list);
         
-        // Add a delayed refresh to handle cache loading delays
         new Thread(() -> {
             try {
-                Thread.sleep(500); // Wait for cache to be ready
+                Thread.sleep(500);
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.task_list);
-                Log.d(TAG, "Delayed widget data refresh completed");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void setupNavigationButtons(Context context, RemoteViews views) {
+        // Setup Previous Month button
+        Intent prevMonthIntent = new Intent(context, CalendarTaskWidget.class);
+        prevMonthIntent.setAction(PREV_MONTH_ACTION);
+        PendingIntent prevMonthPendingIntent = PendingIntent.getBroadcast(context, 
+            10001, prevMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.btn_prev_month, prevMonthPendingIntent);
         
-        Log.d(TAG, "Task list updated with service intent and notified view data changed");
+        // Setup Next Month button
+        Intent nextMonthIntent = new Intent(context, CalendarTaskWidget.class);
+        nextMonthIntent.setAction(NEXT_MONTH_ACTION);
+        PendingIntent nextMonthPendingIntent = PendingIntent.getBroadcast(context, 
+            10002, nextMonthIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.btn_next_month, nextMonthPendingIntent);
     }
 
     private boolean hasTasksForDate(Context context, int year, int month, int day) {
