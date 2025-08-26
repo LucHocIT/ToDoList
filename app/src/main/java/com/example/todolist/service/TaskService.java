@@ -338,7 +338,8 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     }
     
     public List<Task> getAllTasksFromCache() {
-        return taskCache.getAllTasks();
+        List<Task> tasks = taskCache.getAllTasks();
+        return tasks;
     }
     
     public void getTasksByDate(String date, BaseRepository.RepositoryCallback<List<Task>> callback) {

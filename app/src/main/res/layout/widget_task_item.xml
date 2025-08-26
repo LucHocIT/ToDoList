@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_task_item_background">
+
+    <CheckBox
+        android:id="@+id/widget_task_checkbox"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginRight="6dp"
+        android:scaleX="0.8"
+        android:scaleY="0.8" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task title"
+            android:textSize="10sp"
+            android:textColor="#333333"
+            android:fontFamily="sans-serif"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/widget_task_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="09:00"
+            android:textSize="8sp"
+            android:textColor="#888888"
+            android:fontFamily="sans-serif"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Priority indicator -->
+    <View
+        android:id="@+id/widget_task_priority_indicator"
+        android:layout_width="3dp"
+        android:layout_height="12dp"
+        android:background="#FF9800"
+        android:layout_marginLeft="4dp"
+        android:visibility="gone" />
+
+</LinearLayout>

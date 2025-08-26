@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_background"
+    android:padding="8dp">
+
+    <!-- Left Half - Calendar -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@drawable/widget_content_background"
+        android:padding="4dp"
+        android:layout_marginEnd="4dp">
+
+        <!-- Calendar Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/month_year_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="August 2025"
+                android:textColor="#333333"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Days of Week Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="M"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="W"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="F"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S"
+                android:textColor="#666666"
+                android:textSize="8sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Calendar Grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Week 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_6"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_7"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Week 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_8"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_9"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_10"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_11"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_12"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_13"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_14"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Week 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_15"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_16"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_17"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_18"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_19"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_20"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_21"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Week 4 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_22"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_23"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_24"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_25"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_26"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_27"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_28"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Week 5 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_29"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_30"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_31"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_32"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_33"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_34"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_35"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Week 6 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/day_36"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_37"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_38"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_39"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_40"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_41"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView android:id="@+id/day_42"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="9sp"
+                    android:textColor="#333333"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Right Half - Tasks -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@drawable/widget_content_background"
+        android:padding="4dp"
+        android:layout_marginStart="4dp">
+
+        <!-- Selected Date Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/selected_date_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Aug 26, 2025"
+                android:textColor="#333333"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Tasks List Container -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- Tasks List -->
+            <ListView
+                android:id="@+id/task_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:dividerHeight="2dp"
+                android:scrollbars="none" />
+
+            <!-- Empty State -->
+            <TextView
+                android:id="@+id/empty_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No tasks"
+                android:textColor="#999999"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

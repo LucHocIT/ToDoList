@@ -319,6 +319,9 @@
     <string name="task_deleted">Nhiệm vụ đã được xóa</string>
     <string name="confirm_delete_task">Bạn có chắc chắn muốn xóa nhiệm vụ này?</string>
     <string name="share_task_title">Chia sẻ nhiệm vụ</string>
+    
+    <!-- Widget strings -->
+    <string name="calendar_task_widget_description">Widget lịch và nhiệm vụ 4x2 - Hiển thị lịch tháng và danh sách nhiệm vụ theo ngày</string>
 
    
 </resources>
