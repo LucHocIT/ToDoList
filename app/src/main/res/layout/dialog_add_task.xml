@@ -99,48 +99,14 @@
 
     </LinearLayout>
 
-    <!-- SubTask section -->
-    <LinearLayout
-        android:id="@+id/layout_subtask_section"
+    <!-- SubTask section - chỉ có RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_subtasks_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Nhiệm vụ phụ"
-            android:textColor="#666666"
-            android:textSize="14sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_subtasks_dialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:maxHeight="200dp" />
-
-        <TextView
-            android:id="@+id/btn_add_subtask_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:drawableStart="@drawable/ic_add"
-            android:drawablePadding="8dp"
-            android:drawableTint="#4285F4"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:padding="8dp"
-            android:text="Thêm nhiệm vụ phụ"
-            android:textColor="#4285F4"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+        android:maxHeight="200dp"
+        android:visibility="gone" />
 
     <!-- Action buttons -->
     <LinearLayout

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.R;
@@ -35,7 +36,6 @@ public class AddTaskHandler {
     private List<SubTask> tempSubTasks;
     private SubTaskAdapter subTaskAdapter;
     private RecyclerView recyclerSubTasks;
-    private LinearLayout layoutSubTaskSection;
     
     public interface OnTaskAddedListener {
         void onTaskAdded(Task task);
@@ -85,31 +85,24 @@ public class AddTaskHandler {
         
         // Setup SubTask UI
         ImageView iconSubTask = dialogView.findViewById(R.id.icon_subtask_dialog);
-        layoutSubTaskSection = dialogView.findViewById(R.id.layout_subtask_section);
         recyclerSubTasks = dialogView.findViewById(R.id.recycler_subtasks_dialog);
-        TextView btnAddSubTask = dialogView.findViewById(R.id.btn_add_subtask_dialog);
         
         // Initialize SubTask adapter
         setupSubTaskRecyclerView();
         
-        // SubTask icon click listener
         iconSubTask.setOnClickListener(v -> {
-            if (layoutSubTaskSection.getVisibility() == View.GONE) {
-                layoutSubTaskSection.setVisibility(View.VISIBLE);
-                iconSubTask.setRotation(45f); // Rotate to indicate active state
-            } else {
-                layoutSubTaskSection.setVisibility(View.GONE);
-                iconSubTask.setRotation(0f);
+            if (recyclerSubTasks.getVisibility() == View.GONE) {
+                recyclerSubTasks.setVisibility(View.VISIBLE);
             }
-        });
-        
-        // Add SubTask button click listener
-        btnAddSubTask.setOnClickListener(v -> {
             SubTask newSubTask = new SubTask();
             newSubTask.setTitle("");
             newSubTask.setId("temp_" + System.currentTimeMillis());
             tempSubTasks.add(newSubTask);
             subTaskAdapter.notifyItemInserted(tempSubTasks.size() - 1);
+            
+            Log.d("AddTaskHandler", "Added new SubTask. Total count: " + tempSubTasks.size());
+            
+            iconSubTask.animate().rotation(iconSubTask.getRotation() + 90f).setDuration(200).start();
         });
         
         final String[] selectedDate = {prefilledDate};
@@ -128,6 +121,7 @@ public class AddTaskHandler {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnSave.setOnClickListener(v -> {
             String title = editTaskTitle.getText().toString().trim();
+            Log.d("AddTaskHandler", "Save clicked. Title: '" + title + "', tempSubTasks count: " + tempSubTasks.size());
             if (!title.isEmpty()) {
                 String categoryName = getCategoryFromSpinner(spinnerCategory);
                 createNewTaskWithDetails(title, categoryName, selectedDate[0], selectedTime[0], selectedReminder[0], selectedRepeat[0]);
@@ -268,26 +262,36 @@ public class AddTaskHandler {
         }
         
         // Add SubTasks to the new task
+        Log.d("AddTaskHandler", "tempSubTasks size: " + tempSubTasks.size());
         if (!tempSubTasks.isEmpty()) {
             List<SubTask> validSubTasks = new ArrayList<>();
             for (SubTask subTask : tempSubTasks) {
+                Log.d("AddTaskHandler", "SubTask title: '" + subTask.getTitle() + "'");
                 if (subTask.getTitle() != null && !subTask.getTitle().trim().isEmpty()) {
                     subTask.setTaskId(taskId);
                     if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
                         subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + Math.random());
                     }
                     validSubTasks.add(subTask);
+                    Log.d("AddTaskHandler", "Added valid SubTask: " + subTask.getTitle());
                 }
             }
             if (!validSubTasks.isEmpty()) {
                 newTask.setSubTasks(validSubTasks);
+                Log.d("AddTaskHandler", "Set " + validSubTasks.size() + " SubTasks to newTask");
+            } else {
+                Log.d("AddTaskHandler", "No valid SubTasks found");
             }
+        } else {
+            Log.d("AddTaskHandler", "tempSubTasks is empty");
         }
         
         // Use TaskService to add task
         taskService.addTask(newTask, new TaskService.TaskOperationCallback() {
             @Override
             public void onSuccess() {
+                Log.d("AddTaskHandler", "Task saved successfully. SubTasks count: " + 
+                    (newTask.getSubTasks() != null ? newTask.getSubTasks().size() : 0));
                 if (context instanceof Activity) {
                     ((Activity) context).runOnUiThread(() -> {
                         if (listener != null) {
@@ -295,6 +299,7 @@ public class AddTaskHandler {
                         }
                         // Clear tempSubTasks sau khi lưu thành công
                         tempSubTasks.clear();
+                        Log.d("AddTaskHandler", "tempSubTasks cleared");
                         // Removed unnecessary success toast
                     });
                 }
