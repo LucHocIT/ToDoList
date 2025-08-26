@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.RemoteViews;
 import com.example.todolist.cache.TaskCache;
@@ -20,19 +21,22 @@ public class CalendarTaskWidget extends AppWidgetProvider {
     private static final String PREV_MONTH_ACTION = "com.example.todolist.PREV_MONTH";
     private static final String NEXT_MONTH_ACTION = "com.example.todolist.NEXT_MONTH";
     
-    private int currentYear;
-    private int currentMonth;
-    private int selectedDay = 1;
+    private static final String WIDGET_PREFS = "calendar_widget_prefs";
+    private static final String PREF_CURRENT_MONTH = "current_month";
+    private static final String PREF_CURRENT_YEAR = "current_year";
+    private static final String PREF_SELECTED_DAY = "selected_day";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        // Load saved date or use current date
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
         Calendar calendar = Calendar.getInstance();
-        currentYear = calendar.get(Calendar.YEAR);
-        currentMonth = calendar.get(Calendar.MONTH);
-        selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentYear = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        int currentMonth = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        int selectedDay = prefs.getInt(PREF_SELECTED_DAY, calendar.get(Calendar.DAY_OF_MONTH));
         
         for (int appWidgetId : appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId);
+            updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
         }
     }
 
@@ -40,63 +44,89 @@ public class CalendarTaskWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS, Context.MODE_PRIVATE);
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = prefs.getInt(PREF_CURRENT_YEAR, calendar.get(Calendar.YEAR));
+        int currentMonth = prefs.getInt(PREF_CURRENT_MONTH, calendar.get(Calendar.MONTH));
+        int selectedDay = prefs.getInt(PREF_SELECTED_DAY, calendar.get(Calendar.DAY_OF_MONTH));
+        
         if (DAY_CLICK_ACTION.equals(intent.getAction())) {
             selectedDay = intent.getIntExtra("day", 1);
             currentMonth = intent.getIntExtra("month", 0);
             currentYear = intent.getIntExtra("year", 2025);
             
+            // Save updated values
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(PREF_CURRENT_YEAR, currentYear);
+            editor.putInt(PREF_CURRENT_MONTH, currentMonth);
+            editor.putInt(PREF_SELECTED_DAY, selectedDay);
+            editor.apply();
+            
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new android.content.ComponentName(context, CalendarTaskWidget.class));
             
             for (int appWidgetId : appWidgetIds) {
-                updateWidget(context, appWidgetManager, appWidgetId);
+                updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
             }
         } else if (PREV_MONTH_ACTION.equals(intent.getAction())) {
-            // Navigate to previous month
-            Calendar calendar = Calendar.getInstance();
+            // Navigate to previous month (direction = -1)
             calendar.set(currentYear, currentMonth, 1);
-            calendar.add(Calendar.MONTH, -1);
+            calendar.add(Calendar.MONTH, -1);  // ← Trừ 1 tháng
             currentYear = calendar.get(Calendar.YEAR);
             currentMonth = calendar.get(Calendar.MONTH);
             selectedDay = 1; // Reset to first day of month
+            
+            // Save updated values
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(PREF_CURRENT_YEAR, currentYear);
+            editor.putInt(PREF_CURRENT_MONTH, currentMonth);
+            editor.putInt(PREF_SELECTED_DAY, selectedDay);
+            editor.apply();
             
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new android.content.ComponentName(context, CalendarTaskWidget.class));
             
             for (int appWidgetId : appWidgetIds) {
-                updateWidget(context, appWidgetManager, appWidgetId);
+                updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
             }
         } else if (NEXT_MONTH_ACTION.equals(intent.getAction())) {
-            // Navigate to next month
-            Calendar calendar = Calendar.getInstance();
+            // Navigate to next month (direction = +1)
             calendar.set(currentYear, currentMonth, 1);
-            calendar.add(Calendar.MONTH, 1);
+            calendar.add(Calendar.MONTH, 1);   // ← Cộng 1 tháng
             currentYear = calendar.get(Calendar.YEAR);
             currentMonth = calendar.get(Calendar.MONTH);
             selectedDay = 1; // Reset to first day of month
+            
+            // Save updated values
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(PREF_CURRENT_YEAR, currentYear);
+            editor.putInt(PREF_CURRENT_MONTH, currentMonth);
+            editor.putInt(PREF_SELECTED_DAY, selectedDay);
+            editor.apply();
             
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new android.content.ComponentName(context, CalendarTaskWidget.class));
             
             for (int appWidgetId : appWidgetIds) {
-                updateWidget(context, appWidgetManager, appWidgetId);
+                updateWidget(context, appWidgetManager, appWidgetId, currentYear, currentMonth, selectedDay);
             }
         }
     }
 
-    private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId, 
+                             int currentYear, int currentMonth, int selectedDay) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_calendar_task_4x2);
         
-        updateCalendarView(context, views);
-        updateTaskList(context, views, appWidgetId);
+        updateCalendarView(context, views, currentYear, currentMonth, selectedDay);
+        updateTaskList(context, views, appWidgetId, currentYear, currentMonth, selectedDay);
         
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    private void updateCalendarView(Context context, RemoteViews views) {
+    private void updateCalendarView(Context context, RemoteViews views, int currentYear, int currentMonth, int selectedDay) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(currentYear, currentMonth, 1);
         
@@ -155,7 +185,8 @@ public class CalendarTaskWidget extends AppWidgetProvider {
         }
     }
 
-    private void updateTaskList(Context context, RemoteViews views, int appWidgetId) {
+    private void updateTaskList(Context context, RemoteViews views, int appWidgetId, 
+                               int currentYear, int currentMonth, int selectedDay) {
         Intent serviceIntent = new Intent(context, CalendarTaskWidgetService.class);
         serviceIntent.putExtra("extra_day", selectedDay);
         serviceIntent.putExtra("extra_month", currentMonth);
