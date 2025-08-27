@@ -12,7 +12,6 @@ import android.widget.RemoteViews;
 
 import com.example.todolist.R;
 import com.example.todolist.model.CountdownEvent;
-import com.example.todolist.CountdownWidgetConfigActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -96,7 +95,7 @@ public class CountdownWidgetProvider extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_countdown_unit, "D");
 
         // Thêm click listener
-        Intent intent = new Intent(context, CountdownWidgetConfigActivity.class);
+        Intent intent = new Intent(context, com.example.todolist.widget.CountdownWidgetConfigActivity.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, 

@@ -23,11 +23,11 @@
     <string name="language_changed">Language changed successfully</string>
     <string name="choose_language">Choose language</string>
     <string name="version_format">Version %s</string>
-    <string name="version_default">Version 1.0</string>
+    <string name="version_default">Version 2.0</string>
     
     <!-- Dialog strings -->
     <string name="about_app_title">About To-Do List App</string>
-    <string name="about_app_message">To-Do List - Smart task management application\n\nVersion: 1.0\nDeveloper: Team Development\nEmail: phamluc2304@gmail.com\n\nThe app helps you manage your daily tasks efficiently with a beautiful interface and many useful features.</string>
+    <string name="about_app_message">To-Do List - Smart task management application\n\nVersion: 2.0\nDeveloper: Team Development\nEmail: phamluc2304@gmail.com\n\nThe app helps you manage your daily tasks efficiently with a beautiful interface and many useful features.</string>
     <string name="close">Close</string>
     
     <string name="privacy_policy_title">Privacy Policy</string>

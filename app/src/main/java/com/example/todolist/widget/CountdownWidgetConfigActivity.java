@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.widget;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -20,9 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.example.todolist.R;
 import com.example.todolist.adapter.SimpleIconAdapter;
 import com.example.todolist.model.CountdownEvent;
-import com.example.todolist.widget.CountdownWidgetProvider;
 
 import java.util.Calendar;
 

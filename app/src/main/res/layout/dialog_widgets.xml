@@ -421,6 +421,162 @@
 
             </LinearLayout>
 
+            <!-- Calendar Task Widget 4x2 -->
+            <LinearLayout
+                android:id="@+id/widget_calendar_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/widget_preview_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiện ích lịch công việc 4x2"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#4285F4"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Calendar task widget preview -->
+                <LinearLayout
+                    android:layout_width="250dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/widget_background"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:padding="8dp">
+
+                    <!-- Header with month and add button -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tháng 8, 2025"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/circle_background_light"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp">
+
+                            <ImageView
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:src="@drawable/ic_add"
+                                android:tint="#4CAF50"
+                                android:layout_marginEnd="2dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Thêm việc"
+                                android:textSize="7sp"
+                                android:textColor="#4CAF50" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Calendar grid simulation -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!-- Week days header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="2dp">
+
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="CN" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T2" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T3" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T4" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T5" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T6" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="T7" android:textSize="6sp"
+                                android:textColor="#666666" android:gravity="center" />
+
+                        </LinearLayout>
+
+                        <!-- Calendar dates with tasks -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="25" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#999999" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="26" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#333333" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="27" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#FFFFFF"
+                                android:background="@drawable/circle_background_light" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="28" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#333333" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="29" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#333333" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="30" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#333333" />
+                            <TextView android:layout_width="0dp" android:layout_height="match_parent"
+                                android:layout_weight="1" android:text="31" android:textSize="7sp"
+                                android:gravity="center" android:textColor="#333333" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Widget lịch hiển thị công việc theo ngày với khả năng thêm việc nhanh"
+                    android:textSize="11sp"
+                    android:textColor="#999999"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

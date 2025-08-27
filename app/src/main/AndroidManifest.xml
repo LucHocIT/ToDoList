@@ -162,7 +162,7 @@
 
         <!-- Countdown Widget Config Activity -->
         <activity
-            android:name=".CountdownWidgetConfigActivity"
+            android:name=".widget.CountdownWidgetConfigActivity"
             android:theme="@style/Theme.ToDoList"
             android:exported="false">
             <intent-filter>

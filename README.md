@@ -64,9 +64,9 @@ git clone https://github.com/LucHocIT/ToDoList.git
 
 ## Phiên bản
 
-**Phiên bản hiện tại**: 1.0
+**Phiên bản hiện tại**: 2.0
 
-### Tính năng chính v1.0
+### Tính năng chính v2.0
 
 - Quản lý nhiệm vụ cơ bản
 - Phân loại theo danh mục

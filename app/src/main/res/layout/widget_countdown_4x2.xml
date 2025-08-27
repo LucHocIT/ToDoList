@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="12dp"
+    android:gravity="center">
+
+    <!-- Icon Section -->
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:id="@+id/widget_countdown_icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_event_birthday"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_background"
+            android:padding="10dp" />
+
+    </FrameLayout>
+
+    <!-- Event Title -->
+    <TextView
+        android:id="@+id/widget_countdown_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mom's Birthday"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="?android:textColorPrimary"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Event Date -->
+    <TextView
+        android:id="@+id/widget_countdown_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2021/08/15"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif"
+        android:textColor="?android:textColorSecondary"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Countdown Display -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/circle_background_light"
+        android:padding="12dp"
+        android:minWidth="80dp">
+
+        <TextView
+            android:id="@+id/widget_countdown_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/widget_countdown_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="D"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>

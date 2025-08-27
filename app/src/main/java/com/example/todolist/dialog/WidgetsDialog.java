@@ -55,7 +55,7 @@ public class WidgetsDialog {
             widgetCountdown.setOnClickListener(v -> {
                 // Mở activity cấu hình countdown widget
                 android.content.Intent intent = new android.content.Intent(context, 
-                    com.example.todolist.CountdownWidgetConfigActivity.class);
+                    com.example.todolist.widget.CountdownWidgetConfigActivity.class);
                 context.startActivity(intent);
                 dismiss();
             });
