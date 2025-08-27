@@ -7,6 +7,7 @@ public class WidgetUpdateHelper {
     public static void updateAllWidgets(Context context) {
         updateCalendarWidget(context);
         updateMiniWidget(context);
+        updateCountdownWidgets(context);
     }
     public static void updateCalendarWidget(Context context) {
         Intent intent = new Intent(context, CalendarWidgetProvider.class);
@@ -23,6 +24,15 @@ public class WidgetUpdateHelper {
             new ComponentName(context, MiniWidgetProvider.class));
         for (int appWidgetId : appWidgetIds) {
             MiniWidgetProvider.updateWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
+    
+    public static void updateCountdownWidgets(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+            new ComponentName(context, CountdownWidgetProvider.class));
+        for (int appWidgetId : appWidgetIds) {
+            CountdownWidgetProvider.updateCountdownWidget(context, appWidgetManager, appWidgetId);
         }
     }
 }

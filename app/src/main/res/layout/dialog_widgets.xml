@@ -268,6 +268,104 @@
 
             </LinearLayout>
 
+            <!-- Countdown Widget -->
+            <LinearLayout
+                android:id="@+id/widget_countdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/widget_preview_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiện ích đếm ngược 4x1"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#4285F4"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Countdown widget preview -->
+                <LinearLayout
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/widget_background"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_event_birthday"
+                        android:background="@drawable/circle_background"
+                        android:padding="4dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mom's Birthday"
+                            android:textSize="8sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333"
+                            android:maxLines="1" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="2021/08/15"
+                            android:textSize="6sp"
+                            android:textColor="#666666" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/circle_background_light"
+                        android:padding="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="123"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:textColor="#00D4AA" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="D"
+                            android:textSize="6sp"
+                            android:textColor="#00D4AA" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiện ích đếm ngược sự kiện quan trọng với nhiều biểu tượng"
+                    android:textSize="11sp"
+                    android:textColor="#999999"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
             <!-- Quick Add Widget -->
             <LinearLayout
                 android:id="@+id/widget_quick_add"

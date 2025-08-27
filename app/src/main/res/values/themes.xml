@@ -26,4 +26,17 @@
         <item name="android:colorAccent">@color/light_sky_blue</item>
         <item name="android:colorPrimary">@color/sky_blue</item>
     </style>
+    
+    <!-- DatePicker Dialog Theme -->
+    <style name="DatePickerDialogTheme" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:colorAccent">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+    </style>
+    
+    <!-- Custom DatePicker Style -->
+    <style name="CustomDatePickerStyle" parent="android:Widget.Material.DatePicker">
+        <item name="android:yearListSelectorColor">@color/colorPrimary</item>
+    </style>
 </resources>

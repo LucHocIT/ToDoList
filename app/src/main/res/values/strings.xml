@@ -322,6 +322,20 @@
     
     <!-- Widget strings -->
     <string name="calendar_task_widget_description">Widget lịch và nhiệm vụ 4x2 - Hiển thị lịch tháng và danh sách nhiệm vụ theo ngày</string>
+    
+    <!-- Countdown Widget strings -->
+    <string name="countdown_widget_title">Tiện ích đếm ngược 4x1</string>
+    <string name="countdown_widget_description">Đếm ngược sự kiện quan trọng với nhiều biểu tượng</string>
+    <string name="countdown_widget_name">Countdown Widget</string>
+    <string name="countdown_config_title">Thiết lập tiện ích đếm ngược</string>
+    <string name="event_title_hint">Tên sự kiện</string>
+    <string name="event_icon_section">Biểu tượng sự kiện</string>
+    <string name="calculation_type_section">Loại tính toán</string>
+    <string name="date_section">Ngày</string>
+    <string name="calculation_type_days">Số ngày</string>
+    <string name="calculation_type_remaining">Ngày còn lại</string>
+    <string name="save_widget">LƯU</string>
+    <string name="cancel_widget">HỦY</string>
 
    
 </resources>

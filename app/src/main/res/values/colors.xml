@@ -58,4 +58,8 @@
     <!-- Completed Tasks Colors -->
     <color name="completed_task_bg">#FAFAFA</color>
     <color name="completed_task_border">#E8F5E8</color>
+    
+    <!-- Widget Colors -->
+    <color name="colorPrimary">#00D4AA</color>
+    <color name="background_color">#F5F5F5</color>
 </resources>

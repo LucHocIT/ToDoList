@@ -31,10 +31,42 @@ public class WidgetsDialog {
     private void setupClickListeners(View dialogView) {
         ImageView btnClose = dialogView.findViewById(R.id.btn_close_dialog);
         btnClose.setOnClickListener(v -> dismiss());
+        
         dialogView.setOnClickListener(v -> dismiss());
+        
         LinearLayout dialogContent = dialogView.findViewById(R.id.dialog_content);
         if (dialogContent != null) {
             dialogContent.setOnClickListener(v -> {
+            });
+        }
+        
+        // Calendar Widget click
+        LinearLayout widgetCalendar = dialogView.findViewById(R.id.widget_calendar);
+        if (widgetCalendar != null) {
+            widgetCalendar.setOnClickListener(v -> {
+                // Xử lý thêm calendar widget
+                dismiss();
+            });
+        }
+        
+        // Countdown Widget click  
+        LinearLayout widgetCountdown = dialogView.findViewById(R.id.widget_countdown);
+        if (widgetCountdown != null) {
+            widgetCountdown.setOnClickListener(v -> {
+                // Mở activity cấu hình countdown widget
+                android.content.Intent intent = new android.content.Intent(context, 
+                    com.example.todolist.CountdownWidgetConfigActivity.class);
+                context.startActivity(intent);
+                dismiss();
+            });
+        }
+        
+        // Quick Add Widget click
+        LinearLayout widgetQuickAdd = dialogView.findViewById(R.id.widget_quick_add);
+        if (widgetQuickAdd != null) {
+            widgetQuickAdd.setOnClickListener(v -> {
+                // Xử lý thêm quick add widget
+                dismiss();
             });
         }
     }
