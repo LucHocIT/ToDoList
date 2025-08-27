@@ -23,6 +23,7 @@ import com.example.todolist.BottomNavigationManager;
 import com.example.todolist.auth.AuthManager;
 import com.example.todolist.auth.SyncManager;
 import com.google.firebase.auth.FirebaseUser;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
     }
     
     private void initViews() {
-        // Bottom navigation buttons
+        // Bottom navigation buttons (từ include bottom_navigation.xml)
         btnNavMenu = findViewById(R.id.btn_nav_menu);
         btnNavTasks = findViewById(R.id.btn_nav_tasks);
         btnNavCalendar = findViewById(R.id.btn_nav_calendar);
@@ -152,9 +153,8 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
             tvUserName.setText(user.getDisplayName() != null ? user.getDisplayName() : "User");
             tvUserEmail.setText(user.getEmail());
             
-            // Load user avatar if available - for now use default
-            // TODO: Implement image loading with Glide later
-            imgUserAvatar.setImageResource(R.drawable.ic_person);
+            // Load user avatar from Google
+            setUserAvatar(user);
             
             // Update button text to show "Sign Out"
             updateAuthButtonText("Đăng xuất");
@@ -166,6 +166,24 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
             
             // Update button text to show "Sign In"
             updateAuthButtonText("Đăng nhập với Google");
+        }
+    }
+    
+    /**
+     * Set user avatar from Google account
+     */
+    private void setUserAvatar(FirebaseUser user) {
+        if (user.getPhotoUrl() != null) {
+            // Load avatar from Google account using Glide
+            Glide.with(this)
+                    .load(user.getPhotoUrl())
+                    .circleCrop() // Make it circular
+                    .placeholder(R.drawable.ic_person) // Default placeholder
+                    .error(R.drawable.ic_person) // Error fallback
+                    .into(imgUserAvatar);
+        } else {
+            // No avatar available, use default
+            imgUserAvatar.setImageResource(R.drawable.ic_person);
         }
     }
     
