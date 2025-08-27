@@ -33,6 +33,7 @@ import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.todolist.BottomNavigationManager;
 import java.util.List;
 import java.util.Locale;
 
@@ -160,7 +161,9 @@ public class MainActivity extends AppCompatActivity implements
         if (adapters != null && adapters.length == 4) {
             filterManager.setAdapters(adapters[0], adapters[1], adapters[2], adapters[3]);
         }
-        uiManager.setupBottomNavigation();
+        
+        // Setup unified bottom navigation
+        BottomNavigationManager.setupForActivity(this, BottomNavigationManager.SCREEN_TASKS);
     }
     private void setupAddTaskHandler() {
         addTaskHandler = new AddTaskHandler(this, task -> taskService.loadTasks());

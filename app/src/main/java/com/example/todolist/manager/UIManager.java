@@ -80,18 +80,10 @@ public class UIManager {
         recyclerCompletedTodayTasks.setAdapter(completedAdapter);
         return new TaskAdapter[] { overdueAdapter, todayAdapter, futureAdapter, completedAdapter };
     }
+    // Method này đã được thay thế bằng BottomNavigationManager
+    @Deprecated
     public void setupBottomNavigation() {
-        LinearLayout btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
-        LinearLayout btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
-        LinearLayout btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
-        LinearLayout btnNavProfile = activity.findViewById(R.id.btn_nav_profile);
-        com.example.todolist.util.UnifiedNavigationHelper.setupBottomNavigation(
-            activity, btnNavMenu, btnNavTasks, btnNavCalendar, btnNavProfile, "tasks");
-        androidx.drawerlayout.widget.DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
-        if (drawerLayout != null && listener instanceof com.example.todolist.manager.NavigationDrawerManager.NavigationListener) {
-            com.example.todolist.util.UnifiedNavigationHelper.initializeDrawerForActivity(
-                activity, drawerLayout, (com.example.todolist.manager.NavigationDrawerManager.NavigationListener) listener);
-        }
+        // Không cần thiết nữa - sử dụng BottomNavigationManager thay thế
     }
     private void showPopupMenu(View anchor) {
         PopupMenu popup = new PopupMenu(activity, anchor);

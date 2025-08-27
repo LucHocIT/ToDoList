@@ -21,7 +21,7 @@ import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.util.AddTaskHandler;
 import com.example.todolist.util.SettingsManager;
-import com.example.todolist.util.UnifiedNavigationHelper;
+import com.example.todolist.BottomNavigationManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -117,12 +117,13 @@ public class CalendarActivity extends AppCompatActivity
         selectedDate.set(Calendar.DAY_OF_MONTH, selectedDay);
     }
     private void setupBottomNavigation() {
-        LinearLayout btnNavMenu = findViewById(R.id.btn_nav_menu);
-        LinearLayout btnNavTasks = findViewById(R.id.btn_nav_tasks);
-        LinearLayout btnNavCalendar = findViewById(R.id.btn_nav_calendar);
-        UnifiedNavigationHelper.setupBottomNavigation(this, btnNavMenu, btnNavTasks,
-                btnNavCalendar, null, "calendar");
-        UnifiedNavigationHelper.initializeDrawerForActivity(this, drawerLayout, this);
+        // Setup unified bottom navigation
+        BottomNavigationManager.setupForActivity(this, BottomNavigationManager.SCREEN_CALENDAR);
+        
+        // Initialize drawer if available
+        if (drawerLayout != null) {
+            navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
+        }
     }
 
     private void handleDrawerIntent() {

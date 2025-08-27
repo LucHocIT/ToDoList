@@ -19,7 +19,7 @@ import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.model.Task;
 import com.example.todolist.manager.NavigationDrawerManager;
-import com.example.todolist.util.UnifiedNavigationHelper;
+import com.example.todolist.BottomNavigationManager;
 import com.example.todolist.auth.AuthManager;
 import com.example.todolist.auth.SyncManager;
 import com.google.firebase.auth.FirebaseUser;
@@ -78,14 +78,8 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
     }
     
     private void setupBottomNavigation() {
-        UnifiedNavigationHelper.setupBottomNavigation(
-            this, 
-            btnNavMenu, 
-            btnNavTasks, 
-            btnNavCalendar, 
-            btnNavProfile,
-            "profile"
-        );
+        // Setup unified bottom navigation
+        BottomNavigationManager.setupForActivity(this, BottomNavigationManager.SCREEN_PROFILE);
     }
     
     private void setupDrawer() {
@@ -114,7 +108,6 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
             };
             
             drawerManager = new NavigationDrawerManager(this, drawerLayout, navigationListener);
-            UnifiedNavigationHelper.initializeDrawerForActivity(this, drawerLayout, navigationListener);
         }
         
         if (getIntent().getBooleanExtra("open_drawer", false)) {
