@@ -21,74 +21,66 @@ public class TaskRepeatService {
     }
     
     /**
-     * Tạo các task lặp lại cho task có repeat
-     * Tạo các instance cho 1 tháng tiếp theo
+     * Cập nhật ngày đến hạn cho task lặp lại khi hoàn thành
+     * Thay vì tạo nhiều task clone, chỉ cần cập nhật ngày đến hạn
      */
-    public static void createRepeatInstances(Task originalTask, TaskCreator taskCreator, RepeatTaskCallback callback) {
-        if (!originalTask.isRepeating() || originalTask.getRepeatType() == null || originalTask.getRepeatType().equals("Không")) {
-            if (callback != null) callback.onSuccess();
+    public static void updateTaskForNextRepeat(Task task) {
+        if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không")) {
             return;
         }
         
-        String repeatType = originalTask.getRepeatType();
+        String repeatType = task.getRepeatType();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         
         try {
-            Date originalDate = dateFormat.parse(originalTask.getDueDate());
+            Date currentDate = dateFormat.parse(task.getDueDate());
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(originalDate);
+            calendar.setTime(currentDate);
             
-            // Tạo instance cho 4 tuần tiếp theo (đủ để hiển thị)
-            for (int i = 1; i <= 4; i++) {
-                Calendar nextDate = (Calendar) calendar.clone();
-                
-                switch (repeatType) {
-                    case "Hàng ngày":
-                    case "Hằng ngày":
-                        nextDate.add(Calendar.DAY_OF_MONTH, i);
-                        break;
-                    case "Hàng tuần":
-                    case "Hằng tuần":
-                        nextDate.add(Calendar.WEEK_OF_YEAR, i);
-                        break;
-                    case "Hàng tháng":
-                    case "Hằng tháng":
-                        nextDate.add(Calendar.MONTH, i);
-                        break;
-                    case "Hàng năm":
-                    case "Hằng năm":
-                        nextDate.add(Calendar.YEAR, i);
-                        break;
-                    default:
-                        continue;
-                }
-                
-                // Tạo task clone
-                Task clonedTask = cloneTaskForDate(originalTask, dateFormat.format(nextDate.getTime()));
-                
-                // Thêm task clone (không tạo repeat instances cho clone)
-                taskCreator.addTaskWithoutRepeat(clonedTask, new BaseRepository.DatabaseCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        // Instance tạo thành công
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        // Log error nhưng không fail cả flow
-                    }
-                });
+            // Tính ngày tiếp theo dựa trên loại lặp lại
+            switch (repeatType) {
+                case "Hàng ngày":
+                case "Hằng ngày":
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                    break;
+                case "Hàng tuần":
+                case "Hằng tuần":
+                    calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                    break;
+                case "Hàng tháng":
+                case "Hằng tháng":
+                    calendar.add(Calendar.MONTH, 1);
+                    break;
+                case "Hàng năm":
+                case "Hằng năm":
+                    calendar.add(Calendar.YEAR, 1);
+                    break;
             }
             
-            if (callback != null) callback.onSuccess();
+            // Cập nhật ngày đến hạn
+            task.setDueDate(dateFormat.format(calendar.getTime()));
+            
+            // Đặt lại trạng thái chưa hoàn thành
+            task.setIsCompleted(false);
+            task.setCompletionDate(null);
             
         } catch (Exception e) {
-            if (callback != null) callback.onError("Lỗi tạo repeat instances: " + e.getMessage());
+            android.util.Log.e("TaskRepeatService", "Error updating repeat task: " + e.getMessage());
         }
     }
     
     /**
-     * Clone task cho ngày mới
+     * DEPRECATED: Không còn tạo instances clone nữa
+     * Giữ lại để tương thích với code cũ
+     */
+    @Deprecated
+    public static void createRepeatInstances(Task originalTask, TaskCreator taskCreator, RepeatTaskCallback callback) {
+        // Không làm gì cả - chỉ callback success
+        if (callback != null) callback.onSuccess();
+    }
+    
+    /**
+     * Clone task cho ngày mới (giữ lại cho future use)
      */
     private static Task cloneTaskForDate(Task originalTask, String newDate) {
         Task clonedTask = new Task();
@@ -119,8 +111,7 @@ public class TaskRepeatService {
      * Kiểm tra xem có cần tạo thêm repeat instances không
      */
     public static boolean needsRepeatInstances(Task task) {
-        return task.isRepeating() && 
-               task.getRepeatType() != null && 
-               !task.getRepeatType().equals("Không");
+        // Không cần tạo instances nữa
+        return false;
     }
 }

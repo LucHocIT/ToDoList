@@ -67,6 +67,7 @@ public class TaskManager {
         todoTask.setHasReminder(task.isHasReminder());
         todoTask.setAttachments(task.getAttachments());
         todoTask.setRepeatType(task.getRepeatType());
+        todoTask.setRepeating(task.isRepeating());
         return todoTask;
     }
     private void updateTaskLists() {
@@ -122,6 +123,26 @@ public class TaskManager {
         }
     }
     public void completeTask(TodoTask task, boolean isCompleted) {
+        // Convert TodoTask to Task for processing
+        Task taskToUpdate = convertTodoTaskToTask(task);
+        
+        // Xử lý task lặp lại khi hoàn thành
+        if (isCompleted && taskToUpdate.isRepeating() && taskToUpdate.getRepeatType() != null && !taskToUpdate.getRepeatType().equals("Không")) {
+            // Cập nhật ngày đến hạn cho chu kỳ tiếp theo thay vì đánh dấu hoàn thành
+            com.example.todolist.service.task.TaskRepeatService.updateTaskForNextRepeat(taskToUpdate);
+            
+            // Cập nhật TodoTask với thông tin mới
+            task.setDueDate(taskToUpdate.getDueDate());
+            task.setCompleted(false); // Giữ trạng thái chưa hoàn thành
+            task.setCompletionDate(null);
+            
+            // Cập nhật trong database
+            taskService.updateTask(taskToUpdate);
+            loadTasks();
+            return;
+        }
+        
+        // Xử lý task bình thường
         task.setCompleted(isCompleted);
         if (isCompleted) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -129,8 +150,7 @@ public class TaskManager {
         } else {
             task.setCompletionDate(null);
         }
-        // Convert TodoTask to Task for update
-        Task taskToUpdate = convertTodoTaskToTask(task);
+        
         taskService.updateTask(taskToUpdate);
         ReminderScheduler scheduler = new ReminderScheduler(context);
         if (isCompleted) {
@@ -162,6 +182,7 @@ public class TaskManager {
         task.setHasReminder(todoTask.isHasReminder());
         task.setAttachments(todoTask.getAttachments());
         task.setRepeatType(todoTask.getRepeatType());
+        task.setIsRepeating(todoTask.isRepeating());
         return task;
     }
     public void toggleTaskImportant(TodoTask task) {

@@ -250,6 +250,32 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     public void completeTask(Task task, boolean isCompleted) {
         lastLocalUpdateTime = System.currentTimeMillis();
         cancelPendingFirebaseUpdates();
+        
+        // Xử lý task lặp lại khi hoàn thành
+        if (isCompleted && task.isRepeating() && task.getRepeatType() != null && !task.getRepeatType().equals("Không")) {
+            // Cập nhật ngày đến hạn cho chu kỳ tiếp theo thay vì đánh dấu hoàn thành
+            com.example.todolist.service.task.TaskRepeatService.updateTaskForNextRepeat(task);
+            
+            // Cập nhật task với ngày mới
+            updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    updateTaskInList(task);
+                    listService.categorizeTasks(allTasks);
+                    notifyListener();
+                }
+
+                @Override
+                public void onError(String error) {
+                    if (listener != null) {
+                        listener.onError("Lỗi cập nhật task lặp lại: " + error);
+                    }
+                }
+            });
+            return;
+        }
+        
+        // Xử lý subtasks khi hoàn thành task bình thường
         if (isCompleted && task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
             for (com.example.todolist.model.SubTask subTask : task.getSubTasks()) {
                 if (!subTask.isCompleted()) {
