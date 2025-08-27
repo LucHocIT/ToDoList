@@ -146,6 +146,7 @@ public class CompletedTasksAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         public void bind(Task task) {
             textTaskTitle.setText(task.getTitle());
+            taskBackground.setBackgroundResource(R.drawable.completed_task_background);
             String dateTimeText = formatDateTime(task.getDueDate(), task.getDueTime());
             if (dateTimeText != null && !dateTimeText.trim().isEmpty()) {
                 textTaskDateTime.setText(dateTimeText);

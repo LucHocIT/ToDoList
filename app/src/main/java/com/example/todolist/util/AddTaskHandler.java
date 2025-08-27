@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.R;
@@ -84,8 +83,6 @@ public class AddTaskHandler {
         // Setup SubTask UI
         ImageView iconSubTask = dialogView.findViewById(R.id.icon_subtask_dialog);
         recyclerSubTasks = dialogView.findViewById(R.id.recycler_subtasks_dialog);
-        
-        // Initialize SubTask adapter
         setupSubTaskRecyclerView();
         
         iconSubTask.setOnClickListener(v -> {
@@ -97,8 +94,6 @@ public class AddTaskHandler {
             newSubTask.setId("temp_" + System.currentTimeMillis());
             tempSubTasks.add(newSubTask);
             subTaskAdapter.notifyItemInserted(tempSubTasks.size() - 1);
-            
-            Log.d("AddTaskHandler", "Added new SubTask. Total count: " + tempSubTasks.size());
             
             iconSubTask.animate().rotation(iconSubTask.getRotation() + 90f).setDuration(200).start();
         });
@@ -119,7 +114,6 @@ public class AddTaskHandler {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnSave.setOnClickListener(v -> {
             String title = editTaskTitle.getText().toString().trim();
-            Log.d("AddTaskHandler", "Save clicked. Title: '" + title + "', tempSubTasks count: " + tempSubTasks.size());
             if (!title.isEmpty()) {
                 String categoryName = getCategoryFromSpinner(spinnerCategory);
                 createNewTaskWithDetails(title, categoryName, selectedDate[0], selectedTime[0], selectedReminder[0], selectedRepeat[0]);
@@ -161,7 +155,6 @@ public class AddTaskHandler {
 
             @Override
             public void onAddNewSubTask() {
-                // This won't be used in dialog, we handle it with button
             }
         };
         
@@ -171,7 +164,6 @@ public class AddTaskHandler {
     }
     
     private void setupCategorySpinner(Spinner spinner, String prefilledCategory) {
-        // Get categories from CategoryService
         categoryService.getAllCategories(new BaseRepository.ListCallback<Category>() {
             @Override
             public void onSuccess(List<Category> categories) {
@@ -256,34 +248,25 @@ public class AddTaskHandler {
             newTask.setRepeatType(repeat);
         }
 
-        Log.d("AddTaskHandler", "tempSubTasks size: " + tempSubTasks.size());
         if (!tempSubTasks.isEmpty()) {
             List<SubTask> validSubTasks = new ArrayList<>();
             for (SubTask subTask : tempSubTasks) {
-                Log.d("AddTaskHandler", "SubTask title: '" + subTask.getTitle() + "'");
                 if (subTask.getTitle() != null && !subTask.getTitle().trim().isEmpty()) {
                     subTask.setTaskId(taskId);
                     if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
                         subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
                     }
                     validSubTasks.add(subTask);
-                    Log.d("AddTaskHandler", "Added valid SubTask: " + subTask.getTitle());
                 }
             }
             if (!validSubTasks.isEmpty()) {
                 newTask.setSubTasks(validSubTasks);
-                Log.d("AddTaskHandler", "Set " + validSubTasks.size() + " SubTasks to newTask");
-            } else {
-                Log.d("AddTaskHandler", "No valid SubTasks found");
             }
-        } else {
-            Log.d("AddTaskHandler", "tempSubTasks is empty");
         }
 
         taskService.addTask(newTask, new TaskService.TaskOperationCallback() {
             @Override
             public void onSuccess() {
-                Log.d("AddTaskHandler", "Task saved successfully. Now saving SubTasks...");
                 if (newTask.getSubTasks() != null && !newTask.getSubTasks().isEmpty()) {
                     saveSubTasksToDatabase(newTask.getId(), newTask.getSubTasks());
                 }
@@ -294,7 +277,6 @@ public class AddTaskHandler {
                             listener.onTaskAdded(newTask);
                         }
                         tempSubTasks.clear();
-                        Log.d("AddTaskHandler", "tempSubTasks cleared");
                     });
                 }
             }
@@ -315,19 +297,15 @@ public class AddTaskHandler {
         }
         SubTaskService subTaskService = new SubTaskService(context);
         
-        Log.d("AddTaskHandler", "Saving " + subTasks.size() + " SubTasks to database");
-        
         for (SubTask subTask : subTasks) {
             subTask.setTaskId(taskId);
             subTaskService.saveSubTask(taskId, subTask, new SubTaskService.SubTaskOperationCallback() {
                 @Override
                 public void onSuccess() {
-                    Log.d("AddTaskHandler", "SubTask saved successfully: " + subTask.getTitle());
                 }
 
                 @Override
                 public void onError(String error) {
-                    Log.e("AddTaskHandler", "Error saving SubTask: " + error);
                 }
             });
         }
