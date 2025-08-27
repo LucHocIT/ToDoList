@@ -84,8 +84,9 @@ public class UIManager {
         LinearLayout btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
         LinearLayout btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
         LinearLayout btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
+        LinearLayout btnNavProfile = activity.findViewById(R.id.btn_nav_profile);
         com.example.todolist.util.UnifiedNavigationHelper.setupBottomNavigation(
-            activity, btnNavMenu, btnNavTasks, btnNavCalendar, null, "tasks");
+            activity, btnNavMenu, btnNavTasks, btnNavCalendar, btnNavProfile, "tasks");
         androidx.drawerlayout.widget.DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
         if (drawerLayout != null && listener instanceof com.example.todolist.manager.NavigationDrawerManager.NavigationListener) {
             com.example.todolist.util.UnifiedNavigationHelper.initializeDrawerForActivity(

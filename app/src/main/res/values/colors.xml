@@ -62,4 +62,10 @@
     <!-- Widget Colors -->
     <color name="colorPrimary">#00D4AA</color>
     <color name="background_color">#F5F5F5</color>
+    
+    <!-- Profile Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="text_secondary">#666666</color>
+    <color name="nav_unselected">#999999</color>
+    <color name="primary">#4285F4</color>
 </resources>

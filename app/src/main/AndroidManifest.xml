@@ -74,6 +74,10 @@
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".activities.ProfileActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".ThemeSelectionActivity"
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />

@@ -34,13 +34,14 @@ public class UnifiedNavigationHelper {
                                            LinearLayout btnNavProfile,
                                            String currentScreen) {
         // Set current screen as selected
-        setCurrentScreenSelected(currentScreen, btnNavTasks, btnNavCalendar);
+        setCurrentScreenSelected(currentScreen, btnNavTasks, btnNavCalendar, btnNavProfile);
         // Setup navigation button listeners
-        setupNavigationListeners(context, btnNavMenu, btnNavTasks, btnNavCalendar, currentScreen);
+        setupNavigationListeners(context, btnNavMenu, btnNavTasks, btnNavCalendar, btnNavProfile, currentScreen);
     }
     private static void setCurrentScreenSelected(String currentScreen, 
                                                LinearLayout btnNavTasks, 
-                                               LinearLayout btnNavCalendar) {
+                                               LinearLayout btnNavCalendar,
+                                               LinearLayout btnNavProfile) {
         switch (currentScreen) {
             case "calendar":
                 if (btnNavCalendar != null) {
@@ -52,12 +53,18 @@ public class UnifiedNavigationHelper {
                     setNavigationSelected(btnNavTasks);
                 }
                 break;
+            case "profile":
+                if (btnNavProfile != null) {
+                    setNavigationSelected(btnNavProfile);
+                }
+                break;
         }
     }
     private static void setupNavigationListeners(Context context,
                                                 LinearLayout btnNavMenu,
                                                 LinearLayout btnNavTasks, 
                                                 LinearLayout btnNavCalendar,
+                                                LinearLayout btnNavProfile,
                                                 String currentScreen) {
         // Tasks navigation
         if (btnNavTasks != null) {
@@ -72,6 +79,14 @@ public class UnifiedNavigationHelper {
             btnNavCalendar.setOnClickListener(v -> {
                 if (!currentScreen.equals("calendar")) {
                     navigateToCalendar(context);
+                }
+            });
+        }
+        // Profile navigation
+        if (btnNavProfile != null) {
+            btnNavProfile.setOnClickListener(v -> {
+                if (!currentScreen.equals("profile")) {
+                    navigateToProfile(context);
                 }
             });
         }
@@ -91,6 +106,14 @@ public class UnifiedNavigationHelper {
     }
     private static void navigateToCalendar(Context context) {
         Intent intent = new Intent(context, CalendarActivity.class);
+        context.startActivity(intent);
+        if (context instanceof AppCompatActivity) {
+            ((AppCompatActivity) context).finish();
+        }
+    }
+    
+    private static void navigateToProfile(Context context) {
+        Intent intent = new Intent(context, com.example.todolist.activities.ProfileActivity.class);
         context.startActivity(intent);
         if (context instanceof AppCompatActivity) {
             ((AppCompatActivity) context).finish();

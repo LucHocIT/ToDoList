@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_tasks"
+        android:title="Nhiệm vụ"
+        android:icon="@drawable/ic_task" />
+    
+    <item
+        android:id="@+id/nav_calendar"
+        android:title="Lịch"
+        android:icon="@drawable/ic_calendar" />
+        
+    <item
+        android:id="@+id/nav_completed"
+        android:title="Đã hoàn thành"
+        android:icon="@drawable/ic_check" />
+        
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Cài đặt"
+        android:icon="@drawable/ic_settings" />
+</menu>

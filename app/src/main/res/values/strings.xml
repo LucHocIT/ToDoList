@@ -2,6 +2,9 @@
     <string name="app_name">ToDoList</string>
     <string name="action_settings">Settings</string>
     
+    <!-- Firebase Authentication -->
+    <string name="default_web_client_id">788880723589-i0uq5id6g4ibgbsc2j1ie9tsbudo18vj.apps.googleusercontent.com</string>
+    
     <!-- Task Detail strings -->
     <string name="task_description_hint">Mô tả nhiệm vụ...</string>
     
