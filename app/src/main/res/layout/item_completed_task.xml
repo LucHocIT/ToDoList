@@ -14,12 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#F8F8F8"
+        android:background="@drawable/completed_task_background"
         android:paddingVertical="12dp"
         android:paddingHorizontal="16dp"
         android:gravity="center_vertical"
         android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_marginVertical="2dp">
 
         <!-- Completed Checkbox -->
         <ImageView

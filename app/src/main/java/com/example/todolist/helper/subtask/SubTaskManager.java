@@ -128,10 +128,7 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
             List<SubTask> modifiedSubTasks = SubTaskUtils.markAllSubTasksAsCompleted(currentTask);
             
             if (!modifiedSubTasks.isEmpty()) {
-                android.util.Log.d("SubTaskManager", "Auto-completing " + modifiedSubTasks.size() + " subtasks");
-                
                 for (SubTask subTask : modifiedSubTasks) {
-                    android.util.Log.d("SubTaskManager", "Completing subtask: " + subTask.getTitle());
                     // Update each subtask in Firebase
                     subTaskService.updateSubTask(currentTask.getId(), subTask, null);
                 }
@@ -150,8 +147,6 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
             subTaskAdapter = new SubTaskAdapter(subTasks, this);
             subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
             recyclerSubTasks.setAdapter(subTaskAdapter);
-            
-            android.util.Log.d("SubTaskManager", "Refreshed subtasks count: " + subTasks.size());
         }
     }
 
@@ -253,7 +248,6 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     @Override
     public void onAddNewSubTask() {
         if (currentTask != null) {
-            android.util.Log.d("SubTaskManager", "Adding new subtask to task: " + currentTask.getId());
             SubTask newSubTask = new SubTask("", currentTask.getId());
             newSubTask.setId(UUID.randomUUID().toString());
             currentTask.addSubTask(newSubTask);

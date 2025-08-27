@@ -138,21 +138,7 @@ public class TaskCache {
     
     // Debug method to check cache state
     public void logCacheState(String context) {
-        android.util.Log.d("TaskCache", "=== Cache State Debug (" + context + ") ===");
-        android.util.Log.d("TaskCache", "isInitialized: " + isInitialized);
-        android.util.Log.d("TaskCache", "isLoading: " + isLoading);
-        android.util.Log.d("TaskCache", "taskMap size: " + taskMap.size());
-        android.util.Log.d("TaskCache", "listeners count: " + listeners.size());
-        if (taskMap.size() > 0) {
-            android.util.Log.d("TaskCache", "Sample tasks:");
-            int count = 0;
-            for (Task task : taskMap.values()) {
-                if (count >= 3) break; // Only show first 3 tasks
-                android.util.Log.d("TaskCache", "  - " + task.getTitle() + " (due: " + task.getDueDate() + ")");
-                count++;
-            }
-        }
-        android.util.Log.d("TaskCache", "=== End Cache State ===");
+        // Debug logging removed for clean code
     }
     
     public void setLoading(boolean loading) {

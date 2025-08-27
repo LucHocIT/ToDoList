@@ -2,7 +2,6 @@ package com.example.todolist.helper.taskdetail;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -206,7 +205,6 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
 
     private void setPriorityDisplay(String priority) {
         if (textPriorityLabel == null || textPriorityValue == null) {
-            Log.w("TaskDataManager", "Priority TextViews are null");
             return;
         }
         

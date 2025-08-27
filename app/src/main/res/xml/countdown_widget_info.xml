@@ -9,4 +9,4 @@
     android:targetCellHeight="1"
     android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen"
-    android:configure="com.example.todolist.CountdownWidgetConfigActivity" />
+    android:configure="com.example.todolist.widget.CountdownWidgetConfigActivity" />

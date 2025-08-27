@@ -131,21 +131,28 @@ public class TaskDetailActivity extends AppCompatActivity implements
         
         btnMenuOptions.setOnClickListener(v -> showOptionsMenu(v));
         
-        layoutDatePicker.setOnClickListener(v -> taskDataManager.showDateTimePicker());
+        layoutDatePicker.setOnClickListener(v -> {
+            if (currentTask != null && !currentTask.isCompleted()) {
+                taskDataManager.showDateTimePicker();
+            }
+        });
         
-        layoutAttachments.setOnClickListener(v -> attachmentHandler.showFileTypeDialog());
+        layoutAttachments.setOnClickListener(v -> {
+            if (currentTask != null && !currentTask.isCompleted()) {
+                attachmentHandler.showFileTypeDialog();
+            }
+        });
         
         layoutNotes.setOnClickListener(v -> {
-            toggleNotesInput();
+            if (currentTask != null && !currentTask.isCompleted()) {
+                toggleNotesInput();
+            }
         });
         
         btnAddSubtask.setOnClickListener(v -> {
-            android.util.Log.d("TaskDetail", "Add subtask button clicked");
-            if (currentTask != null) {
-                android.util.Log.d("TaskDetail", "Current task has subtasks: " + 
-                    (currentTask.getSubTasks() != null ? currentTask.getSubTasks().size() : 0));
+            if (currentTask != null && !currentTask.isCompleted()) {
+                subTaskManager.onAddNewSubTask();
             }
-            subTaskManager.onAddNewSubTask();
         });
     }
     
@@ -179,6 +186,9 @@ public class TaskDetailActivity extends AppCompatActivity implements
         subTaskManager.setCurrentTask(task);
         subTaskManager.loadSubTasksFromDatabase();
         updateNotesDisplay();
+        
+        // Update UI based on completion status
+        onTaskCompletionChanged(task.isCompleted());
     }
     
     private void updateNotesDisplay() {
@@ -215,19 +225,36 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     @Override
     public void onTaskCompletionChanged(boolean isCompleted) {
+        editDetailTitle.setEnabled(!isCompleted);
+        editDetailTitle.setAlpha(isCompleted ? 0.6f : 1.0f);
+        editDescription.setEnabled(!isCompleted);
+        editDescription.setAlpha(isCompleted ? 0.6f : 1.0f);
         spinnerCategory.setEnabled(!isCompleted);
         spinnerCategory.setAlpha(isCompleted ? 0.6f : 1.0f);
         
         layoutDatePicker.setEnabled(!isCompleted);
         layoutDatePicker.setAlpha(isCompleted ? 0.6f : 1.0f);
+        layoutDatePicker.setClickable(!isCompleted);
 
         layoutAttachments.setEnabled(!isCompleted);
         layoutAttachments.setAlpha(isCompleted ? 0.6f : 1.0f);
+        layoutAttachments.setClickable(!isCompleted);
         
+        layoutNotes.setEnabled(!isCompleted);
+        layoutNotes.setAlpha(isCompleted ? 0.6f : 1.0f);
+        layoutNotes.setClickable(!isCompleted);
         btnAddSubtask.setEnabled(!isCompleted);
         btnAddSubtask.setAlpha(isCompleted ? 0.6f : 1.0f);
 
+        if (isCompleted) {
+            btnMenuOptions.setAlpha(0.6f);
+        } else {
+            btnMenuOptions.setAlpha(1.0f);
+        }
+        // Update subtask manager
         subTaskManager.onTaskCompletionChanged(isCompleted);
+        
+        // Note: AttachmentHandler interactions are disabled via click listeners above
     }
     
     @Override
@@ -239,14 +266,22 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private void showOptionsMenu(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.task_detail_menu, popup.getMenu());
+        if (currentTask != null && currentTask.isCompleted()) {
+            popup.getMenu().findItem(R.id.menu_mark_as_done).setVisible(false);
+            popup.getMenu().findItem(R.id.menu_start_focus).setVisible(false);
+        }
         
         popup.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.menu_mark_as_done) {
-                markTaskAsCompleted();
+                if (currentTask != null && !currentTask.isCompleted()) {
+                    markTaskAsCompleted();
+                }
                 return true;
             } else if (itemId == R.id.menu_start_focus) {
-                startFocusSession();
+                if (currentTask != null && !currentTask.isCompleted()) {
+                    startFocusSession();
+                }
                 return true;
             } else if (itemId == R.id.menu_share) {
                 shareTask();
@@ -263,9 +298,6 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     private void markTaskAsCompleted() {
         if (currentTask != null) {
-            android.util.Log.d("TaskDetail", "Marking task as completed. Current subtasks count: " + 
-                (currentTask.getSubTasks() != null ? currentTask.getSubTasks().size() : 0));
-            
             currentTask.setCompleted(true);
             subTaskManager.markAllSubTasksAsCompleted();
 
