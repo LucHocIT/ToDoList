@@ -21,6 +21,7 @@ import com.example.todolist.model.SubTask;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.service.CategoryService;
+import com.example.todolist.service.task.SubTaskService;
 import com.example.todolist.notification.ReminderScheduler;
 import com.example.todolist.repository.BaseRepository;
 import java.util.ArrayList;
@@ -43,10 +44,7 @@ public class AddTaskHandler {
     public AddTaskHandler(Context context, OnTaskAddedListener listener) {
         this.context = context;
         this.listener = listener;
-        
-        // Initialize SubTask list
         this.tempSubTasks = new ArrayList<>();
-        
         // Initialize services
         this.taskService = new TaskService(context, new TaskService.TaskUpdateListener() {
             @Override
@@ -140,10 +138,7 @@ public class AddTaskHandler {
     }
     
     private void setupSubTaskRecyclerView() {
-        // Clear existing subtasks for new dialog
         tempSubTasks.clear();
-        
-        // Initialize adapter with SubTask listener
         SubTaskAdapter.OnSubTaskListener subTaskListener = new SubTaskAdapter.OnSubTaskListener() {
             @Override
             public void onSubTaskStatusChanged(SubTask subTask, boolean isCompleted) {
@@ -242,9 +237,9 @@ public class AddTaskHandler {
         if (time != null && !time.equals(context.getString(R.string.none)) && !time.equals("12:00")) {
             finalTime = time;
         }
-        // Create new Task using Firebase model
+
         Task newTask = new Task();
-        String taskId = String.valueOf(System.currentTimeMillis()) + "_" + Math.random();
+        String taskId = String.valueOf(System.currentTimeMillis()) + "_" + ((int)(Math.random() * 10000));
         newTask.setId(taskId);
         
         newTask.setTitle(title);
@@ -260,8 +255,7 @@ public class AddTaskHandler {
             newTask.setRepeating(true);
             newTask.setRepeatType(repeat);
         }
-        
-        // Add SubTasks to the new task
+
         Log.d("AddTaskHandler", "tempSubTasks size: " + tempSubTasks.size());
         if (!tempSubTasks.isEmpty()) {
             List<SubTask> validSubTasks = new ArrayList<>();
@@ -270,7 +264,7 @@ public class AddTaskHandler {
                 if (subTask.getTitle() != null && !subTask.getTitle().trim().isEmpty()) {
                     subTask.setTaskId(taskId);
                     if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
-                        subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + Math.random());
+                        subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
                     }
                     validSubTasks.add(subTask);
                     Log.d("AddTaskHandler", "Added valid SubTask: " + subTask.getTitle());
@@ -285,22 +279,22 @@ public class AddTaskHandler {
         } else {
             Log.d("AddTaskHandler", "tempSubTasks is empty");
         }
-        
-        // Use TaskService to add task
+
         taskService.addTask(newTask, new TaskService.TaskOperationCallback() {
             @Override
             public void onSuccess() {
-                Log.d("AddTaskHandler", "Task saved successfully. SubTasks count: " + 
-                    (newTask.getSubTasks() != null ? newTask.getSubTasks().size() : 0));
+                Log.d("AddTaskHandler", "Task saved successfully. Now saving SubTasks...");
+                if (newTask.getSubTasks() != null && !newTask.getSubTasks().isEmpty()) {
+                    saveSubTasksToDatabase(newTask.getId(), newTask.getSubTasks());
+                }
+                
                 if (context instanceof Activity) {
                     ((Activity) context).runOnUiThread(() -> {
                         if (listener != null) {
                             listener.onTaskAdded(newTask);
                         }
-                        // Clear tempSubTasks sau khi lưu thành công
                         tempSubTasks.clear();
                         Log.d("AddTaskHandler", "tempSubTasks cleared");
-                        // Removed unnecessary success toast
                     });
                 }
             }
@@ -313,5 +307,29 @@ public class AddTaskHandler {
                 }
             }
         });
+    }
+    
+    private void saveSubTasksToDatabase(String taskId, List<SubTask> subTasks) {
+        if (subTasks == null || subTasks.isEmpty()) {
+            return;
+        }
+        SubTaskService subTaskService = new SubTaskService(context);
+        
+        Log.d("AddTaskHandler", "Saving " + subTasks.size() + " SubTasks to database");
+        
+        for (SubTask subTask : subTasks) {
+            subTask.setTaskId(taskId);
+            subTaskService.saveSubTask(taskId, subTask, new SubTaskService.SubTaskOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d("AddTaskHandler", "SubTask saved successfully: " + subTask.getTitle());
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.e("AddTaskHandler", "Error saving SubTask: " + error);
+                }
+            });
+        }
     }
 }
