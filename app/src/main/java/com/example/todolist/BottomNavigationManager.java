@@ -59,7 +59,7 @@ public class BottomNavigationManager {
         
         // Initialize colors
         selectedColor = ContextCompat.getColor(activity, R.color.primary);
-        unselectedColor = ContextCompat.getColor(activity, android.R.color.darker_gray);
+        unselectedColor = ContextCompat.getColor(activity, R.color.text_gray);
         
         initViews();
         setupClickListeners();
@@ -105,8 +105,11 @@ public class BottomNavigationManager {
     }
     
     private void navigateToScreen(String targetScreen) {
+        android.util.Log.d("BottomNav", "navigateToScreen called: current=" + currentScreen + ", target=" + targetScreen);
+        
         // Không navigate nếu đã ở màn hình hiện tại
         if (currentScreen.equals(targetScreen)) {
+            android.util.Log.d("BottomNav", "Already on target screen, ignoring");
             return;
         }
         
@@ -126,12 +129,17 @@ public class BottomNavigationManager {
                 break;
                 
             case SCREEN_MENU:
-                // Mở navigation drawer nếu có
+                // Mở navigation drawer nếu có - tất cả activity đều có drawer
                 DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
                 if (drawerLayout != null) {
+                    android.util.Log.d("BottomNav", "Opening drawer");
+                    // Cập nhật UI state trước khi mở drawer
+                    updateCurrentScreen(SCREEN_MENU);
                     drawerLayout.openDrawer(GravityCompat.START);
+                    return; // Không navigate, chỉ mở drawer
                 } else {
-                    // Nếu không có drawer, navigate về MainActivity và mở drawer
+                    android.util.Log.d("BottomNav", "No drawer found, fallback to MainActivity");
+                    // Nếu không có drawer, fallback về MainActivity
                     intent = new Intent(activity, MainActivity.class);
                     intent.putExtra("open_drawer", true);
                 }
@@ -139,30 +147,39 @@ public class BottomNavigationManager {
         }
         
         if (intent != null) {
+            android.util.Log.d("BottomNav", "Starting new activity for " + targetScreen);
+            // Tắt hiệu ứng transition
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             activity.startActivity(intent);
+            activity.overridePendingTransition(0, 0); // Tắt hiệu ứng chuyển màn hình
             activity.finish(); // Đóng activity hiện tại để tránh stack overflow
         }
     }
     
     private void updateSelectedState() {
+        android.util.Log.d("BottomNav", "updateSelectedState called for screen: " + currentScreen);
+        
         // Reset tất cả về trạng thái unselected
         resetAllToUnselected();
-        
-        // Set trạng thái selected cho màn hình hiện tại
+
         switch (currentScreen) {
             case SCREEN_MENU:
+                android.util.Log.d("BottomNav", "Setting MENU as selected");
                 setSelected(imgNavMenu, textNavMenu);
                 break;
                 
             case SCREEN_TASKS:
+                android.util.Log.d("BottomNav", "Setting TASKS as selected");
                 setSelected(imgNavTasks, textNavTasks);
                 break;
                 
             case SCREEN_CALENDAR:
+                android.util.Log.d("BottomNav", "Setting CALENDAR as selected");
                 setSelected(imgNavCalendar, textNavCalendar);
                 break;
                 
             case SCREEN_PROFILE:
+                android.util.Log.d("BottomNav", "Setting PROFILE as selected");
                 setSelected(imgNavProfile, textNavProfile);
                 break;
         }
@@ -177,19 +194,31 @@ public class BottomNavigationManager {
     
     private void setSelected(ImageView icon, TextView text) {
         if (icon != null) {
+            android.util.Log.d("BottomNav", "Setting icon " + getResourceName(icon) + " to selected color");
             icon.setColorFilter(selectedColor);
         }
         if (text != null) {
+            android.util.Log.d("BottomNav", "Setting text " + getResourceName(text) + " to selected color");
             text.setTextColor(selectedColor);
         }
     }
     
     private void setUnselected(ImageView icon, TextView text) {
         if (icon != null) {
+            android.util.Log.d("BottomNav", "Setting icon " + getResourceName(icon) + " to unselected color");
             icon.setColorFilter(unselectedColor);
         }
         if (text != null) {
+            android.util.Log.d("BottomNav", "Setting text " + getResourceName(text) + " to unselected color");
             text.setTextColor(unselectedColor);
+        }
+    }
+    
+    private String getResourceName(android.view.View view) {
+        try {
+            return activity.getResources().getResourceEntryName(view.getId());
+        } catch (Exception e) {
+            return "unknown";
         }
     }
     

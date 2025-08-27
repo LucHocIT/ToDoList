@@ -94,7 +94,8 @@ public class ThemeManager {
             btnMenu.setColorFilter(primaryColor);
         }
 
-        applyThemeToBottomNavigation(primaryColor);
+        // KHÔNG apply theme cho bottom navigation vì đã có BottomNavigationManager quản lý
+        // applyThemeToBottomNavigation(primaryColor);
         updateNavigationDrawerTheme(theme);
         updateTaskItemsTheme(lightColor);
     }
@@ -115,29 +116,9 @@ public class ThemeManager {
             button.setBackgroundTintList(backgroundTint);
         }
     }
-    private void applyThemeToBottomNavigation(int primaryColor) {
-        View btnNavMenu = activity.findViewById(R.id.btn_nav_menu);
-        View btnNavTasks = activity.findViewById(R.id.btn_nav_tasks);
-        View btnNavCalendar = activity.findViewById(R.id.btn_nav_calendar);
-        applyThemeToNavButton(btnNavMenu, primaryColor);
-        applyThemeToNavButton(btnNavTasks, primaryColor);
-        applyThemeToNavButton(btnNavCalendar, primaryColor);
-    }
-    private void applyThemeToNavButton(View navButton, int primaryColor) {
-        if (navButton instanceof android.widget.LinearLayout) {
-            android.widget.LinearLayout layout = (android.widget.LinearLayout) navButton;
-            if (layout.getChildCount() >= 2) {
-                View iconView = layout.getChildAt(0);
-                View textView = layout.getChildAt(1);
-                if (iconView instanceof ImageView) {
-                    ((ImageView) iconView).setColorFilter(primaryColor);
-                }
-                if (textView instanceof TextView) {
-                    ((TextView) textView).setTextColor(primaryColor);
-                }
-            }
-        }
-    }
+    
+    // REMOVED: applyThemeToBottomNavigation - now managed by BottomNavigationManager
+    // REMOVED: applyThemeToNavButton - now managed by BottomNavigationManager
     private void updateNavigationDrawerTheme(ThemeColor theme) {
         android.widget.RelativeLayout navHeader = activity.findViewById(R.id.nav_header_container);
         if (navHeader != null) {

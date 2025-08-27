@@ -23,8 +23,7 @@
             android:id="@+id/img_nav_menu"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_menu"
-            android:tint="#666666"/>
+            android:src="@drawable/ic_menu"/>
 
         <TextView
             android:id="@+id/text_nav_menu"
@@ -32,7 +31,6 @@
             android:layout_height="wrap_content"
             android:text="Menu"
             android:textSize="10sp"
-            android:textColor="#666666"
             android:layout_marginTop="2dp"/>
 
     </LinearLayout>
@@ -52,8 +50,7 @@
             android:id="@+id/img_nav_tasks"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_task"
-            android:tint="#666666"/>
+            android:src="@drawable/ic_task"/>
 
         <TextView
             android:id="@+id/text_nav_tasks"
@@ -61,7 +58,6 @@
             android:layout_height="wrap_content"
             android:text="Nhiệm vụ"
             android:textSize="10sp"
-            android:textColor="#666666"
             android:layout_marginTop="2dp"/>
 
     </LinearLayout>
@@ -81,8 +77,7 @@
             android:id="@+id/img_nav_calendar"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_calendar"
-            android:tint="#666666"/>
+            android:src="@drawable/ic_calendar"/>
 
         <TextView
             android:id="@+id/text_nav_calendar"
@@ -90,7 +85,6 @@
             android:layout_height="wrap_content"
             android:text="Lịch"
             android:textSize="10sp"
-            android:textColor="#666666"
             android:layout_marginTop="2dp"/>
 
     </LinearLayout>
@@ -110,8 +104,7 @@
             android:id="@+id/img_nav_profile"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_person"
-            android:tint="#666666"/>
+            android:src="@drawable/ic_person"/>
 
         <TextView
             android:id="@+id/text_nav_profile"
@@ -119,7 +112,6 @@
             android:layout_height="wrap_content"
             android:text="Của tôi"
             android:textSize="10sp"
-            android:textColor="#666666"
             android:layout_marginTop="2dp"/>
 
     </LinearLayout>
