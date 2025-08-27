@@ -91,7 +91,9 @@ public class DateTimePickerDialog {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnSave.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onDateTimeSelected(selectedDate, selectedTime, selectedReminder, selectedRepeat);
+                // Trả về giá trị thời gian thực tế thay vì text gốc
+                String actualReminderTime = calculateReminderDisplayText(selectedReminder);
+                listener.onDateTimeSelected(selectedDate, selectedTime, actualReminderTime, selectedRepeat);
             }
             dialog.dismiss();
         });
@@ -106,6 +108,11 @@ public class DateTimePickerDialog {
             (view, hourOfDay, minute) -> {
                 selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
                 textSelectedTime.setText(selectedTime);
+                if (selectedReminder != null && !selectedReminder.equals(context.getString(R.string.none))) {
+                    String displayText = calculateReminderDisplayText(selectedReminder);
+                    textSelectedReminder.setText(displayText);
+                }
+                
                 updateReminderState(); 
             },
             now.get(Calendar.HOUR_OF_DAY),
@@ -145,7 +152,8 @@ public class DateTimePickerDialog {
         builder.setTitle(context.getString(R.string.choose_reminder));
         builder.setItems(reminderOptions, (dialog, which) -> {
             selectedReminder = reminderOptions[which];
-            textSelectedReminder.setText(selectedReminder);
+            String displayText = calculateReminderDisplayText(selectedReminder);
+            textSelectedReminder.setText(displayText);
         });
         builder.show();
     }
@@ -185,7 +193,9 @@ public class DateTimePickerDialog {
         
         if (reminder != null && !reminder.isEmpty() && !reminder.equals("Không")) {
             selectedReminder = reminder;
-            textSelectedReminder.setText(reminder);
+            // Hiển thị thời gian thực tế của lời nhắc thay vì chỉ text
+            String displayText = calculateReminderDisplayText(reminder);
+            textSelectedReminder.setText(displayText);
         }
         
         if (repeat != null && !repeat.isEmpty() && !repeat.equals("Không")) {
@@ -196,6 +206,47 @@ public class DateTimePickerDialog {
         updateReminderState();
         updateRepeatState();
     }
+
+    private String calculateReminderDisplayText(String reminderOption) {
+        if (reminderOption.equals(context.getString(R.string.none)) || 
+            selectedTime == null || selectedTime.equals(context.getString(R.string.none))) {
+            return reminderOption;
+        }
+        
+        try {
+            String[] timeParts = selectedTime.split(":");
+            int taskHour = Integer.parseInt(timeParts[0]);
+            int taskMinute = Integer.parseInt(timeParts[1]);
+            int minutesToSubtract = 0;
+            if (reminderOption.equals(context.getString(R.string.reminder_5_min))) {
+                minutesToSubtract = 5;
+            } else if (reminderOption.equals(context.getString(R.string.reminder_15_min))) {
+                minutesToSubtract = 15;
+            } else if (reminderOption.equals(context.getString(R.string.reminder_30_min))) {
+                minutesToSubtract = 30;
+            } else if (reminderOption.equals(context.getString(R.string.reminder_1_hour))) {
+                minutesToSubtract = 60;
+            }
+            
+            if (minutesToSubtract > 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, taskHour);
+                calendar.set(Calendar.MINUTE, taskMinute);
+                calendar.add(Calendar.MINUTE, -minutesToSubtract);
+                String reminderTime = String.format(Locale.getDefault(), "%02d:%02d", 
+                    calendar.get(Calendar.HOUR_OF_DAY), 
+                    calendar.get(Calendar.MINUTE));
+
+                return reminderTime;
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return reminderOption;
+    }
+    
     public void show() {
         if (dialog != null) {
             dialog.show();

@@ -97,38 +97,12 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
             textDueDate.setText(formattedDate != null ? formattedDate : "Không");
             textTime.setText(currentTask.getDueTime() != null ? currentTask.getDueTime() : "Không");
 
-            String reminderTime = calculateReminderTime(currentTask.getDueTime());
-            textReminderValue.setText(reminderTime);
+            // Hiển thị reminder từ task, không cần tính toán lại
+            textReminderValue.setText(currentTask.getReminder() != null ? currentTask.getReminder() : "Không");
             
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
             // updateCompletionStatus(); // TODO: Implement if needed
-        }
-    }
-
-    private String calculateReminderTime(String dueTime) {
-        if (dueTime == null || dueTime.isEmpty() || dueTime.equals("Không")) {
-            return "Không";
-        }
-        
-        try {
-            String[] timeParts = dueTime.split(":");
-            int hours = Integer.parseInt(timeParts[0]);
-            int minutes = Integer.parseInt(timeParts[1]);
-            
-            // Subtract 30 minutes
-            minutes -= 30;
-            if (minutes < 0) {
-                minutes += 60;
-                hours -= 1;
-            }
-            if (hours < 0) {
-                hours += 24;
-            }
-            
-            return String.format("%02d:%02d", hours, minutes);
-        } catch (Exception e) {
-            return "Không";
         }
     }
 
