@@ -150,10 +150,24 @@ public class TaskListService {
         futureTasks.clear();
         completedTodayTasks.clear();
     }
-    
-    // Getters
+
     public List<Task> getOverdueTasks() { return new ArrayList<>(overdueTasks); }
     public List<Task> getTodayTasks() { return new ArrayList<>(todayTasks); }
     public List<Task> getFutureTasks() { return new ArrayList<>(futureTasks); }
     public List<Task> getCompletedTodayTasks() { return new ArrayList<>(completedTodayTasks); }
+    public List<Task> getIncompleteTasks() {
+        List<Task> incomplete = new ArrayList<>();
+        incomplete.addAll(overdueTasks);
+        incomplete.addAll(todayTasks);
+        incomplete.addAll(futureTasks);
+        return incomplete;
+    }
+    
+    public List<Task> getCompletedTasksFromCache() {
+        return new ArrayList<>(completedTodayTasks);
+    }
+    
+    public List<Task> getTasksByCategoryFromCache(String categoryId) {
+        return new ArrayList<>(); 
+    }
 }
