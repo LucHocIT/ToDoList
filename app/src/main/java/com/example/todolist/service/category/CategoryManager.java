@@ -6,10 +6,6 @@ import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.CategoryRepository;
 
 import java.util.List;
-
-/**
- * CategoryManager - Xử lý các thao tác CRUD cho Category
- */
 public class CategoryManager {
     
     private Context context;

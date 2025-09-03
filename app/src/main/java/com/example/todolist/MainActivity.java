@@ -36,7 +36,7 @@ import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.example.todolist.BottomNavigationManager;
+import com.example.todolist.view.BottomNavigationManager;
 import java.util.List;
 import java.util.Locale;
 

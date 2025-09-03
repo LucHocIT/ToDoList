@@ -8,17 +8,11 @@ import com.example.todolist.manager.AuthManager;
 import com.example.todolist.manager.FirebaseSyncManager;
 import com.example.todolist.service.TaskService;
 
-/**
- * Utility để migrate từ logic cũ sang logic Firebase sync mới
- */
 public class FirebaseMigrationHelper {
     private static final String TAG = "FirebaseMigrationHelper";
     private static final String PREF_NAME = "migration_prefs";
     private static final String KEY_MIGRATED_TO_NEW_SYNC = "migrated_to_new_sync";
-    
-    /**
-     * Check và thực hiện migration nếu cần
-     */
+
     public static void checkAndMigrate(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         boolean hasMigrated = prefs.getBoolean(KEY_MIGRATED_TO_NEW_SYNC, false);
@@ -30,31 +24,17 @@ public class FirebaseMigrationHelper {
             Log.d(TAG, "Migration completed.");
         }
     }
-    
-    /**
-     * Thực hiện migration
-     */
+
     private static void performMigration(Context context) {
         AuthManager authManager = AuthManager.getInstance();
         authManager.initialize(context);
-        
-        // Nếu user đã login trước đây, giữ nguyên trạng thái login
-        // nhưng để sync = false để user tự quyết định
         if (authManager.isSignedIn()) {
             Log.d(TAG, "User was already logged in, keeping login state");
             Log.d(TAG, "Sync is disabled by default - user can enable in settings");
-            
-            // Đảm bảo sync bị tắt cho đến khi user tự bật
             authManager.setSyncEnabled(false);
         }
-        
-        // Không cần làm gì thêm vì tất cả tasks đã có trong SQLite
-        // Khi user bật sync thì TaskService.syncAllTasksToFirebase() sẽ xử lý
     }
-    
-    /**
-     * Force enable sync cho user (chỉ dùng khi cần thiết)
-     */
+
     public static void enableSyncForLoggedInUser(Context context, 
                                                 TaskService taskService,
                                                 Runnable onSuccess, 
@@ -68,8 +48,6 @@ public class FirebaseMigrationHelper {
         }
         
         authManager.setSyncEnabled(true);
-        
-        // Đồng bộ tất cả tasks hiện có lên Firebase
         taskService.syncAllTasksToFirebase(new FirebaseSyncManager.SyncCallback() {
             @Override
             public void onSuccess(String message) {
@@ -86,10 +64,7 @@ public class FirebaseMigrationHelper {
             }
         });
     }
-    
-    /**
-     * Reset migration state (chỉ dùng cho debug/testing)
-     */
+
     public static void resetMigrationState(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().remove(KEY_MIGRATED_TO_NEW_SYNC).apply();

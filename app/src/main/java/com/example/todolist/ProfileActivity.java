@@ -21,7 +21,7 @@ import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.model.Task;
 import com.example.todolist.manager.NavigationDrawerManager;
-import com.example.todolist.BottomNavigationManager;
+import com.example.todolist.view.BottomNavigationManager;
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.manager.SyncManager;
 import com.google.firebase.auth.FirebaseUser;

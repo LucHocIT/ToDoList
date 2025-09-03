@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,13 +16,8 @@ import com.example.todolist.MainActivity;
 import com.example.todolist.CalendarActivity;
 import com.example.todolist.activities.ProfileActivity;
 
-/**
- * Lớp quản lý Bottom Navigation chung cho toàn bộ ứng dụng
- * Thay thế cho các lớp navigation cũ và thống nhất UI/UX
- */
 public class BottomNavigationManager {
-    
-    // Các màn hình chính - theo thứ tự: Menu, Nhiệm vụ, Lịch, Của tôi
+
     public static final String SCREEN_MENU = "menu";
     public static final String SCREEN_TASKS = "tasks";
     public static final String SCREEN_CALENDAR = "calendar";
@@ -126,15 +121,12 @@ public class BottomNavigationManager {
                 break;
                 
             case SCREEN_MENU:
-                // Mở navigation drawer nếu có - tất cả activity đều có drawer
                 DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
                 if (drawerLayout != null) {
-                    // Cập nhật UI state trước khi mở drawer
                     updateCurrentScreen(SCREEN_MENU);
                     drawerLayout.openDrawer(GravityCompat.START);
-                    return; // Không navigate, chỉ mở drawer
+                    return; 
                 } else {
-                    // Nếu không có drawer, fallback về MainActivity
                     intent = new Intent(activity, MainActivity.class);
                     intent.putExtra("open_drawer", true);
                 }
@@ -142,16 +134,14 @@ public class BottomNavigationManager {
         }
         
         if (intent != null) {
-            // Tắt hiệu ứng transition
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             activity.startActivity(intent);
-            activity.overridePendingTransition(0, 0); // Tắt hiệu ứng chuyển màn hình
-            activity.finish(); // Đóng activity hiện tại để tránh stack overflow
+            activity.overridePendingTransition(0, 0); 
+            activity.finish(); 
         }
     }
     
     private void updateSelectedState() {
-        // Reset tất cả về trạng thái unselected
         resetAllToUnselected();
 
         switch (currentScreen) {
@@ -197,19 +187,12 @@ public class BottomNavigationManager {
             text.setTextColor(unselectedColor);
         }
     }
-    
-    /**
-     * Cập nhật màn hình hiện tại và refresh UI
-     */
+
     public void updateCurrentScreen(String newScreen) {
         this.currentScreen = newScreen;
         updateSelectedState();
     }
-    
-    /**
-     * Setup bottom navigation cho activity
-     * Method này sẽ thay thế cho UnifiedNavigationHelper
-     */
+
     public static void setupForActivity(AppCompatActivity activity, String currentScreen) {
         new BottomNavigationManager(activity, currentScreen);
     }

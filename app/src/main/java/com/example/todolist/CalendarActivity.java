@@ -21,7 +21,7 @@ import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.util.AddTaskHandler;
 import com.example.todolist.util.SettingsManager;
-import com.example.todolist.BottomNavigationManager;
+import com.example.todolist.view.BottomNavigationManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
