@@ -16,8 +16,6 @@ public class TaskCompletionService {
     
     public void completeTask(Task task, boolean isCompleted, BaseRepository.DatabaseCallback<Boolean> callback) {
         task.setCompleted(isCompleted);
-        
-        // Update in database
         taskRepository.updateTask(task, callback);
     }
     

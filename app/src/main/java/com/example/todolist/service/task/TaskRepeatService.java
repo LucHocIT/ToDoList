@@ -19,11 +19,7 @@ public class TaskRepeatService {
     public interface TaskCreator {
         void addTaskWithoutRepeat(Task task, BaseRepository.DatabaseCallback<String> callback);
     }
-    
-    /**
-     * Cập nhật ngày đến hạn cho task lặp lại khi hoàn thành
-     * Thay vì tạo nhiều task clone, chỉ cần cập nhật ngày đến hạn
-     */
+
     public static void updateTaskForNextRepeat(Task task) {
         if (!task.isRepeating() || task.getRepeatType() == null || task.getRepeatType().equals("Không")) {
             return;
@@ -56,11 +52,8 @@ public class TaskRepeatService {
                     calendar.add(Calendar.YEAR, 1);
                     break;
             }
-            
-            // Cập nhật ngày đến hạn
+
             task.setDueDate(dateFormat.format(calendar.getTime()));
-            
-            // Đặt lại trạng thái chưa hoàn thành
             task.setIsCompleted(false);
             task.setCompletionDate(null);
             
@@ -69,19 +62,12 @@ public class TaskRepeatService {
         }
     }
     
-    /**
-     * DEPRECATED: Không còn tạo instances clone nữa
-     * Giữ lại để tương thích với code cũ
-     */
     @Deprecated
     public static void createRepeatInstances(Task originalTask, TaskCreator taskCreator, RepeatTaskCallback callback) {
         // Không làm gì cả - chỉ callback success
         if (callback != null) callback.onSuccess();
     }
-    
-    /**
-     * Clone task cho ngày mới (giữ lại cho future use)
-     */
+
     private static Task cloneTaskForDate(Task originalTask, String newDate) {
         Task clonedTask = new Task();
         
@@ -106,12 +92,8 @@ public class TaskRepeatService {
         
         return clonedTask;
     }
-    
-    /**
-     * Kiểm tra xem có cần tạo thêm repeat instances không
-     */
+
     public static boolean needsRepeatInstances(Task task) {
-        // Không cần tạo instances nữa
         return false;
     }
 }

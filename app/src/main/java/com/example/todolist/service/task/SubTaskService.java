@@ -58,6 +58,17 @@ public class SubTaskService {
         });
     }
     
+    public void completeAllSubTasks(com.example.todolist.model.Task task) {
+        if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
+            for (com.example.todolist.model.SubTask subTask : task.getSubTasks()) {
+                if (!subTask.isCompleted()) {
+                    subTask.setCompleted(true);
+                    updateSubTask(task.getId(), subTask, null);
+                }
+            }
+        }
+    }
+    
     public void deleteSubTask(String taskId, String subTaskId, SubTaskOperationCallback callback) {
         // First get the subtask by id, then delete it
         subTaskRepository.getSubTasksByTaskId(taskId, new BaseRepository.RepositoryCallback<List<SubTask>>() {
@@ -124,5 +135,27 @@ public class SubTaskService {
                 callback.onError(error);
             }
         });
+    }
+
+    public void loadSubTasksForTask(String taskId, SubTaskOperationCallback callback) {
+        getSubTasks(taskId, new BaseRepository.ListCallback<SubTask>() {
+            @Override
+            public void onSuccess(List<SubTask> subTasks) {
+                if (callback != null) {
+                    callback.onSuccess();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) {
+                    callback.onError(error);
+                }
+            }
+        });
+    }
+    
+    public void loadSubTasksForAllTasks() {
+
     }
 }
