@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.dialog.WidgetsDialog;
+import com.example.todolist.model.Category;
 import com.example.todolist.service.CategoryService;
 import com.example.todolist.manager.FilterManager;
 import com.example.todolist.manager.NavigationDrawerManager;
@@ -27,7 +28,9 @@ import com.example.todolist.model.Task;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.notification.NotificationHelper;
+import java.util.List;
 import com.example.todolist.util.AddTaskHandler;
+import com.example.todolist.util.FirebaseMigrationHelper;
 import com.example.todolist.util.NotificationPermissionHelper;
 import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
@@ -121,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements
         tvEmptyTitle = findViewById(R.id.tv_empty_title);
     }
     private void initManagers() {
+        // Check and perform Firebase migration if needed (for existing users)
+        FirebaseMigrationHelper.checkAndMigrate(this);
+        
         taskService = new TaskService(this, this);
         categoryService = new CategoryService(this, this);
         searchManager = new SearchManager(layoutSearch, findViewById(R.id.layout_filter_tabs), editSearch, btnCancelSearch, this);
@@ -173,7 +179,17 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
     private void loadData() {
-        categoryService.initializeDefaultCategories();
+        categoryService.initializeDefaultCategories(new CategoryService.CategoryOperationCallback() {
+            @Override
+            public void onSuccess() {
+                // Categories initialized successfully
+            }
+
+            @Override
+            public void onError(String error) {
+                // Handle error if needed
+            }
+        });
         taskService.loadTasks();
     }
 
@@ -330,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements
         );
     }
     @Override
-    public void onCategoriesUpdated() {
+    public void onCategoriesUpdated(List<Category> categories) {
         if (filterManager != null) {
             filterManager.refreshCategories();
         }

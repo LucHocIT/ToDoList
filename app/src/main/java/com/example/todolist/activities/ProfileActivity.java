@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -15,19 +16,20 @@ import com.example.todolist.CompletedTasksActivity;
 import com.example.todolist.MainActivity;
 import com.example.todolist.R;
 import com.example.todolist.SettingsActivity;
+import com.example.todolist.activities.SyncAccountActivity;
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.model.Task;
 import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.BottomNavigationManager;
-import com.example.todolist.auth.AuthManager;
-import com.example.todolist.auth.SyncManager;
+import com.example.todolist.manager.AuthManager;
+import com.example.todolist.manager.SyncManager;
 import com.google.firebase.auth.FirebaseUser;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity implements AuthManager.AuthListener, SyncManager.SyncListener {
+public class ProfileActivity extends AppCompatActivity {
     
     private LinearLayout btnNavMenu, btnNavTasks, btnNavCalendar, btnNavProfile;
     private LinearLayout btnAuthGoogle, btnSyncSettings, btnAboutApp;
@@ -44,15 +46,32 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
         setContentView(R.layout.activity_profile);
         
         // Initialize managers
-        authManager = new AuthManager(this, this);
-        syncManager = new SyncManager(this);
+        // authManager = new AuthManager(this, new AuthManager.AuthListener() {
+        //     @Override
+        //     public void onAuthSuccess(FirebaseUser user) {
+        //         loadUserData();
+        //         // loadStatistics();
+        //     }
+
+        //     @Override
+        //     public void onAuthError(String error) {
+        //         // Handle auth error
+        //     }
+
+        //     @Override
+        //     public void onSignOut() {
+        //         loadUserData();
+        //         // loadStatistics();
+        //     }
+        // });
+        // syncManager = new SyncManager(this);
         
         initViews();
         setupBottomNavigation();
         setupDrawer();
         setupClickListeners();
         loadUserData();
-        loadStatistics();
+        // loadStatistics();
     }
     
     private void initViews() {
@@ -65,17 +84,17 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
         // Profile elements
         imgUserAvatar = findViewById(R.id.img_user_avatar);
         tvUserName = findViewById(R.id.tv_user_name);
-        tvUserEmail = findViewById(R.id.tv_user_email);
-        tvTotalTasks = findViewById(R.id.tv_total_tasks);
-        tvCompletedTasks = findViewById(R.id.tv_completed_tasks);
+        // tvUserEmail = findViewById(R.id.tv_user_email);
+        // tvTotalTasks = findViewById(R.id.tv_total_tasks);
+        // tvCompletedTasks = findViewById(R.id.tv_completed_tasks);
         
         // Action buttons
-        btnAuthGoogle = findViewById(R.id.btn_auth_google);
-        btnSyncSettings = findViewById(R.id.btn_sync_settings);
-        btnAboutApp = findViewById(R.id.btn_about_app);
+        // btnAuthGoogle = findViewById(R.id.btn_auth_google);
+        // btnSyncSettings = findViewById(R.id.btn_sync_settings);
+        // btnAboutApp = findViewById(R.id.btn_about_app);
         
         // Initialize repository
-        taskRepository = new TaskRepository();
+        taskRepository = new TaskRepository(this);
     }
     
     private void setupBottomNavigation() {
@@ -119,54 +138,47 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
     }
     
     private void setupClickListeners() {
+        // Avatar click listener - navigate to sync screen
+        imgUserAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SyncAccountActivity.class);
+            startActivity(intent);
+        });
+        
         // Google Authentication Button
+        /*
         btnAuthGoogle.setOnClickListener(v -> {
-            if (authManager.isSignedIn()) {
-                // User is signed in, show sign out option
-                showSignOutDialog();
-            } else {
-                // User is not signed in, start sign in
-                authManager.signInWithGoogle(this);
-            }
+            Intent intent = new Intent(this, SyncAccountActivity.class);
+            startActivity(intent);
         });
         
         // Sync Settings Button
         btnSyncSettings.setOnClickListener(v -> {
-            if (authManager.isSignedIn()) {
-                showSyncDialog();
-            } else {
-                // Show message to sign in first
-                showToast("Vui lòng đăng nhập trước khi đồng bộ");
-            }
+            Intent intent = new Intent(this, SyncAccountActivity.class);
+            startActivity(intent);
         });
         
         // About App Button
         btnAboutApp.setOnClickListener(v -> {
             showAboutDialog();
         });
+        */
     }
     
     private void loadUserData() {
-        FirebaseUser user = authManager.getCurrentUser();
-        if (user != null) {
-            // User is signed in
-            tvUserName.setText(user.getDisplayName() != null ? user.getDisplayName() : "User");
-            tvUserEmail.setText(user.getEmail());
-            
-            // Load user avatar from Google
-            setUserAvatar(user);
-            
-            // Update button text to show "Sign Out"
-            updateAuthButtonText("Đăng xuất");
-        } else {
-            // User is not signed in
-            tvUserName.setText("Chưa đăng nhập");
-            tvUserEmail.setText("Đăng nhập để đồng bộ dữ liệu");
+        // FirebaseUser currentUser = authManager.getCurrentUser();
+        // if (currentUser != null) {
+        //     // User is signed in
+        //     tvUserName.setText(currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Firebase User");
+        //     tvUserEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "");
+        //     // updateAuthButtonText("Đã đăng nhập");
+        //     setUserAvatar(currentUser);
+        // } else {
+            // User not signed in
+            tvUserName.setText("Local User");
+            // tvUserEmail.setText("local@example.com");
+            // updateAuthButtonText("Đăng nhập Google");
             imgUserAvatar.setImageResource(R.drawable.ic_person);
-            
-            // Update button text to show "Sign In"
-            updateAuthButtonText("Đăng nhập với Google");
-        }
+        // }
     }
     
     /**
@@ -187,6 +199,7 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
         }
     }
     
+    /*
     private void updateAuthButtonText(String text) {
         // Find TextView inside btnAuthGoogle LinearLayout
         if (btnAuthGoogle != null && btnAuthGoogle.getChildCount() > 1) {
@@ -196,6 +209,7 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
             }
         }
     }
+    */
     
     private void loadStatistics() {
         // Load all tasks and calculate statistics
@@ -266,69 +280,12 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
-        if (requestCode == AuthManager.getSignInRequestCode()) {
-            authManager.handleSignInResult(data);
-        }
+        // if (requestCode == AuthManager.getSignInRequestCode()) {
+        //     authManager.handleSignInResult(data);
+        // }
     }
     
-    // AuthManager.AuthListener implementations
-    @Override
-    public void onAuthSuccess(FirebaseUser user) {
-        runOnUiThread(() -> {
-            loadUserData();
-            loadStatistics();
-            showToast("Đăng nhập thành công!");
-        });
-    }
-    
-    @Override
-    public void onAuthError(String error) {
-        runOnUiThread(() -> {
-            showToast("Lỗi đăng nhập: " + error);
-        });
-    }
-    
-    @Override
-    public void onSignOut() {
-        runOnUiThread(() -> {
-            loadUserData();
-            loadStatistics();
-            showToast("Đã đăng xuất");
-        });
-    }
-    
-    // SyncManager.SyncListener implementations
-    @Override
-    public void onSyncStart() {
-        runOnUiThread(() -> {
-            showToast("Bắt đầu đồng bộ...");
-        });
-    }
-    
-    @Override
-    public void onSyncProgress(int progress, String status) {
-        runOnUiThread(() -> {
-            // Update progress in UI if needed
-            // For now, just log
-        });
-    }
-    
-    @Override
-    public void onSyncComplete(boolean success, String message) {
-        runOnUiThread(() -> {
-            showToast(message);
-            if (success) {
-                loadStatistics(); // Refresh statistics after sync
-            }
-        });
-    }
-    
-    @Override
-    public void onSyncError(String error) {
-        runOnUiThread(() -> {
-            showToast("Lỗi đồng bộ: " + error);
-        });
-    }
+    // AuthManager.AuthListener implementations đã được handle trong constructor
     
     // Helper methods
     private void showSignOutDialog() {
@@ -336,7 +293,7 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
                 .setTitle("Đăng xuất")
                 .setMessage("Bạn có chắc muốn đăng xuất?")
                 .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                    authManager.signOut();
+                    // authManager.signOut();
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
@@ -354,13 +311,13 @@ public class ProfileActivity extends AppCompatActivity implements AuthManager.Au
                 .setItems(options, (dialog, which) -> {
                     switch (which) {
                         case 0:
-                            syncManager.syncLocalToFirebase();
+                            // syncManager.syncLocalToFirebase();
                             break;
                         case 1:
-                            syncManager.syncFirebaseToLocal();
+                            // syncManager.syncFirebaseToLocal();
                             break;
                         case 2:
-                            syncManager.syncBidirectional();
+                            // syncManager.syncBidirectional();
                             break;
                     }
                 })

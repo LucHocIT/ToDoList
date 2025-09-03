@@ -12,7 +12,7 @@ public class TaskManager {
     
     public TaskManager(Context context) {
         this.context = context;
-        this.taskRepository = new TaskRepository();
+        this.taskRepository = new TaskRepository(context);
     }
     
     public void addTask(Task task, BaseRepository.DatabaseCallback<String> callback) {
@@ -68,7 +68,7 @@ public class TaskManager {
     }
     
     public void searchTasks(String query, BaseRepository.RepositoryCallback<java.util.List<Task>> callback) {
-        taskRepository.getAllTasks(new BaseRepository.RepositoryCallback<java.util.List<Task>>() {
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(java.util.List<Task> tasks) {
                 java.util.List<Task> filtered = new java.util.ArrayList<>();

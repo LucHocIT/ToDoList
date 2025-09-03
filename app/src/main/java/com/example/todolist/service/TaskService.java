@@ -6,6 +6,8 @@ import android.os.Looper;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.todolist.cache.TaskCache;
+import com.example.todolist.manager.AuthManager;
+import com.example.todolist.manager.FirebaseSyncManager;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
@@ -14,7 +16,6 @@ import com.example.todolist.service.task.TaskCompletionService;
 import com.example.todolist.service.task.TaskListService;
 import com.example.todolist.service.task.SubTaskService;
 import com.example.todolist.widget.WidgetUpdateHelper;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,6 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     private Context context;
     private TaskRepository taskRepository;
     private TaskUpdateListener listener;
-    private ValueEventListener realtimeListener;
     private TaskManager taskManager;
     private TaskCompletionService completionService;
     private TaskListService listService;
@@ -45,20 +45,30 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     private Runnable pendingFirebaseUpdate;
     private long lastLocalUpdateTime;
     private static final long LOCAL_UPDATE_PRIORITY_WINDOW = 1000;
-    private static final long FIREBASE_UPDATE_DELAY = 500; 
+    private static final long FIREBASE_UPDATE_DELAY = 500;
+    
+    // Firebase sync management
+    private AuthManager authManager;
+    private FirebaseSyncManager firebaseSyncManager; 
 
     public TaskService(Context context, TaskUpdateListener listener) {
         this.context = context;
         this.listener = listener;
-        this.taskRepository = new TaskRepository();
+        this.taskRepository = new TaskRepository(context); // Pass context for SQLite
         this.taskCache = TaskCache.getInstance();
         taskCache.addListener(this);
         this.firebaseUpdateHandler = new Handler(Looper.getMainLooper());
         
         this.taskManager = new TaskManager(context);
-        this.completionService = new TaskCompletionService();
-        this.listService = new TaskListService();
+        this.completionService = new TaskCompletionService(context);
+        this.listService = new TaskListService(context);
         this.subTaskService = new SubTaskService(context);
+        
+        // Initialize Firebase sync management
+        this.authManager = AuthManager.getInstance();
+        this.authManager.initialize(context);
+        this.firebaseSyncManager = FirebaseSyncManager.getInstance();
+        this.firebaseSyncManager.initialize(context);
         
         this.allTasks = new ArrayList<>();
     }
@@ -71,15 +81,20 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
             return;
         }
         taskCache.setLoading(true);
-        realtimeListener = taskRepository.addTasksRealtimeListener(new BaseRepository.ListCallback<Task>() {
+        
+        // Load tasks from SQLite database first
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
-                if (!taskCache.isInitialized()) {
-                    // Lần đầu tiên - load vào cache
-                    taskCache.loadFromFirebase(tasks);
-                } else {
-                    // Đã có cache - sync background
-                    taskCache.syncFromFirebase(tasks);
+                taskCache.loadFromFirebase(tasks); // Keep using cache for UI consistency
+                taskCache.setLoading(false);
+                if (listener != null) {
+                    listener.onTasksUpdated();
+                }
+                
+                // Nếu đã login và bật sync, tải thêm từ Firebase để merge
+                if (authManager.shouldSyncToFirebase()) {
+                    loadAndMergeFromFirebase();
                 }
             }
 
@@ -91,6 +106,55 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
                 }
             }
         });
+    }
+    
+    private void loadAndMergeFromFirebase() {
+        firebaseSyncManager.loadTasksFromFirebase(new FirebaseSyncManager.FirebaseSyncCallback() {
+            @Override
+            public void onSuccess(List<Task> firebaseTasks) {
+                // Merge Firebase tasks with local cache
+                // Simple merge: add Firebase tasks that don't exist locally
+                List<Task> localTasks = taskCache.getAllTasks();
+                boolean hasNewTasks = false;
+                
+                for (Task firebaseTask : firebaseTasks) {
+                    boolean existsLocally = false;
+                    for (Task localTask : localTasks) {
+                        if (localTask.getId().equals(firebaseTask.getId())) {
+                            existsLocally = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!existsLocally) {
+                        // Add to local database and cache
+                        taskRepository.addTask(firebaseTask, null);
+                        taskCache.addTaskOptimistic(firebaseTask);
+                        hasNewTasks = true;
+                    }
+                }
+                
+                if (hasNewTasks && listener != null) {
+                    listener.onTasksUpdated();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                android.util.Log.w("TaskService", "Failed to load tasks from Firebase: " + error);
+            }
+        });
+    }
+    
+    // Method để đồng bộ tất cả local tasks lên Firebase khi user bật sync
+    public void syncAllTasksToFirebase(FirebaseSyncManager.SyncCallback callback) {
+        if (!authManager.shouldSyncToFirebase()) {
+            if (callback != null) callback.onError("Sync is disabled or user not logged in");
+            return;
+        }
+        
+        List<Task> allLocalTasks = taskCache.getAllTasks();
+        firebaseSyncManager.syncAllTasksToFirebase(allLocalTasks, callback);
     }
     
     private void handleFirebaseTasksUpdate(List<Task> tasks) {
@@ -131,44 +195,72 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
             task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
         }
 
+        // Luôn lưu vào cache trước (optimistic UI)
         taskCache.addTaskOptimistic(task);
-        taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
+        
+        // Luôn lưu vào SQLite local database
+        taskRepository.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
-            public void onSuccess(String firebaseTaskId) {
-                if (!task.getId().equals(firebaseTaskId)) {
-                    // Nếu Firebase tạo ID khác, cập nhật cache
-                    taskCache.deleteTaskOptimistic(task.getId());
-                    task.setId(firebaseTaskId);
-                    taskCache.addTaskOptimistic(task);
-                }
-                
-                // Tạo repeat instances nếu cần
-                if (com.example.todolist.service.task.TaskRepeatService.needsRepeatInstances(task)) {
-                    com.example.todolist.service.task.TaskRepeatService.createRepeatInstances(task, TaskService.this, new com.example.todolist.service.task.TaskRepeatService.RepeatTaskCallback() {
+            public void onSuccess(String localTaskId) {
+                // Nếu đã login và bật sync thì đồng bộ lên Firebase
+                if (authManager.shouldSyncToFirebase()) {
+                    firebaseSyncManager.addTaskToFirebase(task, new BaseRepository.DatabaseCallback<String>() {
                         @Override
-                        public void onSuccess() {
-                            if (callback != null) callback.onSuccess();
+                        public void onSuccess(String firebaseTaskId) {
+                            // Cập nhật ID nếu Firebase tạo ID khác
+                            if (!task.getId().equals(firebaseTaskId)) {
+                                taskCache.deleteTaskOptimistic(task.getId());
+                                task.setId(firebaseTaskId);
+                                taskCache.addTaskOptimistic(task);
+                                
+                                // Cập nhật lại trong SQLite với Firebase ID
+                                taskRepository.updateTask(task, null);
+                            }
+                            
+                            handleRepeatTaskCreation(task, callback);
                         }
 
                         @Override
                         public void onError(String error) {
-                            // Log error nhưng vẫn báo success cho task chính
-                            android.util.Log.e("TaskService", "Error creating repeat instances: " + error);
-                            if (callback != null) callback.onSuccess();
+                            // Firebase thất bại nhưng SQLite đã thành công - vẫn OK
+                            android.util.Log.w("TaskService", "Firebase sync failed but local save succeeded: " + error);
+                            handleRepeatTaskCreation(task, callback);
                         }
                     });
                 } else {
-                    if (callback != null) callback.onSuccess();
+                    // Chưa login hoặc chưa bật sync - chỉ lưu local
+                    handleRepeatTaskCreation(task, callback);
                 }
             }
 
             @Override
             public void onError(String error) {
-                // Rollback optimistic update nếu Firebase fail
+                // Rollback optimistic update nếu SQLite fail
                 taskCache.deleteTaskOptimistic(task.getId());
-                if (callback != null) callback.onError(error);
+                if (callback != null) callback.onError("Local save failed: " + error);
             }
         });
+    }
+    
+    private void handleRepeatTaskCreation(Task task, TaskOperationCallback callback) {
+        // Tạo repeat instances nếu cần
+        if (com.example.todolist.service.task.TaskRepeatService.needsRepeatInstances(task)) {
+            com.example.todolist.service.task.TaskRepeatService.createRepeatInstances(task, TaskService.this, new com.example.todolist.service.task.TaskRepeatService.RepeatTaskCallback() {
+                @Override
+                public void onSuccess() {
+                    if (callback != null) callback.onSuccess();
+                }
+
+                @Override
+                public void onError(String error) {
+                    // Log error nhưng vẫn báo success cho task chính
+                    android.util.Log.e("TaskService", "Error creating repeat instances: " + error);
+                    if (callback != null) callback.onSuccess();
+                }
+            });
+        } else {
+            if (callback != null) callback.onSuccess();
+        }
     }
     
     public void addTaskWithoutRepeat(Task task) {
@@ -181,22 +273,48 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
             task.setId(String.valueOf(System.currentTimeMillis()) + "_" + Math.random());
         }
         
+        // Luôn lưu vào cache trước (optimistic UI)
         taskCache.addTaskOptimistic(task);
-        taskManager.addTask(task, new BaseRepository.DatabaseCallback<String>() {
+        
+        // Luôn lưu vào SQLite local database
+        taskRepository.addTask(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
-            public void onSuccess(String firebaseTaskId) {
-                if (!task.getId().equals(firebaseTaskId)) {
-                    taskCache.deleteTaskOptimistic(task.getId());
-                    task.setId(firebaseTaskId);
-                    taskCache.addTaskOptimistic(task);
+            public void onSuccess(String localTaskId) {
+                // Nếu đã login và bật sync thì đồng bộ lên Firebase
+                if (authManager.shouldSyncToFirebase()) {
+                    firebaseSyncManager.addTaskToFirebase(task, new BaseRepository.DatabaseCallback<String>() {
+                        @Override
+                        public void onSuccess(String firebaseTaskId) {
+                            // Cập nhật ID nếu Firebase tạo ID khác
+                            if (!task.getId().equals(firebaseTaskId)) {
+                                taskCache.deleteTaskOptimistic(task.getId());
+                                task.setId(firebaseTaskId);
+                                taskCache.addTaskOptimistic(task);
+                                
+                                // Cập nhật lại trong SQLite với Firebase ID
+                                taskRepository.updateTask(task, null);
+                            }
+                            if (callback != null) callback.onSuccess(firebaseTaskId);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            // Firebase thất bại nhưng SQLite đã thành công - vẫn OK
+                            android.util.Log.w("TaskService", "Firebase sync failed but local save succeeded: " + error);
+                            if (callback != null) callback.onSuccess(task.getId());
+                        }
+                    });
+                } else {
+                    // Chưa login hoặc chưa bật sync - chỉ lưu local
+                    if (callback != null) callback.onSuccess(task.getId());
                 }
-                if (callback != null) callback.onSuccess(firebaseTaskId);
             }
 
             @Override
             public void onError(String error) {
+                // Rollback optimistic update nếu SQLite fail
                 taskCache.deleteTaskOptimistic(task.getId());
-                if (callback != null) callback.onError(error);
+                if (callback != null) callback.onError("Local save failed: " + error);
             }
         });
     }
@@ -206,16 +324,39 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     }
     
     public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) { 
+        // Luôn cập nhật cache trước (optimistic UI)
         taskCache.updateTaskOptimistic(task);
-        taskManager.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
+        
+        // Luôn cập nhật SQLite local database
+        taskRepository.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                if (callback != null) callback.onSuccess(result);
+                // Nếu đã login và bật sync thì đồng bộ lên Firebase
+                if (authManager.shouldSyncToFirebase()) {
+                    firebaseSyncManager.updateTaskInFirebase(task, new BaseRepository.DatabaseCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean firebaseResult) {
+                            if (callback != null) callback.onSuccess(result);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            // Firebase thất bại nhưng SQLite đã thành công - vẫn OK
+                            android.util.Log.w("TaskService", "Firebase update failed but local update succeeded: " + error);
+                            if (callback != null) callback.onSuccess(result);
+                        }
+                    });
+                } else {
+                    // Chưa login hoặc chưa bật sync - chỉ update local
+                    if (callback != null) callback.onSuccess(result);
+                }
             }
 
             @Override
             public void onError(String error) {
-                if (callback != null) callback.onError(error);
+                // Rollback optimistic update nếu SQLite fail
+                // TODO: Load original task from database and restore cache
+                if (callback != null) callback.onError("Local update failed: " + error);
             }
         });
     }
@@ -225,26 +366,51 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc muốn xóa task này?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    taskCache.deleteTaskOptimistic(task.getId());
-                    taskManager.deleteTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean result) {
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            if (listener != null) {
-                                listener.onError("Lỗi xóa task: " + error);
-                            }
-                        }
-                    });
+                    deleteTask(task, null);
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
     }
 
     public void deleteTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
-        taskManager.deleteTask(task, callback);
+        // Luôn xóa khỏi cache trước (optimistic UI)
+        taskCache.deleteTaskOptimistic(task.getId());
+        
+        // Luôn xóa khỏi SQLite local database
+        taskRepository.deleteTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                // Nếu đã login và bật sync thì xóa khỏi Firebase
+                if (authManager.shouldSyncToFirebase()) {
+                    firebaseSyncManager.deleteTaskFromFirebase(task.getId(), new BaseRepository.DatabaseCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean firebaseResult) {
+                            if (callback != null) callback.onSuccess(result);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            // Firebase thất bại nhưng SQLite đã thành công - vẫn OK
+                            android.util.Log.w("TaskService", "Firebase delete failed but local delete succeeded: " + error);
+                            if (callback != null) callback.onSuccess(result);
+                        }
+                    });
+                } else {
+                    // Chưa login hoặc chưa bật sync - chỉ xóa local
+                    if (callback != null) callback.onSuccess(result);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                // Rollback optimistic update nếu SQLite fail
+                taskCache.addTaskOptimistic(task);
+                if (callback != null) callback.onError("Local delete failed: " + error);
+                if (listener != null) {
+                    listener.onError("Lỗi xóa task: " + error);
+                }
+            }
+        });
     }
 
     public void completeTask(Task task, boolean isCompleted) {
@@ -333,7 +499,17 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     }
     
     public void getAllTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
-        taskRepository.getAllTasks(callback);
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
+            @Override
+            public void onSuccess(List<Task> tasks) {
+                callback.onSuccess(tasks);
+            }
+            
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        });
     }
     
     public void searchTasks(String query, BaseRepository.RepositoryCallback<List<Task>> callback) {
@@ -421,9 +597,6 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     }
     
     public void cleanup() {
-        if (realtimeListener != null) {
-            taskRepository.removeTasksListener(realtimeListener);
-        }
         // Unregister from cache
         taskCache.removeListener(this);
     }
@@ -502,7 +675,7 @@ public class TaskService implements TaskCache.TaskCacheListener, com.example.tod
     }
     
     public void loadSubTasksForTask(String taskId, TaskOperationCallback callback) {
-        taskRepository.getSubTasks(taskId, new BaseRepository.ListCallback<com.example.todolist.model.SubTask>() {
+        subTaskService.getSubTasks(taskId, new BaseRepository.ListCallback<com.example.todolist.model.SubTask>() {
             @Override
             public void onSuccess(List<com.example.todolist.model.SubTask> subTasks) {
                 // Cập nhật subtasks cho task trong cache

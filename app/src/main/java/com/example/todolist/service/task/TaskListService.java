@@ -1,5 +1,6 @@
 package com.example.todolist.service.task;
 
+import android.content.Context;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
@@ -18,7 +19,15 @@ public class TaskListService {
     private List<Task> completedTodayTasks;
     
     public TaskListService() {
-        this.taskRepository = new TaskRepository();
+        // Constructor without context - will use null context for repository
+        // This is for compatibility with existing code that doesn't pass context
+        this.taskRepository = null; // Will be set when needed
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        initializeLists();
+    }
+    
+    public TaskListService(Context context) {
+        this.taskRepository = new TaskRepository(context);
         this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         initializeLists();
     }
@@ -99,7 +108,7 @@ public class TaskListService {
     }
     
     public void getTasksByDate(String date, BaseRepository.RepositoryCallback<List<Task>> callback) {
-        taskRepository.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 List<Task> filteredTasks = new ArrayList<>();

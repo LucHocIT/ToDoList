@@ -13,9 +13,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import com.example.todolist.model.Category;
 import com.example.todolist.service.CategoryService;
 import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.util.SettingsManager;
+import java.util.List;
 import java.util.Locale;
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
@@ -168,7 +170,7 @@ public class SettingsActivity extends AppCompatActivity {
         try {
             CategoryService categoryService = new CategoryService(this, new CategoryService.CategoryUpdateListener() {
                 @Override
-                public void onCategoriesUpdated() {
+                public void onCategoriesUpdated(List<Category> categories) {
                 }
                 @Override
                 public void onError(String error) {
@@ -177,15 +179,40 @@ public class SettingsActivity extends AppCompatActivity {
                     });
                 }
             });
-            categoryService.clearAllDataAndReset();
-            SettingsManager.resetAllSettings(this);
-            Toast.makeText(this, getString(R.string.reset_success), Toast.LENGTH_LONG).show();
-            Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            }
+            categoryService.clearAllCategories(new CategoryService.CategoryOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    categoryService.initializeDefaultCategories(new CategoryService.CategoryOperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> {
+                                SettingsManager.resetAllSettings(SettingsActivity.this);
+                                Toast.makeText(SettingsActivity.this, getString(R.string.reset_success), Toast.LENGTH_LONG).show();
+                                Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                                if (intent != null) {
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finishAffinity();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(SettingsActivity.this, "Lỗi khởi tạo lại: " + error, Toast.LENGTH_LONG).show();
+                            });
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SettingsActivity.this, "Lỗi xóa dữ liệu: " + error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.reset_error, e.getMessage()), Toast.LENGTH_LONG).show();
         }

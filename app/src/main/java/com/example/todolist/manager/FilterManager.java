@@ -63,7 +63,7 @@ public class FilterManager {
         this.tvEmptyTitle = tvEmptyTitle;
         this.listener = listener;
         
-        this.categoryRepository = new CategoryRepository();
+        this.categoryRepository = new CategoryRepository(context);
         this.categories = new ArrayList<>();
         this.categoryButtons = new ArrayList<>();
         

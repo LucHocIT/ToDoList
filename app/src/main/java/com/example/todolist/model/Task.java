@@ -1,7 +1,5 @@
 package com.example.todolist.model;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.PropertyName;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
@@ -139,6 +137,7 @@ public class Task implements Serializable {
         updateTimestamp();
     }
     public boolean isHasReminder() { return hasReminder; }
+    public boolean hasReminder() { return hasReminder; }
     public void setHasReminder(boolean hasReminder) { 
         this.hasReminder = hasReminder;
         updateTimestamp();
@@ -175,7 +174,7 @@ public class Task implements Serializable {
         updateTimestamp();
     }
     
-    @Exclude
+    
     public void setCompletionDateFromLong(Long completionDate) { 
         if (completionDate != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -195,7 +194,7 @@ public class Task implements Serializable {
         }
     }
     
-    @Exclude
+    
     public void setCreatedAtFromLong(Long createdAt) { 
         if (createdAt != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -216,7 +215,7 @@ public class Task implements Serializable {
         }
     }
     
-    @Exclude
+    
     public void setUpdatedAtFromLong(Long updatedAt) { 
         if (updatedAt != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -256,7 +255,7 @@ public class Task implements Serializable {
     }
     
     // Attachment helper methods
-    @Exclude
+    
     public List<Attachment> getAttachmentList() {
         if (attachments == null || attachments.trim().isEmpty()) {
             return new ArrayList<>();
@@ -270,7 +269,7 @@ public class Task implements Serializable {
         }
     }
     
-    @Exclude
+    
     public void setAttachmentList(List<Attachment> attachmentList) {
         if (attachmentList == null || attachmentList.isEmpty()) {
             this.attachments = "";
@@ -285,7 +284,7 @@ public class Task implements Serializable {
         updateTimestamp();
     }
     
-    @Exclude
+    
     public void addAttachment(Attachment attachment) {
         List<Attachment> currentList = getAttachmentList();
         attachment.setId(String.valueOf(System.currentTimeMillis()));
@@ -293,14 +292,14 @@ public class Task implements Serializable {
         setAttachmentList(currentList);
     }
     
-    @Exclude
+    
     public void removeAttachment(String attachmentId) {
         List<Attachment> currentList = getAttachmentList();
         currentList.removeIf(attachment -> attachmentId.equals(attachment.getId()));
         setAttachmentList(currentList);
     }
     
-    @Exclude
+    
     public boolean hasAttachments() {
         return !getAttachmentList().isEmpty();
     }

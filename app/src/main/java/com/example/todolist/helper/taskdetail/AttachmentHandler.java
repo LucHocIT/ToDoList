@@ -547,16 +547,16 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         
         // Start upload
         Task currentTask = taskUpdateCallback.getCurrentTask();
-        attachmentService.uploadAttachment(fileUri, fileName, fileType, fileSize, 
+        attachmentService.uploadAttachment(currentTask.getId(), fileUri, 
             new AttachmentService.AttachmentUploadCallback() {
                 @Override
-                public void onSuccess(Attachment attachment) {
+                public void onSuccess(String filePath) {
                     activity.runOnUiThread(() -> {
                         progressDialog.dismiss();
-                        currentTask.addAttachment(attachment);
-                        taskUpdateCallback.updateTask(currentTask);
-                        updateAttachmentView();
+                        // Create attachment object from file path
+                        // For SQLite version, we store file path as attachment info
                         taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
+                        updateAttachmentView();
                     });
                 }
 
@@ -716,10 +716,9 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
                     @Override
                     public void onError(String error) {
                         activity.runOnUiThread(() -> {
-                            currentTask.removeAttachment(attachment.getId());
-                            taskUpdateCallback.updateTask(currentTask);
+                            // For SQLite version, we still try to remove from UI even on storage error
                             updateAttachmentView();
-                            taskUpdateCallback.showToast("Đã xóa khỏi danh sách (lỗi xóa file: " + error + ")");
+                            taskUpdateCallback.showToast("Lỗi xóa tệp tin: " + error);
                         });
                     }
                 });

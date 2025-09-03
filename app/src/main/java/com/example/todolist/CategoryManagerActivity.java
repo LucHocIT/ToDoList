@@ -399,15 +399,14 @@ public class CategoryManagerActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCategoriesUpdated() {
+    public void onCategoriesUpdated(List<Category> categories) {
         runOnUiThread(() -> {
-            List<Category> updatedCategories = categoryService.getCategories();
-            categories.clear();
-            categories.addAll(updatedCategories);
+            this.categories.clear();
+            this.categories.addAll(categories);
             Category addNewItem = new Category();
             addNewItem.setName("");
             addNewItem.setId("-1"); 
-            categories.add(addNewItem);
+            this.categories.add(addNewItem);
             categoryAdapter.notifyDataSetChanged();
         });
     }

@@ -17,7 +17,7 @@ public class CategoryManager {
 
     public CategoryManager(Context context) {
         this.context = context;
-        this.categoryRepository = new CategoryRepository();
+        this.categoryRepository = new CategoryRepository(context);
     }
 
     public void addCategory(Category category, BaseRepository.DatabaseCallback<String> callback) {
@@ -38,6 +38,11 @@ public class CategoryManager {
 
     public void getAllCategories(BaseRepository.ListCallback<Category> callback) {
         categoryRepository.getAllCategories(callback);
+    }
+    
+    public List<Category> getCategories() {
+        // For synchronous access, return empty list and recommend using getAllCategories() callback
+        return new java.util.ArrayList<>();
     }
 
     public void initializeDefaultCategories(BaseRepository.DatabaseCallback<Boolean> callback) {

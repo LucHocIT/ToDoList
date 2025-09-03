@@ -42,7 +42,7 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
     }
 
     private void setupCategorySpinner() {
-        categoryService.getAllCategories(new BaseRepository.RepositoryCallback<List<Category>>() {
+        categoryService.getAllCategories(new BaseRepository.ListCallback<Category>() {
             @Override
             public void onSuccess(List<Category> categories) {
                 allCategories = categories;
@@ -130,8 +130,8 @@ public class CategoryHandler implements CategoryService.CategoryUpdateListener {
     }
 
     @Override
-    public void onCategoriesUpdated() {
-
+    public void onCategoriesUpdated(List<Category> categories) {
+        
     }
 
     @Override

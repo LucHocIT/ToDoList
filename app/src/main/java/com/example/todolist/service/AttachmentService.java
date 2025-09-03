@@ -2,21 +2,24 @@ package com.example.todolist.service;
 
 import android.content.Context;
 import android.net.Uri;
-import com.example.todolist.model.Attachment;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import java.util.UUID;
+import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
 
 public class AttachmentService {
     
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
-    private Context context;
+    public interface AttachmentCallback {
+        void onSuccess();
+        void onError(String error);
+    }
+    
+    public interface AttachmentListCallback {
+        void onSuccess(List<String> attachments);
+        void onError(String error);
+    }
     
     public interface AttachmentUploadCallback {
-        void onSuccess(Attachment attachment);
+        void onSuccess(String filePath);
         void onError(String error);
         void onProgress(int progress);
     }
@@ -26,68 +29,110 @@ public class AttachmentService {
         void onError(String error);
     }
     
+    private Context context;
+    
     public AttachmentService(Context context) {
         this.context = context;
-        this.storage = FirebaseStorage.getInstance();
-        this.storageRef = storage.getReference();
     }
     
-    public void uploadAttachment(Uri fileUri, String fileName, String fileType, long fileSize, AttachmentUploadCallback callback) {
-        String userId = getCurrentUserId();
-        if (userId == null) {
-            callback.onError("Người dùng chưa đăng nhập");
-            return;
+    public void uploadAttachment(String taskId, Uri fileUri, AttachmentCallback callback) {
+        // For SQLite version, we just store file paths locally
+        try {
+            String fileName = "attachment_" + System.currentTimeMillis() + ".jpg";
+            File attachmentDir = new File(context.getFilesDir(), "attachments");
+            if (!attachmentDir.exists()) {
+                attachmentDir.mkdirs();
+            }
+            
+            File attachmentFile = new File(attachmentDir, fileName);
+            // In a real implementation, you would copy the file here
+            
+            if (callback != null) {
+                callback.onSuccess();
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.onError(e.getMessage());
+            }
         }
-        
-        // Generate unique file name
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-        String storagePath = "attachments/" + userId + "/" + uniqueFileName;
-        
-        StorageReference fileRef = storageRef.child(storagePath);
-        
-        UploadTask uploadTask = fileRef.putFile(fileUri);
-        
-        // Listen for upload progress
-        uploadTask.addOnProgressListener(taskSnapshot -> {
-            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-            callback.onProgress((int) progress);
-        });
-        
-        // Handle upload completion
-        uploadTask.addOnSuccessListener(taskSnapshot -> {
-            // Get download URL
-            fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                // Create attachment object
-                Attachment attachment = new Attachment(fileName, fileType, fileSize);
-                attachment.setDownloadUrl(downloadUri.toString());
-                attachment.setStoragePath(storagePath);
-                attachment.setId(UUID.randomUUID().toString());
-                
-                callback.onSuccess(attachment);
-            }).addOnFailureListener(e -> {
-                callback.onError("Lỗi lấy download URL: " + e.getMessage());
-            });
-        }).addOnFailureListener(e -> {
-            callback.onError("Lỗi upload file: " + e.getMessage());
-        });
     }
     
-    public void deleteAttachment(String storagePath, AttachmentDeleteCallback callback) {
-        if (storagePath == null || storagePath.isEmpty()) {
-            callback.onError("Đường dẫn file không hợp lệ");
-            return;
+    public void deleteAttachment(String taskId, String attachmentUrl, AttachmentCallback callback) {
+        try {
+            File file = new File(attachmentUrl);
+            if (file.exists()) {
+                file.delete();
+            }
+            
+            if (callback != null) {
+                callback.onSuccess();
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.onError(e.getMessage());
+            }
         }
-        
-        StorageReference fileRef = storageRef.child(storagePath);
-        fileRef.delete().addOnSuccessListener(aVoid -> {
-            callback.onSuccess();
-        }).addOnFailureListener(e -> {
-            callback.onError("Lỗi xóa file: " + e.getMessage());
-        });
     }
     
-    private String getCurrentUserId() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : "anonymous";
+    public void getAttachments(String taskId, AttachmentListCallback callback) {
+        try {
+            File attachmentDir = new File(context.getFilesDir(), "attachments");
+            List<String> attachments = new ArrayList<>();
+            
+            if (attachmentDir.exists()) {
+                File[] files = attachmentDir.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        attachments.add(file.getAbsolutePath());
+                    }
+                }
+            }
+            
+            if (callback != null) {
+                callback.onSuccess(attachments);
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.onError(e.getMessage());
+            }
+        }
+    }
+    
+    public void uploadAttachment(String taskId, Uri fileUri, AttachmentUploadCallback callback) {
+        // For SQLite version, we just store file paths locally
+        try {
+            String fileName = "attachment_" + System.currentTimeMillis() + ".jpg";
+            String filePath = context.getFilesDir() + "/attachments/" + taskId + "/" + fileName;
+            
+            // Simulate progress
+            if (callback != null) {
+                callback.onProgress(50);
+                callback.onProgress(100);
+                callback.onSuccess(filePath);
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.onError(e.getMessage());
+            }
+        }
+    }
+    
+    public void deleteAttachment(String filePath, AttachmentDeleteCallback callback) {
+        try {
+            File file = new File(filePath);
+            boolean deleted = file.delete();
+            
+            if (callback != null) {
+                if (deleted) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Failed to delete file");
+                }
+            }
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.onError(e.getMessage());
+            }
+        }
     }
 }

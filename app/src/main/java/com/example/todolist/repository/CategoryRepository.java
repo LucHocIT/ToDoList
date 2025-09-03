@@ -1,244 +1,227 @@
 package com.example.todolist.repository;
 
-import androidx.annotation.NonNull;
-import com.example.todolist.model.Category;
-import com.example.todolist.repository.category.CategoryCrudRepository;
-import com.example.todolist.repository.category.CategoryQueryRepository;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import android.content.Context;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import com.example.todolist.database.ToDoDatabase;
+import com.example.todolist.database.dao.CategoryDao;
+import com.example.todolist.database.entity.CategoryEntity;
+import com.example.todolist.database.mapper.CategoryMapper;
+import com.example.todolist.model.Category;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 public class CategoryRepository extends BaseRepository {
     
-    // Sub-repositories that handle specific functionality
-    private CategoryCrudRepository crudRepository;      // CRUD operations
-    private CategoryQueryRepository queryRepository;    // Query and filtering
+    private CategoryDao categoryDao;
     
-    public CategoryRepository() {
-        this.crudRepository = new CategoryCrudRepository();
-        this.queryRepository = new CategoryQueryRepository();
+    public CategoryRepository(Context context) {
+        super();
+        ToDoDatabase database = ToDoDatabase.getInstance(context);
+        categoryDao = database.categoryDao();
     }
-
-    // === CRUD OPERATIONS - Delegate to CategoryCrudRepository ===
+    
+    // === CRUD OPERATIONS ===
+    
     public void addCategory(Category category, DatabaseCallback<String> callback) {
-        crudRepository.addCategory(category, callback);
-    }
-
-    public void updateCategory(Category category, DatabaseCallback<Boolean> callback) {
-        crudRepository.updateCategory(category, callback);
-    }
-
-    public void deleteCategory(Category category, DatabaseCallback<Boolean> callback) {
-        crudRepository.deleteCategory(category, callback);
-    }
-
-    public void getCategoryById(String categoryId, RepositoryCallback<Category> callback) {
-        crudRepository.getCategoryById(categoryId, callback);
-    }
-
-    // === QUERY OPERATIONS - Delegate to CategoryQueryRepository ===
-    public void getAllCategories(ListCallback<Category> callback) {
-        queryRepository.getAllCategories(callback);
-    }
-
-    public void searchCategories(String query, RepositoryCallback<List<Category>> callback) {
-        queryRepository.searchCategories(query, callback);
-    }
-
-    public void getCategoriesByColor(String color, ListCallback<Category> callback) {
-        queryRepository.getCategoriesByColor(color, callback);
-    }
-
-    public void getDefaultCategories(ListCallback<Category> callback) {
-        queryRepository.getDefaultCategories(callback);
+        executeAsync(() -> {
+            try {
+                // Generate ID if not set
+                if (category.getId() == null || category.getId().isEmpty()) {
+                    category.setId(UUID.randomUUID().toString());
+                }
+                
+                // Set timestamps
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                String currentDate = dateFormat.format(new Date());
+                category.setCreatedAt(currentDate);
+                category.setUpdatedAt(currentDate);
+                
+                CategoryEntity entity = CategoryMapper.toEntity(category);
+                categoryDao.insertCategory(entity);
+                runOnMainThread(() -> callback.onSuccess(entity.id));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi thêm danh mục: " + e.getMessage()));
+            }
+        });
     }
     
-    public ValueEventListener addCategoriesRealtimeListener(ListCallback<Category> callback) {
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Category> categories = new ArrayList<>();
+    public void updateCategory(Category category, DatabaseCallback<Boolean> callback) {
+        executeAsync(() -> {
+            try {
+                // Update timestamp
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                String currentDate = dateFormat.format(new Date());
+                category.setUpdatedAt(currentDate);
                 
-                for (DataSnapshot categorySnapshot : dataSnapshot.getChildren()) {
-                    Category category = categorySnapshot.getValue(Category.class);
-                    if (category != null) {
-                        category.setId(categorySnapshot.getKey());
-                        categories.add(category);
-                    }
-                }
-                Collections.sort(categories, new Comparator<Category>() {
-                    @Override
-                    public int compare(Category c1, Category c2) {
-                        int order1 = c1.getSortOrder();
-                        int order2 = c2.getSortOrder();
-                        
-                        int orderComparison = Integer.compare(order1, order2);
-                        if (orderComparison != 0) {
-                            return orderComparison;
-                        }
-                        
-                        return c1.getName().compareTo(c2.getName());
-                    }
-                });
-                
-                if (callback != null) {
-                    callback.onSuccess(categories);
-                }
+                CategoryEntity entity = CategoryMapper.toEntity(category);
+                categoryDao.updateCategory(entity);
+                runOnMainThread(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi cập nhật danh mục: " + e.getMessage()));
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if (callback != null) {
-                    callback.onError("Realtime listener error: " + databaseError.getMessage());
-                }
+        });
+    }
+    
+    public void deleteCategory(Category category, DatabaseCallback<Boolean> callback) {
+        executeAsync(() -> {
+            try {
+                CategoryEntity entity = CategoryMapper.toEntity(category);
+                categoryDao.deleteCategory(entity);
+                runOnMainThread(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi xóa danh mục: " + e.getMessage()));
             }
-        };
-        
-        crudRepository.getCategoriesRef().addValueEventListener(listener);
-        return listener;
+        });
     }
-
-    public void removeCategoriesListener(ValueEventListener listener) {
-        if (listener != null) {
-            crudRepository.getCategoriesRef().removeEventListener(listener);
-        }
+    
+    public void getCategoryById(String categoryId, RepositoryCallback<Category> callback) {
+        executeAsync(() -> {
+            try {
+                CategoryEntity entity = categoryDao.getCategoryById(categoryId);
+                Category category = CategoryMapper.fromEntity(entity);
+                runOnMainThread(() -> callback.onSuccess(category));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi lấy danh mục: " + e.getMessage()));
+            }
+        });
     }
-
-    // === UTILITY OPERATIONS ===
+    
+    // === QUERY OPERATIONS ===
+    
+    public void getAllCategories(ListCallback<Category> callback) {
+        executeAsync(() -> {
+            try {
+                List<CategoryEntity> entities = categoryDao.getAllCategories();
+                List<Category> categories = CategoryMapper.fromEntities(entities);
+                runOnMainThread(() -> callback.onSuccess(categories));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi lấy danh sách danh mục: " + e.getMessage()));
+            }
+        });
+    }
+    
+    public void searchCategories(String query, RepositoryCallback<List<Category>> callback) {
+        executeAsync(() -> {
+            try {
+                List<CategoryEntity> entities = categoryDao.searchCategories(query);
+                List<Category> categories = CategoryMapper.fromEntities(entities);
+                runOnMainThread(() -> callback.onSuccess(categories));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi tìm kiếm danh mục: " + e.getMessage()));
+            }
+        });
+    }
+    
+    public void getCategoriesByColor(String color, ListCallback<Category> callback) {
+        executeAsync(() -> {
+            try {
+                List<CategoryEntity> entities = categoryDao.getCategoriesByColor(color);
+                List<Category> categories = CategoryMapper.fromEntities(entities);
+                runOnMainThread(() -> callback.onSuccess(categories));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi lấy danh mục theo màu: " + e.getMessage()));
+            }
+        });
+    }
+    
+    public void getDefaultCategories(ListCallback<Category> callback) {
+        executeAsync(() -> {
+            try {
+                List<CategoryEntity> entities = categoryDao.getDefaultCategories();
+                List<Category> categories = CategoryMapper.fromEntities(entities);
+                runOnMainThread(() -> callback.onSuccess(categories));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi lấy danh mục mặc định: " + e.getMessage()));
+            }
+        });
+    }
+    
+    // === INITIALIZATION OPERATIONS ===
+    
     public void initializeDefaultCategories(DatabaseCallback<Boolean> callback) {
-        queryRepository.getDefaultCategories(new ListCallback<Category>() {
-            @Override
-            public void onSuccess(List<Category> defaultCategories) {
-                if (defaultCategories.isEmpty()) {
-                    createDefaultCategories(callback);
-                } else {
-                    if (callback != null) {
-                        callback.onSuccess(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                createDefaultCategories(callback);
-            }
-        });
-    }
-
-    private void createDefaultCategories(DatabaseCallback<Boolean> callback) {
-        List<Category> defaultCategories = new ArrayList<>();
-        
-        Category personalCategory = new Category();
-        personalCategory.setName("Cá nhân");
-        personalCategory.setColor("#4CAF50");
-        personalCategory.setSortOrder(0);
-        personalCategory.setIsDefault(true);
-        defaultCategories.add(personalCategory);
-        
-        Category favoriteCategory = new Category();
-        favoriteCategory.setName("Yêu thích");
-        favoriteCategory.setColor("#FF9800");
-        favoriteCategory.setSortOrder(1);
-        favoriteCategory.setIsDefault(true);
-        defaultCategories.add(favoriteCategory);
-        
-        Category workCategory = new Category();
-        workCategory.setName("Công việc");
-        workCategory.setColor("#2196F3");
-        workCategory.setSortOrder(2);
-        workCategory.setIsDefault(true);
-        defaultCategories.add(workCategory);
-        
-        addCategoriesSequentially(defaultCategories, 0, callback);
-    }
-
-    private void addCategoriesSequentially(List<Category> categories, int index, DatabaseCallback<Boolean> callback) {
-        if (index >= categories.size()) {
-            if (callback != null) {
-                callback.onSuccess(true);
-            }
-            return;
-        }
-        
-        addCategory(categories.get(index), new DatabaseCallback<String>() {
-            @Override
-            public void onSuccess(String categoryId) {
-                addCategoriesSequentially(categories, index + 1, callback);
-            }
-
-            @Override
-            public void onError(String error) {
-                addCategoriesSequentially(categories, index + 1, callback);
-            }
-        });
-    }
-
-    public void removeDuplicateCategories(DatabaseCallback<Boolean> callback) {
-        queryRepository.checkDuplicateCategories(new RepositoryCallback<List<Category>>() {
-            @Override
-            public void onSuccess(List<Category> duplicates) {
-                if (duplicates.isEmpty()) {
-                    if (callback != null) {
-                        callback.onSuccess(true);
-                    }
+        executeAsync(() -> {
+            try {
+                // Check if default categories already exist
+                List<CategoryEntity> existing = categoryDao.getDefaultCategories();
+                if (!existing.isEmpty()) {
+                    runOnMainThread(() -> callback.onSuccess(true));
                     return;
                 }
                 
-                removeDuplicatesSequentially(duplicates, 0, callback);
-            }
-
-            @Override
-            public void onError(String error) {
-                if (callback != null) {
-                    callback.onError(error);
+                // Create default categories
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                String currentDate = dateFormat.format(new Date());
+                
+                Category[] defaultCategories = {
+                    createDefaultCategory("Công việc", "#FF5722", "work", 1, currentDate),
+                    createDefaultCategory("Cá nhân", "#2196F3", "personal", 2, currentDate),
+                    createDefaultCategory("Mua sắm", "#4CAF50", "shopping", 3, currentDate),
+                    createDefaultCategory("Sức khỏe", "#E91E63", "health", 4, currentDate),
+                    createDefaultCategory("Học tập", "#9C27B0", "study", 5, currentDate)
+                };
+                
+                for (Category category : defaultCategories) {
+                    CategoryEntity entity = CategoryMapper.toEntity(category);
+                    categoryDao.insertCategory(entity);
                 }
+                
+                runOnMainThread(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi khởi tạo danh mục mặc định: " + e.getMessage()));
             }
         });
     }
+    
+    public void removeDuplicateCategories(DatabaseCallback<Boolean> callback) {
+        executeAsync(() -> {
+            try {
+                // Get all categories
+                List<CategoryEntity> allCategories = categoryDao.getAllCategories();
+                
+                // Remove duplicates based on name (keep the first occurrence)
+                for (int i = 0; i < allCategories.size(); i++) {
+                    CategoryEntity current = allCategories.get(i);
+                    for (int j = i + 1; j < allCategories.size(); j++) {
+                        CategoryEntity other = allCategories.get(j);
+                        if (current.name.equals(other.name)) {
+                            categoryDao.deleteCategory(other);
+                            allCategories.remove(j);
+                            j--; // Adjust index after removal
+                        }
+                    }
+                }
+                
+                runOnMainThread(() -> callback.onSuccess(true));
+            } catch (Exception e) {
+                runOnMainThread(() -> callback.onError("Lỗi xóa danh mục trùng lặp: " + e.getMessage()));
+            }
+        });
+    }
+    
+    private Category createDefaultCategory(String name, String color, String icon, int sortOrder, String currentDate) {
+        Category category = new Category();
+        category.setId(UUID.randomUUID().toString());
+        category.setName(name);
+        category.setColor(color);
+        category.setIcon(icon);
+        category.setSortOrder(sortOrder);
+        category.setDefault(true);
+        category.setCreatedAt(currentDate);
+        category.setUpdatedAt(currentDate);
+        return category;
+    }
 
-    private void removeDuplicatesSequentially(List<Category> duplicates, int index, DatabaseCallback<Boolean> callback) {
-        if (index >= duplicates.size()) {
-            if (callback != null) {
+    public void deleteAllCategories(DatabaseCallback<Boolean> callback) {
+        executeAsync(() -> {
+            try {
+                categoryDao.deleteAllCategories();
                 callback.onSuccess(true);
-            }
-            return;
-        }
-        
-        deleteCategory(duplicates.get(index), new DatabaseCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                removeDuplicatesSequentially(duplicates, index + 1, callback);
-            }
-
-            @Override
-            public void onError(String error) {
-                removeDuplicatesSequentially(duplicates, index + 1, callback);
-            }
-        });
-    }
-
-    // === LEGACY COMPATIBILITY METHODS ===
-    @Deprecated
-    public void insertCategory(Category category, DatabaseCallback<String> callback) {
-        addCategory(category, callback);
-    }
-
-    @Deprecated
-    public void getAllCategories(RepositoryCallback<List<Category>> callback) {
-        getAllCategories(new ListCallback<Category>() {
-            @Override
-            public void onSuccess(List<Category> categories) {
-                callback.onSuccess(categories);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
+            } catch (Exception e) {
+                callback.onError("Failed to delete all categories: " + e.getMessage());
             }
         });
     }

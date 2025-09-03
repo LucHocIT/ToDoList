@@ -1,5 +1,6 @@
 package com.example.todolist.service.task;
 
+import android.content.Context;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
@@ -9,8 +10,8 @@ public class TaskCompletionService {
     
     private TaskRepository taskRepository;
     
-    public TaskCompletionService() {
-        this.taskRepository = new TaskRepository();
+    public TaskCompletionService(Context context) {
+        this.taskRepository = new TaskRepository(context);
     }
     
     public void completeTask(Task task, boolean isCompleted, BaseRepository.DatabaseCallback<Boolean> callback) {
@@ -26,7 +27,7 @@ public class TaskCompletionService {
     }
     
     public void getCompletedTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
-        taskRepository.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 List<Task> completedTasks = new java.util.ArrayList<>();
@@ -46,7 +47,7 @@ public class TaskCompletionService {
     }
     
     public void getIncompleteTasks(BaseRepository.RepositoryCallback<List<Task>> callback) {
-        taskRepository.getAllTasks(new BaseRepository.RepositoryCallback<List<Task>>() {
+        taskRepository.getAllTasks(new BaseRepository.ListCallback<Task>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 List<Task> incompleteTasks = new java.util.ArrayList<>();

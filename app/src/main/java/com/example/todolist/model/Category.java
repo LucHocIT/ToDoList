@@ -1,7 +1,5 @@
 package com.example.todolist.model;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.PropertyName;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,6 +51,32 @@ public class Category implements Serializable {
         result.put("updatedAt", updatedAt);
         return result;
     }
+    
+    // Convert from Map for Firebase
+    public static Category fromMap(Map<String, Object> map) {
+        Category category = new Category();
+        category.setId((String) map.get("id"));
+        category.setName((String) map.get("name"));
+        category.setColor((String) map.get("color"));
+        category.setIcon((String) map.get("icon"));
+        
+        Object sortOrder = map.get("sortOrder");
+        if (sortOrder instanceof Long) {
+            category.setSortOrder(((Long) sortOrder).intValue());
+        } else if (sortOrder instanceof Integer) {
+            category.setSortOrder((Integer) sortOrder);
+        }
+        
+        Object isDefault = map.get("isDefault");
+        if (isDefault instanceof Boolean) {
+            category.setIsDefault((Boolean) isDefault);
+        }
+        
+        category.setCreatedAt(map.get("createdAt"));
+        category.setUpdatedAt(map.get("updatedAt"));
+        
+        return category;
+    }
     // Update timestamp
     public void updateTimestamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -87,6 +111,10 @@ public class Category implements Serializable {
         this.isDefault = isDefault;
         updateTimestamp();
     }
+    public void setDefault(boolean isDefault) { 
+        this.isDefault = isDefault;
+        updateTimestamp();
+    }
     public String getCreatedAt() { return createdAt; }
     
     public void setCreatedAt(Object createdAt) { 
@@ -100,7 +128,7 @@ public class Category implements Serializable {
         }
     }
     
-    @Exclude
+    
     public void setCreatedAtFromLong(Long createdAt) { 
         if (createdAt != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -121,7 +149,7 @@ public class Category implements Serializable {
         }
     }
     
-    @Exclude
+    
     public void setUpdatedAtFromLong(Long updatedAt) { 
         if (updatedAt != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

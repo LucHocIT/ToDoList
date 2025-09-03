@@ -112,7 +112,7 @@ public class UIManager {
         sortDialog.show();
     }
     public void setupCategorySpinner(Spinner spinner) {
-        categoryService.getAllCategories(new BaseRepository.RepositoryCallback<List<Category>>() {
+        categoryService.getAllCategories(new BaseRepository.ListCallback<Category>() {
             @Override
             public void onSuccess(List<Category> categories) {
                 for (Category cat : categories) {

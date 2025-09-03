@@ -4,7 +4,6 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class TodoApplication extends Application {
     
@@ -13,16 +12,7 @@ public class TodoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        initializeFirebase();
         createNotificationChannel();
-    }
-    
-    private void initializeFirebase() {
-        try {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     private void createNotificationChannel() {
