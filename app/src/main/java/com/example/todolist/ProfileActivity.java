@@ -26,6 +26,7 @@ import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.model.Task;
 import com.example.todolist.model.Category;
 import com.example.todolist.service.CategoryService;
+import com.example.todolist.view.SimplePieChartView;
 import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.view.BottomNavigationManager;
 import com.example.todolist.manager.AuthManager;
@@ -58,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     private AuthManager authManager;
     private SyncManager syncManager;
     private Calendar currentWeekStart;
+    private SimplePieChartView pieChartView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +126,9 @@ public class ProfileActivity extends AppCompatActivity {
         
         // Filter dropdown
         filterDropdown = findViewById(R.id.filter_dropdown);
+        
+        // Pie chart view
+        pieChartView = findViewById(R.id.pie_chart_view);
         
         // Initialize repository
         taskRepository = new TaskRepository(this);
@@ -577,6 +582,11 @@ public class ProfileActivity extends AppCompatActivity {
             categoryCount.put(categoryName, categoryCount.getOrDefault(categoryName, 0) + 1);
         }
         
+        // Update the pie chart with real data
+        if (pieChartView != null) {
+            pieChartView.setData(categoryCount);
+        }
+        
         // Update the legend with real data
         updateCategoryLegend(categoryCount);
     }
@@ -587,8 +597,19 @@ public class ProfileActivity extends AppCompatActivity {
         if (legendContainer != null) {
             legendContainer.removeAllViews();
             
-            // Colors for different categories
-            int[] colors = {0xFF5C9CFF, 0xFF9CC3FF, 0xFFC8DFFF, 0xFFE3F2FD, 0xFF6A1B9A, 0xFFFF9800};
+            // Colors for different categories - matching the sample image
+            int[] colors = {
+                0xFF5C9CFF,  // Blue - Danh sách yêu thích
+                0xFF9CC3FF,  // Light Blue - không có thể loại 
+                0xFFC8DFFF,  // Lighter Blue - Công việc
+                0xFF4A90E2,  // Medium Blue
+                0xFF2E7BD6,  // Dark Blue
+                0xFF8BB8FF,  // Sky Blue
+                0xFF6FA8FF,  // Ocean Blue
+                0xFF5A9BFF,  // Royal Blue
+                0xFFB8D4FF,  // Pale Blue
+                0xFF7AB3FF   // Bright Blue
+            };
             int colorIndex = 0;
             
             for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
@@ -650,6 +671,12 @@ public class ProfileActivity extends AppCompatActivity {
                 noDataText.setTextSize(14);
                 noDataText.setTextColor(0xFF999999);
                 noDataText.setGravity(android.view.Gravity.CENTER);
+                LinearLayout.LayoutParams noDataParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                noDataParams.topMargin = (int) (16 * getResources().getDisplayMetrics().density);
+                noDataText.setLayoutParams(noDataParams);
                 legendContainer.addView(noDataText);
             }
         }

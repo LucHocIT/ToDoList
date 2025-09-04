@@ -601,13 +601,12 @@
                                 android:layout_height="200dp"
                                 android:layout_marginBottom="16dp">
 
-                                <!-- Simple Pie Chart Representation -->
-                                <ImageView
+                                <!-- Custom Pie Chart View -->
+                                <com.example.todolist.view.SimplePieChartView
+                                    android:id="@+id/pie_chart_view"
                                     android:layout_width="120dp"
                                     android:layout_height="120dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_pie_chart"
-                                    android:contentDescription="Pie Chart" />
+                                    android:layout_gravity="center" />
 
                             </FrameLayout>
 
