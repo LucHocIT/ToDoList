@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.widget.PopupMenu;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -23,6 +24,8 @@ import com.example.todolist.SyncAccountActivity;
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.model.Task;
+import com.example.todolist.model.Category;
+import com.example.todolist.service.CategoryService;
 import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.view.BottomNavigationManager;
 import com.example.todolist.manager.AuthManager;
@@ -34,6 +37,8 @@ import java.util.List;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
     
@@ -178,8 +183,21 @@ public class ProfileActivity extends AppCompatActivity {
         });
         
         btnNextWeek.setOnClickListener(v -> {
-            currentWeekStart.add(Calendar.WEEK_OF_YEAR, 1);
-            updateWeekDisplay();
+            // Calculate next week
+            Calendar nextWeek = (Calendar) currentWeekStart.clone();
+            nextWeek.add(Calendar.WEEK_OF_YEAR, 1);
+            
+            // Get current week start
+            Calendar currentActualWeek = Calendar.getInstance();
+            int dayOfWeek = currentActualWeek.get(Calendar.DAY_OF_WEEK);
+            int daysFromMonday = (dayOfWeek == Calendar.SUNDAY) ? 6 : dayOfWeek - Calendar.MONDAY;
+            currentActualWeek.add(Calendar.DAY_OF_YEAR, -daysFromMonday);
+            
+            // Only allow if next week is not in the future
+            if (!nextWeek.after(currentActualWeek)) {
+                currentWeekStart.add(Calendar.WEEK_OF_YEAR, 1);
+                updateWeekDisplay();
+            }
         });
         
         // Filter dropdown listener
@@ -296,6 +314,7 @@ public class ProfileActivity extends AppCompatActivity {
                     tvCompletedTasks.setText(String.valueOf(finalCompletedTasks));
                     tvPendingTasks.setText(String.valueOf(finalPendingTasks));
                     updateWeeklyChart();
+                    updatePieChart();
                 });
             }
 
@@ -411,10 +430,24 @@ public class ProfileActivity extends AppCompatActivity {
     }
     
     private void updateWeeklyChart() {
+        // Get completed tasks and update chart based on real data
+        taskRepository.getCompletedTasks(new TaskRepository.RepositoryCallback<List<Task>>() {
+            @Override
+            public void onSuccess(List<Task> completedTasks) {
+                runOnUiThread(() -> updateChartWithData(completedTasks));
+            }
+
+            @Override
+            public void onError(String error) {
+                // If error, show empty chart
+                runOnUiThread(() -> updateChartWithData(new ArrayList<>()));
+            }
+        });
+    }
+    
+    private void updateChartWithData(List<Task> completedTasks) {
         // Get the start and end of the current week
         Calendar weekStart = (Calendar) currentWeekStart.clone();
-        Calendar weekEnd = (Calendar) weekStart.clone();
-        weekEnd.add(Calendar.DAY_OF_YEAR, 6);
         
         // Array of chart bars (Sunday to Saturday)
         View[] chartBars = {
@@ -422,38 +455,66 @@ public class ProfileActivity extends AppCompatActivity {
             chartBarThursday, chartBarFriday, chartBarSaturday
         };
         
-        // Get completed tasks for each day of the week
+        // Count completed tasks for each day of the week
+        int[] taskCounts = new int[7]; // Sunday=0, Monday=1, ..., Saturday=6
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        
+        for (Task task : completedTasks) {
+            if (task.isCompleted() && task.getCompletionDate() != null) {
+                try {
+                    // Parse completion date
+                    Calendar taskDate = Calendar.getInstance();
+                    taskDate.setTime(dateFormat.parse(task.getCompletionDate()));
+                    
+                    // Check if task completion date is in current week
+                    Calendar weekEnd = (Calendar) weekStart.clone();
+                    weekEnd.add(Calendar.DAY_OF_YEAR, 6);
+                    
+                    if (!taskDate.before(weekStart) && !taskDate.after(weekEnd)) {
+                        int dayOfWeek = taskDate.get(Calendar.DAY_OF_WEEK) - 1; // Convert to 0-6
+                        taskCounts[dayOfWeek]++;
+                    }
+                } catch (Exception e) {
+                    // Skip invalid dates
+                }
+            }
+        }
+        
+        // Check if all days have zero tasks
+        boolean hasAnyData = false;
+        for (int count : taskCounts) {
+            if (count > 0) {
+                hasAnyData = true;
+                break;
+            }
+        }
+        
+        // Find and update the "no data" message visibility
+        TextView noDataMessage = findViewById(R.id.tv_no_chart_data);
+        if (noDataMessage != null) {
+            noDataMessage.setVisibility(hasAnyData ? View.GONE : View.VISIBLE);
+        }
+        
+        // Update chart bar heights (max height 100dp, scale: 2 tasks per level)
+        int maxHeight = 100; // dp
         for (int i = 0; i < 7; i++) {
-            Calendar dayCalendar = (Calendar) weekStart.clone();
-            dayCalendar.add(Calendar.DAY_OF_YEAR, i);
-            
-            // Get completed tasks count for this day
-            int completedCount = getCompletedTasksForDate(dayCalendar);
-            
-            // Update chart bar height (max height 80dp, scale based on max tasks in week)
-            int maxHeight = 80; // dp
-            int height = Math.min(completedCount * 20, maxHeight); // 20dp per task, max 80dp
-            
             if (chartBars[i] != null) {
+                // Calculate height: each task = 12.5dp, max 8 tasks = 100dp
+                int height = Math.min(taskCounts[i] * 12, maxHeight);
+                
                 android.view.ViewGroup.LayoutParams params = chartBars[i].getLayoutParams();
                 params.height = (int) (height * getResources().getDisplayMetrics().density);
                 chartBars[i].setLayoutParams(params);
                 
-                // Set different color if there are tasks
-                if (completedCount > 0) {
-                    chartBars[i].setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
+                // Set color based on task count
+                if (taskCounts[i] > 0) {
+                    chartBars[i].setBackgroundColor(0xFF5C9CFF); // Blue
                 } else {
-                    chartBars[i].setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                    chartBars[i].setBackgroundColor(0xFFE0E0E0); // Gray
                 }
             }
         }
-    }
-    
-    private int getCompletedTasksForDate(Calendar date) {
-        // Get completed tasks for specific date
-        // This is a simplified version - you should implement based on your Task model
-        // For now, return a sample value since we need to make async call
-        return (int) (Math.random() * 5); // Random 0-4 tasks for demo
     }
     
     private boolean isSameDate(String dateStr, Calendar calendar) {
@@ -463,5 +524,134 @@ public class ProfileActivity extends AppCompatActivity {
         String calendarDateStr = dateFormat.format(calendar.getTime());
         
         return dateStr.equals(calendarDateStr);
+    }
+    
+    private void updatePieChart() {
+        // Get incomplete tasks to analyze categories
+        taskRepository.getIncompleteTasks(new TaskRepository.RepositoryCallback<List<Task>>() {
+            @Override
+            public void onSuccess(List<Task> incompleteTasks) {
+                // Also get categories to have complete information
+                CategoryService categoryService = new CategoryService(ProfileActivity.this, null);
+                categoryService.getAllCategories(new BaseRepository.ListCallback<Category>() {
+                    @Override
+                    public void onSuccess(List<Category> categories) {
+                        runOnUiThread(() -> updatePieChartWithData(incompleteTasks, categories));
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> updatePieChartWithData(incompleteTasks, new ArrayList<>()));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                // If error, show empty chart
+                runOnUiThread(() -> updatePieChartWithData(new ArrayList<>(), new ArrayList<>()));
+            }
+        });
+    }
+    
+    private void updatePieChartWithData(List<Task> incompleteTasks, List<Category> categories) {
+        // Count tasks by category
+        Map<String, Integer> categoryCount = new HashMap<>();
+        Map<String, String> categoryNames = new HashMap<>();
+        
+        // Create a map of category ID to category name
+        for (Category category : categories) {
+            categoryNames.put(category.getId(), category.getName());
+        }
+        
+        for (Task task : incompleteTasks) {
+            String categoryId = task.getCategoryId();
+            String categoryName;
+            
+            if (categoryId == null || categoryId.isEmpty()) {
+                categoryName = "Không có thể loại";
+            } else {
+                categoryName = categoryNames.getOrDefault(categoryId, "Không có thể loại");
+            }
+            
+            categoryCount.put(categoryName, categoryCount.getOrDefault(categoryName, 0) + 1);
+        }
+        
+        // Update the legend with real data
+        updateCategoryLegend(categoryCount);
+    }
+    
+    private void updateCategoryLegend(Map<String, Integer> categoryCount) {
+        // Find legend container
+        LinearLayout legendContainer = findViewById(R.id.legend_container);
+        if (legendContainer != null) {
+            legendContainer.removeAllViews();
+            
+            // Colors for different categories
+            int[] colors = {0xFF5C9CFF, 0xFF9CC3FF, 0xFFC8DFFF, 0xFFE3F2FD, 0xFF6A1B9A, 0xFFFF9800};
+            int colorIndex = 0;
+            
+            for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
+                String categoryName = entry.getKey();
+                Integer count = entry.getValue();
+                
+                // Create legend item layout
+                LinearLayout legendItem = new LinearLayout(this);
+                legendItem.setOrientation(LinearLayout.HORIZONTAL);
+                legendItem.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                itemParams.bottomMargin = (int) (8 * getResources().getDisplayMetrics().density);
+                legendItem.setLayoutParams(itemParams);
+                
+                // Color indicator
+                View colorView = new View(this);
+                LinearLayout.LayoutParams colorParams = new LinearLayout.LayoutParams(
+                    (int) (12 * getResources().getDisplayMetrics().density),
+                    (int) (12 * getResources().getDisplayMetrics().density)
+                );
+                colorParams.rightMargin = (int) (8 * getResources().getDisplayMetrics().density);
+                colorView.setLayoutParams(colorParams);
+                colorView.setBackgroundColor(colors[colorIndex % colors.length]);
+                legendItem.addView(colorView);
+                
+                // Category name
+                TextView nameTextView = new TextView(this);
+                LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+                );
+                nameTextView.setLayoutParams(nameParams);
+                nameTextView.setText(categoryName);
+                nameTextView.setTextSize(14);
+                nameTextView.setTextColor(getColor(android.R.color.black));
+                legendItem.addView(nameTextView);
+                
+                // Count
+                TextView countTextView = new TextView(this);
+                countTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ));
+                countTextView.setText(String.valueOf(count));
+                countTextView.setTextSize(14);
+                countTextView.setTextColor(0xFF666666);
+                legendItem.addView(countTextView);
+                
+                legendContainer.addView(legendItem);
+                colorIndex++;
+            }
+            
+            // Show message if no incomplete tasks
+            if (categoryCount.isEmpty()) {
+                TextView noDataText = new TextView(this);
+                noDataText.setText("Không có nhiệm vụ chưa hoàn thành");
+                noDataText.setTextSize(14);
+                noDataText.setTextColor(0xFF999999);
+                noDataText.setGravity(android.view.Gravity.CENTER);
+                legendContainer.addView(noDataText);
+            }
+        }
     }
 }

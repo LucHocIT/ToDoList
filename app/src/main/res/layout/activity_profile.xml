@@ -105,7 +105,7 @@
                             android:layout_marginEnd="8dp"
                             app:cardCornerRadius="12dp"
                             app:cardElevation="2dp"
-                            android:backgroundTint="#F5F5F5">
+                            android:backgroundTint="#E3F2FD">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                             android:layout_marginStart="8dp"
                             app:cardCornerRadius="12dp"
                             app:cardElevation="2dp"
-                            android:backgroundTint="#F5F5F5">
+                            android:backgroundTint="#E3F2FD">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -184,7 +184,7 @@
                         android:layout_marginBottom="20dp"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="2dp"
-                        android:backgroundTint="#F5F5F5">
+                        android:backgroundTint="#E3F2FD">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -248,13 +248,85 @@
 
                             </LinearLayout>
 
-                            <!-- Simple Chart Representation -->
+                            <!-- Chart with Y-axis -->
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="120dp"
-                                android:orientation="horizontal"
-                                android:gravity="bottom"
-                                android:weightSum="7">
+                                android:layout_height="140dp"
+                                android:orientation="horizontal">
+                                
+                                <!-- Y-axis labels -->
+                                <LinearLayout
+                                    android:layout_width="24dp"
+                                    android:layout_height="120dp"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="8"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:gravity="center" />
+                                        
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="6"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:gravity="center" />
+                                        
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="4"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:gravity="center" />
+                                        
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="2"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:gravity="center" />
+                                        
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="0"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:gravity="center" />
+                                        
+                                </LinearLayout>
+
+                                <!-- Chart bars -->
+                                <FrameLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="120dp"
+                                    android:layout_weight="1">
+                                    
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical">
+                                        
+                                        <!-- Chart area with bars -->
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1"
+                                            android:orientation="horizontal"
+                                            android:gravity="bottom"
+                                            android:weightSum="7">
 
                                 <!-- Sunday -->
                                 <LinearLayout
@@ -430,18 +502,32 @@
                                         android:layout_gravity="center"
                                         android:layout_marginTop="8dp" />
                                 </LinearLayout>
-
-                            </LinearLayout>
-
-                            <!-- No Data Message -->
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Không có dữ liệu nhiệm vụ"
-                                android:textSize="14sp"
-                                android:textColor="#999999"
-                                android:gravity="center"
-                                android:layout_marginTop="16dp" />
+                                
+                                </LinearLayout> <!-- End chart bars container -->
+                                
+                                <!-- Horizontal axis line -->
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#E0E0E0"
+                                    android:layout_marginTop="4dp" />
+                                
+                                </LinearLayout> <!-- End chart bars area -->
+                                
+                                <!-- No Data Message (centered in chart area) -->
+                                <TextView
+                                    android:id="@+id/tv_no_chart_data"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Không có dữ liệu nhiệm vụ"
+                                    android:textSize="14sp"
+                                    android:textColor="#999999"
+                                    android:visibility="gone" />
+                                
+                                </FrameLayout> <!-- End chart area with bars and no data message -->
+                                
+                            </LinearLayout> <!-- End chart with Y-axis -->
 
                         </LinearLayout>
 
@@ -454,7 +540,7 @@
                         android:layout_marginBottom="100dp"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="2dp"
-                        android:backgroundTint="#F5F5F5">
+                        android:backgroundTint="#E3F2FD">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -527,101 +613,12 @@
 
                             <!-- Legend -->
                             <LinearLayout
+                                android:id="@+id/legend_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
-                                <!-- Legend Item 1 -->
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginBottom="8dp">
-
-                                    <View
-                                        android:layout_width="12dp"
-                                        android:layout_height="12dp"
-                                        android:background="#5C9CFF"
-                                        android:layout_marginEnd="8dp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Danh sách yêu thích"
-                                        android:textSize="14sp"
-                                        android:textColor="@color/black" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="1"
-                                        android:textSize="14sp"
-                                        android:textColor="#666666" />
-
-                                </LinearLayout>
-
-                                <!-- Legend Item 2 -->
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical"
-                                    android:layout_marginBottom="8dp">
-
-                                    <View
-                                        android:layout_width="12dp"
-                                        android:layout_height="12dp"
-                                        android:background="#9CC3FF"
-                                        android:layout_marginEnd="8dp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="không có thể loại"
-                                        android:textSize="14sp"
-                                        android:textColor="@color/black" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="1"
-                                        android:textSize="14sp"
-                                        android:textColor="#666666" />
-
-                                </LinearLayout>
-
-                                <!-- Legend Item 3 -->
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="horizontal"
-                                    android:gravity="center_vertical">
-
-                                    <View
-                                        android:layout_width="12dp"
-                                        android:layout_height="12dp"
-                                        android:background="#C8DFFF"
-                                        android:layout_marginEnd="8dp" />
-
-                                    <TextView
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:text="Công việc"
-                                        android:textSize="14sp"
-                                        android:textColor="@color/black" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="1"
-                                        android:textSize="14sp"
-                                        android:textColor="#666666" />
-
-                                </LinearLayout>
+                                <!-- Legend items will be added dynamically -->
 
                             </LinearLayout>
 
