@@ -587,29 +587,41 @@
 
                             </LinearLayout>
 
-                            <!-- Pie Chart Container -->
-                            <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="200dp"
-                                android:layout_marginBottom="16dp">
-
-                                <!-- Custom Pie Chart View -->
-                                <com.example.todolist.view.SimplePieChartView
-                                    android:id="@+id/pie_chart_view"
-                                    android:layout_width="120dp"
-                                    android:layout_height="120dp"
-                                    android:layout_gravity="center" />
-
-                            </FrameLayout>
-
-                            <!-- Legend -->
+                            <!-- Pie Chart and Legend Container -->
                             <LinearLayout
-                                android:id="@+id/legend_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical">
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="16dp">
 
-                                <!-- Legend items will be added dynamically -->
+                                <!-- Pie Chart Container -->
+                                <FrameLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="200dp"
+                                    android:layout_weight="1">
+
+                                    <!-- Custom Pie Chart View - Made larger -->
+                                    <com.example.todolist.view.SimplePieChartView
+                                        android:id="@+id/pie_chart_view"
+                                        android:layout_width="160dp"
+                                        android:layout_height="160dp"
+                                        android:layout_gravity="center" />
+
+                                </FrameLayout>
+
+                                <!-- Legend -->
+                                <LinearLayout
+                                    android:id="@+id/legend_container"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:layout_marginStart="16dp">
+
+                                    <!-- Legend items will be added dynamically -->
+
+                                </LinearLayout>
 
                             </LinearLayout>
 

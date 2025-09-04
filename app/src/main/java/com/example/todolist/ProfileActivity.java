@@ -173,21 +173,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
         
         btnNextWeek.setOnClickListener(v -> {
-            // Calculate next week
-            Calendar nextWeek = (Calendar) currentWeekStart.clone();
-            nextWeek.add(Calendar.WEEK_OF_YEAR, 1);
-            
-            // Get current week start
-            Calendar currentActualWeek = Calendar.getInstance();
-            int dayOfWeek = currentActualWeek.get(Calendar.DAY_OF_WEEK);
-            int daysFromMonday = (dayOfWeek == Calendar.SUNDAY) ? 6 : dayOfWeek - Calendar.MONDAY;
-            currentActualWeek.add(Calendar.DAY_OF_YEAR, -daysFromMonday);
-            
-            // Only allow if next week is not in the future
-            if (!nextWeek.after(currentActualWeek)) {
-                currentWeekStart.add(Calendar.WEEK_OF_YEAR, 1);
-                updateWeekDisplay();
-            }
+            currentWeekStart.add(Calendar.WEEK_OF_YEAR, 1);
+            updateWeekDisplay();
         });
         
         // Filter dropdown listener
@@ -215,7 +202,26 @@ public class ProfileActivity extends AppCompatActivity {
         
         String weekRange = format.format(currentWeekStart.getTime()) + "-" + format.format(weekEnd.getTime());
         tvWeekRange.setText(weekRange);
+        
+        // Check if current week is the actual current week
+        Calendar currentActualWeek = Calendar.getInstance();
+        int dayOfWeek = currentActualWeek.get(Calendar.DAY_OF_WEEK);
+        int daysFromMonday = (dayOfWeek == Calendar.SUNDAY) ? 6 : dayOfWeek - Calendar.MONDAY;
+        currentActualWeek.add(Calendar.DAY_OF_YEAR, -daysFromMonday);
+        
+        // Hide next week button if we're viewing current week
+        if (isSameWeek(currentWeekStart, currentActualWeek)) {
+            btnNextWeek.setVisibility(View.GONE);
+        } else {
+            btnNextWeek.setVisibility(View.VISIBLE);
+        }
+        
         updateWeeklyChart();
+    }
+    
+    private boolean isSameWeek(Calendar week1, Calendar week2) {
+        return week1.get(Calendar.YEAR) == week2.get(Calendar.YEAR) &&
+               week1.get(Calendar.WEEK_OF_YEAR) == week2.get(Calendar.WEEK_OF_YEAR);
     }
     
     private void showFilterDialog() {
