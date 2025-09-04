@@ -32,10 +32,6 @@ public class SyncAccountActivity extends AppCompatActivity {
     private ImageView menuButton;
     private RelativeLayout driveLayout;
     private TextView loginStatusText;
-    private LinearLayout loggedInContent;
-    private TextView lastSyncTime;
-    private TextView syncStatus;
-    private TextView syncTimeDisplay; // For the main sync card
     private SwitchCompat autoSyncSwitch;
     
     private AuthManager authManager;
@@ -74,10 +70,6 @@ public class SyncAccountActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menuButton);
         driveLayout = findViewById(R.id.driveLayout);
         loginStatusText = findViewById(R.id.loginStatusText);
-        loggedInContent = findViewById(R.id.loggedInContent);
-        lastSyncTime = findViewById(R.id.lastSyncTime);
-        syncStatus = findViewById(R.id.syncStatus);
-        syncTimeDisplay = findViewById(R.id.syncTimeDisplay);
         autoSyncSwitch = findViewById(R.id.autoSyncSwitch);
     }
 
@@ -161,54 +153,26 @@ public class SyncAccountActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        // Cập nhật thời gian đồng bộ cuối từ SyncManager
-        String lastSync = syncManager.getLastSyncTime();
-        if (syncTimeDisplay != null) {
-            syncTimeDisplay.setText("Thời gian đồng bộ hóa lần cuối: " + lastSync);
+        if (authManager.isSignedIn()) {
+            // Hiển thị trạng thái đã đăng nhập
+            String email = authManager.getCurrentUserEmail();
+            loginStatusText.setText(email != null ? email : "Đã đăng nhập");
+            
+            // Hiển thị dấu 3 chấm khi đã đăng nhập
+            menuButton.setVisibility(View.VISIBLE);
+            
+        } else {
+            // Hiển thị trạng thái chưa đăng nhập
+            loginStatusText.setText("Nhấn để đăng nhập");
+            
+            // Ẩn dấu 3 chấm khi chưa đăng nhập
+            menuButton.setVisibility(View.GONE);
         }
         
         // Cập nhật trạng thái sync switch từ AuthManager
         if (autoSyncSwitch != null) {
             autoSyncSwitch.setChecked(authManager.isSyncEnabled());
         }
-        
-        if (authManager.isSignedIn()) {
-            // Hiển thị trạng thái đã đăng nhập
-            String email = authManager.getCurrentUserEmail();
-            loginStatusText.setText(email != null ? email : "Đã đăng nhập");
-            
-            // Hiển thị phần bổ sung khi đã đăng nhập
-            loggedInContent.setVisibility(View.VISIBLE);
-            
-            // Cập nhật thông tin đồng bộ
-            if (lastSyncTime != null) {
-                lastSyncTime.setText(lastSync);
-            }
-            if (syncStatus != null) {
-                if (authManager.isSyncEnabled()) {
-                    syncStatus.setText("Đã bật đồng bộ");
-                    syncStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-                } else {
-                    syncStatus.setText("Chưa bật đồng bộ");
-                    syncStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
-                }
-            }
-        } else {
-            // Hiển thị trạng thái chưa đăng nhập
-            loginStatusText.setText("Nhấn để đăng nhập");
-            
-            // Ẩn phần bổ sung khi chưa đăng nhập
-            loggedInContent.setVisibility(View.GONE);
-            
-            // Tắt sync khi chưa đăng nhập
-            if (syncStatus != null) {
-                syncStatus.setText("Chưa đăng nhập");
-                syncStatus.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            }
-        }
-        
-        // Switch luôn hoạt động bất kể trạng thái đăng nhập
-        // Các card chính (Đồng bộ hóa bản ghi và Tự động đồng bộ hóa) luôn hiển thị
     }
 
     @Override

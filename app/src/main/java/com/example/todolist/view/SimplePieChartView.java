@@ -26,9 +26,9 @@ public class SimplePieChartView extends View {
         0xFF2E7BD6,  // Dark Blue
         0xFF8BB8FF,  // Sky Blue
         0xFF6FA8FF,  // Ocean Blue
-        0xFF5A9BFF,  // Royal Blue
-        0xFFB8D4FF,  // Pale Blue
-        0xFF7AB3FF   // Bright Blue
+        0xFF5A9BFF,  
+        0xFFB8D4FF,  
+        0xFF7AB3FF   
     };
     
     public SimplePieChartView(Context context) {
