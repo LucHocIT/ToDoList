@@ -1,6 +1,8 @@
 package com.example.todolist;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -69,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements
     private TextView tvEmptyTitle;
     // Other components
     private AddTaskHandler addTaskHandler;
+    private BroadcastReceiver taskRefreshReceiver;
+    
     private static final int REQUEST_TASK_DETAIL = 1001;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,28 @@ public class MainActivity extends AppCompatActivity implements
         handleDrawerIntent();
         handleQuickAddIntent();
         NotificationPermissionHelper.requestNotificationPermission(this);
+        setupTaskRefreshReceiver();
+    }
+    
+    private void setupTaskRefreshReceiver() {
+        taskRefreshReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("com.example.todolist.REFRESH_TASKS".equals(intent.getAction())) {
+                    // Refresh tasks when sync completed
+                    taskService.loadTasks();
+                }
+            }
+        };
+        
+        IntentFilter filter = new IntentFilter("com.example.todolist.REFRESH_TASKS");
+        
+        // For Android 13+ (API 33+), specify RECEIVER_NOT_EXPORTED since this is internal app communication
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(taskRefreshReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(taskRefreshReceiver, filter);
+        }
     }
     @Override
     protected void onResume() {
@@ -454,6 +480,9 @@ public class MainActivity extends AppCompatActivity implements
         }
         if (categoryService != null) {
             categoryService.cleanup();
+        }
+        if (taskRefreshReceiver != null) {
+            unregisterReceiver(taskRefreshReceiver);
         }
     }
     

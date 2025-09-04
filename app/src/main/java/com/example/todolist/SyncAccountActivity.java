@@ -2,15 +2,20 @@ package com.example.todolist.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -112,27 +117,12 @@ public class SyncAccountActivity extends AppCompatActivity {
             authManager.setSyncEnabled(isChecked);
             
             if (isChecked && authManager.isSignedIn()) {
-                // Khi bật sync và đã login, đồng bộ tất cả tasks lên Firebase
-                Toast.makeText(this, "Đang đồng bộ tasks lên Firebase...", Toast.LENGTH_SHORT).show();
-                taskService.syncAllTasksToFirebase(new FirebaseSyncManager.SyncCallback() {
-                    @Override
-                    public void onSuccess(String message) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(SyncAccountActivity.this, "Đồng bộ thành công: " + message, Toast.LENGTH_SHORT).show();
-                            updateUI();
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> {
-                            Toast.makeText(SyncAccountActivity.this, "Lỗi đồng bộ: " + error, Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
+                showSyncProgressDialog();
+            } else if (isChecked && !authManager.isSignedIn()) {
+                Toast.makeText(this, "Bạn cần đăng nhập trước khi bật đồng bộ hóa", Toast.LENGTH_SHORT).show();
+                autoSyncSwitch.setChecked(false);
+                authManager.setSyncEnabled(false);
             }
-            
-            Toast.makeText(this, "Tự động đồng bộ: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -244,6 +234,68 @@ public class SyncAccountActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+    
+    private void showSyncProgressDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_sync_progress, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        
+        AlertDialog progressDialog = builder.create();
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView titleText = dialogView.findViewById(R.id.sync_title);
+        TextView percentText = dialogView.findViewById(R.id.sync_percent);
+        ProgressBar progressSpinner = dialogView.findViewById(R.id.sync_progress_spinner);
+        TextView statusText = dialogView.findViewById(R.id.sync_status);
+        
+        titleText.setText("Đồng bộ hóa bản ghi");
+        percentText.setText("3%");
+        statusText.setText("Đang kết nối với các dịch vụ của Google...");
+        
+        progressDialog.show();
+        taskService.syncAllTasksToFirebase(new FirebaseSyncManager.SyncCallback() {
+            @Override
+            public void onSuccess(String message) {
+                runOnUiThread(() -> {
+                    // Update to completion and hide spinner
+                    percentText.setText("100%");
+                    progressSpinner.setVisibility(View.GONE);
+                    statusText.setText("Đồng bộ thành công!");
+                    
+                    // Delay to show completion, then dismiss and refresh main screen
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        progressDialog.dismiss();
+                        updateUI();
+                        
+                        // Send broadcast to refresh main activity tasks
+                        Intent intent = new Intent("com.example.todolist.REFRESH_TASKS");
+                        sendBroadcast(intent);
+                        
+                        // Also finish this activity to return to main screen
+                        finish();
+                    }, 1000);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    statusText.setText("Lỗi đồng bộ: " + error);
+                    percentText.setText("Error");
+                    progressSpinner.setVisibility(View.GONE);
+                    
+                    // Auto dismiss after showing error
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {                    
+                        progressDialog.dismiss();
+                        // Reset sync switch if failed
+                        autoSyncSwitch.setChecked(false);
+                        authManager.setSyncEnabled(false);
+                    }, 2000);
+                });
+            }
+        });
     }
 
     @Override

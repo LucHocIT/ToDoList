@@ -43,6 +43,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -550,13 +551,44 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         attachmentService.uploadAttachment(currentTask.getId(), fileUri, 
             new AttachmentService.AttachmentUploadCallback() {
                 @Override
-                public void onSuccess(String filePath) {
+                public void onSuccess(String result) {
                     activity.runOnUiThread(() -> {
                         progressDialog.dismiss();
-                        // Create attachment object from file path
-                        // For SQLite version, we store file path as attachment info
-                        taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
-                        updateAttachmentView();
+                        
+                        try {
+                            // Parse result: "downloadUrl|storagePath"
+                            String[] parts = result.split("\\|");
+                            if (parts.length == 2) {
+                                String downloadUrl = parts[0];
+                                String storagePath = parts[1];
+                                
+                                // Create Attachment object with Firebase Storage info
+                                Attachment attachment = new Attachment(fileName, fileType, fileSize);
+                                attachment.setDownloadUrl(downloadUrl);
+                                attachment.setStoragePath(storagePath);
+                                attachment.setId("attachment_" + System.currentTimeMillis());
+                                
+                                // Add attachment to current task
+                                if (currentTask.getAttachmentList() == null) {
+                                    currentTask.setAttachmentList(new ArrayList<>());
+                                }
+                                currentTask.addAttachment(attachment);
+                                
+                                // Update task in database/cache
+                                if (taskUpdateCallback != null) {
+                                    taskUpdateCallback.updateTask(currentTask);
+                                }
+                                
+                                taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
+                                updateAttachmentView();
+                            } else {
+                                // Fallback for old format (just file path)
+                                taskUpdateCallback.showToast("Đã thêm tệp tin đính kèm");
+                                updateAttachmentView();
+                            }
+                        } catch (Exception e) {
+                            taskUpdateCallback.showToast("Lỗi xử lý file: " + e.getMessage());
+                        }
                     });
                 }
 
@@ -759,8 +791,6 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         if (waveformHandler != null && waveformRunnable != null) {
             waveformHandler.removeCallbacks(waveformRunnable);
         }
-        
-        // Reset recording state
         resetRecordingState();
     }
 }
