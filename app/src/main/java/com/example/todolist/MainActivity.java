@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements
         tvEmptyTitle = findViewById(R.id.tv_empty_title);
     }
     private void initManagers() {
-        // Check and perform Firebase migration if needed (for existing users)
         FirebaseMigrationHelper.checkAndMigrate(this);
         
         taskService = new TaskService(this, this);
@@ -208,12 +207,12 @@ public class MainActivity extends AppCompatActivity implements
         categoryService.initializeDefaultCategories(new CategoryService.CategoryOperationCallback() {
             @Override
             public void onSuccess() {
-                // Categories initialized successfully
+
             }
 
             @Override
             public void onError(String error) {
-                // Handle error if needed
+
             }
         });
         taskService.loadTasks();
@@ -349,7 +348,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTasksUpdated() {
         runOnUiThread(() -> {
-            // Load subtasks for all tasks
             taskService.loadSubTasksForAllTasks();
             
             searchManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),

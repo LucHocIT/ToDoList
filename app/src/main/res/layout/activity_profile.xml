@@ -23,533 +23,620 @@
                 android:layout_weight="1"
                 android:fillViewport="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center_horizontal">
-
-        <!-- User Avatar -->
-        <ImageView
-            android:id="@+id/img_user_avatar"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/circle_background"
-            android:src="@drawable/ic_person"
-            android:scaleType="centerCrop"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="User Avatar" />
-
-        <!-- User Name -->
-        <TextView
-            android:id="@+id/tv_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chào Luc Phạm"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="8dp" />
-
-        <!-- User Status -->
-        <TextView
-            android:id="@+id/tv_user_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bạn đã giữ theo kế hoạch của mình trong 149 ngày!"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Upgrade to Pro Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:backgroundTint="#5C9CFF">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Header with Avatar and Countdown -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nâng cấp lên Pro"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <!-- User Avatar -->
+                        <ImageView
+                            android:id="@+id/img_user_avatar"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/circle_background"
+                            android:src="@drawable/ic_person"
+                            android:scaleType="centerCrop"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="User Avatar" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <!-- User Name -->
+                            <TextView
+                                android:id="@+id/tv_user_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chào Anh Hà"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black" />
+
+                            <!-- User Status -->
+                            <TextView
+                                android:id="@+id/tv_user_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bạn đã giữ theo kế hoạch của mình trong 157 ngày!"
+                                android:textSize="14sp"
+                                android:textColor="#666666"
+                                android:layout_marginTop="4dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Task Statistics Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng quan về Nhiệm vụ"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@android:color/white" />
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="12dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Statistics Cards -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Mở khóa tất cả các tính năng PRO"
-                        android:textSize="14sp"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="4dp" />
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="20dp">
+
+                        <!-- Completed Tasks Card -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="2dp"
+                            android:backgroundTint="#F5F5F5">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="20dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/tv_completed_tasks"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="34"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nhiệm vụ đã hoàn thành"
+                                    android:textSize="12sp"
+                                    android:textColor="#666666"
+                                    android:gravity="center"
+                                    android:layout_marginTop="8dp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Pending Tasks Card -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="2dp"
+                            android:backgroundTint="#F5F5F5">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="20dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/tv_pending_tasks"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="3"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="nhiệm vụ chưa hoàn thành"
+                                    android:textSize="12sp"
+                                    android:textColor="#666666"
+                                    android:gravity="center"
+                                    android:layout_marginTop="8dp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <!-- Daily Completion Chart -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        android:backgroundTint="#F5F5F5">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="16dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Hoàn thành nhiệm vụ hằng ngày"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <ImageView
+                                        android:id="@+id/btn_prev_week"
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_arrow_left"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                                        android:contentDescription="Previous Week" />
+
+                                    <TextView
+                                        android:id="@+id/tv_week_range"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="8/31-9/6"
+                                        android:textSize="12sp"
+                                        android:textColor="#666666"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_marginEnd="8dp" />
+
+                                    <ImageView
+                                        android:id="@+id/btn_next_week"
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_arrow_right"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                                        android:contentDescription="Next Week" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- Simple Chart Representation -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:orientation="horizontal"
+                                android:gravity="bottom"
+                                android:weightSum="7">
+
+                                <!-- Sunday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_sunday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="CN"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Monday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_monday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 2"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Tuesday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_tuesday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 3"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Wednesday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_wednesday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 4"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Thursday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_thursday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 5"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Friday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_friday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 6"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                                <!-- Saturday -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="bottom">
+                                    
+                                    <View
+                                        android:id="@+id/chart_bar_saturday"
+                                        android:layout_width="16dp"
+                                        android:layout_height="0dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_gravity="center" />
+                                    
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Th 7"
+                                        android:textSize="10sp"
+                                        android:textColor="#666666"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="8dp" />
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- No Data Message -->
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Không có dữ liệu nhiệm vụ"
+                                android:textSize="14sp"
+                                android:textColor="#999999"
+                                android:gravity="center"
+                                android:layout_marginTop="16dp" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Incomplete Tasks by Category Section -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="100dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        android:backgroundTint="#F5F5F5">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="16dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Phân loại nhiệm vụ chưa hoàn thành"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black" />
+
+                                <!-- Filter Dropdown -->
+                                <LinearLayout
+                                    android:id="@+id/filter_dropdown"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:background="?android:attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:padding="8dp">
+
+                                    <TextView
+                                        android:id="@+id/tv_filter_text"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Tất cả"
+                                        android:textSize="14sp"
+                                        android:textColor="#666666" />
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:src="@drawable/ic_arrow_drop_down"
+                                        android:layout_marginStart="4dp"
+                                        android:contentDescription="Dropdown Arrow" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <!-- Pie Chart Container -->
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="200dp"
+                                android:layout_marginBottom="16dp">
+
+                                <!-- Simple Pie Chart Representation -->
+                                <ImageView
+                                    android:layout_width="120dp"
+                                    android:layout_height="120dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_pie_chart"
+                                    android:contentDescription="Pie Chart" />
+
+                            </FrameLayout>
+
+                            <!-- Legend -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <!-- Legend Item 1 -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="8dp">
+
+                                    <View
+                                        android:layout_width="12dp"
+                                        android:layout_height="12dp"
+                                        android:background="#5C9CFF"
+                                        android:layout_marginEnd="8dp" />
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Danh sách yêu thích"
+                                        android:textSize="14sp"
+                                        android:textColor="@color/black" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="1"
+                                        android:textSize="14sp"
+                                        android:textColor="#666666" />
+
+                                </LinearLayout>
+
+                                <!-- Legend Item 2 -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:layout_marginBottom="8dp">
+
+                                    <View
+                                        android:layout_width="12dp"
+                                        android:layout_height="12dp"
+                                        android:background="#9CC3FF"
+                                        android:layout_marginEnd="8dp" />
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="không có thể loại"
+                                        android:textSize="14sp"
+                                        android:textColor="@color/black" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="1"
+                                        android:textSize="14sp"
+                                        android:textColor="#666666" />
+
+                                </LinearLayout>
+
+                                <!-- Legend Item 3 -->
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <View
+                                        android:layout_width="12dp"
+                                        android:layout_height="12dp"
+                                        android:background="#C8DFFF"
+                                        android:layout_marginEnd="8dp" />
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Công việc"
+                                        android:textSize="14sp"
+                                        android:textColor="@color/black" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="1"
+                                        android:textSize="14sp"
+                                        android:textColor="#666666" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/pro_badge_background"
-                    android:text="PRO"
-                    android:textColor="#5C9CFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:padding="8dp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp" />
+            </ScrollView>
 
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Task Statistics Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tổng quan về Nhiệm vụ"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Statistics Cards -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
-
-            <!-- Completed Tasks Card -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                android:backgroundTint="#F5F5F5">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tv_completed_tasks"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="34"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nhiệm vụ đã hoàn thành"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:layout_marginTop="8dp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Pending Tasks Card -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                android:backgroundTint="#F5F5F5">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tv_pending_tasks"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="nhiệm vụ chưa hoàn thành"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:layout_marginTop="8dp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
+            <!-- Bottom Navigation -->
+            <include layout="@layout/bottom_navigation" />
 
         </LinearLayout>
-
-        <!-- Daily Completion Chart -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            android:backgroundTint="#F5F5F5">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Hoàn thành nhiệm vụ hằng ngày"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="8/24-8/30"
-                        android:textSize="12sp"
-                        android:textColor="#666666" />
-
-                </LinearLayout>
-
-                <!-- Simple Chart Representation -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"
-                    android:gravity="bottom"
-                    android:weightSum="7">
-
-                    <!-- Days of week with bars -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="CN"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 2"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 3"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="80dp"
-                            android:background="#5C9CFF"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 4"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 5"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 6"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="bottom">
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="0dp"
-                            android:background="#E0E0E0"
-                            android:layout_gravity="center" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Th 7"
-                            android:textSize="10sp"
-                            android:textColor="#666666"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Recent Tasks Section -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            android:backgroundTint="#F5F5F5">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nhiệm vụ trong 7 ngày tới"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Sample Task Item -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_calendar"
-                        android:layout_marginEnd="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="hhh"
-                            android:textSize="14sp"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="08-30"
-                        android:textSize="12sp"
-                        android:textColor="#666666" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Upgrade to Pro Bottom -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            android:backgroundTint="#FFF9E6">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_crown"
-                    android:layout_marginEnd="12dp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nâng cấp lên PRO"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Xóa quảng cáo, mở khóa tất cả các tính năng"
-                        android:textSize="12sp"
-                        android:textColor="#666666"
-                        android:layout_marginTop="2dp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:layout_marginStart="8dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <!-- Bottom Navigation -->
-    <include layout="@layout/bottom_navigation" />
-
-    </LinearLayout>
 
     </FrameLayout>
 

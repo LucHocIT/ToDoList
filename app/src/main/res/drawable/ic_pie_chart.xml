@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Pie chart representation -->
+    <path
+        android:fillColor="#5C9CFF"
+        android:pathData="M60,60 L60,10 A50,50 0 0,1 95.71,44.64 z"/>
+    
+    <path
+        android:fillColor="#9CC3FF"
+        android:pathData="M60,60 L95.71,44.64 A50,50 0 0,1 95.71,75.36 z"/>
+    
+    <path
+        android:fillColor="#C8DFFF"
+        android:pathData="M60,60 L95.71,75.36 A50,50 0 1,1 60,10 z"/>
+    
+    <!-- Center circle -->
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="60"
+        cy="60"
+        r="25"/>
+</vector>

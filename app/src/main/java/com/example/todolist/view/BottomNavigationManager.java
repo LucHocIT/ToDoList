@@ -14,7 +14,7 @@ import androidx.core.view.GravityCompat;
 import com.example.todolist.R;
 import com.example.todolist.MainActivity;
 import com.example.todolist.CalendarActivity;
-import com.example.todolist.activities.ProfileActivity;
+import com.example.todolist.ProfileActivity;
 
 public class BottomNavigationManager {
 
