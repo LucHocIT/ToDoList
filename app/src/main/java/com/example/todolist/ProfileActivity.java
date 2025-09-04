@@ -31,6 +31,7 @@ import com.example.todolist.manager.NavigationDrawerManager;
 import com.example.todolist.view.BottomNavigationManager;
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.manager.SyncManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.bumptech.glide.Glide;
 
@@ -67,24 +68,8 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         
         // Initialize managers
-        // authManager = new AuthManager(this, new AuthManager.AuthListener() {
-        //     @Override
-        //     public void onAuthSuccess(FirebaseUser user) {
-        //         loadUserData();
-        //         loadStatistics();
-        //     }
-
-        //     @Override
-        //     public void onAuthError(String error) {
-        //         // Handle auth error
-        //     }
-
-        //     @Override
-        //     public void onSignOut() {
-        //         loadUserData();
-        //         loadStatistics();
-        //     }
-        // });
+        authManager = AuthManager.getInstance();
+        authManager.initialize(this);
         // syncManager = new SyncManager(this);
         
         initViews();
@@ -251,20 +236,33 @@ public class ProfileActivity extends AppCompatActivity {
     }
     
     private void loadUserData() {
-        // FirebaseUser currentUser = authManager.getCurrentUser();
-        // if (currentUser != null) {
-        //     // User is signed in
-        //     tvUserName.setText(currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Firebase User");
-        //     tvUserEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "");
-        //     // updateAuthButtonText("Đã đăng nhập");
-        //     setUserAvatar(currentUser);
-        // } else {
-            // User not signed in
+        if (authManager.isSignedIn()) {
+            // User is signed in with Google
+            String userName = authManager.getCurrentUserName();
+            String userEmail = authManager.getCurrentUserEmail();
+            
+            // Set user name (fallback to email if no display name)
+            if (userName != null && !userName.isEmpty()) {
+                tvUserName.setText(userName);
+            } else if (userEmail != null && !userEmail.isEmpty()) {
+                tvUserName.setText(userEmail.split("@")[0]); // Use email prefix as name
+            } else {
+                tvUserName.setText("Google User");
+            }
+            
+            // Load Google avatar
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser != null) {
+                setUserAvatar(currentUser);
+            } else {
+                imgUserAvatar.setImageResource(R.drawable.ic_person);
+            }
+        } else {
+            // User not signed in - show default
             tvUserName.setText("Local User");
-            // tvUserEmail.setText("local@example.com");
-            // updateAuthButtonText("Đăng nhập Google");
             imgUserAvatar.setImageResource(R.drawable.ic_person);
-        // }
+        }
     }
     
     /**
@@ -680,5 +678,13 @@ public class ProfileActivity extends AppCompatActivity {
                 legendContainer.addView(noDataText);
             }
         }
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh user data when returning from sync screen
+        loadUserData();
+        loadStatistics();
     }
 }
