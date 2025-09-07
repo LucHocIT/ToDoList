@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -237,9 +238,19 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             int taskId = intent.getIntExtra(NotificationHelper.EXTRA_TASK_ID, -1);
+            String taskIdStr = intent.getStringExtra(NotificationHelper.EXTRA_TASK_ID);
             String action = intent.getStringExtra("action");
+            
+            // Try both int and string task ID for backward compatibility
             if (taskId != -1) {
                 Task task = taskService.getTaskByIdFromCache(String.valueOf(taskId));
+                if (task != null) {
+                    Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);
+                    detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
+                    startActivityForResult(detailIntent, REQUEST_TASK_DETAIL);
+                }
+            } else if (taskIdStr != null) {
+                Task task = taskService.getTaskByIdFromCache(taskIdStr);
                 if (task != null) {
                     Intent detailIntent = new Intent(MainActivity.this, TaskDetailActivity.class);
                     detailIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, task.getId());
@@ -492,4 +503,8 @@ public class MainActivity extends AppCompatActivity implements
             super.onBackPressed();
         }
     }
+    
+    /**
+     * DEBUG method to test notifications
+     */
 }

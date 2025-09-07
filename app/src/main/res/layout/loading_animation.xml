@@ -44,13 +44,40 @@
             android:layout_marginTop="-15dp"
             android:src="@drawable/diranosaurus"
             android:scaleType="fitCenter"/>
+            
+        <!-- Dust clouds behind dinosaur -->
+        <ImageView
+            android:id="@+id/dust_cloud1"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/dust_cloud"
+            android:alpha="0.6"
+            android:visibility="gone"
+            android:scaleType="fitCenter"/>
+            
+        <ImageView
+            android:id="@+id/dust_cloud2"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/dust_cloud"
+            android:alpha="0.4"
+            android:visibility="gone"
+            android:scaleType="fitCenter"/>
 
-        <!-- Elephant (voi sẽ di chuyển theo progress) -->
+        <!-- Elephant (voi sẽ ở bên phải và chờ khủng long đến) -->
         <ImageView
             android:id="@+id/elephant"
             android:layout_width="32dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="32dp"
             android:layout_marginTop="-15dp"
             android:src="@drawable/elephant"
             android:scaleType="fitCenter"/>

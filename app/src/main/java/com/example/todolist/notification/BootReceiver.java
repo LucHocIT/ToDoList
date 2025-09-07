@@ -31,13 +31,9 @@ public class BootReceiver extends BroadcastReceiver {
             public void onSuccess(List<Task> tasks) {
                 ReminderScheduler scheduler = new ReminderScheduler(context);
                 for (Task task : tasks) {
-                    if (task.getReminder() != null && !task.getReminder().equals("Không")) {
-                        try {
-                            int taskIntId = Math.abs(task.getId().hashCode()); // Convert String to int
-                            scheduler.scheduleReminder(taskIntId, task.getTitle(), task.getDueDate(), task.getDueTime());
-                        } catch (Exception e) {
-                            // Handle error
-                        }
+                    if (task.isHasReminder() && !task.isCompleted()) {
+                        // Sử dụng scheduleTaskReminder thay vì scheduleReminder để đảm bảo tính nhất quán
+                        scheduler.scheduleTaskReminder(task);
                     }
                 }
                 taskService.cleanup();

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Hiệu ứng nhảy vui mừng -->
+    <translate
+        android:fromYDelta="0dp"
+        android:toYDelta="-12dp"
+        android:duration="400"
+        android:repeatCount="3"
+        android:repeatMode="reverse"
+        android:interpolator="@android:anim/bounce_interpolator"/>
+        
+    <!-- Hiệu ứng scale to hơn khi vui mừng -->
+    <scale
+        android:fromXScale="1.0"
+        android:fromYScale="1.0"
+        android:toXScale="1.15"
+        android:toYScale="1.15"
+        android:duration="800"
+        android:repeatCount="2"
+        android:repeatMode="reverse"
+        android:pivotX="50%"
+        android:pivotY="100%"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        
+    <!-- Hiệu ứng lắc lư vui mừng -->
+    <rotate
+        android:fromDegrees="-8"
+        android:toDegrees="8"
+        android:duration="300"
+        android:repeatCount="5"
+        android:repeatMode="reverse"
+        android:pivotX="50%"
+        android:pivotY="80%"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        
+</set>

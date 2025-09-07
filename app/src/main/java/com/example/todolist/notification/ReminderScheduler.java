@@ -13,9 +13,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ReminderScheduler {
-    private static final String TAG = "ReminderScheduler";
     private Context context;
     private AlarmManager alarmManager;
+    
     public ReminderScheduler(Context context) {
         this.context = context;
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -39,13 +39,18 @@ public class ReminderScheduler {
             if (dueDateTime == null) return;
             Calendar dueCal = Calendar.getInstance();
             dueCal.setTime(dueDateTime);
-            Calendar reminderCal = (Calendar) dueCal.clone();
-            int reminderMinutes = getReminderMinutes(reminderType);
-            reminderCal.add(Calendar.MINUTE, -reminderMinutes);
-            Calendar now = Calendar.getInstance();
-            if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
-                scheduleReminderNotification(task, reminderCal.getTimeInMillis(), reminderType);
+            Calendar reminderCal = Calendar.getInstance();
+            String reminderDateTimeString = dueDate + " " + reminderType;
+            Date reminderDateTime = dateTimeFormat.parse(reminderDateTimeString);
+            if (reminderDateTime != null) {
+                reminderCal.setTime(reminderDateTime);
+                Calendar now = Calendar.getInstance();
+                if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
+                    scheduleReminderNotification(task, reminderCal.getTimeInMillis(), reminderType);
+                }
             }
+            
+            Calendar now = Calendar.getInstance();
             if (dueCal.getTimeInMillis() > now.getTimeInMillis()) {
                 scheduleDueNotification(task, dueCal.getTimeInMillis());
             }
@@ -92,10 +97,13 @@ public class ReminderScheduler {
     }
 
     public void cancelTaskReminders(int taskId) {
-        // Há»§y reminder alarm
-        cancelAlarm(taskId * 10);
-        // Há»§y due alarm  
-        cancelAlarm(taskId * 10 + 1);
+        // Sử dụng cùng logic với schedule để đảm bảo tính nhất quán
+        String taskIdStr = String.valueOf(taskId);
+        int reminderRequestCode = taskIdStr.hashCode();
+        int dueRequestCode = taskIdStr.hashCode() + 1;
+        
+        cancelAlarm(reminderRequestCode);
+        cancelAlarm(dueRequestCode);
     }
 
     private void cancelAlarm(int requestCode) {
@@ -110,46 +118,23 @@ public class ReminderScheduler {
         pendingIntent.cancel();
     }
 
-    private int getReminderMinutes(String reminderType) {
-        switch (reminderType) {
-            case "5 phút trước":
-                return 5;
-            case "15 phút trước":
-                return 15;
-            case "30 phút trước":
-                return 30;
-            case "1 giờ trước":
-                return 60;
-            default:
-                return 5; 
-        }
-    }
-
     public void scheduleReminder(int taskIntId, String title, String dueDate, String dueTime) {
         Task tempTask = new Task();
         tempTask.setId(String.valueOf(taskIntId));
         tempTask.setTitle(title);
         tempTask.setDueDate(dueDate);
         tempTask.setDueTime(dueTime);
-        tempTask.setReminder("5 phút trước"); 
+        // Đặt thời gian nhắc nhở cụ thể (ví dụ: "22:10") thay vì "5 phút trước"
+        tempTask.setReminderType(dueTime); // hoặc thời gian cụ thể khác
+        tempTask.setHasReminder(true);
         scheduleTaskReminder(tempTask);
     }
 
     public void cancelReminder(int taskIntId) {
-        String taskId = String.valueOf(taskIntId);
-        Intent intent = new Intent(context, NotificationReceiver.class);
-        intent.setAction(NotificationReceiver.ACTION_REMINDER);
-        intent.putExtra(NotificationReceiver.EXTRA_TASK_ID, taskId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                taskIntId,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-        if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
-        }
+        cancelTaskReminders(taskIntId);
     }
+    
     public void rescheduleAllReminders() {
+        // Implementation for reschedule all reminders if needed
     }
 }

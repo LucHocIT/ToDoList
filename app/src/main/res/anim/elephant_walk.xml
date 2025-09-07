@@ -3,24 +3,37 @@
     android:interpolator="@android:anim/linear_interpolator"
     android:fillAfter="true">
     
-    <!-- Gentle bouncing effect for elephant walking -->
+    <!-- Hiệu ứng thở nhẹ nhàng của con voi -->
     <translate
-        android:duration="800"
+        android:duration="1500"
         android:fromYDelta="0%"
-        android:toYDelta="5%"
+        android:toYDelta="2%"
         android:repeatCount="infinite"
-        android:repeatMode="reverse" />
+        android:repeatMode="reverse"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
         
-    <!-- Slight scale animation to simulate breathing -->
+    <!-- Hiệu ứng scale nhẹ để mô phỏng nhịp thở -->
     <scale
-        android:duration="1200"
+        android:duration="2000"
         android:fromXScale="1.0"
         android:fromYScale="1.0"
-        android:toXScale="1.05"
-        android:toYScale="1.05"
+        android:toXScale="1.02"
+        android:toYScale="1.02"
         android:pivotX="50%"
         android:pivotY="50%"
         android:repeatCount="infinite"
-        android:repeatMode="reverse" />
+        android:repeatMode="reverse"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
+        
+    <!-- Hiệu ứng lắc tai nhẹ -->
+    <rotate
+        android:fromDegrees="-1"
+        android:toDegrees="1"
+        android:duration="2500"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
+        android:pivotX="30%"
+        android:pivotY="30%"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         
 </set>

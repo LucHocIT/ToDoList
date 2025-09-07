@@ -529,11 +529,12 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
         android.widget.ImageView dinosaur = dialogView.findViewById(R.id.dinosaur);
         android.widget.ImageView elephant = dialogView.findViewById(R.id.elephant); 
         android.view.View progressLine = dialogView.findViewById(R.id.progress_line);
+        android.widget.ImageView dustCloud1 = dialogView.findViewById(R.id.dust_cloud1);
+        android.widget.ImageView dustCloud2 = dialogView.findViewById(R.id.dust_cloud2);
         
-        // Start animations
-        android.view.animation.Animation dinosaurAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_walk);
+        android.view.animation.Animation dinosaurWalkAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_walk);
+        dinosaur.startAnimation(dinosaurWalkAnim);
         android.view.animation.Animation elephantAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.elephant_walk);
-        dinosaur.startAnimation(dinosaurAnim);
         elephant.startAnimation(elephantAnim);
         
         // Set file info
@@ -616,28 +617,90 @@ public class AttachmentHandler implements AttachmentAdapter.OnAttachmentActionLi
                             progressLine.setLayoutParams(relParams);
                         }
                         
-                        // Move elephant along the treestreet road based on progress
-                        android.view.ViewGroup.LayoutParams elephantParams = elephant.getLayoutParams();
-                        if (elephantParams instanceof android.widget.RelativeLayout.LayoutParams) {
-                            android.widget.RelativeLayout.LayoutParams elephantRelParams = (android.widget.RelativeLayout.LayoutParams) elephantParams;
-                            // Calculate elephant position based on progress
-                            // Start at 32dp margin (left side), move to right side minus elephant width
-                            int startMargin = 32; // dp converted to pixels
-                            int containerWidth = dialogView.getWidth() - 64; // Total available width minus margins
+
+                        android.view.ViewGroup.LayoutParams dinosaurParams = dinosaur.getLayoutParams();
+                        if (dinosaurParams instanceof android.widget.RelativeLayout.LayoutParams) {
+                            android.widget.RelativeLayout.LayoutParams dinosaurRelParams = (android.widget.RelativeLayout.LayoutParams) dinosaurParams;
+                            int startMargin = 16; // Starting position
+                            int containerWidth = dialogView.getWidth() - 64; // Available width minus margins
+                            int dinosaurWidth = 40; // Dinosaur width in dp
                             int elephantWidth = 32; // Elephant width in dp
-                            int maxPosition = containerWidth - elephantWidth;
+                            int maxPosition = containerWidth - dinosaurWidth - elephantWidth - 16; // 16dp gap from elephant
                             
-                            int elephantPosition = startMargin + (int) (maxPosition * progress / 100f);
-                            elephantRelParams.leftMargin = elephantPosition;
-                            elephant.setLayoutParams(elephantRelParams);
+                            int dinosaurPosition = startMargin + (int) (maxPosition * progress / 100f);
+                            dinosaurRelParams.leftMargin = dinosaurPosition;
+                            dinosaur.setLayoutParams(dinosaurRelParams);
+                            
+                            // Show dust clouds when dinosaur is moving
+                            if (progress > 0 && progress < 100) {
+                                if (dustCloud1 != null && dustCloud2 != null) {
+                                    dustCloud1.setVisibility(android.view.View.VISIBLE);
+                                    dustCloud2.setVisibility(android.view.View.VISIBLE);
+                                    
+                                    // Position dust clouds behind dinosaur
+                                    android.view.ViewGroup.LayoutParams dustParams1 = dustCloud1.getLayoutParams();
+                                    android.view.ViewGroup.LayoutParams dustParams2 = dustCloud2.getLayoutParams();
+                                    if (dustParams1 instanceof android.widget.RelativeLayout.LayoutParams && 
+                                        dustParams2 instanceof android.widget.RelativeLayout.LayoutParams) {
+                                        
+                                        ((android.widget.RelativeLayout.LayoutParams) dustParams1).leftMargin = dinosaurPosition - 5;
+                                        ((android.widget.RelativeLayout.LayoutParams) dustParams2).leftMargin = dinosaurPosition - 8;
+                                        dustCloud1.setLayoutParams(dustParams1);
+                                        dustCloud2.setLayoutParams(dustParams2);
+                                        
+                                        // Animate dust clouds with fade effect
+                                        android.view.animation.AlphaAnimation dustAnim1 = new android.view.animation.AlphaAnimation(0.6f, 0.0f);
+                                        dustAnim1.setDuration(500);
+                                        dustAnim1.setRepeatCount(android.view.animation.Animation.INFINITE);
+                                        
+                                        android.view.animation.AlphaAnimation dustAnim2 = new android.view.animation.AlphaAnimation(0.4f, 0.0f);
+                                        dustAnim2.setDuration(700);
+                                        dustAnim2.setRepeatCount(android.view.animation.Animation.INFINITE);
+                                        
+                                        dustCloud1.startAnimation(dustAnim1);
+                                        dustCloud2.startAnimation(dustAnim2);
+                                    }
+                                }
+                            } else {
+                                // Hide dust when not moving
+                                if (dustCloud1 != null && dustCloud2 != null) {
+                                    dustCloud1.setVisibility(android.view.View.GONE);
+                                    dustCloud2.setVisibility(android.view.View.GONE);
+                                    dustCloud1.clearAnimation();
+                                    dustCloud2.clearAnimation();
+                                }
+                            }
+                            if (progress > 0 && progress < 80) {
+                                // Normal fast walking when far from elephant
+                                dinosaur.clearAnimation();
+                                android.view.animation.Animation fastWalkAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_fast_walk);
+                                dinosaur.startAnimation(fastWalkAnim);
+                            } else if (progress >= 80 && progress < 100) {
+                                // Slower, more careful approach when near elephant
+                                dinosaur.clearAnimation();
+                                android.view.animation.Animation slowWalkAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_walk);
+                                dinosaur.startAnimation(slowWalkAnim);
+                                elephant.clearAnimation();
+                                android.view.animation.ScaleAnimation nervousAnim = new android.view.animation.ScaleAnimation(
+                                    1.0f, 1.05f, 1.0f, 1.05f,
+                                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
+                                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f);
+                                nervousAnim.setDuration(300);
+                                nervousAnim.setRepeatCount(android.view.animation.Animation.INFINITE);
+                                nervousAnim.setRepeatMode(android.view.animation.Animation.REVERSE);
+                                elephant.startAnimation(nervousAnim);
+                            }
                         }
-                        
-                        // Chỉ cập nhật khi hoàn thành
+
                         if (progress >= 100) {
-                            // Play eat animation - khủng long ăn voi
                             dinosaur.clearAnimation();
+                            elephant.clearAnimation();
                             android.view.animation.Animation eatAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.elephant_eaten);
                             elephant.startAnimation(eatAnim);
+                            android.view.animation.Animation celebrateAnim = android.view.animation.AnimationUtils.loadAnimation(activity, R.anim.dinosaur_celebrate);
+                            dinosaur.postDelayed(() -> {
+                                dinosaur.startAnimation(celebrateAnim);
+                            }, 500);
                         }
                     });
                 }

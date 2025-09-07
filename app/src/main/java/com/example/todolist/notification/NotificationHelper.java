@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import com.example.todolist.MainActivity;
 import com.example.todolist.R;
@@ -50,7 +51,8 @@ public class NotificationHelper {
         if (!SettingsManager.isNotificationsEnabled(context)) {
             return;
         }
-        String title = "â° Task Ä‘áº¿n háº¡n!";
+        
+        String title = "🔔 Task đến hạn!";
         String content = task.getTitle();
         String expandedContent = task.getTitle();
         if (task.getDueDate() != null && !task.getDueDate().equals("Không")) {
@@ -70,6 +72,7 @@ public class NotificationHelper {
         if (!SettingsManager.isNotificationsEnabled(context)) {
             return;
         }
+        
         String title = "🕒 Nhắc nhở task";
         String content = task.getTitle();
         String expandedContent = task.getTitle();
@@ -131,9 +134,7 @@ public class NotificationHelper {
         } else {
             builder.setSound(null);
         }
-        // Táº¯t rung hoĂ n toĂ n
         builder.setVibrate(null);
-        // Apply lights (luĂ´n báº­t Ä‘á»ƒ dá»… nháº­n biáº¿t)
         builder.setLights(task.isImportant() ? 0xFFFF0000 : 0xFF0000FF, 1000, 1000);
         notificationManager.notify(notificationId, builder.build());
     }

@@ -1,37 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <!-- Hiệu ứng bước chân thực tế - lên xuống nhanh hơn -->
+    <!-- Hiệu ứng bước chân nhanh hơn khi đang di chuyển -->
     <translate
         android:fromYDelta="0dp"
-        android:toYDelta="-6dp"
-        android:duration="300"
+        android:toYDelta="-8dp"
+        android:duration="150"
         android:repeatCount="infinite"
         android:repeatMode="reverse"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         
-    <!-- Hiệu ứng lắc lư nhẹ khi đi -->
+    <!-- Hiệu ứng lắc lư mạnh hơn khi đi nhanh -->
     <rotate
-        android:fromDegrees="-2"
-        android:toDegrees="2"
-        android:duration="600"
+        android:fromDegrees="-3"
+        android:toDegrees="3"
+        android:duration="300"
         android:repeatCount="infinite"
         android:repeatMode="reverse"
         android:pivotX="50%"
         android:pivotY="80%"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         
-    <!-- Hiệu ứng scale nhẹ để mô phỏng trọng lượng -->
+    <!-- Hiệu ứng scale để mô phỏng trọng lượng khi đi nhanh -->
     <scale
         android:fromXScale="1.0"
         android:fromYScale="1.0"
-        android:toXScale="0.98"
-        android:toYScale="1.02"
-        android:duration="300"
+        android:toXScale="0.95"
+        android:toYScale="1.05"
+        android:duration="150"
         android:repeatCount="infinite"
         android:repeatMode="reverse"
         android:pivotX="50%"
         android:pivotY="100%"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+        
+    <!-- Hiệu ứng nhẹ nhàng mô phỏng di chuyển đầu -->
+    <translate
+        android:fromXDelta="-1dp"
+        android:toXDelta="1dp"
+        android:duration="300"
+        android:repeatCount="infinite"
+        android:repeatMode="reverse"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
         
 </set>
