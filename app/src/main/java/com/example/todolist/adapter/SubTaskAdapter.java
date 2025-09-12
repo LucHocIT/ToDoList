@@ -52,16 +52,18 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        android.util.Log.d("SubTaskAdapter", "onBindViewHolder: position=" + position);
         SubTask subTask = subTasks.get(position);
+        android.util.Log.d("SubTaskAdapter", "onBindViewHolder: binding subtask=" + subTask.getTitle());
         ((SubTaskViewHolder) holder).bind(subTask);
     }
     
     @Override
     public int getItemCount() {
-        return subTasks.size(); 
-    }
-    
-    class SubTaskViewHolder extends RecyclerView.ViewHolder {
+        int count = subTasks.size();
+        android.util.Log.d("SubTaskAdapter", "getItemCount: " + count);
+        return count;
+    }    class SubTaskViewHolder extends RecyclerView.ViewHolder {
         CheckBox checkBoxSubTask;
         EditText editTextSubTask;
         ImageView btnDeleteSubTask;

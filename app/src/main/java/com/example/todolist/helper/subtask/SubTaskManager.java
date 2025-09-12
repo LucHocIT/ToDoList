@@ -1,6 +1,7 @@
 package com.example.todolist.helper.subtask;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,13 +57,21 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     }
 
     public void loadSubTasksFromDatabase() {
+        android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase: currentTask=" + (currentTask != null ? currentTask.getId() : "null"));
         if (currentTask != null && currentTask.getId() != null) {
             subTaskService.getSubTasks(currentTask.getId(), new com.example.todolist.repository.BaseRepository.ListCallback<SubTask>() {
                 @Override
                 public void onSuccess(List<SubTask> subTasks) {
+                    android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase onSuccess: found " + subTasks.size() + " subtasks");
+                    for (int i = 0; i < subTasks.size(); i++) {
+                        SubTask st = subTasks.get(i);
+                        android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase: subtask[" + i + "] = title:'" + st.getTitle() + "', completed:" + st.isCompleted() + ", id:" + st.getId());
+                    }
+                    
                     if (context instanceof android.app.Activity) {
                         ((android.app.Activity) context).runOnUiThread(() -> {
                             currentTask.setSubTasks(subTasks);
+                            android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase: set subtasks to currentTask, now has " + currentTask.getSubTasks().size() + " subtasks");
                             refreshSubTasks();
                         });
                     }
@@ -70,6 +79,7 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
 
                 @Override
                 public void onError(String error) {
+                    android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase onError: " + error);
                     if (context instanceof android.app.Activity) {
                         ((android.app.Activity) context).runOnUiThread(() -> {
                             if (currentTask.getSubTasks() == null) {
@@ -81,6 +91,7 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
                 }
             });
         } else {
+            android.util.Log.d("SubTaskManager", "loadSubTasksFromDatabase: currentTask is null or has no ID");
             refreshSubTasks();
         }
     }
@@ -96,9 +107,10 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
             for (SubTask subTask : currentTask.getSubTasks()) {
                 if (!subTask.isCompleted()) {
                     subTask.setCompleted(true);
-                    // Update each subtask in Firebase
-                    subTaskService.updateSubTask(currentTask.getId(), subTask, null);
                 }
+            }
+            if (callback != null) {
+                callback.onTaskUpdated(currentTask);
             }
         }
 
@@ -112,13 +124,15 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
         if (currentTask != null && currentTask.getSubTasks() != null) {
             List<SubTask> emptySubTasks = SubTaskUtils.getEmptySubTasks(currentTask.getSubTasks());
 
-            for (SubTask emptySubTask : emptySubTasks) {
-                subTaskService.deleteSubTask(currentTask.getId(), emptySubTask.getId(), null);
-                currentTask.removeSubTask(emptySubTask);
-            }
-            
-            if (!emptySubTasks.isEmpty() && callback != null) {
-                callback.onTaskUpdated(currentTask);
+            if (!emptySubTasks.isEmpty()) {
+                for (SubTask emptySubTask : emptySubTasks) {
+                    currentTask.removeSubTask(emptySubTask);
+                }
+                
+                // Update the entire task through proper sync
+                if (callback != null) {
+                    callback.onTaskUpdated(currentTask);
+                }
             }
         }
     }
@@ -128,9 +142,8 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
             List<SubTask> modifiedSubTasks = SubTaskUtils.markAllSubTasksAsCompleted(currentTask);
             
             if (!modifiedSubTasks.isEmpty()) {
-                for (SubTask subTask : modifiedSubTasks) {
-                    // Update each subtask in Firebase
-                    subTaskService.updateSubTask(currentTask.getId(), subTask, null);
+                if (callback != null) {
+                    callback.onTaskUpdated(currentTask);
                 }
 
                 if (context instanceof android.app.Activity) {
@@ -141,43 +154,45 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     }
 
     private void refreshSubTasks() {
+        android.util.Log.d("SubTaskManager", "refreshSubTasks called");
         if (subTaskAdapter != null && currentTask != null) {
             // Update the adapter's data instead of creating a new adapter
             List<SubTask> subTasks = currentTask.getSubTasks() != null ? currentTask.getSubTasks() : new ArrayList<>();
+            android.util.Log.d("SubTaskManager", "refreshSubTasks: updating adapter with " + subTasks.size() + " subtasks");
+            for (int i = 0; i < subTasks.size(); i++) {
+                SubTask st = subTasks.get(i);
+                android.util.Log.d("SubTaskManager", "refreshSubTasks: subtask[" + i + "] = title:'" + st.getTitle() + "', completed:" + st.isCompleted() + ", id:" + st.getId());
+            }
+            
             subTaskAdapter = new SubTaskAdapter(subTasks, this);
             subTaskAdapter.setTaskCompleted(currentTask.isCompleted());
             recyclerSubTasks.setAdapter(subTaskAdapter);
+            android.util.Log.d("SubTaskManager", "refreshSubTasks: adapter set to RecyclerView");
+        } else {
+            android.util.Log.d("SubTaskManager", "refreshSubTasks: subTaskAdapter=" + (subTaskAdapter != null) + ", currentTask=" + (currentTask != null));
         }
     }
 
     @Override
     public void onSubTaskStatusChanged(SubTask subTask, boolean isCompleted) {
+        android.util.Log.d("SubTaskManager", "onSubTaskStatusChanged: subTask.id=" + subTask.getId() + ", title='" + subTask.getTitle() + "', isCompleted=" + isCompleted);
+        
+        // Simple update like AddTaskHandler
         subTask.setCompleted(isCompleted);
-        if (currentTask != null) {
-            subTaskService.updateSubTask(currentTask.getId(), subTask, new SubTaskService.SubTaskOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    // Update task in database
-                    if (callback != null) {
-                        callback.onTaskUpdated(currentTask);
-                    }
-                    if (context instanceof android.app.Activity) {
-                        ((android.app.Activity) context).runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    if (context instanceof android.app.Activity) {
-                        ((android.app.Activity) context).runOnUiThread(() -> {
-                            if (callback != null) {
-                                callback.showToast("Lỗi cập nhật subtask: " + error);
-                            }
-                            // Revert changes
-                            subTask.setCompleted(!isCompleted);
-                            subTaskAdapter.notifyDataSetChanged();
-                        });
-                    }
+        android.util.Log.d("SubTaskManager", "onSubTaskStatusChanged: set completed status, now subTask.isCompleted()=" + subTask.isCompleted());
+        
+        // Save to database via callback
+        if (callback != null && currentTask != null) {
+            android.util.Log.d("SubTaskManager", "onSubTaskStatusChanged: calling callback.onTaskUpdated");
+            callback.onTaskUpdated(currentTask);
+        }
+        
+        // Update UI
+        if (context instanceof android.app.Activity) {
+            ((android.app.Activity) context).runOnUiThread(() -> {
+                android.util.Log.d("SubTaskManager", "onSubTaskStatusChanged: calling notifyDataSetChanged");
+                if (subTaskAdapter != null) {
+                    subTaskAdapter.notifyDataSetChanged();
                 }
             });
         }
@@ -185,29 +200,16 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     
     @Override
     public void onSubTaskTextChanged(SubTask subTask, String newText) {
+        android.util.Log.d("SubTaskManager", "onSubTaskTextChanged: " + newText);
         if (!newText.isEmpty()) {
+            // Simple update like AddTaskHandler
             subTask.setTitle(newText);
-            if (currentTask != null) {
-                subTaskService.saveSubTask(currentTask.getId(), subTask, new SubTaskService.SubTaskOperationCallback() {
-                    @Override
-                    public void onSuccess() {
-                        // Update task in database
-                        if (callback != null) {
-                            callback.onTaskUpdated(currentTask);
-                        }
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        if (context instanceof android.app.Activity) {
-                            ((android.app.Activity) context).runOnUiThread(() -> {
-                                if (callback != null) {
-                                    callback.showToast("Lỗi cập nhật subtask: " + error);
-                                }
-                            });
-                        }
-                    }
-                });
+            android.util.Log.d("SubTaskManager", "onSubTaskTextChanged: updated subtask title");
+            
+            // Save to database via callback
+            if (callback != null && currentTask != null) {
+                android.util.Log.d("SubTaskManager", "onSubTaskTextChanged: calling callback.onTaskUpdated");
+                callback.onTaskUpdated(currentTask);
             }
         } else {
             onSubTaskDeleted(subTask);
@@ -216,47 +218,66 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
     
     @Override
     public void onSubTaskDeleted(SubTask subTask) {
-        if (currentTask != null) {
-            // Delete from Firebase first
-            subTaskService.deleteSubTask(currentTask.getId(), subTask.getId(), new SubTaskService.SubTaskOperationCallback() {
-                @Override
-                public void onSuccess() {
-                    // Remove from local task
-                    currentTask.removeSubTask(subTask);
-                    if (callback != null) {
-                        callback.onTaskUpdated(currentTask);
-                    }
-                    if (context instanceof android.app.Activity) {
-                        ((android.app.Activity) context).runOnUiThread(() -> subTaskAdapter.notifyDataSetChanged());
-                    }
+        android.util.Log.d("SubTaskManager", "onSubTaskDeleted: deleting subtask with id=" + subTask.getId());
+        
+        if (currentTask != null && currentTask.getSubTasks() != null) {
+            int position = currentTask.getSubTasks().indexOf(subTask);
+            if (position != -1) {
+                currentTask.getSubTasks().remove(position);
+                android.util.Log.d("SubTaskManager", "onSubTaskDeleted: removed from currentTask, now has " + currentTask.getSubTasks().size() + " subtasks");
+                
+                // Update adapter like AddTaskHandler
+                if (subTaskAdapter != null) {
+                    subTaskAdapter.notifyItemRemoved(position);
                 }
-
-                @Override
-                public void onError(String error) {
-                    if (context instanceof android.app.Activity) {
-                        ((android.app.Activity) context).runOnUiThread(() -> {
-                            if (callback != null) {
-                                callback.showToast("Lỗi xóa subtask: " + error);
-                            }
-                        });
-                    }
+                
+                // Save to database via callback
+                if (callback != null) {
+                    callback.onTaskUpdated(currentTask);
                 }
-            });
+            }
         }
     }
     
     @Override
     public void onAddNewSubTask() {
+        android.util.Log.d("SubTaskManager", "onAddNewSubTask called");
+        
+        // Create new SubTask with temp ID like AddTaskHandler
+        SubTask newSubTask = new SubTask();
+        newSubTask.setTitle("");
+        newSubTask.setId("temp_" + System.currentTimeMillis());
+        android.util.Log.d("SubTaskManager", "onAddNewSubTask: created new subtask with ID=" + newSubTask.getId());
+        
+        // Make the RecyclerView visible if needed
+        if (recyclerSubTasks != null && recyclerSubTasks.getVisibility() == View.GONE) {
+            recyclerSubTasks.setVisibility(View.VISIBLE);
+        }
+        
+        // Add to current task's subtasks - ENSURE PROPER LIST INITIALIZATION
         if (currentTask != null) {
-            SubTask newSubTask = new SubTask("", currentTask.getId());
-            newSubTask.setId(UUID.randomUUID().toString());
-            currentTask.addSubTask(newSubTask);
-            
-            if (context instanceof android.app.Activity) {
-                ((android.app.Activity) context).runOnUiThread(() -> {
-                    refreshSubTasks();
-                });
+            if (currentTask.getSubTasks() == null) {
+                currentTask.setSubTasks(new ArrayList<>());
+                android.util.Log.d("SubTaskManager", "onAddNewSubTask: initialized new SubTasks list");
             }
+            
+            android.util.Log.d("SubTaskManager", "onAddNewSubTask: before adding, currentTask has " + currentTask.getSubTasks().size() + " subtasks");
+            currentTask.getSubTasks().add(newSubTask);
+            android.util.Log.d("SubTaskManager", "onAddNewSubTask: after adding, currentTask has " + currentTask.getSubTasks().size() + " subtasks");
+            
+            // Refresh adapter immediately with new data like AddTaskHandler
+            if (subTaskAdapter != null) {
+                android.util.Log.d("SubTaskManager", "onAddNewSubTask: refreshing adapter with notifyDataSetChanged");
+                refreshSubTasks();
+            }
+            
+            // Save to database via callback
+            if (callback != null) {
+                android.util.Log.d("SubTaskManager", "onAddNewSubTask: calling callback.onTaskUpdated");
+                callback.onTaskUpdated(currentTask);
+            }
+        } else {
+            android.util.Log.d("SubTaskManager", "onAddNewSubTask: currentTask is null");
         }
     }
 

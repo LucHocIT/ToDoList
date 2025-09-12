@@ -17,6 +17,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
     private AppCompatActivity activity;
     private TaskService taskService;
     private Task currentTask;
+    private boolean isLoadingData = false; // Flag to prevent updating lastModified when loading data
     
     // UI Components
     private EditText editDetailTitle;
@@ -34,6 +35,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
         void showToast(String message);
         void finish();
         void onTaskCompletionChanged(boolean isCompleted);
+        void updateNotesDisplay(); // Add method to update notes display during protected loading
     }
 
     private TaskUpdateCallback callback;
@@ -69,6 +71,8 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
                 taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
                     @Override
                     public void onSuccess(Task task) {
+                        android.util.Log.d("TaskDataManager", "Task loaded from database: " + task.getTitle() + 
+                            " | lastModified: " + task.getLastModified());
                         currentTask = task;
                         activity.runOnUiThread(() -> {
                             displayTaskData();
@@ -78,6 +82,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
 
                     @Override
                     public void onError(String error) {
+                        android.util.Log.e("TaskDataManager", "Error loading task: " + error);
                         activity.runOnUiThread(() -> {
                             callback.showToast("Không tìm thấy task");
                             callback.finish();
@@ -90,6 +95,8 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
 
     private void displayTaskData() {
         if (currentTask != null) {
+            isLoadingData = true; // Prevent updateTimestamp during data loading
+            
             editDetailTitle.setText(currentTask.getTitle());
             editDescription.setText(currentTask.getDescription() != null ? currentTask.getDescription() : "");
             String formattedDate = formatDateDisplay(currentTask.getDueDate());
@@ -102,6 +109,9 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
             setPriorityDisplay(currentTask.getPriority());
             textRepeatValue.setText(currentTask.getRepeat() != null ? currentTask.getRepeat() : "Không");        
             // updateCompletionStatus(); // TODO: Implement if needed
+            callback.updateNotesDisplay();
+            
+            isLoadingData = false; // Re-enable updateTimestamp after loading
         }
     }
 
@@ -115,7 +125,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (currentTask != null && !currentTask.isCompleted()) {
+                if (currentTask != null && !currentTask.isCompleted() && !isLoadingData) {
                     currentTask.setTitle(s.toString());
                     taskService.updateTask(currentTask);
                 }
@@ -131,7 +141,7 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (currentTask != null && !currentTask.isCompleted()) {
+                if (currentTask != null && !currentTask.isCompleted() && !isLoadingData) {
                     currentTask.setDescription(s.toString());
                     taskService.updateTask(currentTask);
                 }

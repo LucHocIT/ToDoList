@@ -158,12 +158,34 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     @Override
     public void updateTask(Task task) {
+        android.util.Log.d("TaskDetailActivity", "updateTask: received task with " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        
+        // PRESERVE EXISTING SUBTASKS if the incoming task doesn't have them
+        if (this.currentTask != null && this.currentTask.getSubTasks() != null && !this.currentTask.getSubTasks().isEmpty()) {
+            if (task.getSubTasks() == null || task.getSubTasks().isEmpty()) {
+                android.util.Log.d("TaskDetailActivity", "updateTask: preserving existing " + this.currentTask.getSubTasks().size() + " subtasks");
+                task.setSubTasks(this.currentTask.getSubTasks());
+            }
+        }
+        
         this.currentTask = task;
+        android.util.Log.d("TaskDetailActivity", "updateTask: currentTask now has " + (this.currentTask.getSubTasks() != null ? this.currentTask.getSubTasks().size() : 0) + " subtasks");
         taskDataManager.updateTask(task);
     }
     
     @Override
     public void onTaskUpdated(Task task) {
+        android.util.Log.d("TaskDetailActivity", "onTaskUpdated: received task with " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        
+        // PRESERVE EXISTING SUBTASKS if the incoming task doesn't have them
+        if (this.currentTask != null && this.currentTask.getSubTasks() != null && !this.currentTask.getSubTasks().isEmpty()) {
+            if (task.getSubTasks() == null || task.getSubTasks().isEmpty()) {
+                android.util.Log.d("TaskDetailActivity", "onTaskUpdated: preserving existing " + this.currentTask.getSubTasks().size() + " subtasks");
+                task.setSubTasks(this.currentTask.getSubTasks());
+            }
+        }
+        
+        android.util.Log.d("TaskDetailActivity", "onTaskUpdated: calling taskDataManager.updateTask");
         taskDataManager.updateTask(task);
     }
     
@@ -178,20 +200,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onTaskLoaded(Task task) {
-        this.currentTask = task;
-        categoryHandler.updateCategorySelection();
-        attachmentHandler.updateAttachmentView();
-        uiHelper.updateCompletionStatus(task);
-        subTaskManager.setCurrentTask(task);
-        subTaskManager.loadSubTasksFromDatabase();
-        updateNotesDisplay();
-        
-        // Update UI based on completion status
-        onTaskCompletionChanged(task.isCompleted());
-    }
-    
-    private void updateNotesDisplay() {
+    public void updateNotesDisplay() {
         if (currentTask != null && currentTask.getDescription() != null && !currentTask.getDescription().trim().isEmpty()) {
             textExistingNotes.setText(currentTask.getDescription());
             textExistingNotes.setVisibility(View.VISIBLE);
@@ -203,16 +212,26 @@ public class TaskDetailActivity extends AppCompatActivity implements
             editDescription.setText("");
         }
     }
+
+    @Override
+    public void onTaskLoaded(Task task) {
+        this.currentTask = task;
+        categoryHandler.updateCategorySelection();
+        attachmentHandler.updateAttachmentView();
+        uiHelper.updateCompletionStatus(task);
+        subTaskManager.setCurrentTask(task);
+        subTaskManager.loadSubTasksFromDatabase();
+
+        onTaskCompletionChanged(task.isCompleted());
+    }
     
     private void toggleNotesInput() {
         if (layoutNotesInput.getVisibility() == View.GONE) {
-            // Show input
             layoutNotesInput.setVisibility(View.VISIBLE);
             textExistingNotes.setVisibility(View.GONE);
             textNotesAction.setText("LƯU");
             editDescription.requestFocus();
         } else {
-            // Save and hide input
             String noteText = editDescription.getText().toString().trim();
             if (currentTask != null) {
                 currentTask.setDescription(noteText);
@@ -251,10 +270,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
         } else {
             btnMenuOptions.setAlpha(1.0f);
         }
-        // Update subtask manager
+
         subTaskManager.onTaskCompletionChanged(isCompleted);
-        
-        // Note: AttachmentHandler interactions are disabled via click listeners above
     }
     
     @Override

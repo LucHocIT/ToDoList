@@ -2,8 +2,10 @@ package com.example.todolist.service.task;
 
 import android.content.Context;
 import com.example.todolist.model.SubTask;
+import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.SubTaskRepository;
+import com.example.todolist.service.TaskService;
 
 import java.util.List;
 
@@ -16,10 +18,15 @@ public class SubTaskService {
     
     private Context context;
     private SubTaskRepository subTaskRepository;
+    private TaskService taskService; // Add TaskService reference
     
     public SubTaskService(Context context) {
         this.context = context;
         this.subTaskRepository = new SubTaskRepository(context);
+    }
+    
+    public void setTaskService(TaskService taskService) {
+        this.taskService = taskService;
     }
     
     public void saveSubTask(String taskId, SubTask subTask, SubTaskOperationCallback callback) {
@@ -157,5 +164,66 @@ public class SubTaskService {
     
     public void loadSubTasksForAllTasks() {
 
+    }
+
+    public void saveSubTaskThroughTask(Task task, SubTask subTask, SubTaskOperationCallback callback) {
+        if (taskService == null) {
+            saveSubTask(task.getId(), subTask, callback);
+            return;
+        }
+
+        if (task.getSubTasks() == null) {
+            task.setSubTasks(new java.util.ArrayList<>());
+        }
+
+        boolean found = false;
+        for (int i = 0; i < task.getSubTasks().size(); i++) {
+            if (task.getSubTasks().get(i).getId().equals(subTask.getId())) {
+                task.getSubTasks().set(i, subTask);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            task.addSubTask(subTask);
+        }
+
+        taskService.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                if (callback != null) callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) callback.onError(error);
+            }
+        });
+    }
+    
+    public void updateSubTaskThroughTask(Task task, SubTask subTask, SubTaskOperationCallback callback) {
+        saveSubTaskThroughTask(task, subTask, callback);
+    }
+    
+    public void deleteSubTaskThroughTask(Task task, String subTaskId, SubTaskOperationCallback callback) {
+        if (taskService == null) {
+            deleteSubTask(task.getId(), subTaskId, callback);
+            return;
+        }
+
+        if (task.getSubTasks() != null) {
+            task.getSubTasks().removeIf(subTask -> subTask.getId().equals(subTaskId));
+        }
+        taskService.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                if (callback != null) callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) callback.onError(error);
+            }
+        });
     }
 }

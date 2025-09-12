@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.todolist.model.Task;
 import com.example.todolist.model.Category;
+import com.example.todolist.model.SubTask;
 import com.example.todolist.repository.BaseRepository;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +25,7 @@ public class FirebaseSyncManager {
     private static final String USERS_NODE = "users";
     private static final String TASKS_NODE = "tasks";
     private static final String CATEGORIES_NODE = "categories";
+    // SUBTASKS_NODE removed - SubTasks are now stored inside Tasks
     
     private static FirebaseSyncManager instance;
     private DatabaseReference database;
@@ -602,10 +604,22 @@ public class FirebaseSyncManager {
         taskData.put("isRepeating", task.isRepeating());
         taskData.put("completionDate", task.getCompletionDate());
         taskData.put("createdDate", task.getCreatedAt());
-        taskData.put("lastModified", System.currentTimeMillis());
+        taskData.put("lastModified", task.getLastModified() != null ? task.getLastModified() : System.currentTimeMillis());
         
         if (task.getAttachments() != null) {
             taskData.put("attachments", task.getAttachments());
+        }
+
+        if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
+            List<Map<String, Object>> subTasksData = new ArrayList<>();
+            for (SubTask subTask : task.getSubTasks()) {
+                if (subTask != null) {
+                    subTasksData.add(subTask.toMap());
+                }
+            }
+            taskData.put("subTasks", subTasksData);
+        } else {
+            taskData.put("subTasks", new ArrayList<>());
         }
         
         return taskData;
@@ -629,8 +643,32 @@ public class FirebaseSyncManager {
         task.setCompletionDate((String) data.get("completionDate"));
         task.setCreatedAt((String) data.get("createdDate"));
         
+        // Handle lastModified field
+        if (data.get("lastModified") instanceof Long) {
+            task.setLastModified((Long) data.get("lastModified"));
+        } else if (data.get("lastModified") instanceof Number) {
+            task.setLastModified(((Number) data.get("lastModified")).longValue());
+        } else {
+            task.setLastModified(System.currentTimeMillis());
+        }
+        
         if (data.get("attachments") != null) {
             task.setAttachments((String) data.get("attachments"));
+        }
+        
+        // Convert SubTasks from Firebase Map list back to SubTask objects
+        if (data.get("subTasks") != null) {
+            List<Map<String, Object>> subTasksData = (List<Map<String, Object>>) data.get("subTasks");
+            List<SubTask> subTasks = new ArrayList<>();
+            for (Map<String, Object> subTaskData : subTasksData) {
+                if (subTaskData != null) {
+                    SubTask subTask = SubTask.fromMap(subTaskData);
+                    subTasks.add(subTask);
+                }
+            }
+            task.setSubTasks(subTasks);
+        } else {
+            task.setSubTasks(new ArrayList<>());
         }
         
         return task;
@@ -648,6 +686,11 @@ public class FirebaseSyncManager {
     
     public interface FirebaseCategorySyncCallback {
         void onSuccess(List<Category> categories);
+        void onError(String error);
+    }
+       
+    public interface SubTaskSyncCallback {
+        void onSuccess(List<SubTask> subTasks);
         void onError(String error);
     }
 }

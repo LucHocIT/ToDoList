@@ -28,12 +28,14 @@ public class Task implements Serializable {
     private String completionDate;
     private String createdAt;    
     private String updatedAt;
+    private Long lastModified;
     private List<SubTask> subTasks;     
     public Task() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
         this.createdAt = currentDate;
         this.updatedAt = currentDate;
+        this.lastModified = System.currentTimeMillis();
         this.subTasks = new ArrayList<>();
     }
 
@@ -72,6 +74,7 @@ public class Task implements Serializable {
         result.put("completionDate", completionDate);
         result.put("createdAt", createdAt);
         result.put("updatedAt", updatedAt);
+        result.put("lastModified", lastModified);
         result.put("subTasks", subTasks);
         return result;
     }
@@ -79,6 +82,7 @@ public class Task implements Serializable {
     public void updateTimestamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         this.updatedAt = dateFormat.format(new Date());
+        this.lastModified = System.currentTimeMillis();
     }
 
     public String getId() { return id; }
@@ -221,6 +225,12 @@ public class Task implements Serializable {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             this.updatedAt = dateFormat.format(new Date(updatedAt));
         }
+    }
+    
+    public Long getLastModified() { return lastModified; }
+    
+    public void setLastModified(Long lastModified) { 
+        this.lastModified = lastModified;
     }
     
     public String getCategoryId() { return category; }

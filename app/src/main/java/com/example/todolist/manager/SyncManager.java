@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.model.Task;
+import com.example.todolist.model.SubTask;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -113,7 +114,7 @@ public class SyncManager {
             taskData.put("category", task.getCategory());
             taskData.put("dueDate", task.getDueDate());
             taskData.put("isCompleted", task.isCompleted());
-            taskData.put("lastModified", System.currentTimeMillis());
+            taskData.put("lastModified", task.getLastModified() != null ? task.getLastModified() : System.currentTimeMillis());
             
             String taskId = "task_" + task.getId();
             
@@ -145,12 +146,31 @@ public class SyncManager {
                         Map<String, Object> taskData = (Map<String, Object>) taskSnapshot.getValue();
                         if (taskData != null) {
                             Task remoteTask = new Task();
+                            remoteTask.setId(taskSnapshot.getKey()); // Set Firebase ID
                             remoteTask.setTitle((String) taskData.get("title"));
                             remoteTask.setDescription((String) taskData.get("description"));
                             remoteTask.setPriority((String) taskData.get("priority"));
                             remoteTask.setCategory((String) taskData.get("category"));
                             remoteTask.setDueDate((String) taskData.get("dueDate"));
                             remoteTask.setCompleted(Boolean.TRUE.equals(taskData.get("isCompleted")));
+                            
+                            // FIX: Load SubTasks from Firebase
+                            if (taskData.get("subTasks") != null) {
+                                List<Map<String, Object>> subTasksData = (List<Map<String, Object>>) taskData.get("subTasks");
+                                List<SubTask> subTasks = new ArrayList<>();
+                                for (Map<String, Object> subTaskData : subTasksData) {
+                                    if (subTaskData != null) {
+                                        SubTask subTask = new SubTask();
+                                        subTask.setId((String) subTaskData.get("id"));
+                                        subTask.setTitle((String) subTaskData.get("title"));
+                                        subTask.setCompleted(Boolean.TRUE.equals(subTaskData.get("isCompleted")));
+                                        subTask.setCreatedAt((String) subTaskData.get("createdAt"));
+                                        subTask.setTaskId((String) subTaskData.get("taskId"));
+                                        subTasks.add(subTask);
+                                    }
+                                }
+                                remoteTask.setSubTasks(subTasks);
+                            }
                             
                             remoteTasks.add(remoteTask);
                         }

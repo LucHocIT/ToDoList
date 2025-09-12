@@ -65,4 +65,24 @@ public class SubTask implements Serializable {
     public void setTaskId(String taskId) {
         this.taskId = taskId;
     }
+
+    public java.util.Map<String, Object> toMap() {
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("id", id);
+        result.put("title", title);
+        result.put("isCompleted", isCompleted);
+        result.put("createdAt", createdAt);
+        result.put("taskId", taskId);
+        return result;
+    }
+
+    public static SubTask fromMap(java.util.Map<String, Object> data) {
+        SubTask subTask = new SubTask();
+        subTask.setId((String) data.get("id"));
+        subTask.setTitle((String) data.get("title"));
+        subTask.setCompleted(Boolean.TRUE.equals(data.get("isCompleted")));
+        subTask.setCreatedAt((String) data.get("createdAt"));
+        subTask.setTaskId((String) data.get("taskId"));
+        return subTask;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.todolist.service;
 
 import android.content.Context;
+import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.todolist.cache.TaskCache;
@@ -51,16 +52,15 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         this.taskRepository = new TaskRepository(context);
         this.taskCache = TaskCache.getInstance();
         taskCache.addListener(this);
-        
-        // Initialize service delegates
+
         this.taskManager = new TaskManager(context);
         this.completionService = new TaskCompletionService(context);
         this.listService = new TaskListService(context);
         this.subTaskService = new SubTaskService(context);
         this.syncService = new TaskSyncService(context);
         this.firebaseUpdateService = new TaskFirebaseUpdateService();
-        
-        // Initialize Firebase sync management
+        this.subTaskService.setTaskService(this);
+
         this.authManager = AuthManager.getInstance();
         this.authManager.initialize(context);
         this.firebaseSyncManager = FirebaseSyncManager.getInstance();
@@ -80,8 +80,7 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
                 taskCache.loadFromFirebase(tasks);
                 taskCache.setLoading(false);
                 notifyListener();
-                
-                // Load and merge from Firebase if sync is enabled
+
                 if (authManager.shouldSyncToFirebase()) {
                     syncService.loadAndMergeFromFirebase(() -> notifyListener());
                 }
@@ -94,8 +93,7 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
             }
         });
     }
-    
-    // Method để đồng bộ tất cả local tasks lên Firebase khi user bật sync
+
     public void syncAllTasksToFirebase(FirebaseSyncManager.SyncCallback callback) {
         syncService.syncAllTasksToFirebase(callback);
     }
@@ -126,8 +124,48 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     }
     
     public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
+        android.util.Log.d("TaskService", "updateTask: task.id=" + task.getId() + ", has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        if (task.getSubTasks() != null) {
+            for (int i = 0; i < task.getSubTasks().size(); i++) {
+                com.example.todolist.model.SubTask st = task.getSubTasks().get(i);
+                android.util.Log.d("TaskService", "updateTask: subtask[" + i + "] = title:'" + st.getTitle() + "', completed:" + st.isCompleted() + ", id:" + st.getId());
+            }
+        }
+        
+        Task cachedTask = taskCache.getTask(task.getId());
+        if (cachedTask != null && cachedTask.getSubTasks() != null && !cachedTask.getSubTasks().isEmpty()) {
+            android.util.Log.d("TaskService", "updateTask: found cached task with " + cachedTask.getSubTasks().size() + " subtasks");
+            // If the task being updated doesn't have SubTasks but the cached one does, preserve them
+            if (task.getSubTasks() == null || task.getSubTasks().isEmpty()) {
+                android.util.Log.d("TaskService", "updateTask: preserving cached subtasks");
+                task.setSubTasks(cachedTask.getSubTasks());
+            }
+        } else if (task.getSubTasks() == null || task.getSubTasks().isEmpty()) {
+            android.util.Log.d("TaskService", "updateTask: loading subtasks from database");
+            loadSubTasksForTaskSync(task);
+        }
+        
+        android.util.Log.d("TaskService", "updateTask: final task has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks before sync");
         syncService.performTaskOperation(task, TaskSyncService.TaskOperation.UPDATE, 
             convertBooleanCallback(callback));
+    }
+    
+    private void loadSubTasksForTaskSync(Task task) {
+        try {
+            subTaskService.getSubTasks(task.getId(), new BaseRepository.ListCallback<com.example.todolist.model.SubTask>() {
+                @Override
+                public void onSuccess(List<com.example.todolist.model.SubTask> subTasks) {
+                    task.setSubTasks(subTasks);
+                }
+
+                @Override
+                public void onError(String error) {
+                    Log.w("TaskService", "Failed to load subtasks for task " + task.getId() + ": " + error);
+                }
+            });
+        } catch (Exception e) {
+            Log.w("TaskService", "Exception loading subtasks: " + e.getMessage());
+        }
     }
 
     public void deleteTask(Task task) {
@@ -173,7 +211,19 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         completionService.completeTask(task, isCompleted, new BaseRepository.DatabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                notifyListener();
+                syncService.performTaskOperation(task, TaskSyncService.TaskOperation.UPDATE,
+                    convertBooleanCallback(new BaseRepository.DatabaseCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean syncResult) {
+                            notifyListener();
+                        }
+
+                        @Override
+                        public void onError(String syncError) {
+                            Log.w("TaskService", "Firebase sync failed for task completion: " + syncError);
+                            notifyListener(); 
+                        }
+                    }));
             }
 
             @Override
