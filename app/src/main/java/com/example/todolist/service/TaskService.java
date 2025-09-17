@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.todolist.cache.TaskCache;
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.manager.FirebaseSyncManager;
+import com.example.todolist.model.SubTask;
 import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
@@ -105,8 +106,20 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     
     public void addTask(Task task, TaskOperationCallback callback) {
         ensureTaskId(task);
+        if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
+            for (SubTask subTask : task.getSubTasks()) {
+                subTask.setTaskId(task.getId());
+                if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
+                    subTask.setId(task.getId() + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
+                }
+            }
+        }
+        
         syncService.performTaskOperation(task, TaskSyncService.TaskOperation.ADD, 
-            createOperationCallback(callback, task, () -> handleRepeatTaskCreation(task, callback)));
+            createOperationCallback(callback, task, () -> {
+                saveSubTasksAfterTaskCreation(task, callback);
+                handleRepeatTaskCreation(task, callback);
+            }));
     }
     
     @Override
@@ -436,6 +449,29 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
             });
         } else {
             if (callback != null) callback.onSuccess();
+        }
+    }
+    
+    private void saveSubTasksAfterTaskCreation(Task task, TaskOperationCallback callback) {
+        android.util.Log.d("TaskService", "saveSubTasksAfterTaskCreation: task has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        
+        if (task.getSubTasks() == null || task.getSubTasks().isEmpty()) {
+            android.util.Log.d("TaskService", "saveSubTasksAfterTaskCreation: no subtasks to save");
+            return;
+        }
+        for (SubTask subTask : task.getSubTasks()) {
+            android.util.Log.d("TaskService", "saveSubTasksAfterTaskCreation: saving subtask id=" + subTask.getId() + ", title='" + subTask.getTitle() + "'");
+            subTaskService.saveSubTask(task.getId(), subTask, new SubTaskService.SubTaskOperationCallback() {
+                @Override
+                public void onSuccess() {
+                    android.util.Log.d("TaskService", "saveSubTasksAfterTaskCreation: subtask saved successfully");
+                }
+
+                @Override
+                public void onError(String error) {
+                    android.util.Log.e("TaskService", "saveSubTasksAfterTaskCreation: error saving subtask: " + error);
+                }
+            });
         }
     }
     

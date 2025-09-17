@@ -37,6 +37,10 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
     
+    public void updateSubTasks(List<SubTask> newSubTasks) {
+        this.subTasks = newSubTasks;
+    }
+    
     @Override
     public int getItemViewType(int position) {
         return TYPE_SUBTASK; 

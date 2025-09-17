@@ -94,7 +94,12 @@ public class AddTaskHandler {
             newSubTask.setTitle("");
             newSubTask.setId("temp_" + System.currentTimeMillis());
             tempSubTasks.add(newSubTask);
-            subTaskAdapter.notifyItemInserted(tempSubTasks.size() - 1);
+            
+            // Update adapter data and notify
+            if (subTaskAdapter != null) {
+                subTaskAdapter.updateSubTasks(tempSubTasks);
+                subTaskAdapter.notifyItemInserted(tempSubTasks.size() - 1);
+            }
             
             iconSubTask.animate().rotation(iconSubTask.getRotation() + 90f).setDuration(200).start();
         });
@@ -268,9 +273,6 @@ public class AddTaskHandler {
         taskService.addTask(newTask, new TaskService.TaskOperationCallback() {
             @Override
             public void onSuccess() {
-                if (newTask.getSubTasks() != null && !newTask.getSubTasks().isEmpty()) {
-                    saveSubTasksToDatabase(newTask.getId(), newTask.getSubTasks());
-                }
                 
                 if (context instanceof Activity) {
                     ((Activity) context).runOnUiThread(() -> {
