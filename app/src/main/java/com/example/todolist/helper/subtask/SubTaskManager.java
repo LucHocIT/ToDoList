@@ -184,6 +184,9 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
                             if (subTaskAdapter != null) {
                                 subTaskAdapter.notifyDataSetChanged();
                             }
+                            if (callback != null) {
+                                callback.onTaskUpdated(currentTask);
+                            }
                         });
                     }
                 }
@@ -222,6 +225,11 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
                 @Override
                 public void onSuccess() {
                     android.util.Log.d("SubTaskManager", "onSubTaskTextChanged: saved successfully to database");
+                    
+                    // Notify callback that task has been updated (subtask text changed)
+                    if (callback != null) {
+                        callback.onTaskUpdated(currentTask);
+                    }
                 }
 
                 @Override
@@ -260,6 +268,10 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
                     @Override
                     public void onSuccess() {
                         android.util.Log.d("SubTaskManager", "onSubTaskDeleted: deleted successfully from database");
+
+                        if (callback != null) {
+                            callback.onTaskUpdated(currentTask);
+                        }
                     }
 
                     @Override
@@ -323,6 +335,10 @@ public class SubTaskManager implements SubTaskAdapter.OnSubTaskListener {
                     // Generate proper ID if it was a temp ID
                     if (newSubTask.getId().startsWith("temp_")) {
                         newSubTask.setId(currentTask.getId() + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
+                    }
+
+                    if (callback != null) {
+                        callback.onTaskUpdated(currentTask);
                     }
                 }
 

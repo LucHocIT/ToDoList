@@ -125,8 +125,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> {
-            taskDataManager.updateTaskTitle();
-            finish();
+            finish(); // updateTaskTitle() will be called in finish() method
         });
         
         btnMenuOptions.setOnClickListener(v -> showOptionsMenu(v));
@@ -187,6 +186,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
         
         android.util.Log.d("TaskDetailActivity", "onTaskUpdated: calling taskDataManager.updateTask");
         taskDataManager.updateTask(task);
+
+        setResult(RESULT_OK);
     }
     
     @Override
@@ -276,7 +277,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     @Override
     public void finish() {
-        // Removed cleanupEmptySubTasks() - allow empty SubTasks
+        taskDataManager.updateTaskTitle();
+        setResult(RESULT_OK);
         super.finish();
     }
     

@@ -4,9 +4,13 @@ import android.content.Context;
 
 import com.example.todolist.database.ToDoDatabase;
 import com.example.todolist.database.dao.TaskDao;
+import com.example.todolist.database.dao.SubTaskDao;
 import com.example.todolist.database.entity.TaskEntity;
+import com.example.todolist.database.entity.SubTaskEntity;
 import com.example.todolist.database.mapper.TaskMapper;
+import com.example.todolist.database.mapper.SubTaskMapper;
 import com.example.todolist.model.Task;
+import com.example.todolist.model.SubTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,11 +21,13 @@ import java.util.UUID;
 public class TaskRepository extends BaseRepository {
     
     private TaskDao taskDao;
+    private SubTaskDao subTaskDao;
     
     public TaskRepository(Context context) {
         super();
         ToDoDatabase database = ToDoDatabase.getInstance(context);
         taskDao = database.taskDao();
+        subTaskDao = database.subTaskDao();
     }
     
     // === CRUD OPERATIONS ===
@@ -126,6 +132,15 @@ public class TaskRepository extends BaseRepository {
             try {
                 List<TaskEntity> entities = taskDao.getAllTasks();
                 List<Task> tasks = TaskMapper.fromEntities(entities);
+
+                for (Task task : tasks) {
+                    if (task.getId() != null) {
+                        List<SubTaskEntity> subTaskEntities = subTaskDao.getSubTasksByTaskId(task.getId());
+                        List<SubTask> subTasks = SubTaskMapper.fromEntities(subTaskEntities);
+                        task.setSubTasks(subTasks);
+                    }
+                }
+                
                 runOnMainThread(() -> callback.onSuccess(tasks));
             } catch (Exception e) {
                 runOnMainThread(() -> callback.onError("Lỗi lấy danh sách task: " + e.getMessage()));
@@ -138,6 +153,15 @@ public class TaskRepository extends BaseRepository {
             try {
                 List<TaskEntity> entities = taskDao.searchTasks(query);
                 List<Task> tasks = TaskMapper.fromEntities(entities);
+
+                for (Task task : tasks) {
+                    if (task.getId() != null) {
+                        List<SubTaskEntity> subTaskEntities = subTaskDao.getSubTasksByTaskId(task.getId());
+                        List<SubTask> subTasks = SubTaskMapper.fromEntities(subTaskEntities);
+                        task.setSubTasks(subTasks);
+                    }
+                }
+                
                 runOnMainThread(() -> callback.onSuccess(tasks));
             } catch (Exception e) {
                 runOnMainThread(() -> callback.onError("Lỗi tìm kiếm task: " + e.getMessage()));
@@ -150,6 +174,15 @@ public class TaskRepository extends BaseRepository {
             try {
                 List<TaskEntity> entities = taskDao.getTasksByCategory(categoryId);
                 List<Task> tasks = TaskMapper.fromEntities(entities);
+
+                for (Task task : tasks) {
+                    if (task.getId() != null) {
+                        List<SubTaskEntity> subTaskEntities = subTaskDao.getSubTasksByTaskId(task.getId());
+                        List<SubTask> subTasks = SubTaskMapper.fromEntities(subTaskEntities);
+                        task.setSubTasks(subTasks);
+                    }
+                }
+                
                 runOnMainThread(() -> callback.onSuccess(tasks));
             } catch (Exception e) {
                 runOnMainThread(() -> callback.onError("Lỗi lấy task theo danh mục: " + e.getMessage()));
