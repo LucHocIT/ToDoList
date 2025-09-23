@@ -104,8 +104,7 @@ public class MainActivity extends AppCompatActivity implements
         };
         
         IntentFilter filter = new IntentFilter("com.example.todolist.REFRESH_TASKS");
-        
-        // For Android 13+ (API 33+), specify RECEIVER_NOT_EXPORTED since this is internal app communication
+    
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(taskRefreshReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
@@ -359,8 +358,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTasksUpdated() {
         runOnUiThread(() -> {
-            taskService.loadSubTasksForAllTasks();
-            
+            loadSubTasksAndUpdateUI();
+        });
+    }
+    
+    private void loadSubTasksAndUpdateUI() {
+        taskService.loadSubTasksForAllTasks();
+        new android.os.Handler().postDelayed(() -> {
             searchManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),
                     taskService.getFutureTasks(), taskService.getCompletedTodayTasks());
             filterManager.setTaskLists(taskService.getOverdueTasks(), taskService.getTodayTasks(),
@@ -372,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements
                     filterManager.getFilteredFutureTasks(),
                     filterManager.getFilteredCompletedTodayTasks()
             );
-        });
+        }, 100); 
     }
     @Override
     public void onError(String error) {
@@ -503,8 +507,4 @@ public class MainActivity extends AppCompatActivity implements
             super.onBackPressed();
         }
     }
-    
-    /**
-     * DEBUG method to test notifications
-     */
 }

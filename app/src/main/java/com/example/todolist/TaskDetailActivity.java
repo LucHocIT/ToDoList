@@ -276,7 +276,7 @@ public class TaskDetailActivity extends AppCompatActivity implements
     
     @Override
     public void finish() {
-        subTaskManager.cleanupEmptySubTasks();
+        // Removed cleanupEmptySubTasks() - allow empty SubTasks
         super.finish();
     }
     

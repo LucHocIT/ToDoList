@@ -257,13 +257,12 @@ public class AddTaskHandler {
         if (!tempSubTasks.isEmpty()) {
             List<SubTask> validSubTasks = new ArrayList<>();
             for (SubTask subTask : tempSubTasks) {
-                if (subTask.getTitle() != null && !subTask.getTitle().trim().isEmpty()) {
-                    subTask.setTaskId(taskId);
-                    if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
-                        subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
-                    }
-                    validSubTasks.add(subTask);
+                // Allow empty SubTasks - no validation on title
+                subTask.setTaskId(taskId);
+                if (subTask.getId() == null || subTask.getId().startsWith("temp_")) {
+                    subTask.setId(taskId + "_subtask_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 10000)));
                 }
+                validSubTasks.add(subTask);
             }
             if (!validSubTasks.isEmpty()) {
                 newTask.setSubTasks(validSubTasks);
