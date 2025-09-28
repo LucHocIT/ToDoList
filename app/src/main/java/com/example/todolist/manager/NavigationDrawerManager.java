@@ -65,11 +65,8 @@ public class NavigationDrawerManager {
             });
         }
         if (navSharedTasks != null) {
-            navSharedTasks.setOnClickListener(v -> {
-                closeDrawer();
-                // Shared tasks are now shown in main activity - no separate activity needed
-                Toast.makeText(activity, "Tất cả tasks (bao gồm shared tasks) đều hiển thị ở đây", Toast.LENGTH_SHORT).show();
-            });
+            // Ẩn menu "Công việc chia sẻ"
+            navSharedTasks.setVisibility(View.GONE);
         }
         if (navContact != null) {
             navContact.setOnClickListener(v -> {

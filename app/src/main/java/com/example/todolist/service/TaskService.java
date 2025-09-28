@@ -16,6 +16,7 @@ import com.example.todolist.service.sharing.TaskSharingService;
 import com.example.todolist.service.sharing.SharedTaskSyncService;
 import com.example.todolist.widget.WidgetUpdateHelper;
 import com.example.todolist.model.TaskShare;
+import com.example.todolist.model.SharedUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,7 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
 
     public void loadTasks() {
         if (taskCache.isInitialized()) {
+            loadSharedTasks();
             notifyListener();
             return;
         }
@@ -105,6 +107,11 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
                 notifyError("Lỗi tải tasks: " + error);
             }
         });
+    }
+
+    public void forceReloadSharedTasks() {
+        // Force reload shared tasks without checking cache
+        loadSharedTasks();
     }
 
     public void syncAllTasksToFirebase(FirebaseSyncManager.SyncCallback callback) {
@@ -581,8 +588,29 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         TaskSharingService.getInstance().getTaskShare(taskId, new TaskSharingService.TaskShareCallback() {
             @Override
             public void onTaskShareLoaded(TaskShare taskShare) {
-                // Task được share
-                markTaskAsShared(taskId);
+                // Kiểm tra xem có ít nhất 1 user đã ACCEPTED không
+                boolean hasAcceptedUsers = false;
+                if (taskShare.getSharedUsers() != null) {
+                    for (SharedUser sharedUser : taskShare.getSharedUsers()) {
+                        if (SharedUser.STATUS_ACCEPTED.equals(sharedUser.getStatus())) {
+                            hasAcceptedUsers = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Chỉ đánh dấu là shared nếu có ít nhất 1 user đã tham gia
+                if (hasAcceptedUsers) {
+                    markTaskAsShared(taskId);
+                } else {
+                    // Nếu chỉ có user PENDING thì không đánh dấu là shared
+                    Task task = taskCache.getTask(taskId);
+                    if (task != null && task.isShared()) {
+                        task.setShared(false);
+                        taskCache.updateTaskOptimistic(task);
+                        notifyListener();
+                    }
+                }
             }
 
             @Override
@@ -592,10 +620,18 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
                 if (task != null && task.isShared()) {
                     task.setShared(false);
                     taskCache.updateTaskOptimistic(task);
-                    notifyListener();
                 }
             }
         });
+    }
+
+    public void checkAndUpdateAllSharedStatus() {
+        List<Task> allTasks = taskCache.getAllTasks();
+        for (Task task : allTasks) {
+            if (task.getId() != null) {
+                checkAndUpdateSharedStatus(task.getId());
+            }
+        }
     }
     
     private void notifyListener() { if (listener != null) listener.onTasksUpdated(); }

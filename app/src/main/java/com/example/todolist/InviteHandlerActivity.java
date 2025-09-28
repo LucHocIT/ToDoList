@@ -92,15 +92,16 @@ public class InviteHandlerActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     Toast.makeText(InviteHandlerActivity.this, "✅ Đã tham gia task thành công!", Toast.LENGTH_LONG).show();
                     
-                    // Gửi broadcast để refresh tasks trong MainActivity
-                    Intent refreshIntent = new Intent("com.example.todolist.REFRESH_TASKS");
-                    sendBroadcast(refreshIntent);
+                    // Cập nhật shared status của task sau khi accept
+                    com.example.todolist.service.TaskService taskService = new com.example.todolist.service.TaskService(InviteHandlerActivity.this, null);
+                    taskService.checkAndUpdateSharedStatus(taskId);
                     
-                    // Mở TaskDetailActivity
-                    Intent taskIntent = new Intent(InviteHandlerActivity.this, TaskDetailActivity.class);
-                    taskIntent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
-                    taskIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(taskIntent);
+                    // Chuyển về MainActivity với flag để force reload tasks
+                    Intent mainIntent = new Intent(InviteHandlerActivity.this, MainActivity.class);
+                    mainIntent.putExtra("force_reload_tasks", true);
+                    mainIntent.putExtra("joined_task_id", taskId);
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mainIntent);
                     
                     finish();
                 });

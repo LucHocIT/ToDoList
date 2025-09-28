@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements
         handleNotificationIntent();
         handleDrawerIntent();
         handleQuickAddIntent();
+        handleJoinTaskIntent();
         NotificationPermissionHelper.requestNotificationPermission(this);
         setupTaskRefreshReceiver();
     }
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("com.example.todolist.REFRESH_TASKS".equals(intent.getAction())) {
-                    // Refresh tasks when sync completed
+                    taskService.forceReloadSharedTasks();
                     taskService.loadTasks();
                 }
             }
@@ -117,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         taskService.rescheduleAllReminders();
+        
+        // Force reload shared tasks để đảm bảo realtime sync
+        taskService.forceReloadSharedTasks();
+        
         if (themeManager != null) {
             themeManager.applyCurrentTheme();
         }
@@ -292,6 +297,24 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void handleJoinTaskIntent() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra("force_reload_tasks", false)) {
+            String joinedTaskId = intent.getStringExtra("joined_task_id");
+
+            taskService.forceReloadSharedTasks();
+            // Kiểm tra và cập nhật shared status của tất cả tasks
+            taskService.checkAndUpdateAllSharedStatus();
+
+            if (joinedTaskId != null) {
+                Toast.makeText(this, "🎉 Task được chia sẻ đã được thêm vào danh sách!", Toast.LENGTH_LONG).show();
+            }
+
+            intent.removeExtra("force_reload_tasks");
+            intent.removeExtra("joined_task_id");
+        }
+    }
+
     private void handleDrawerIntent() {
         Intent intent = getIntent();
         if (intent != null && intent.getBooleanExtra("open_drawer", false)) {
@@ -317,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent); 
+        handleJoinTaskIntent();
+        
         if ("com.example.todolist.QUICK_ADD_TASK".equals(intent.getAction())) {
             if (addTaskHandler != null) {
                 addTaskHandler.showAddTaskDialog();

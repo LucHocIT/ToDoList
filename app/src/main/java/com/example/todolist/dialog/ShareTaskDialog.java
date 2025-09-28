@@ -221,7 +221,7 @@ public class ShareTaskDialog extends Dialog {
                         // Gửi email mời
                         sendInvitationEmail(email, name);
                         
-                        // Đánh dấu task là shared và gửi broadcast để refresh
+                        // Gửi broadcast để refresh tasks (không tự động đánh dấu là shared)
                         if (context instanceof android.app.Activity) {
                             Intent refreshIntent = new Intent("com.example.todolist.REFRESH_TASKS");
                             context.sendBroadcast(refreshIntent);
@@ -233,7 +233,7 @@ public class ShareTaskDialog extends Dialog {
                             listener.onTaskShared(email, name);
                         }
                         
-                        Toast.makeText(context, "Đã mời thành công và gửi email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Đã mời thành công", Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -281,17 +281,7 @@ public class ShareTaskDialog extends Dialog {
             new AutoEmailService.EmailSendCallback() {
                 @Override
                 public void onEmailSent(String message) {
-                    if (context instanceof android.app.Activity) {
-                        ((android.app.Activity) context).runOnUiThread(() -> {
-                            // Hiển thị dialog thông báo email đã gửi tự động
-                            new androidx.appcompat.app.AlertDialog.Builder(context)
-                                .setTitle("✅ Email đã được gửi!")
-                                .setMessage("📧 " + message + "\n\n" +
-                                          "Người nhận sẽ nhận được email với link tham gia task và có thể click để join ngay lập tức.")
-                                .setPositiveButton("OK", null)
-                                .show();
-                        });
-                    }
+                    // Email đã gửi thành công - không cần hiển thị dialog
                 }
 
                 @Override
