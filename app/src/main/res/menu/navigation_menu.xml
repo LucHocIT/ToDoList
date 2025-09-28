@@ -16,6 +16,11 @@
         android:icon="@drawable/ic_check" />
         
     <item
+        android:id="@+id/nav_shared_tasks"
+        android:title="@string/nav_shared_tasks"
+        android:icon="@drawable/ic_share" />
+        
+    <item
         android:id="@+id/nav_settings"
         android:title="Cài đặt"
         android:icon="@drawable/ic_settings" />

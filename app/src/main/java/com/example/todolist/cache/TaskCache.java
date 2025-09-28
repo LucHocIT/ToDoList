@@ -125,6 +125,11 @@ public class TaskCache {
     }
 
     public Task getTask(String taskId) {
+        if (taskId == null) {
+            // Defensive: log and return null if taskId is null
+            android.util.Log.e("TaskCache", "getTask called with null taskId");
+            return null;
+        }
         return taskMap.get(taskId);
     }
 

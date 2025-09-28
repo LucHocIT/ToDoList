@@ -63,6 +63,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private ImageView iconRepeat;
         private ImageView iconNotes;
         private ImageView iconAttachment;
+        private ImageView iconShare;
         private ImageView iconStar;
         private TextView textSubtaskProgress;
         private LinearLayout taskBackground;
@@ -75,6 +76,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             iconRepeat = itemView.findViewById(R.id.icon_repeat);
             iconNotes = itemView.findViewById(R.id.icon_notes);
             iconAttachment = itemView.findViewById(R.id.icon_attachment);
+            iconShare = itemView.findViewById(R.id.icon_share);
             iconStar = itemView.findViewById(R.id.icon_star);
             textSubtaskProgress = itemView.findViewById(R.id.text_subtask_progress);
             taskBackground = itemView.findViewById(R.id.task_background);
@@ -116,6 +118,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             iconNotes.setVisibility(task.getDescription() != null && 
                                    !task.getDescription().trim().isEmpty() ? View.VISIBLE : View.GONE);
             iconAttachment.setVisibility(task.hasAttachments() ? View.VISIBLE : View.GONE);
+            
+            // Hiển thị icon share cho task được chia sẻ
+            iconShare.setVisibility(task.isShared() ? View.VISIBLE : View.GONE);
             
             // Hiển thị progress subtask
             if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {

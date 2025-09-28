@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "shared_tasks": {
+      ".indexOn": ["taskId", "ownerId"],
+      "$shareId": {
+        ".read": "auth != null && (data.child('ownerId').val() == auth.uid || data.child('sharedUsers').hasChild(auth.uid))",
+        ".write": "auth != null && (data.child('ownerId').val() == auth.uid || (!data.exists() && auth != null))"
+      }
+    },
+    "user_shared_tasks": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    },
+    "tasks": {
+      "$taskId": {
+        ".read": "auth != null && auth.uid == data.child('userId').val()",
+        ".write": "auth != null && auth.uid == data.child('userId').val()"
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId"
+      }
+    }
+  }
+}

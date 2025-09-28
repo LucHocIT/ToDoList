@@ -27,6 +27,7 @@ public class NavigationDrawerManager {
     // Navigation menu items
     private LinearLayout navTheme;
     private LinearLayout navUtilities;
+    private LinearLayout navSharedTasks;
     private LinearLayout navContact;
     private LinearLayout navSettings;
     public NavigationDrawerManager(AppCompatActivity activity, DrawerLayout drawerLayout, NavigationListener listener) {
@@ -39,6 +40,7 @@ public class NavigationDrawerManager {
     private void initNavigationItems() {
         navTheme = activity.findViewById(R.id.nav_theme);
         navUtilities = activity.findViewById(R.id.nav_utilities);
+        navSharedTasks = activity.findViewById(R.id.nav_shared_tasks);
         navContact = activity.findViewById(R.id.nav_contact);
         navSettings = activity.findViewById(R.id.nav_settings);
     }
@@ -60,6 +62,13 @@ public class NavigationDrawerManager {
                 }
                 // Hiá»ƒn thá»‹ WidgetsDialog thay vĂ¬ showUtilitiesDialog
                 showWidgetsPreview();
+            });
+        }
+        if (navSharedTasks != null) {
+            navSharedTasks.setOnClickListener(v -> {
+                closeDrawer();
+                // Shared tasks are now shown in main activity - no separate activity needed
+                Toast.makeText(activity, "Tất cả tasks (bao gồm shared tasks) đều hiển thị ở đây", Toast.LENGTH_SHORT).show();
             });
         }
         if (navContact != null) {
@@ -192,4 +201,6 @@ public class NavigationDrawerManager {
         Intent intent = new Intent(activity, com.example.todolist.SettingsActivity.class);
         activity.startActivity(intent);
     }
+    
+
 }

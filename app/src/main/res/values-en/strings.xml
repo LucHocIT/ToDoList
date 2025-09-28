@@ -278,6 +278,8 @@
     <string name="menu_mark_as_done">Mark as done</string>
     <string name="menu_start_focus">Start focus</string>
     <string name="menu_share">Share</string>
+    <string name="menu_collaborate">Collaborate</string>
+    <string name="nav_shared_tasks">Shared Tasks</string>
     <string name="menu_delete">Delete</string>
     <string name="task_marked_completed">Task marked as completed</string>
     <string name="task_deleted">Task deleted</string>

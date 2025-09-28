@@ -74,6 +74,8 @@ public class AuthManager {
         // Store callback for result handling
         this.pendingCallback = callback;
     }
+
+
     
     private AuthCallback pendingCallback;
     

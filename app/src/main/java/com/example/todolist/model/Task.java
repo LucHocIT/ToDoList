@@ -29,7 +29,8 @@ public class Task implements Serializable {
     private String createdAt;    
     private String updatedAt;
     private Long lastModified;
-    private List<SubTask> subTasks;     
+    private List<SubTask> subTasks;
+    private boolean isShared; // Đánh dấu task có được chia sẻ không     
     public Task() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
@@ -76,6 +77,7 @@ public class Task implements Serializable {
         result.put("updatedAt", updatedAt);
         result.put("lastModified", lastModified);
         result.put("subTasks", subTasks);
+        result.put("isShared", isShared);
         return result;
     }
 
@@ -339,6 +341,12 @@ public class Task implements Serializable {
         }
     }
     
+    public boolean isShared() { return isShared; }
+    public void setShared(boolean shared) { 
+        this.isShared = shared;
+        updateTimestamp();
+    }
+    
     @Override
     public String toString() {
         return "Task{" +
@@ -346,6 +354,7 @@ public class Task implements Serializable {
                 ", title='" + title + '\'' +
                 ", dueDate='" + dueDate + '\'' +
                 ", isCompleted=" + isCompleted +
+                ", isShared=" + isShared +
                 '}';
     }
 }

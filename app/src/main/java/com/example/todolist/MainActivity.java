@@ -37,6 +37,7 @@ import com.example.todolist.util.FirebaseMigrationHelper;
 import com.example.todolist.util.NotificationPermissionHelper;
 import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
+import com.example.todolist.service.sharing.SharedTaskSyncService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.example.todolist.view.BottomNavigationManager;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements
     private UIManager uiManager;
     private NavigationDrawerManager navigationDrawerManager;
     private ThemeManager themeManager;
+    private SharedTaskSyncService sharedTaskSyncService;
     // Core UI Components
     private DrawerLayout drawerLayout;
     private FloatingActionButton fabAdd;
@@ -178,6 +180,32 @@ public class MainActivity extends AppCompatActivity implements
         uiManager = new UIManager(this, fabAdd, btnMenu, findViewById(R.id.text_check_all_completed), this);
         navigationDrawerManager = new NavigationDrawerManager(this, drawerLayout, this);
         themeManager = new ThemeManager(this, this);
+        
+        // Initialize shared task sync service
+        sharedTaskSyncService = SharedTaskSyncService.getInstance();
+        sharedTaskSyncService.initialize(this);
+        sharedTaskSyncService.addUpdateListener(new SharedTaskSyncService.SharedTaskUpdateListener() {
+            @Override
+            public void onSharedTaskUpdated(Task task) {
+                runOnUiThread(() -> taskService.loadTasks());
+            }
+
+            @Override
+            public void onSubTaskUpdated(String taskId, com.example.todolist.model.SubTask subTask) {
+                runOnUiThread(() -> taskService.loadTasks());
+            }
+
+            @Override
+            public void onTaskSharingChanged(com.example.todolist.model.TaskShare taskShare) {
+                runOnUiThread(() -> taskService.loadTasks());
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Lỗi sync shared task: " + error, Toast.LENGTH_SHORT).show());
+            }
+        });
+        
         TaskAdapter[] adapters = uiManager.setupRecyclerViews(
                 findViewById(R.id.recycler_overdue_tasks),
                 findViewById(R.id.recycler_today_tasks),

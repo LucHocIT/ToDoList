@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,6 +61,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     
     @Override
     public int getItemViewType(int position) {
+        if (attachments == null || position >= attachments.size()) {
+            return VIEW_TYPE_FILE;
+        }
         Attachment attachment = attachments.get(position);
         String fileName = attachment.getFileName().toLowerCase();
         
@@ -76,6 +81,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (attachments == null || position >= attachments.size()) {
+            return;
+        }
         Attachment attachment = attachments.get(position);
         if (holder instanceof MediaViewHolder) {
             ((MediaViewHolder) holder).bind(attachment);
@@ -86,11 +94,11 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     
     @Override
     public int getItemCount() {
-        return attachments.size();
+        return attachments != null ? attachments.size() : 0;
     }
     
     public void updateAttachments(List<Attachment> newAttachments) {
-        this.attachments = newAttachments;
+        this.attachments = newAttachments != null ? newAttachments : new ArrayList<>();
         notifyDataSetChanged();
     }
     

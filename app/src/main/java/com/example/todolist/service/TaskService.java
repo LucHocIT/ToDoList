@@ -12,7 +12,10 @@ import com.example.todolist.model.Task;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.service.task.*;
+import com.example.todolist.service.sharing.TaskSharingService;
+import com.example.todolist.service.sharing.SharedTaskSyncService;
 import com.example.todolist.widget.WidgetUpdateHelper;
+import com.example.todolist.model.TaskShare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,7 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     private SubTaskService subTaskService;
     private TaskSyncService syncService;
     private TaskFirebaseUpdateService firebaseUpdateService;
+    private TaskSharingService taskSharingService;
     
     // Firebase sync management
     private AuthManager authManager;
@@ -66,6 +70,8 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         this.authManager.initialize(context);
         this.firebaseSyncManager = FirebaseSyncManager.getInstance();
         this.firebaseSyncManager.initialize(context);
+        this.taskSharingService = TaskSharingService.getInstance();
+        this.taskSharingService.initialize(context);
     }
 
     public void loadTasks() {
@@ -83,7 +89,13 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
                 notifyListener();
 
                 if (authManager.shouldSyncToFirebase()) {
-                    syncService.loadAndMergeFromFirebase(() -> notifyListener());
+                    syncService.loadAndMergeFromFirebase(() -> {
+                        // Load shared tasks after regular sync
+                        loadSharedTasks();
+                        notifyListener();
+                    });
+                } else {
+                    loadSharedTasks();
                 }
             }
 
@@ -97,6 +109,75 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
 
     public void syncAllTasksToFirebase(FirebaseSyncManager.SyncCallback callback) {
         syncService.syncAllTasksToFirebase(callback);
+    }
+
+    private void loadSharedTasks() {
+        if (!authManager.shouldSyncToFirebase()) {
+            return;
+        }
+
+        String currentUserEmail = authManager.getCurrentUserEmail();
+        if (currentUserEmail == null) {
+            return;
+        }
+
+        taskSharingService.getSharedTasksForCurrentUser(new TaskSharingService.SharedTasksCallback() {
+            @Override
+            public void onSharedTasksLoaded(List<TaskShare> sharedTasks) {
+                // Load actual tasks from these shared task IDs
+                for (TaskShare taskShare : sharedTasks) {
+                    loadSharedTask(taskShare.getTaskId());
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e("TaskService", "Lỗi load shared tasks: " + error);
+            }
+        });
+    }
+
+    private void loadSharedTask(String taskId) {
+        SharedTaskSyncService sharedTaskSyncService = SharedTaskSyncService.getInstance();
+        sharedTaskSyncService.initialize(context);
+        
+        sharedTaskSyncService.loadSharedTask(taskId, new SharedTaskSyncService.SharedTaskCallback() {
+            @Override
+            public void onTaskLoaded(Task task) {
+                Log.d("TaskService", "onTaskLoaded callback received. Task is null: " + (task == null) + 
+                                   ", Task ID: " + (task != null ? task.getId() : "N/A") +
+                                   ", Task title: " + (task != null ? task.getTitle() : "N/A"));
+                
+                if (task == null) {
+                    Log.e("TaskService", "Loaded shared task is null");
+                    return;
+                }
+                
+                if (task.getId() == null || task.getId().trim().isEmpty()) {
+                    Log.e("TaskService", "Loaded shared task has null or empty id. Title: " + task.getTitle());
+                    return;
+                }
+                
+                Log.d("TaskService", "Successfully received shared task: " + task.getTitle() + " with ID: " + task.getId() + " (shared: " + task.isShared() + ")");
+                
+                Task existingTask = taskCache.getTask(task.getId());
+                if (existingTask == null) {
+                    Log.d("TaskService", "Adding new shared task to cache: " + task.getId());
+                    taskCache.addTaskOptimistic(task);
+                } else {
+                    Log.d("TaskService", "Updating existing task to shared: " + task.getId());
+                    // Cập nhật task hiện có với trạng thái shared
+                    existingTask.setShared(true);
+                    taskCache.updateTaskOptimistic(existingTask);
+                }
+                notifyListener();
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e("TaskService", "Error loading shared task " + taskId + ": " + error);
+            }
+        });
     }
 
     // CRUD Operations - delegated to TaskSyncService
@@ -482,6 +563,39 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
             task.getSubTasks().forEach(subTask -> subTask.setCompleted(false));
         }
         notifyListener();
+    }
+    
+    /**
+     * Đánh dấu một task là shared
+     */
+    public void markTaskAsShared(String taskId) {
+        Task task = taskCache.getTask(taskId);
+        if (task != null) {
+            task.setShared(true);
+            taskCache.updateTaskOptimistic(task);
+            notifyListener();
+        }
+    }
+
+    public void checkAndUpdateSharedStatus(String taskId) {
+        TaskSharingService.getInstance().getTaskShare(taskId, new TaskSharingService.TaskShareCallback() {
+            @Override
+            public void onTaskShareLoaded(TaskShare taskShare) {
+                // Task được share
+                markTaskAsShared(taskId);
+            }
+
+            @Override
+            public void onError(String error) {
+                // Task không được share, đảm bảo isShared = false
+                Task task = taskCache.getTask(taskId);
+                if (task != null && task.isShared()) {
+                    task.setShared(false);
+                    taskCache.updateTaskOptimistic(task);
+                    notifyListener();
+                }
+            }
+        });
     }
     
     private void notifyListener() { if (listener != null) listener.onTasksUpdated(); }

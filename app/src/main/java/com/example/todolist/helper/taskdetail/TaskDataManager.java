@@ -71,13 +71,21 @@ public class TaskDataManager implements TaskService.TaskUpdateListener {
                 taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
                     @Override
                     public void onSuccess(Task task) {
-                        android.util.Log.d("TaskDataManager", "Task loaded from database: " + task.getTitle() + 
-                            " | lastModified: " + task.getLastModified());
-                        currentTask = task;
-                        activity.runOnUiThread(() -> {
-                            displayTaskData();
-                            callback.onTaskLoaded(currentTask);
-                        });
+                        if (task != null) {
+                            android.util.Log.d("TaskDataManager", "Task loaded from database: " + task.getTitle() + 
+                                " | lastModified: " + task.getLastModified());
+                            currentTask = task;
+                            activity.runOnUiThread(() -> {
+                                displayTaskData();
+                                callback.onTaskLoaded(currentTask);
+                            });
+                        } else {
+                            android.util.Log.e("TaskDataManager", "Task is null for taskId: " + taskId);
+                            activity.runOnUiThread(() -> {
+                                callback.showToast("Không tìm thấy task");
+                                callback.finish();
+                            });
+                        }
                     }
 
                     @Override

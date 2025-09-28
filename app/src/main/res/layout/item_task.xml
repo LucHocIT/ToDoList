@@ -97,6 +97,16 @@
                     android:layout_marginStart="4dp"
                     android:visibility="gone"/>
 
+                <!-- Share icon -->
+                <ImageView
+                    android:id="@+id/icon_share"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_share"
+                    android:layout_marginStart="4dp"
+                    android:tint="#4CAF50"
+                    android:visibility="gone"/>
+
                 <!-- Subtask progress icon with text -->
                 <TextView
                     android:id="@+id/text_subtask_progress"

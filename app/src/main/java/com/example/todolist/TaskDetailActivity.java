@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.adapter.SubTaskAdapter;
+import com.example.todolist.dialog.ShareTaskDialog;
 import com.example.todolist.helper.taskdetail.AttachmentHandler;
 import com.example.todolist.helper.taskdetail.CategoryHandler;
 import com.example.todolist.helper.taskdetail.TaskDataManager;
@@ -305,6 +306,9 @@ public class TaskDetailActivity extends AppCompatActivity implements
             } else if (itemId == R.id.menu_share) {
                 shareTask();
                 return true;
+            } else if (itemId == R.id.menu_collaborate) {
+                showCollaborateDialog();
+                return true;
             } else if (itemId == R.id.menu_delete) {
                 showDeleteConfirmation();
                 return true;
@@ -377,6 +381,28 @@ public class TaskDetailActivity extends AppCompatActivity implements
             taskDataManager.deleteTask(currentTask.getId());
             showToast(getString(R.string.task_deleted));
             finish();
+        }
+    }
+    
+    private void showCollaborateDialog() {
+        if (currentTask != null) {
+            ShareTaskDialog dialog = new ShareTaskDialog(this, currentTask.getId(), currentTask.getTitle(), new ShareTaskDialog.OnShareTaskListener() {
+                @Override
+                public void onTaskShared(String userEmail, String userName) {
+                    showToast("Đã chia sẻ với " + userName);
+                }
+                
+                @Override
+                public void onUserRemoved(String userEmail) {
+                    showToast("Đã xóa người dùng " + userEmail);
+                }
+                
+                @Override
+                public void onError(String error) {
+                    // Toast lỗi bị xóa - không hiển thị toast nữa
+                }
+            });
+            dialog.show();
         }
     }
     

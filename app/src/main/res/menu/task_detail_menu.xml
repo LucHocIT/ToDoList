@@ -17,6 +17,11 @@
         android:icon="@drawable/ic_share" />
     
     <item
+        android:id="@+id/menu_collaborate"
+        android:title="@string/menu_collaborate"
+        android:icon="@drawable/ic_share" />
+    
+    <item
         android:id="@+id/menu_delete"
         android:title="@string/menu_delete"
         android:icon="@drawable/ic_delete" />
