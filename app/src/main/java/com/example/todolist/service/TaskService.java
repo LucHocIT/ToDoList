@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.todolist.cache.TaskCache;
+import com.example.todolist.cache.SharedTaskCacheManager;
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.manager.FirebaseSyncManager;
 import com.example.todolist.model.SubTask;
@@ -50,7 +51,10 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     
     // Firebase sync management
     private AuthManager authManager;
-    private FirebaseSyncManager firebaseSyncManager; 
+    private FirebaseSyncManager firebaseSyncManager;
+    
+    // Shared task cache management
+    private SharedTaskCacheManager sharedTaskCacheManager; 
 
     public TaskService(Context context, TaskUpdateListener listener) {
         this.context = context;
@@ -73,6 +77,8 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         this.firebaseSyncManager.initialize(context);
         this.taskSharingService = TaskSharingService.getInstance();
         this.taskSharingService.initialize(context);
+        this.sharedTaskCacheManager = SharedTaskCacheManager.getInstance();
+        this.sharedTaskCacheManager.initialize(context);
     }
 
     public void loadTasks() {
@@ -116,6 +122,9 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
 
     public void syncAllTasksToFirebase(FirebaseSyncManager.SyncCallback callback) {
         syncService.syncAllTasksToFirebase(callback);
+        
+        // Đồng bộ shared tasks pending
+        sharedTaskCacheManager.syncPendingTasks();
     }
 
     private void loadSharedTasks() {
@@ -145,41 +154,15 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     }
 
     private void loadSharedTask(String taskId) {
-        SharedTaskSyncService sharedTaskSyncService = SharedTaskSyncService.getInstance();
-        sharedTaskSyncService.initialize(context);
+        Log.d("TaskService", "Loading shared task via SharedTaskCacheManager: " + taskId);
         
-        sharedTaskSyncService.loadSharedTask(taskId, new SharedTaskSyncService.SharedTaskCallback() {
+        sharedTaskCacheManager.loadSharedTask(taskId, new BaseRepository.DatabaseCallback<Task>() {
             @Override
-            public void onTaskLoaded(Task task) {
-                Log.d("TaskService", "onTaskLoaded callback received. Task is null: " + (task == null) + 
-                                   ", Task ID: " + (task != null ? task.getId() : "N/A") +
-                                   ", Task title: " + (task != null ? task.getTitle() : "N/A"));
-                
-                if (task == null) {
-                    Log.e("TaskService", "Loaded shared task is null");
-                    return;
-                }
-                
-                if (task.getId() == null || task.getId().trim().isEmpty()) {
-                    Log.e("TaskService", "Loaded shared task has null or empty id. Title: " + task.getTitle());
-                    return;
-                }
-                
-                Log.d("TaskService", "Successfully received shared task: " + task.getTitle() + " with ID: " + task.getId() + " (shared: " + task.isShared() + ")");
-                
-                Task existingTask = taskCache.getTask(task.getId());
-                if (existingTask == null) {
-                    Log.d("TaskService", "Adding new shared task to cache: " + task.getId());
-                    taskCache.addTaskOptimistic(task);
-                } else {
-                    Log.d("TaskService", "Updating existing task to shared: " + task.getId());
-                    // Cập nhật task hiện có với trạng thái shared
-                    existingTask.setShared(true);
-                    taskCache.updateTaskOptimistic(existingTask);
-                }
+            public void onSuccess(Task task) {
+                Log.d("TaskService", "Successfully loaded shared task: " + task.getTitle() + " with ID: " + task.getId());
                 notifyListener();
             }
-
+            
             @Override
             public void onError(String error) {
                 Log.e("TaskService", "Error loading shared task " + taskId + ": " + error);
@@ -225,7 +208,14 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
     }
     
     public void updateTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
-        android.util.Log.d("TaskService", "updateTask: task.id=" + task.getId() + ", has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        android.util.Log.d("TaskService", "updateTask: task.id=" + task.getId() + ", shared=" + task.isShared() + ", has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks");
+        
+        // Kiểm tra nếu là shared task thì dùng SharedTaskCacheManager
+        if (task.isShared() || sharedTaskCacheManager.isSharedTask(task.getId())) {
+            updateSharedTask(task, callback);
+            return;
+        }
+        
         if (task.getSubTasks() != null) {
             for (int i = 0; i < task.getSubTasks().size(); i++) {
                 com.example.todolist.model.SubTask st = task.getSubTasks().get(i);
@@ -249,6 +239,33 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
         android.util.Log.d("TaskService", "updateTask: final task has " + (task.getSubTasks() != null ? task.getSubTasks().size() : 0) + " subtasks before sync");
         syncService.performTaskOperation(task, TaskSyncService.TaskOperation.UPDATE, 
             convertBooleanCallback(callback));
+    }
+    
+    /**
+     * Cập nhật shared task với cơ chế: Local → Cache → Firebase
+     */
+    private void updateSharedTask(Task task, BaseRepository.DatabaseCallback<Boolean> callback) {
+        Log.d("TaskService", "Updating shared task: " + task.getId());
+        
+        // Đảm bảo task được đánh dấu là shared
+        task.setShared(true);
+        
+        sharedTaskCacheManager.updateSharedTask(task, new BaseRepository.DatabaseCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.d("TaskService", "Shared task updated successfully: " + task.getId());
+                if (callback != null) callback.onSuccess(true);
+                
+                // Trigger UI update
+                notifyListener();
+            }
+            
+            @Override
+            public void onError(String error) {
+                Log.e("TaskService", "Failed to update shared task: " + error);
+                if (callback != null) callback.onError(error);
+            }
+        });
     }
     
     private void loadSubTasksForTaskSync(Task task) {

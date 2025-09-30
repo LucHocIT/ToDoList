@@ -37,6 +37,7 @@ import com.example.todolist.util.FirebaseMigrationHelper;
 import com.example.todolist.util.NotificationPermissionHelper;
 import com.example.todolist.util.SortType;
 import com.example.todolist.util.TaskActionsDialog;
+import com.example.todolist.cache.SharedTaskCacheManager;
 import com.example.todolist.service.sharing.SharedTaskSyncService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements
     private UIManager uiManager;
     private NavigationDrawerManager navigationDrawerManager;
     private ThemeManager themeManager;
+    private SharedTaskCacheManager sharedTaskCacheManager;
     private SharedTaskSyncService sharedTaskSyncService;
     // Core UI Components
     private DrawerLayout drawerLayout;
