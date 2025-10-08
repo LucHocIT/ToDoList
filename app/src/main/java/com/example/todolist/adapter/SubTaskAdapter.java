@@ -71,6 +71,8 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         CheckBox checkBoxSubTask;
         EditText editTextSubTask;
         ImageView btnDeleteSubTask;
+        private android.os.Handler textChangeHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+        private Runnable textChangeRunnable;
         
         public SubTaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,6 +82,11 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         
         public void bind(SubTask subTask) {
+            // Cancel any pending text change callbacks
+            if (textChangeRunnable != null) {
+                textChangeHandler.removeCallbacks(textChangeRunnable);
+            }
+            
             checkBoxSubTask.setChecked(subTask.isCompleted());
             editTextSubTask.setText(subTask.getTitle());
             
@@ -118,16 +125,40 @@ public class SubTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
             
             // Text change listener (chỉ hoạt động khi task chưa hoàn thành)
-            editTextSubTask.setOnFocusChangeListener(null);
+            if (editTextSubTask.getTag() instanceof android.text.TextWatcher) {
+                editTextSubTask.removeTextChangedListener((android.text.TextWatcher) editTextSubTask.getTag());
+            }
+            
             if (!isTaskCompleted) {
-                editTextSubTask.setOnFocusChangeListener((v, hasFocus) -> {
-                    if (!hasFocus && listener != null) {
-                        String newText = editTextSubTask.getText().toString().trim();
-                        if (!newText.equals(subTask.getTitle())) {
-                            listener.onSubTaskTextChanged(subTask, newText);
-                        }
+                android.text.TextWatcher textWatcher = new android.text.TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                     }
-                });
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(android.text.Editable s) {
+                        // Cancel previous callback
+                        if (textChangeRunnable != null) {
+                            textChangeHandler.removeCallbacks(textChangeRunnable);
+                        }
+
+                        textChangeRunnable = () -> {
+                            String newText = s.toString().trim();
+                            if (!newText.equals(subTask.getTitle()) && listener != null) {
+                                android.util.Log.d("SubTaskAdapter", "Text changed for subtask, saving: " + newText);
+                                listener.onSubTaskTextChanged(subTask, newText);
+                            }
+                        };
+                        textChangeHandler.postDelayed(textChangeRunnable, 500);
+                    }
+                };
+                
+                editTextSubTask.addTextChangedListener(textWatcher);
+                editTextSubTask.setTag(textWatcher);
             }
             
             // Delete button listener (chỉ hoạt động khi task chưa hoàn thành)
