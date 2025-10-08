@@ -206,7 +206,7 @@ public class SharedTaskCacheManager {
             if (callback != null) callback.onSuccess(cachedTask);
             return;
         }
-        
+
         // Load từ Firebase
         sharedTaskSyncService.loadSharedTask(taskId, new SharedTaskSyncService.SharedTaskCallback() {
             @Override
@@ -216,10 +216,13 @@ public class SharedTaskCacheManager {
                 // Cập nhật TaskCache chính
                 taskCache.updateTaskOptimistic(task);
                 notifyTaskUpdated(task);
-                
+
+                // Khởi tạo listener real-time cho shared task
+                sharedTaskSyncService.startListeningForTaskUpdates(taskId);
+
                 if (callback != null) callback.onSuccess(task);
             }
-            
+
             @Override
             public void onError(String error) {
                 Log.e(TAG, "Failed to load shared task: " + error);

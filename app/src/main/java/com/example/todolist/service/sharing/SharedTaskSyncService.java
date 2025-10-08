@@ -346,6 +346,16 @@ public class SharedTaskSyncService {
         Log.d(TAG, "Stopped all listeners");
     }
 
+    /**
+     * Dừng lắng nghe updates cho tất cả shared tasks
+     */
+    public void stopListeningForAllTasks() {
+        for (String taskId : new ArrayList<>(listeningTasks)) {
+            stopListeningForTaskUpdates(taskId);
+        }
+        Log.d(TAG, "Stopped listening for all shared tasks");
+    }
+
     private Task convertToTask(DataSnapshot dataSnapshot) {
         try {
             Log.d(TAG, "Converting task from dataSnapshot. Key: " + dataSnapshot.getKey());

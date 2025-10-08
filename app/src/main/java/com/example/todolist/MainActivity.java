@@ -549,6 +549,9 @@ public class MainActivity extends AppCompatActivity implements
         if (categoryService != null) {
             categoryService.cleanup();
         }
+        if (sharedTaskSyncService != null) {
+            sharedTaskSyncService.stopListeningForAllTasks();
+        }
         if (taskRefreshReceiver != null) {
             unregisterReceiver(taskRefreshReceiver);
         }

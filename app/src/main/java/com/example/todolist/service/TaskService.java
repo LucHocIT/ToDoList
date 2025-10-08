@@ -143,6 +143,8 @@ public class TaskService implements TaskCache.TaskCacheListener, TaskRepeatServi
                 // Load actual tasks from these shared task IDs
                 for (TaskShare taskShare : sharedTasks) {
                     loadSharedTask(taskShare.getTaskId());
+                    // Khởi tạo listener real-time cho shared task
+                    SharedTaskSyncService.getInstance().startListeningForTaskUpdates(taskShare.getTaskId());
                 }
             }
 
