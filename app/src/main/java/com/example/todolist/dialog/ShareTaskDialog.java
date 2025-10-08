@@ -365,15 +365,37 @@ public class ShareTaskDialog extends Dialog {
             .setTitle("Xóa quyền truy cập")
             .setMessage("Bạn có chắc muốn xóa quyền truy cập của " + user.getName() + "?")
             .setPositiveButton("Xóa", (dialog, which) -> {
-                // TODO: Implement remove user từ Firebase
-                sharedUsers.remove(user);
-                updateSharedUsersView();
-                
-                if (listener != null) {
-                    listener.onUserRemoved(user.getEmail());
-                }
-                
-                Toast.makeText(context, "Đã xóa quyền truy cập", Toast.LENGTH_SHORT).show();
+                taskSharingService.removeUserFromSharedTask(taskId, user.getEmail(), new TaskSharingService.SharingCallback() {
+                    @Override
+                    public void onSuccess(String message) {
+                        if (context instanceof android.app.Activity) {
+                            ((android.app.Activity) context).runOnUiThread(() -> {
+
+                                sharedUsers.remove(user);
+                                updateSharedUsersView();
+                                
+                                // Gửi broadcast để user bị xóa refresh và mất task
+                                Intent refreshIntent = new Intent("com.example.todolist.REFRESH_TASKS");
+                                context.sendBroadcast(refreshIntent);
+                                
+                                if (listener != null) {
+                                    listener.onUserRemoved(user.getEmail());
+                                }
+                                
+                                Toast.makeText(context, "Đã xóa quyền truy cập của " + user.getName(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        if (context instanceof android.app.Activity) {
+                            ((android.app.Activity) context).runOnUiThread(() -> {
+                                Toast.makeText(context, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                });
             })
             .setNegativeButton("Hủy", null)
             .show();
@@ -381,10 +403,47 @@ public class ShareTaskDialog extends Dialog {
     
     private void updateUserPermission(SharedUser user, boolean canEdit) {
         user.setCanEdit(canEdit);
-        // TODO: Cập nhật permission trong Firebase
-        
-        String message = canEdit ? "Đã cấp quyền chỉnh sửa" : "Đã thu hồi quyền chỉnh sửa";
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        taskSharingService.getTaskShare(taskId, new TaskSharingService.TaskShareCallback() {
+            @Override
+            public void onTaskShareLoaded(TaskShare taskShare) {
+                // Tìm và cập nhật user trong TaskShare
+                SharedUser sharedUser = taskShare.getSharedUser(user.getEmail());
+                if (sharedUser != null) {
+                    sharedUser.setCanEdit(canEdit);
+                    
+                    // Cập nhật vào Firebase
+                    taskSharingService.updateTaskShare(taskShare, new TaskSharingService.SharingCallback() {
+                        @Override
+                        public void onSuccess(String message) {
+                            if (context instanceof android.app.Activity) {
+                                ((android.app.Activity) context).runOnUiThread(() -> {
+                                    String msg = canEdit ? "Đã cấp quyền chỉnh sửa cho " + user.getName() : "Đã thu hồi quyền chỉnh sửa của " + user.getName();
+                                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            if (context instanceof android.app.Activity) {
+                                ((android.app.Activity) context).runOnUiThread(() -> {
+                                    Toast.makeText(context, "Lỗi cập nhật quyền: " + error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (context instanceof android.app.Activity) {
+                    ((android.app.Activity) context).runOnUiThread(() -> {
+                        Toast.makeText(context, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
     }
     
     private void updateSharedUsersView() {

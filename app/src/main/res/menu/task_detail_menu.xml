@@ -12,11 +12,6 @@
         android:icon="@drawable/ic_play" />
     
     <item
-        android:id="@+id/menu_share"
-        android:title="@string/menu_share"
-        android:icon="@drawable/ic_share" />
-    
-    <item
         android:id="@+id/menu_collaborate"
         android:title="@string/menu_collaborate"
         android:icon="@drawable/ic_share" />

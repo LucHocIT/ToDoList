@@ -344,6 +344,56 @@ public class TaskSharingService {
     }
 
 
+    public void removeUserFromSharedTask(String taskId, String userEmail, SharingCallback callback) {
+        // Kiểm tra và khởi tạo authManager nếu cần
+        if (authManager == null) {
+            authManager = AuthManager.getInstance();
+            if (context != null) {
+                authManager.initialize(context);
+            }
+        }
+        
+        String currentUserEmail = authManager != null ? authManager.getCurrentUserEmail() : null;
+
+        getTaskShare(taskId, new TaskShareCallback() {
+            @Override
+            public void onTaskShareLoaded(TaskShare taskShare) {
+                // Kiểm tra quyền owner
+                if (!taskShare.isOwner(currentUserEmail)) {
+                    if (callback != null) callback.onError("Only owner can remove users");
+                    return;
+                }
+
+                // Xóa user khỏi danh sách
+                taskShare.removeSharedUser(userEmail);
+
+                // Cập nhật trong Firebase
+                database.child(SHARED_TASKS_NODE).child(taskShare.getId()).setValue(taskShare.toMap())
+                        .addOnSuccessListener(aVoid -> {
+                            // Xóa reference từ user_shared_tasks của user bị xóa
+                            String sanitizedEmail = sanitizeEmail(userEmail);
+                            database.child(USER_SHARED_TASKS_NODE).child(sanitizedEmail).child(taskShare.getId()).removeValue()
+                                    .addOnSuccessListener(aVoid2 -> {
+                                        if (callback != null) callback.onSuccess("User removed successfully");
+                                        Log.d(TAG, "User removed from shared task: " + userEmail);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        if (callback != null) callback.onError(e.getMessage());
+                                    });
+                        })
+                        .addOnFailureListener(e -> {
+                            if (callback != null) callback.onError(e.getMessage());
+                        });
+            }
+
+            @Override
+            public void onError(String error) {
+                if (callback != null) callback.onError(error);
+            }
+        });
+    }
+
+
     public void removeTaskSharing(String taskId, SharingCallback callback) {
         // Kiểm tra và khởi tạo authManager nếu cần
         if (authManager == null) {

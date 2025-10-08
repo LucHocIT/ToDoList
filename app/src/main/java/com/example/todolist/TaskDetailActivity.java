@@ -24,10 +24,13 @@ import com.example.todolist.helper.taskdetail.CategoryHandler;
 import com.example.todolist.helper.taskdetail.TaskDataManager;
 import com.example.todolist.helper.taskdetail.UIHelper;
 import com.example.todolist.helper.subtask.SubTaskManager;
+import com.example.todolist.manager.AuthManager;
 import com.example.todolist.model.SubTask;
 import com.example.todolist.model.Task;
+import com.example.todolist.model.TaskShare;
 import com.example.todolist.service.task.SubTaskService;
 import com.example.todolist.service.TaskService;
+import com.example.todolist.service.sharing.TaskSharingService;
 import com.example.todolist.util.TimeSelectionDialog;
 public class TaskDetailActivity extends AppCompatActivity implements 
     AttachmentHandler.TaskUpdateCallback, 
@@ -65,6 +68,8 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private UIHelper uiHelper;
     private SubTaskManager subTaskManager;
     private TaskService taskService;
+    private AuthManager authManager;
+    private TaskSharingService taskSharingService;
     
     private Task currentTask; 
     @Override
@@ -117,6 +122,11 @@ public class TaskDetailActivity extends AppCompatActivity implements
         
         uiHelper = new UIHelper(this);
         uiHelper.initViews(layoutDatePicker, spinnerCategory);
+        authManager = AuthManager.getInstance();
+        authManager.initialize(this);
+        
+        taskSharingService = TaskSharingService.getInstance();
+        taskSharingService.initialize(this);
     }
     
     private void loadTaskData() {
@@ -286,9 +296,20 @@ public class TaskDetailActivity extends AppCompatActivity implements
     private void showOptionsMenu(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenuInflater().inflate(R.menu.task_detail_menu, popup.getMenu());
+        
+        // Ẩn các option cho task đã hoàn thành
         if (currentTask != null && currentTask.isCompleted()) {
             popup.getMenu().findItem(R.id.menu_mark_as_done).setVisible(false);
             popup.getMenu().findItem(R.id.menu_start_focus).setVisible(false);
+        }
+        
+        // Kiểm tra quyền owner để hiển thị menu "Chia sẻ cộng tác"
+        if (currentTask != null) {
+            checkOwnershipAndShowMenu(popup, currentTask.getId());
+        } else {
+            // Nếu không có task, ẩn menu collaborate
+            popup.getMenu().findItem(R.id.menu_collaborate).setVisible(false);
+            popup.show();
         }
         
         popup.setOnMenuItemClickListener(item -> {
@@ -303,9 +324,6 @@ public class TaskDetailActivity extends AppCompatActivity implements
                     startFocusSession();
                 }
                 return true;
-            } else if (itemId == R.id.menu_share) {
-                shareTask();
-                return true;
             } else if (itemId == R.id.menu_collaborate) {
                 showCollaborateDialog();
                 return true;
@@ -315,8 +333,27 @@ public class TaskDetailActivity extends AppCompatActivity implements
             }
             return false;
         });
+    }
+    
+    private void checkOwnershipAndShowMenu(PopupMenu popup, String taskId) {
+        String currentUserEmail = authManager.getCurrentUserEmail();
         
-        popup.show();
+        taskSharingService.getTaskShare(taskId, new TaskSharingService.TaskShareCallback() {
+            @Override
+            public void onTaskShareLoaded(TaskShare taskShare) {
+                // Task đã được share, kiểm tra owner
+                boolean isOwner = taskShare.isOwner(currentUserEmail);
+                popup.getMenu().findItem(R.id.menu_collaborate).setVisible(isOwner);
+                popup.show();
+            }
+
+            @Override
+            public void onError(String error) {
+                // Task chưa được share, user hiện tại là owner (người tạo task)
+                popup.getMenu().findItem(R.id.menu_collaborate).setVisible(true);
+                popup.show();
+            }
+        });
     }
     
     private void markTaskAsCompleted() {
@@ -347,23 +384,6 @@ public class TaskDetailActivity extends AppCompatActivity implements
                 }
             });
             dialog.show();
-        }
-    }
-    
-    private void shareTask() {
-        if (currentTask != null) {
-            String shareText = "Nhiệm vụ: " + currentTask.getTitle();
-            if (currentTask.getDescription() != null && !currentTask.getDescription().isEmpty()) {
-                shareText += "\nMô tả: " + currentTask.getDescription();
-            }
-            if (currentTask.getDueDate() != null) {
-                shareText += "\nHạn: " + currentTask.getDueDate();
-            }
-            
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_task_title)));
         }
     }
     
