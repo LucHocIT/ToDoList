@@ -24,10 +24,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.R;
 import com.example.todolist.adapter.SharedUsersAdapter;
 import com.example.todolist.model.SharedUser;
+import com.example.todolist.model.Task;
 import com.example.todolist.model.TaskShare;
 import com.example.todolist.service.sharing.TaskSharingService;
 import com.example.todolist.service.AutoEmailService;
+import com.example.todolist.service.TaskService;
 import com.example.todolist.manager.AuthManager;
+import com.example.todolist.notification.ReminderScheduler;
+import com.example.todolist.repository.BaseRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +61,8 @@ public class ShareTaskDialog extends Dialog {
     private TaskSharingService taskSharingService;
     private AutoEmailService autoEmailService;
     private AuthManager authManager;
+    private TaskService taskService;
+    private ReminderScheduler reminderScheduler;
     
     public interface OnShareTaskListener {
         void onTaskShared(String userEmail, String userName);
@@ -77,6 +83,8 @@ public class ShareTaskDialog extends Dialog {
         this.autoEmailService.initialize(context);
         this.authManager = AuthManager.getInstance();
         this.authManager.initialize(context);
+        this.taskService = new TaskService(context, null);
+        this.reminderScheduler = new ReminderScheduler(context);
     }
 
     @Override
@@ -220,6 +228,9 @@ public class ShareTaskDialog extends Dialog {
                         
                         // Gửi email mời
                         sendInvitationEmail(email, name);
+                        
+                        // Schedule notification cho user mới được thêm (nếu task có reminder)
+                        scheduleNotificationForNewUser(newUser);
                         
                         // Gửi broadcast để refresh tasks (không tự động đánh dấu là shared)
                         if (context instanceof android.app.Activity) {
@@ -374,6 +385,9 @@ public class ShareTaskDialog extends Dialog {
                                 sharedUsers.remove(user);
                                 updateSharedUsersView();
                                 
+                                // Cancel notifications cho user bị xóa
+                                reminderScheduler.cancelNotificationForUser(taskId, user.getEmail());
+                                
                                 // Gửi broadcast để user bị xóa refresh và mất task
                                 Intent refreshIntent = new Intent("com.example.todolist.REFRESH_TASKS");
                                 context.sendBroadcast(refreshIntent);
@@ -463,5 +477,28 @@ public class ShareTaskDialog extends Dialog {
             this.sharedUsers.addAll(users);
             updateSharedUsersView();
         }
+    }
+    
+    /**
+     * Schedule notification cho user mới được thêm vào shared task
+     */
+    private void scheduleNotificationForNewUser(SharedUser newUser) {
+        // Lấy task để kiểm tra xem có reminder không
+        taskService.getTaskById(taskId, new BaseRepository.RepositoryCallback<Task>() {
+            @Override
+            public void onSuccess(Task task) {
+                if (task != null && task.isHasReminder() && !task.isCompleted()) {
+                    // Schedule reminder và due notification cho user mới
+                    reminderScheduler.scheduleReminderForUser(task, newUser);
+                    reminderScheduler.scheduleDueForUser(task, newUser);
+                    android.util.Log.d("ShareTaskDialog", "Scheduled notifications for new user: " + newUser.getEmail());
+                }
+            }
+            
+            @Override
+            public void onError(String error) {
+                android.util.Log.e("ShareTaskDialog", "Error getting task for notification: " + error);
+            }
+        });
     }
 }

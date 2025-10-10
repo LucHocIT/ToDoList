@@ -67,7 +67,16 @@ dependencies {
     
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    
+    // Testing dependencies
     testImplementation(libs.junit)
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:rules:1.5.0")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
