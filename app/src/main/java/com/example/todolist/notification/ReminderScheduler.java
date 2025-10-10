@@ -59,8 +59,10 @@ public class ReminderScheduler {
             Calendar reminderCal = (Calendar) dueCal.clone();
             int minutesBefore = getReminderMinutes(reminderType);
             Log.d(TAG, "Minutes before due: " + minutesBefore);
+            boolean isSpecificTime = reminderType.matches("\\d{2}:\\d{2}");
             
             if (minutesBefore > 0) {
+                // Reminder type is relative (e.g., "5 phút trước")
                 reminderCal.add(Calendar.MINUTE, -minutesBefore);
                 
                 Calendar now = Calendar.getInstance();
@@ -70,6 +72,25 @@ public class ReminderScheduler {
                 } else {
                     Log.d(TAG, "Reminder time is in the past, skipping");
                 }
+            } else if (isSpecificTime) {
+                try {
+                    String reminderDateTimeString = dueDate + " " + reminderType;
+                    Date reminderDateTime = dateTimeFormat.parse(reminderDateTimeString);
+                    if (reminderDateTime != null) {
+                        reminderCal.setTime(reminderDateTime);
+                        Calendar now = Calendar.getInstance();
+                        if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
+                            Log.d(TAG, "Scheduling specific time reminder notification at: " + reminderCal.getTime());
+                            scheduleReminderNotification(task, reminderCal.getTimeInMillis(), reminderType);
+                        } else {
+                            Log.d(TAG, "Specific reminder time is in the past, skipping");
+                        }
+                    }
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error parsing specific reminder time: " + e.getMessage());
+                }
+            } else {
+                Log.d(TAG, "No valid reminder type, skipping reminder notification");
             }
             
             // Schedule due notification
