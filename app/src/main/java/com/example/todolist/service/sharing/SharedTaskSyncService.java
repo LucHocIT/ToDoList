@@ -1,7 +1,6 @@
 package com.example.todolist.service.sharing;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.model.SubTask;
@@ -23,7 +22,6 @@ import java.util.concurrent.Executors;
  * Service để đồng bộ real-time các thay đổi trên shared tasks
  */
 public class SharedTaskSyncService {
-    private static final String TAG = "SharedTaskSyncService";
     private static final String SHARED_TASKS_NODE = "shared_tasks";
     private static final String USERS_NODE = "users";
     private static final String TASKS_NODE = "tasks";
@@ -110,7 +108,6 @@ public class SharedTaskSyncService {
 
             @Override
             public void onError(String error) {
-                Log.d(TAG, "Task not shared: " + taskId);
             }
         });
     }
@@ -131,7 +128,6 @@ public class SharedTaskSyncService {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Error listening to task updates", databaseError.toException());
                 notifyError(databaseError.getMessage());
             }
         };
@@ -139,8 +135,6 @@ public class SharedTaskSyncService {
         database.child(userPath).addValueEventListener(taskListener);
         firebaseListeners.add(taskListener);
         listeningTasks.add(taskId);
-        
-        Log.d(TAG, "Started listening for task updates: " + taskId);
     }
 
     /**
@@ -153,7 +147,6 @@ public class SharedTaskSyncService {
             // database.removeEventListener(firebaseListeners.get(index));
             listeningTasks.remove(index);
             firebaseListeners.remove(index);
-            Log.d(TAG, "Stopped listening for task updates: " + taskId);
         }
     }
 
@@ -187,10 +180,8 @@ public class SharedTaskSyncService {
                 database.child(ownerPath).setValue(taskData)
                         .addOnSuccessListener(aVoid -> {
                             if (callback != null) callback.onSuccess("Task updated successfully");
-                            Log.d(TAG, "Shared task updated: " + task.getId());
                         })
                         .addOnFailureListener(e -> {
-                            Log.e(TAG, "Error updating shared task", e);
                             if (callback != null) callback.onError(e.getMessage());
                         });
             }
@@ -277,51 +268,37 @@ public class SharedTaskSyncService {
      * Load shared task từ Firebase
      */
     public void loadSharedTask(String taskId, SharedTaskCallback callback) {
-        Log.d(TAG, "Loading shared task: " + taskId);
         TaskSharingService.getInstance().getTaskShare(taskId, new TaskSharingService.TaskShareCallback() {
             @Override
             public void onTaskShareLoaded(TaskShare taskShare) {
                 String ownerPath = USERS_NODE + "/" + sanitizeEmail(taskShare.getOwnerEmail()) + "/" + TASKS_NODE + "/" + taskId;
-                Log.d(TAG, "Looking for task at path: " + ownerPath);
                 
                 database.child(ownerPath).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "DataSnapshot exists: " + dataSnapshot.exists() + " for taskId: " + taskId);
                         if (dataSnapshot.exists()) {
                             Task task = convertToTask(dataSnapshot);
-                            Log.d(TAG, "Task after conversion - Is null: " + (task == null) + 
-                                      ", Has ID: " + (task != null ? (task.getId() != null) : "N/A") +
-                                      ", ID value: " + (task != null ? task.getId() : "N/A"));
                             
                             if (task != null && task.getId() != null && !task.getId().trim().isEmpty()) {
                                 // Đánh dấu task này là shared
                                 task.setShared(true);
-                                Log.d(TAG, "Successfully loaded shared task: " + task.getTitle() + " with ID: " + task.getId());
                                 
                                 // Verify task is still valid after setShared
                                 if (task.getId() != null && !task.getId().trim().isEmpty()) {
-                                    Log.d(TAG, "Task validated before callback: " + task.getId());
                                     if (callback != null) callback.onTaskLoaded(task);
                                 } else {
-                                    Log.e(TAG, "Task ID became null after setShared!");
                                     if (callback != null) callback.onError("Task ID became null after setShared");
                                 }
                             } else {
-                                Log.e(TAG, "Failed to convert task data for taskId: " + taskId + 
-                                          ". Task is null: " + (task == null) + 
-                                          ", Task ID is null: " + (task != null && task.getId() == null));
                                 if (callback != null) callback.onError("Failed to convert task data");
                             }
                         } else {
-                            Log.e(TAG, "Task not found at path: " + ownerPath);
                             if (callback != null) callback.onError("Task not found");
                         }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG, "Error loading shared task", databaseError.toException());
                         if (callback != null) callback.onError(databaseError.getMessage());
                     }
                 });
@@ -329,7 +306,6 @@ public class SharedTaskSyncService {
 
             @Override
             public void onError(String error) {
-                Log.e(TAG, "Error getting TaskShare for taskId " + taskId + ": " + error);
                 if (callback != null) callback.onError("Task is not shared: " + error);
             }
         });
@@ -343,7 +319,6 @@ public class SharedTaskSyncService {
         firebaseListeners.clear();
         listeningTasks.clear();
         updateListeners.clear();
-        Log.d(TAG, "Stopped all listeners");
     }
 
     /**
@@ -353,28 +328,22 @@ public class SharedTaskSyncService {
         for (String taskId : new ArrayList<>(listeningTasks)) {
             stopListeningForTaskUpdates(taskId);
         }
-        Log.d(TAG, "Stopped listening for all shared tasks");
     }
 
     private Task convertToTask(DataSnapshot dataSnapshot) {
         try {
-            Log.d(TAG, "Converting task from dataSnapshot. Key: " + dataSnapshot.getKey());
-            
             String taskId = dataSnapshot.getKey();
             if (taskId == null || taskId.trim().isEmpty()) {
-                Log.e(TAG, "Task ID from dataSnapshot.getKey() is null or empty");
                 return null;
             }
             
             Task task = new Task();
             task.setId(taskId);
             if (task.getId() == null || task.getId().trim().isEmpty()) {
-                Log.e(TAG, "Task ID became null after setting! Original: " + taskId);
                 return null;
             }
             
             String title = dataSnapshot.child("title").getValue(String.class);
-            Log.d(TAG, "Task title: " + title);
             task.setTitle(title);
             
             task.setDescription(dataSnapshot.child("description").getValue(String.class));
@@ -418,14 +387,11 @@ public class SharedTaskSyncService {
             task.setSubTasks(subTasks);
 
             if (task.getId() == null || task.getId().trim().isEmpty()) {
-                Log.e(TAG, "Task ID is null at end of conversion! Title: " + task.getTitle());
                 return null;
             }
 
-            Log.d(TAG, "Successfully converted task: " + task.getId() + " - " + task.getTitle());
             return task;
         } catch (Exception e) {
-            Log.e(TAG, "Error converting to Task", e);
             return null;
         }
     }
@@ -449,7 +415,6 @@ public class SharedTaskSyncService {
 
             return subTask;
         } catch (Exception e) {
-            Log.e(TAG, "Error converting to SubTask", e);
             return null;
         }
     }
@@ -459,7 +424,6 @@ public class SharedTaskSyncService {
             try {
                 listener.onSharedTaskUpdated(task);
             } catch (Exception e) {
-                Log.e(TAG, "Error notifying task update", e);
             }
         }
     }
@@ -469,7 +433,6 @@ public class SharedTaskSyncService {
             try {
                 listener.onError(error);
             } catch (Exception e) {
-                Log.e(TAG, "Error notifying error", e);
             }
         }
     }

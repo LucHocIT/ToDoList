@@ -40,25 +40,58 @@ public class ReminderScheduler {
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             String dateTimeString = dueDate + " " + dueTime;
             Date dueDateTime = dateTimeFormat.parse(dateTimeString);
-            if (dueDateTime == null) return;
+            if (dueDateTime == null) {
+                return;
+            }
+            
             Calendar dueCal = Calendar.getInstance();
             dueCal.setTime(dueDateTime);
-            Calendar reminderCal = Calendar.getInstance();
-            String reminderDateTimeString = dueDate + " " + reminderType;
-            Date reminderDateTime = dateTimeFormat.parse(reminderDateTimeString);
-            if (reminderDateTime != null) {
-                reminderCal.setTime(reminderDateTime);
+            
+            // Calculate reminder time based on reminder type
+            Calendar reminderCal = (Calendar) dueCal.clone();
+            int minutesBefore = getReminderMinutes(reminderType);
+            if (minutesBefore > 0) {
+                reminderCal.add(Calendar.MINUTE, -minutesBefore);
+                
                 Calendar now = Calendar.getInstance();
                 if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
                     scheduleReminderNotification(task, reminderCal.getTimeInMillis(), reminderType);
                 }
             }
             
+            // Schedule due notification
             Calendar now = Calendar.getInstance();
             if (dueCal.getTimeInMillis() > now.getTimeInMillis()) {
                 scheduleDueNotification(task, dueCal.getTimeInMillis());
             }
         } catch (ParseException e) {
+            // Silent catch
+        }
+    }
+    
+    /**
+     * Get minutes before due time based on reminder type
+     */
+    private int getReminderMinutes(String reminderType) {
+        if (reminderType == null) return 0;
+        
+        switch (reminderType) {
+            case "5 phút trước":
+                return 5;
+            case "15 phút trước":
+                return 15;
+            case "30 phút trước":
+                return 30;
+            case "1 giờ trước":
+                return 60;
+            case "1 ngày trước":
+                return 1440; // 24 * 60
+            default:
+                // If it's a time format (HH:mm), return 0 to skip reminder
+                if (reminderType.matches("\\d{2}:\\d{2}")) {
+                    return 0;
+                }
+                return 0;
         }
     }
 
@@ -153,14 +186,12 @@ public class ReminderScheduler {
         
         // Schedule cho owner (như bình thường)
         scheduleTaskReminder(task);
-        Log.d(TAG, "Scheduled reminder for owner: " + taskShare.getOwnerEmail());
         
         // Schedule cho từng shared user
         if (taskShare.getSharedUsers() != null && !taskShare.getSharedUsers().isEmpty()) {
             for (SharedUser user : taskShare.getSharedUsers()) {
                 scheduleReminderForUser(task, user);
                 scheduleDueForUser(task, user);
-                Log.d(TAG, "Scheduled reminder for shared user: " + user.getEmail());
             }
         }
     }
@@ -217,13 +248,10 @@ public class ReminderScheduler {
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, 
                             reminderCal.getTimeInMillis(), pendingIntent);
                     }
-                    
-                    Log.d(TAG, "Scheduled reminder for user " + user.getEmail() + 
-                        " at " + reminderDateTimeString);
                 }
             }
         } catch (ParseException e) {
-            Log.e(TAG, "Error scheduling reminder for user: " + user.getEmail(), e);
+            // Silent catch
         }
     }
     
@@ -278,13 +306,10 @@ public class ReminderScheduler {
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, 
                             dueCal.getTimeInMillis(), pendingIntent);
                     }
-                    
-                    Log.d(TAG, "Scheduled due notification for user " + user.getEmail() + 
-                        " at " + dueDateTimeString);
                 }
             }
         } catch (ParseException e) {
-            Log.e(TAG, "Error scheduling due notification for user: " + user.getEmail(), e);
+            // Silent catch
         }
     }
     
@@ -300,8 +325,6 @@ public class ReminderScheduler {
         
         cancelAlarm(reminderRequestCode);
         cancelAlarm(dueRequestCode);
-        
-        Log.d(TAG, "Cancelled notifications for user: " + userEmail + " on task: " + taskId);
     }
     
     /**
@@ -321,7 +344,5 @@ public class ReminderScheduler {
                 cancelNotificationForUser(task.getId(), user.getEmail());
             }
         }
-        
-        Log.d(TAG, "Cancelled all reminders for shared task: " + task.getId());
     }
 }

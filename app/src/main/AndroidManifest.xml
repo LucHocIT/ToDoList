@@ -122,7 +122,12 @@
         <receiver
             android:name=".notification.NotificationReceiver"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="reminder_notification" />
+                <action android:name="due_notification" />
+            </intent-filter>
+        </receiver>
 
         <!-- Boot receiver to reschedule alarms after reboot -->
         <receiver

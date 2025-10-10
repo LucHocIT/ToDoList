@@ -3,7 +3,6 @@ package com.example.todolist.cache;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.example.todolist.manager.AuthManager;
 import com.example.todolist.model.Task;
@@ -26,8 +25,6 @@ import java.util.concurrent.Executors;
  * Áp dụng pattern: Local SQLite → Cache → Firebase Sync
  */
 public class SharedTaskCacheManager {
-    private static final String TAG = "SharedTaskCacheManager";
-    
     private static SharedTaskCacheManager instance;
     private final Map<String, Task> sharedTaskCache = new ConcurrentHashMap<>();
     private final Map<String, Task> pendingSyncTasks = new ConcurrentHashMap<>();
@@ -99,23 +96,17 @@ public class SharedTaskCacheManager {
             return;
         }
         
-        Log.d(TAG, "Updating shared task: " + task.getId());
-        
-        // 1. Optimistic update cache
         sharedTaskCache.put(task.getId(), task);
         notifyTaskUpdated(task);
         
-        // 2. Lưu vào local SQLite
         saveToLocalDatabase(task, new BaseRepository.DatabaseCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                // 3. Đồng bộ lên Firebase nếu có kết nối
                 syncToFirebase(task, callback);
             }
             
             @Override
             public void onError(String error) {
-                Log.w(TAG, "Failed to save to local DB, adding to pending sync: " + error);
                 // Lưu vào pending sync để đồng bộ sau
                 pendingSyncTasks.put(task.getId(), task);
                 if (callback != null) callback.onSuccess("Task cached locally, will sync when online");
@@ -135,18 +126,15 @@ public class SharedTaskCacheManager {
                 taskRepository.updateTask(task, new BaseRepository.DatabaseCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean result) {
-                        Log.d(TAG, "Task saved to local DB: " + task.getId());
                         if (callback != null) callback.onSuccess("Saved locally");
                     }
                     
                     @Override
                     public void onError(String error) {
-                        Log.e(TAG, "Failed to save to local DB: " + error);
                         if (callback != null) callback.onError(error);
                     }
                 });
             } catch (Exception e) {
-                Log.e(TAG, "Exception saving to local DB", e);
                 if (callback != null) callback.onError(e.getMessage());
             }
         });
@@ -157,14 +145,12 @@ public class SharedTaskCacheManager {
      */
     private void syncToFirebase(Task task, BaseRepository.DatabaseCallback<String> callback) {
         if (!authManager.shouldSyncToFirebase()) {
-            Log.d(TAG, "Sync disabled, task kept in local cache");
             pendingSyncTasks.put(task.getId(), task);
             if (callback != null) callback.onSuccess("Task cached locally");
             return;
         }
         
         if (syncingTasks.contains(task.getId())) {
-            Log.d(TAG, "Task already syncing: " + task.getId());
             return;
         }
         
@@ -175,7 +161,6 @@ public class SharedTaskCacheManager {
             public void onSuccess(String message) {
                 syncingTasks.remove(task.getId());
                 pendingSyncTasks.remove(task.getId());
-                Log.d(TAG, "Task synced to Firebase: " + task.getId());
                 
                 // Cập nhật TaskCache chính để UI được refresh
                 taskCache.updateTaskOptimistic(task);
@@ -186,7 +171,6 @@ public class SharedTaskCacheManager {
             @Override
             public void onError(String error) {
                 syncingTasks.remove(task.getId());
-                Log.w(TAG, "Failed to sync to Firebase: " + error);
                 
                 // Giữ trong pending sync để thử lại sau
                 pendingSyncTasks.put(task.getId(), task);
@@ -225,7 +209,6 @@ public class SharedTaskCacheManager {
 
             @Override
             public void onError(String error) {
-                Log.e(TAG, "Failed to load shared task: " + error);
                 if (callback != null) callback.onError(error);
             }
         });
@@ -239,19 +222,15 @@ public class SharedTaskCacheManager {
             return;
         }
         
-        Log.d(TAG, "Syncing " + pendingSyncTasks.size() + " pending shared tasks");
-        
         List<Task> tasksToSync = new ArrayList<>(pendingSyncTasks.values());
         for (Task task : tasksToSync) {
             syncToFirebase(task, new BaseRepository.DatabaseCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
-                    Log.d(TAG, "Pending task synced: " + task.getId());
                 }
                 
                 @Override
                 public void onError(String error) {
-                    Log.w(TAG, "Failed to sync pending task: " + task.getId());
                 }
             });
         }
@@ -264,8 +243,6 @@ public class SharedTaskCacheManager {
         sharedTaskSyncService.addUpdateListener(new SharedTaskSyncService.SharedTaskUpdateListener() {
             @Override
             public void onSharedTaskUpdated(Task task) {
-                Log.d(TAG, "Received shared task update from Firebase: " + task.getId());
-                
                 // Cập nhật cache
                 sharedTaskCache.put(task.getId(), task);
                 
@@ -287,14 +264,12 @@ public class SharedTaskCacheManager {
             
             @Override
             public void onTaskSharingChanged(TaskShare taskShare) {
-                Log.d(TAG, "Task sharing changed: " + taskShare.getTaskId());
                 // Load lại task để cập nhật trạng thái sharing
                 loadSharedTask(taskShare.getTaskId(), null);
             }
             
             @Override
             public void onError(String error) {
-                Log.e(TAG, "Firebase listener error: " + error);
                 notifyError(error);
             }
         });
@@ -331,7 +306,7 @@ public class SharedTaskCacheManager {
                 try {
                     listener.onSharedTaskUpdated(task);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error notifying listener", e);
+                    // Silent
                 }
             }
         });
@@ -343,7 +318,6 @@ public class SharedTaskCacheManager {
                 try {
                     listener.onSharedTaskAdded(task);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error notifying listener", e);
                 }
             }
         });
@@ -355,7 +329,6 @@ public class SharedTaskCacheManager {
                 try {
                     listener.onSharedTaskDeleted(taskId);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error notifying listener", e);
                 }
             }
         });
@@ -367,7 +340,6 @@ public class SharedTaskCacheManager {
                 try {
                     listener.onError(error);
                 } catch (Exception e) {
-                    Log.e(TAG, "Error notifying listener", e);
                 }
             }
         });
