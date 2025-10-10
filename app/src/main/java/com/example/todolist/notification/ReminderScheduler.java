@@ -26,14 +26,20 @@ public class ReminderScheduler {
     }
 
     public void scheduleTaskReminder(Task task) {
+        Log.d(TAG, "scheduleTaskReminder called for task: " + task.getTitle());
         if (!task.isHasReminder() || task.isCompleted()) {
+            Log.d(TAG, "Task skipped - hasReminder: " + task.isHasReminder() + ", isCompleted: " + task.isCompleted());
             return;
         }
         String dueDate = task.getDueDate();
         String dueTime = task.getDueTime();
         String reminderType = task.getReminderType();
+        
+        Log.d(TAG, "Task details - dueDate: " + dueDate + ", dueTime: " + dueTime + ", reminderType: " + reminderType);
+        
         if (dueDate == null || dueTime == null || reminderType == null ||
             dueDate.equals("Không") || dueTime.equals("Không") || reminderType.equals("Không")) {
+            Log.d(TAG, "Task skipped - missing required data");
             return;
         }
         try {
@@ -47,25 +53,35 @@ public class ReminderScheduler {
             Calendar dueCal = Calendar.getInstance();
             dueCal.setTime(dueDateTime);
             
+            Log.d(TAG, "Due date time parsed successfully: " + dueDateTime);
+            
             // Calculate reminder time based on reminder type
             Calendar reminderCal = (Calendar) dueCal.clone();
             int minutesBefore = getReminderMinutes(reminderType);
+            Log.d(TAG, "Minutes before due: " + minutesBefore);
+            
             if (minutesBefore > 0) {
                 reminderCal.add(Calendar.MINUTE, -minutesBefore);
                 
                 Calendar now = Calendar.getInstance();
                 if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
+                    Log.d(TAG, "Scheduling reminder notification at: " + reminderCal.getTime());
                     scheduleReminderNotification(task, reminderCal.getTimeInMillis(), reminderType);
+                } else {
+                    Log.d(TAG, "Reminder time is in the past, skipping");
                 }
             }
             
             // Schedule due notification
             Calendar now = Calendar.getInstance();
             if (dueCal.getTimeInMillis() > now.getTimeInMillis()) {
+                Log.d(TAG, "Scheduling due notification at: " + dueCal.getTime());
                 scheduleDueNotification(task, dueCal.getTimeInMillis());
+            } else {
+                Log.d(TAG, "Due time is in the past, skipping");
             }
         } catch (ParseException e) {
-            // Silent catch
+            Log.e(TAG, "Error parsing date/time: " + e.getMessage());
         }
     }
     
@@ -115,10 +131,14 @@ public class ReminderScheduler {
     }
 
     private void scheduleDueNotification(Task task, long triggerTime) {
+        Log.d(TAG, "scheduleDueNotification: taskId=" + task.getId() + ", triggerTime=" + new java.util.Date(triggerTime));
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.setAction(NotificationReceiver.ACTION_DUE);
         intent.putExtra(NotificationReceiver.EXTRA_TASK_ID, task.getId());
         int requestCode = task.getId().hashCode() + 1; 
+        
+        Log.d(TAG, "Creating PendingIntent with requestCode: " + requestCode);
+        
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
                 requestCode,
@@ -128,8 +148,10 @@ public class ReminderScheduler {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+            Log.d(TAG, "Alarm set using setExactAndAllowWhileIdle");
         } else {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+            Log.d(TAG, "Alarm set using setExact");
         }
     }
 

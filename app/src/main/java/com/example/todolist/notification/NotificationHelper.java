@@ -13,6 +13,7 @@ import com.example.todolist.model.Task;
 import com.example.todolist.util.SettingsManager;
 
 public class NotificationHelper {
+    private static final String TAG = "NotificationHelper";
     private static final String CHANNEL_ID = "todolist_notifications";
     private static final String CHANNEL_NAME = "TodoList Notifications";
     private static final String CHANNEL_DESC = "Thông báo từ ứng dụng TodoList";
@@ -48,7 +49,9 @@ public class NotificationHelper {
         }
     }
     public void showDueNotification(Task task) {
+        Log.d(TAG, "showDueNotification called for task: " + task.getTitle());
         if (!SettingsManager.isNotificationsEnabled(context)) {
+            Log.d(TAG, "Notifications disabled in settings");
             return;
         }
         
@@ -69,7 +72,9 @@ public class NotificationHelper {
     }
 
     public void showReminderNotification(Task task) {
+        Log.d(TAG, "showReminderNotification called for task: " + task.getTitle());
         if (!SettingsManager.isNotificationsEnabled(context)) {
+            Log.d(TAG, "Notifications disabled in settings");
             return;
         }
         
@@ -93,6 +98,7 @@ public class NotificationHelper {
     }
 
     private void showNotification(int notificationId, String title, String content, String expandedContent, Task task, boolean isReminder) {
+        Log.d(TAG, "showNotification called - id: " + notificationId + ", title: " + title);
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(EXTRA_TASK_ID, task.getId());
@@ -137,6 +143,7 @@ public class NotificationHelper {
         builder.setVibrate(null);
         builder.setLights(task.isImportant() ? 0xFFFF0000 : 0xFF0000FF, 1000, 1000);
         notificationManager.notify(notificationId, builder.build());
+        Log.d(TAG, "Notification displayed successfully with id: " + notificationId);
     }
 
     public void cancelNotification(int notificationId) {

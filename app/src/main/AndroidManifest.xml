@@ -124,8 +124,8 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="reminder_notification" />
-                <action android:name="due_notification" />
+                <action android:name="com.example.todolist.action.REMINDER_NOTIFICATION" />
+                <action android:name="com.example.todolist.action.DUE_NOTIFICATION" />
             </intent-filter>
         </receiver>
 

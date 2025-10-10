@@ -2,22 +2,28 @@ package com.example.todolist.notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import com.example.todolist.model.Task;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.repository.BaseRepository;
 
 public class NotificationReceiver extends BroadcastReceiver {
-    public static final String ACTION_REMINDER = "reminder_notification";
-    public static final String ACTION_DUE = "due_notification";
+    private static final String TAG = "NotificationReceiver";
+    public static final String ACTION_REMINDER = "com.example.todolist.action.REMINDER_NOTIFICATION";
+    public static final String ACTION_DUE = "com.example.todolist.action.DUE_NOTIFICATION";
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_REMINDER_TYPE = "reminder_type";
     
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "NotificationReceiver.onReceive called");
         String action = intent.getAction();
         String taskId = intent.getStringExtra(EXTRA_TASK_ID);
         
+        Log.d(TAG, "Action: " + action + ", TaskId: " + taskId);
+        
         if (taskId == null || taskId.isEmpty() || action == null) {
+            Log.e(TAG, "Missing required data - action or taskId is null");
             return;
         }
         
@@ -33,13 +39,18 @@ public class NotificationReceiver extends BroadcastReceiver {
             public void onSuccess(java.util.List<Task> tasks) {
                 for (Task task : tasks) {
                     if (task.getId().equals(taskId)) {
+                        Log.d(TAG, "Found task: " + task.getTitle() + ", isCompleted: " + task.isCompleted());
                         if (!task.isCompleted()) {
                             NotificationHelper notificationHelper = new NotificationHelper(context);
                             if (ACTION_REMINDER.equals(action)) {
+                                Log.d(TAG, "Showing reminder notification");
                                 notificationHelper.showReminderNotification(task);
                             } else if (ACTION_DUE.equals(action)) {
+                                Log.d(TAG, "Showing due notification");
                                 notificationHelper.showDueNotification(task);
                             }
+                        } else {
+                            Log.d(TAG, "Task is completed, skipping notification");
                         }
                         break;
                     }
