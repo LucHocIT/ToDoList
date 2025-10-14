@@ -103,6 +103,8 @@ public class SettingsActivity extends AppCompatActivity {
         layoutRingtone.setOnClickListener(v -> {
             if (switchNotifications.isChecked()) {
                 openRingtonePicker();
+            } else {
+                showFeedback("Vui lòng bật thông báo trước");
             }
         });
         
@@ -110,6 +112,7 @@ public class SettingsActivity extends AppCompatActivity {
         switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchNotifications.isChecked()) {
                 SettingsManager.setVibrationEnabled(this, isChecked);
+                showFeedback(isChecked ? "Đã bật rung" : "Đã tắt rung");
             }
         });
         
@@ -119,6 +122,10 @@ public class SettingsActivity extends AppCompatActivity {
         layoutTerms.setOnClickListener(v -> showTermsOfService());
         layoutHelpSupport.setOnClickListener(v -> showHelpSupport());
         layoutResetData.setOnClickListener(v -> showResetDataDialog());
+    }
+    
+    private void showFeedback(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
     private void loadCurrentSettings() {
         SettingsManager.fixNotificationSettings(this);
@@ -148,23 +155,75 @@ public class SettingsActivity extends AppCompatActivity {
     }
     private void showLanguageDialog() {
         String[] languages = {"Tiếng Việt", "English"};
+        String currentLang = SettingsManager.getLanguage(this);
+        int checkedItem = currentLang.equals("English") ? 1 : 0;
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.choose_language));
-        builder.setItems(languages, (dialog, which) -> {
+        builder.setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
             String selectedLanguage = languages[which];
-            tvLanguageValue.setText(selectedLanguage);
-            SettingsManager.setLanguage(this, selectedLanguage);
-            applyLanguageChange(selectedLanguage);
-            Toast.makeText(this, getString(R.string.language_changed_restart_prompt), Toast.LENGTH_LONG).show();
+            if (!selectedLanguage.equals(currentLang)) {
+                tvLanguageValue.setText(selectedLanguage);
+                SettingsManager.setLanguage(this, selectedLanguage);
+                applyLanguageChange(selectedLanguage);
+                
+                // Show restart confirmation dialog
+                showRestartDialog();
+            }
+            dialog.dismiss();
         });
-        builder.show();
+        builder.setNegativeButton(getString(R.string.cancel), null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    
+    private void showRestartDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Khởi động lại ứng dụng")
+            .setMessage("Ứng dụng cần khởi động lại để áp dụng ngôn ngữ mới. Bạn có muốn khởi động lại ngay bây giờ?")
+            .setPositiveButton("Khởi động lại", (dialog, which) -> {
+                restartApp();
+            })
+            .setNegativeButton("Để sau", null)
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .show();
+    }
+    
+    private void restartApp() {
+        Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finishAffinity();
+        }
     }
     private void showAboutDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_about_enhanced, null);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.about_app_title));
-        builder.setMessage(getString(R.string.about_app_message));
-        builder.setPositiveButton(getString(R.string.close), null);
-        builder.show();
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup close button
+        ImageView btnClose = dialogView.findViewById(R.id.btn_close_about);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Setup version text
+        TextView tvVersion = dialogView.findViewById(R.id.tv_about_version);
+        if (tvVersion != null) {
+            try {
+                String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                tvVersion.setText("Version " + versionName);
+            } catch (Exception e) {
+                tvVersion.setText("Version 2.0");
+            }
+        }
+        
+        dialog.show();
     }
     private void showPrivacyPolicy() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -200,15 +259,30 @@ public class SettingsActivity extends AppCompatActivity {
         builder.show();
     }
     private void showResetDataDialog() {
-        new AlertDialog.Builder(this)
-            .setTitle(getString(R.string.reset_data_title))
-            .setMessage(getString(R.string.reset_data_message))
-            .setPositiveButton(getString(R.string.agree), (dialog, which) -> {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_reset_confirm, null);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup buttons
+        TextView btnCancel = dialogView.findViewById(R.id.btn_cancel_reset);
+        TextView btnConfirm = dialogView.findViewById(R.id.btn_confirm_reset);
+        
+        if (btnCancel != null) {
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        if (btnConfirm != null) {
+            btnConfirm.setOnClickListener(v -> {
+                dialog.dismiss();
                 performDataReset();
-            })
-            .setNegativeButton(getString(R.string.cancel), null)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
+            });
+        }
+        
+        dialog.show();
     }
     private void performDataReset() {
         try {
