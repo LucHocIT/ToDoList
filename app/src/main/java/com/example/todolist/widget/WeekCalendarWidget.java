@@ -218,15 +218,20 @@ public class WeekCalendarWidget extends AppWidgetProvider {
             }
             
             // Set color and background based on status
-            if (isSelected) {
-                // Ngày được chọn: gạch chân màu xanh
-                views.setTextColor(dayViewIds[i], Color.parseColor("#4285F4"));
+            if (isSelected && !isToday) {
+                // Ngày được chọn (không phải hôm nay): chỉ gạch chân màu xanh, chữ màu xám
+                views.setTextColor(dayViewIds[i], Color.parseColor("#666666"));
                 views.setInt(dayViewIds[i], "setBackgroundResource", R.drawable.widget_day_underline);
-                views.setTextColor(labelViewIds[i], Color.parseColor("#4285F4"));
-            } else if (isToday) {
-                // Ngày hôm nay: chữ màu xanh, không gạch chân
+                views.setTextColor(labelViewIds[i], Color.parseColor("#666666"));
+            } else if (isToday && !isSelected) {
+                // Ngày hôm nay (không được chọn): chữ màu xanh, không gạch chân
                 views.setTextColor(dayViewIds[i], Color.parseColor("#4285F4"));
                 views.setInt(dayViewIds[i], "setBackgroundResource", android.R.color.transparent);
+                views.setTextColor(labelViewIds[i], Color.parseColor("#4285F4"));
+            } else if (isToday && isSelected) {
+                // Ngày hôm nay và được chọn: chữ màu xanh và gạch chân
+                views.setTextColor(dayViewIds[i], Color.parseColor("#4285F4"));
+                views.setInt(dayViewIds[i], "setBackgroundResource", R.drawable.widget_day_underline);
                 views.setTextColor(labelViewIds[i], Color.parseColor("#4285F4"));
             } else {
                 // Ngày bình thường: chữ màu xám

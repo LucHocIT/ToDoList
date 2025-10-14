@@ -71,7 +71,6 @@ class WeekCalendarRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         Task task = tasks.get(position);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_week_task_item);
         
-        // Remove VIP icon if present
         String title = task.getTitle();
         if (title != null) {
             title = title.replace("👑", "").trim();
@@ -79,6 +78,12 @@ class WeekCalendarRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         
         // Set task title
         views.setTextViewText(R.id.widget_week_task_title, title);
+
+        if (task.isImportant()) {
+            views.setViewVisibility(R.id.widget_week_task_star, View.VISIBLE);
+        } else {
+            views.setViewVisibility(R.id.widget_week_task_star, View.GONE);
+        }
 
         // Set task time if available
         if (task.getDueTime() != null && !task.getDueTime().isEmpty() && 
