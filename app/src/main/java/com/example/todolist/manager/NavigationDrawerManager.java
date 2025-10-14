@@ -59,7 +59,9 @@ public class NavigationDrawerManager {
                 if (listener != null) {
                     listener.onUtilitiesSelected();
                 }
-                // Widget functionality has been moved to a separate screen
+                // Mở màn hình hướng dẫn tiện ích widget
+                Intent widgetsIntent = new Intent(activity, com.example.todolist.WidgetsGuideActivity.class);
+                activity.startActivity(widgetsIntent);
             });
         }
         if (navSharedTasks != null) {

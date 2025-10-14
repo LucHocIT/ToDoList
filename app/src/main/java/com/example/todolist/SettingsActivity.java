@@ -13,7 +13,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +24,7 @@ import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.util.SettingsManager;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.List;
 import java.util.Locale;
 public class SettingsActivity extends AppCompatActivity {
@@ -34,8 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
     private ThemeManager themeManager;
     // UI Components
     private ImageView btnBack;
-    private Switch switchNotifications;
-    private Switch switchVibration;
+    private SwitchMaterial switchNotifications;
+    private SwitchMaterial switchVibration;
     private LinearLayout layoutRingtone;
     private TextView tvRingtoneValue;
     private LinearLayout layoutLanguage;
@@ -87,9 +87,14 @@ public class SettingsActivity extends AppCompatActivity {
         layoutResetData = findViewById(R.id.layout_reset_data);
     }
     private void setupClickListeners() {
-        // Back button
-        btnBack.setOnClickListener(v -> finish());
-        // Notification switches
+        // Back button with ripple animation
+        btnBack.setOnClickListener(v -> {
+            v.animate().scaleX(0.9f).scaleY(0.9f).setDuration(100).withEndAction(() -> {
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                finish();
+            });
+        });
+        // Notification switches with improved feedback
         switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SettingsManager.setNotificationsEnabled(this, isChecked);
             // Automatically disable sound when notifications are disabled
@@ -97,31 +102,75 @@ public class SettingsActivity extends AppCompatActivity {
                 SettingsManager.setSoundEnabled(this, false);
             }
             updateNotificationSubSettings(isChecked);
+            showModernSnackbar(isChecked ? "✓ Đã bật thông báo" : "✗ Đã tắt thông báo");
         });
         
-        // Ringtone setting
+        // Ringtone setting with animation
         layoutRingtone.setOnClickListener(v -> {
             if (switchNotifications.isChecked()) {
+                animateClickEffect(v);
                 openRingtonePicker();
             } else {
-                showFeedback("Vui lòng bật thông báo trước");
+                showModernSnackbar("⚠ Vui lòng bật thông báo trước");
             }
         });
         
-        // Vibration switch
+        // Vibration switch with feedback
         switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchNotifications.isChecked()) {
                 SettingsManager.setVibrationEnabled(this, isChecked);
-                showFeedback(isChecked ? "Đã bật rung" : "Đã tắt rung");
+                showModernSnackbar(isChecked ? "✓ Đã bật rung" : "✗ Đã tắt rung");
             }
         });
         
-        layoutLanguage.setOnClickListener(v -> showLanguageDialog());
-        layoutAboutApp.setOnClickListener(v -> showAboutDialog());
-        layoutPrivacyPolicy.setOnClickListener(v -> showPrivacyPolicy());
-        layoutTerms.setOnClickListener(v -> showTermsOfService());
-        layoutHelpSupport.setOnClickListener(v -> showHelpSupport());
-        layoutResetData.setOnClickListener(v -> showResetDataDialog());
+        layoutLanguage.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showLanguageDialog();
+        });
+        layoutAboutApp.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showAboutDialog();
+        });
+        layoutPrivacyPolicy.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showPrivacyPolicy();
+        });
+        layoutTerms.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showTermsOfService();
+        });
+        layoutHelpSupport.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showHelpSupport();
+        });
+        layoutResetData.setOnClickListener(v -> {
+            animateClickEffect(v);
+            showResetDataDialog();
+        });
+    }
+    
+    // Modern Material Design 3 feedback
+    private void showModernSnackbar(String message) {
+        View rootView = findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT);
+        snackbar.setBackgroundTint(getResources().getColor(R.color.colorPrimary));
+        snackbar.setTextColor(Color.WHITE);
+        snackbar.setActionTextColor(Color.WHITE);
+        snackbar.show();
+    }
+    
+    // Subtle click animation for better UX
+    private void animateClickEffect(View view) {
+        view.animate()
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(50)
+            .withEndAction(() -> {
+                view.animate()
+                    .scaleX(1.0f)
+                    .scaleY(1.0f)
+                    .setDuration(50);
+            });
     }
     
     private void showFeedback(String message) {
