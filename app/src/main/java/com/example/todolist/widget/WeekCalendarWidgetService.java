@@ -69,32 +69,40 @@ class WeekCalendarRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         }
         
         Task task = tasks.get(position);
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_task_item_simple);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_week_task_item);
+        
+        // Remove VIP icon if present
+        String title = task.getTitle();
+        if (title != null) {
+            title = title.replace("👑", "").trim();
+        }
         
         // Set task title
-        views.setTextViewText(R.id.widget_task_title, task.getTitle());
+        views.setTextViewText(R.id.widget_week_task_title, title);
 
         // Set task time if available
-        if (task.getDueTime() != null && !task.getDueTime().isEmpty()) {
-            views.setTextViewText(R.id.widget_task_time, task.getDueTime());
-            views.setViewVisibility(R.id.widget_task_time, View.VISIBLE);
+        if (task.getDueTime() != null && !task.getDueTime().isEmpty() && 
+            !task.getDueTime().equals("Không")) {
+            views.setTextViewText(R.id.widget_week_task_time, task.getDueTime());
+            views.setViewVisibility(R.id.widget_week_task_time, View.VISIBLE);
         } else {
-            views.setViewVisibility(R.id.widget_task_time, View.GONE);
+            views.setViewVisibility(R.id.widget_week_task_time, View.GONE);
         }
-
-        // Set priority timeline bar color (left side)
-        int priorityColor = getPriorityColor(task.getPriority());
-        views.setInt(R.id.widget_task_priority_indicator, "setBackgroundColor", priorityColor);
 
         // Set completion circle
         if (task.isCompleted()) {
-            views.setTextViewText(R.id.widget_task_checkbox, "✓");
-            views.setTextColor(R.id.widget_task_checkbox, 0xFFFFFFFF); // White checkmark
-            views.setInt(R.id.widget_task_checkbox, "setBackgroundResource", R.drawable.circle_completed);
+            views.setTextViewText(R.id.widget_week_task_checkbox, "✓");
+            views.setTextColor(R.id.widget_week_task_checkbox, 0xFF4CAF50); // Green checkmark
         } else {
-            views.setTextViewText(R.id.widget_task_checkbox, "○");
-            views.setTextColor(R.id.widget_task_checkbox, 0xFF666666); // Gray circle
-            views.setInt(R.id.widget_task_checkbox, "setBackgroundResource", android.R.color.transparent);
+            views.setTextViewText(R.id.widget_week_task_checkbox, "○");
+            views.setTextColor(R.id.widget_week_task_checkbox, 0xFF999999); // Gray circle
+        }
+        
+        // Strike through text if completed
+        if (task.isCompleted()) {
+            views.setTextColor(R.id.widget_week_task_title, 0xFF999999); // Gray text for completed
+        } else {
+            views.setTextColor(R.id.widget_week_task_title, 0xFF333333); // Black text for active
         }
         
         return views;
@@ -161,26 +169,6 @@ class WeekCalendarRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             if (CalendarUtils.isTaskOnDate(task, selectedDate)) {
                 tasks.add(task);
             }
-        }
-    }
-    
-    private int getPriorityColor(String priority) {
-        if (priority == null) {
-            return 0xFF9E9E9E; // Gray
-        }
-        
-        switch (priority) {
-            case "High":
-            case "Cao":
-                return 0xFFE53935; // Red
-            case "Medium":
-            case "Trung bình":
-                return 0xFFFB8C00; // Orange
-            case "Low":
-            case "Thấp":
-                return 0xFF43A047; // Green
-            default:
-                return 0xFF9E9E9E; // Gray
         }
     }
 }
