@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.todolist.R;
-import com.example.todolist.dialog.WidgetsDialog;
 public class NavigationDrawerManager {
     private static final int REQUEST_CALL_PERMISSION = 1001;
     public interface NavigationListener {
@@ -60,8 +59,7 @@ public class NavigationDrawerManager {
                 if (listener != null) {
                     listener.onUtilitiesSelected();
                 }
-                // Hiá»ƒn thá»‹ WidgetsDialog thay vĂ¬ showUtilitiesDialog
-                showWidgetsPreview();
+                // Widget functionality has been moved to a separate screen
             });
         }
         if (navSharedTasks != null) {
@@ -105,11 +103,7 @@ public class NavigationDrawerManager {
         Intent intent = new Intent(activity, com.example.todolist.ThemeSelectionActivity.class);
         activity.startActivity(intent);
     }
-    private void showWidgetsPreview() {
-        // Hiá»ƒn thá»‹ dialog preview widget
-        WidgetsDialog widgetsDialog = new WidgetsDialog(activity);
-        widgetsDialog.show();
-    }
+    
     private void showContactDialog() {
         // Táº¡o dialog vá»›i layout custom
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);

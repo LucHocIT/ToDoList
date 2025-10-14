@@ -1,12 +1,16 @@
 package com.example.todolist;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -19,6 +23,8 @@ import com.example.todolist.model.Category;
 import com.example.todolist.service.CategoryService;
 import com.example.todolist.manager.ThemeManager;
 import com.example.todolist.util.SettingsManager;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 import java.util.Locale;
 public class SettingsActivity extends AppCompatActivity {

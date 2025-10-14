@@ -18,7 +18,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.todolist.adapter.TaskAdapter;
-import com.example.todolist.dialog.WidgetsDialog;
 import com.example.todolist.model.Category;
 import com.example.todolist.service.CategoryService;
 import com.example.todolist.manager.FilterManager;
@@ -493,8 +492,7 @@ public class MainActivity extends AppCompatActivity implements
     }
     @Override
     public void onUtilitiesSelected() {
-        WidgetsDialog widgetsDialog = new WidgetsDialog(this);
-        widgetsDialog.show();
+        // Widget functionality has been moved to a separate screen
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
