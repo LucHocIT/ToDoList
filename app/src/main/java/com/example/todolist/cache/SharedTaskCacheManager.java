@@ -11,6 +11,7 @@ import com.example.todolist.repository.TaskRepository;
 import com.example.todolist.repository.BaseRepository;
 import com.example.todolist.service.sharing.TaskSharingService;
 import com.example.todolist.service.sharing.SharedTaskSyncService;
+import com.example.todolist.notification.ReminderScheduler;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +31,13 @@ public class SharedTaskCacheManager {
     private final Map<String, Task> pendingSyncTasks = new ConcurrentHashMap<>();
     private final Set<String> syncingTasks = ConcurrentHashMap.newKeySet();
     
+    private Context context;
     private TaskRepository taskRepository;
     private TaskCache taskCache;
     private AuthManager authManager;
     private SharedTaskSyncService sharedTaskSyncService;
     private TaskSharingService taskSharingService;
+    private ReminderScheduler reminderScheduler;
     private ExecutorService executor;
     private Handler mainHandler;
     
@@ -64,11 +67,13 @@ public class SharedTaskCacheManager {
     }
     
     public void initialize(Context context) {
+        this.context = context.getApplicationContext();
         this.taskRepository = new TaskRepository(context);
         this.taskCache = TaskCache.getInstance();
         this.authManager = AuthManager.getInstance();
         this.sharedTaskSyncService = SharedTaskSyncService.getInstance();
         this.taskSharingService = TaskSharingService.getInstance();
+        this.reminderScheduler = new ReminderScheduler(context);
         
         // Khởi tạo các service
         this.authManager.initialize(context);
@@ -203,6 +208,9 @@ public class SharedTaskCacheManager {
 
                 // Khởi tạo listener real-time cho shared task
                 sharedTaskSyncService.startListeningForTaskUpdates(taskId);
+                
+                // ===== FIX: Schedule notifications khi load shared task =====
+                scheduleNotificationForSharedTask(task);
 
                 if (callback != null) callback.onSuccess(task);
             }
@@ -251,6 +259,9 @@ public class SharedTaskCacheManager {
                 
                 // Lưu vào local DB
                 saveToLocalDatabase(task, null);
+                
+                // ===== FIX: Schedule lại notifications cho shared task =====
+                scheduleNotificationForSharedTask(task);
                 
                 // Thông báo listeners
                 notifyTaskUpdated(task);
@@ -341,6 +352,44 @@ public class SharedTaskCacheManager {
                     listener.onError(error);
                 } catch (Exception e) {
                 }
+            }
+        });
+    }
+ void scheduleNotificationForSharedTask(Task task) {
+        if (task == null || !task.isHasReminder() || task.isCompleted()) {
+            return;
+        }
+
+        if (!task.isShared()) {
+            return;
+        }
+        
+        executor.execute(() -> {
+            try {
+                taskSharingService.getTaskShare(task.getId(), new TaskSharingService.TaskShareCallback() {
+                    @Override
+                    public void onTaskShareLoaded(TaskShare taskShare) {
+                        if (taskShare != null) {
+                            reminderScheduler.cancelSharedTaskReminders(task, taskShare);
+                            reminderScheduler.scheduleSharedTaskReminder(task, taskShare);
+                            
+                            android.util.Log.d("SharedTaskCache", 
+                                "Scheduled notifications for shared task: " + task.getTitle() + 
+                                " (owner + " + 
+                                (taskShare.getSharedUsers() != null ? taskShare.getSharedUsers().size() : 0) + 
+                                " shared users)");
+                        }
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        android.util.Log.e("SharedTaskCache", 
+                            "Error scheduling notification for shared task: " + error);
+                    }
+                });
+            } catch (Exception e) {
+                android.util.Log.e("SharedTaskCache", 
+                    "Exception scheduling notification: " + e.getMessage());
             }
         });
     }

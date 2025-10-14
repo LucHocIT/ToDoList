@@ -227,15 +227,21 @@ public class ReminderScheduler {
             return;
         }
         
+        Log.d(TAG, "Scheduling notifications for shared task: " + task.getTitle());
+        
         // Schedule cho owner (như bình thường)
         scheduleTaskReminder(task);
+        Log.d(TAG, "Scheduled reminder and due notification for owner");
         
         // Schedule cho từng shared user
         if (taskShare.getSharedUsers() != null && !taskShare.getSharedUsers().isEmpty()) {
+            Log.d(TAG, "Scheduling for " + taskShare.getSharedUsers().size() + " shared users");
             for (SharedUser user : taskShare.getSharedUsers()) {
                 scheduleReminderForUser(task, user);
                 scheduleDueForUser(task, user);
             }
+        } else {
+            Log.d(TAG, "No shared users to schedule for");
         }
     }
     
@@ -248,23 +254,36 @@ public class ReminderScheduler {
         }
         
         String dueDate = task.getDueDate();
+        String dueTime = task.getDueTime();
         String reminderType = task.getReminderType();
         
-        if (dueDate == null || reminderType == null ||
-            dueDate.equals("Không") || reminderType.equals("Không")) {
+        if (dueDate == null || dueTime == null || reminderType == null ||
+            dueDate.equals("Không") || dueTime.equals("Không") || reminderType.equals("Không")) {
             return;
         }
         
         try {
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            String reminderDateTimeString = dueDate + " " + reminderType;
-            Date reminderDateTime = dateTimeFormat.parse(reminderDateTimeString);
+            String dateTimeString = dueDate + " " + dueTime;
+            Date dueDateTime = dateTimeFormat.parse(dateTimeString);
             
-            if (reminderDateTime != null) {
-                Calendar reminderCal = Calendar.getInstance();
-                reminderCal.setTime(reminderDateTime);
-                Calendar now = Calendar.getInstance();
+            if (dueDateTime == null) {
+                return;
+            }
+            
+            Calendar dueCal = Calendar.getInstance();
+            dueCal.setTime(dueDateTime);
+            
+            // Calculate reminder time based on reminder type (giống logic scheduleTaskReminder)
+            Calendar reminderCal = (Calendar) dueCal.clone();
+            int minutesBefore = getReminderMinutes(reminderType);
+            boolean isSpecificTime = reminderType.matches("\\d{2}:\\d{2}");
+            
+            if (minutesBefore > 0) {
+                // Reminder type is relative (e.g., "5 phút trước")
+                reminderCal.add(Calendar.MINUTE, -minutesBefore);
                 
+                Calendar now = Calendar.getInstance();
                 if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
                     // Tạo unique requestCode cho mỗi user
                     String uniqueKey = task.getId() + "_reminder_" + user.getEmail();
@@ -291,10 +310,55 @@ public class ReminderScheduler {
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, 
                             reminderCal.getTimeInMillis(), pendingIntent);
                     }
+                    
+                    Log.d(TAG, "Scheduled reminder for user " + user.getEmail() + " at: " + reminderCal.getTime());
+                }
+            } else if (isSpecificTime) {
+                // Specific time reminder (e.g., "22:10")
+                try {
+                    String reminderDateTimeString = dueDate + " " + reminderType;
+                    Date reminderDateTime = dateTimeFormat.parse(reminderDateTimeString);
+                    
+                    if (reminderDateTime != null) {
+                        reminderCal.setTime(reminderDateTime);
+                        Calendar now = Calendar.getInstance();
+                        
+                        if (reminderCal.getTimeInMillis() > now.getTimeInMillis()) {
+                            // Tạo unique requestCode cho mỗi user
+                            String uniqueKey = task.getId() + "_reminder_" + user.getEmail();
+                            int requestCode = uniqueKey.hashCode();
+                            
+                            Intent intent = new Intent(context, NotificationReceiver.class);
+                            intent.setAction(NotificationReceiver.ACTION_REMINDER);
+                            intent.putExtra(NotificationReceiver.EXTRA_TASK_ID, task.getId());
+                            intent.putExtra(NotificationReceiver.EXTRA_REMINDER_TYPE, reminderType);
+                            intent.putExtra("user_email", user.getEmail());
+                            intent.putExtra("user_name", user.getName());
+                            
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                                    context,
+                                    requestCode,
+                                    intent,
+                                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                            );
+                            
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, 
+                                    reminderCal.getTimeInMillis(), pendingIntent);
+                            } else {
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, 
+                                    reminderCal.getTimeInMillis(), pendingIntent);
+                            }
+                            
+                            Log.d(TAG, "Scheduled specific time reminder for user " + user.getEmail() + " at: " + reminderCal.getTime());
+                        }
+                    }
+                } catch (ParseException e) {
+                    Log.e(TAG, "Error parsing specific reminder time for user: " + e.getMessage());
                 }
             }
         } catch (ParseException e) {
-            // Silent catch
+            Log.e(TAG, "Error parsing date/time for user reminder: " + e.getMessage());
         }
     }
     
@@ -349,10 +413,12 @@ public class ReminderScheduler {
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, 
                             dueCal.getTimeInMillis(), pendingIntent);
                     }
+                    
+                    Log.d(TAG, "Scheduled due notification for user " + user.getEmail() + " at: " + dueCal.getTime());
                 }
             }
         } catch (ParseException e) {
-            // Silent catch
+            Log.e(TAG, "Error parsing date/time for user due notification: " + e.getMessage());
         }
     }
     

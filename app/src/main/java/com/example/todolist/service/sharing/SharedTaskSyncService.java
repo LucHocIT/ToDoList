@@ -442,6 +442,9 @@ public class SharedTaskSyncService {
     }
 
     private String sanitizeEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return "unknown_user";
+        }
         return email.replace(".", "_").replace("@", "_at_");
     }
 }
