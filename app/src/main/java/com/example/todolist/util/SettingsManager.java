@@ -6,6 +6,7 @@ public class SettingsManager {
     // Notification Settings Keys
     public static final String KEY_NOTIFICATIONS_ENABLED = "notifications_enabled";
     public static final String KEY_SOUND_ENABLED = "sound_enabled";
+    public static final String KEY_VIBRATION_ENABLED = "vibration_enabled";
     public static final String KEY_RINGTONE_URI = "ringtone_uri";
     public static final String KEY_RINGTONE_NAME = "ringtone_name";
     // General Settings Keys
@@ -38,6 +39,15 @@ public class SettingsManager {
     public static void setRingtoneName(Context context, String name) {
         getSharedPreferences(context).edit().putString(KEY_RINGTONE_NAME, name).apply();
     }
+
+    public static boolean isVibrationEnabled(Context context) {
+        return getSharedPreferences(context).getBoolean(KEY_VIBRATION_ENABLED, true);
+    }
+
+    public static void setVibrationEnabled(Context context, boolean enabled) {
+        getSharedPreferences(context).edit().putBoolean(KEY_VIBRATION_ENABLED, enabled).apply();
+    }
+
     // General Settings
     public static String getLanguage(Context context) {
         return getSharedPreferences(context).getString(KEY_LANGUAGE, "Tiếng Việt");

@@ -140,7 +140,14 @@ public class NotificationHelper {
         } else {
             builder.setSound(null);
         }
-        builder.setVibrate(null);
+        
+        // Apply vibration setting
+        if (SettingsManager.isNotificationsEnabled(context) && SettingsManager.isVibrationEnabled(context)) {
+            builder.setVibrate(new long[]{0, 500, 250, 500}); // Vibration pattern: delay, vibrate, sleep, vibrate
+        } else {
+            builder.setVibrate(null);
+        }
+        
         builder.setLights(task.isImportant() ? 0xFFFF0000 : 0xFF0000FF, 1000, 1000);
         notificationManager.notify(notificationId, builder.build());
         Log.d(TAG, "Notification displayed successfully with id: " + notificationId);

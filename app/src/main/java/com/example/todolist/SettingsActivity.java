@@ -3,6 +3,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,11 +22,16 @@ import com.example.todolist.util.SettingsManager;
 import java.util.List;
 import java.util.Locale;
 public class SettingsActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_RINGTONE_PICKER = 1001;
+    
     private SharedPreferences sharedPreferences;
     private ThemeManager themeManager;
     // UI Components
     private ImageView btnBack;
     private Switch switchNotifications;
+    private Switch switchVibration;
+    private LinearLayout layoutRingtone;
+    private TextView tvRingtoneValue;
     private LinearLayout layoutLanguage;
     private LinearLayout layoutAboutApp;
     private LinearLayout layoutPrivacyPolicy;
@@ -58,6 +65,9 @@ public class SettingsActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btn_back_settings);
         // Notification Settings
         switchNotifications = findViewById(R.id.switch_notifications);
+        layoutRingtone = findViewById(R.id.layout_ringtone);
+        tvRingtoneValue = findViewById(R.id.tv_ringtone_value);
+        switchVibration = findViewById(R.id.switch_vibration);
         // General Settings
         layoutLanguage = findViewById(R.id.layout_language);
         tvLanguageValue = findViewById(R.id.tv_language_value);
@@ -80,7 +90,23 @@ public class SettingsActivity extends AppCompatActivity {
             if (!isChecked) {
                 SettingsManager.setSoundEnabled(this, false);
             }
+            updateNotificationSubSettings(isChecked);
         });
+        
+        // Ringtone setting
+        layoutRingtone.setOnClickListener(v -> {
+            if (switchNotifications.isChecked()) {
+                openRingtonePicker();
+            }
+        });
+        
+        // Vibration switch
+        switchVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (switchNotifications.isChecked()) {
+                SettingsManager.setVibrationEnabled(this, isChecked);
+            }
+        });
+        
         layoutLanguage.setOnClickListener(v -> showLanguageDialog());
         layoutAboutApp.setOnClickListener(v -> showAboutDialog());
         layoutPrivacyPolicy.setOnClickListener(v -> showPrivacyPolicy());
@@ -93,6 +119,18 @@ public class SettingsActivity extends AppCompatActivity {
         SettingsManager.ensureSoundDisabledWhenNotificationsOff(this);
         boolean notificationsEnabled = SettingsManager.isNotificationsEnabled(this);
         switchNotifications.setChecked(notificationsEnabled);
+        
+        // Load ringtone setting
+        String ringtoneName = SettingsManager.getRingtoneName(this);
+        tvRingtoneValue.setText(ringtoneName);
+        
+        // Load vibration setting
+        boolean vibrationEnabled = SettingsManager.isVibrationEnabled(this);
+        switchVibration.setChecked(vibrationEnabled);
+        
+        // Update sub-settings visibility
+        updateNotificationSubSettings(notificationsEnabled);
+        
         String language = SettingsManager.getLanguage(this);
         tvLanguageValue.setText(language);
         try {
@@ -229,5 +267,58 @@ public class SettingsActivity extends AppCompatActivity {
         Configuration config = new Configuration();
         config.locale = locale;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+    private void updateNotificationSubSettings(boolean enabled) {
+        // Enable/disable ringtone and vibration settings based on notification state
+        layoutRingtone.setEnabled(enabled);
+        layoutRingtone.setAlpha(enabled ? 1.0f : 0.5f);
+        switchVibration.setEnabled(enabled);
+        
+        if (!enabled) {
+            // Optionally disable vibration when notifications are off
+            switchVibration.setChecked(false);
+            SettingsManager.setVibrationEnabled(this, false);
+        }
+    }
+
+    private void openRingtonePicker() {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, getString(R.string.select_ringtone));
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, getRingtoneUri());
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+        startActivityForResult(intent, REQUEST_CODE_RINGTONE_PICKER);
+    }
+
+    private Uri getRingtoneUri() {
+        String uriString = SettingsManager.getRingtoneUri(this);
+        if (uriString != null && !uriString.isEmpty()) {
+            return Uri.parse(uriString);
+        }
+        return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_RINGTONE_PICKER && resultCode == RESULT_OK) {
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            if (uri != null) {
+                // Save the ringtone URI
+                SettingsManager.setRingtoneUri(this, uri.toString());
+                // Get and save the ringtone name
+                android.media.Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
+                String ringtoneName = ringtone.getTitle(this);
+                SettingsManager.setRingtoneName(this, ringtoneName);
+                tvRingtoneValue.setText(ringtoneName);
+            } else {
+                // Silent was selected
+                SettingsManager.setRingtoneUri(this, "");
+                SettingsManager.setRingtoneName(this, getString(R.string.silent));
+                tvRingtoneValue.setText(getString(R.string.silent));
+            }
+        }
     }
 }

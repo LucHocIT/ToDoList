@@ -13,9 +13,13 @@
     <string name="settings_notifications">THÔNG BÁO</string>
     <string name="settings_notifications_enable">Thông báo</string>
     <string name="settings_sound">Âm thanh</string>
+    <string name="settings_ringtone">Nhạc chuông</string>
+    <string name="settings_vibration">Rung</string>
+    <string name="default_ringtone">Mặc định</string>
+    <string name="silent">Im lặng</string>
+    <string name="select_ringtone">Chọn nhạc chuông</string>
 
     <string name="settings_notification_time">Thời gian nhắc nhở</string>
-    <string name="settings_ringtone">Âm thanh thông báo</string>
     <string name="settings_appearance">GIAO DIỆN</string>
     <string name="settings_dark_mode">Chế độ tối</string>
     <string name="settings_general">CHUNG</string>

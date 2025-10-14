@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Khi switch được bật (checked) -->
+    <item android:color="#4285F4" android:state_checked="true"/>
+    <!-- Khi switch bị tắt (unchecked) -->
+    <item android:color="#BDBDBD"/>
+</selector>
