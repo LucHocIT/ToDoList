@@ -325,6 +325,7 @@
     
     <!-- Widget strings -->
     <string name="calendar_task_widget_description">Widget lịch và nhiệm vụ 4x2 - Hiển thị lịch tháng và danh sách nhiệm vụ theo ngày</string>
+    <string name="week_calendar_widget_description">Widget lịch tuần 4x4 - Hiển thị lịch tuần và danh sách nhiệm vụ theo ngày được chọn</string>
     
     <!-- Countdown Widget strings -->
     <string name="countdown_widget_title">Tiện ích đếm ngược 4x1</string>

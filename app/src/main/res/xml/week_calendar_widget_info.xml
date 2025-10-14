@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="294dp"
+    android:minHeight="294dp"
+    android:minResizeWidth="294dp"
+    android:minResizeHeight="294dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="4"
+    android:initialLayout="@layout/widget_week_calendar_4x4"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@drawable/widget_preview"
+    android:widgetCategory="home_screen"
+    android:description="@string/week_calendar_widget_description"
+    android:initialKeyguardLayout="@layout/widget_week_calendar_4x4" />

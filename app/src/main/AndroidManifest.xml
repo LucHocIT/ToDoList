@@ -184,9 +184,30 @@
                 android:resource="@xml/calendar_task_widget_4x2_info" />
         </receiver>
 
+        <!-- Week Calendar Widget 4x4 -->
+        <receiver
+            android:name=".widget.WeekCalendarWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.todolist.WEEK_DAY_CLICK" />
+                <action android:name="com.example.todolist.PREV_WEEK" />
+                <action android:name="com.example.todolist.NEXT_WEEK" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/week_calendar_widget_info" />
+        </receiver>
+
         <!-- Calendar Task Widget Service -->
         <service
             android:name=".widget.CalendarTaskWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
+
+        <!-- Week Calendar Widget Service -->
+        <service
+            android:name=".widget.WeekCalendarWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
 

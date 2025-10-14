@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_week_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background_sky"
+    android:padding="8dp">
+
+    <!-- Week Calendar Header với background image -->
+    <LinearLayout
+        android:id="@+id/widget_week_header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/background_calendar"
+        android:padding="8dp">
+
+        <!-- Previous Week Button -->
+        <TextView
+            android:id="@+id/btn_prev_week"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:text="◀"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true" />
+
+        <!-- Month/Year Display -->
+        <TextView
+            android:id="@+id/widget_week_month_year"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="10/2025"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <!-- Next Week Button -->
+        <TextView
+            android:id="@+id/btn_next_week"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:text="▶"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true" />
+
+    </LinearLayout>
+
+    <!-- Days of Week Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="#F5F5F5"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- Sunday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="S"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Monday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="M"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Tuesday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Wednesday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="W"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Thursday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Friday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="F"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+        <!-- Saturday -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/widget_week_label_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="S"
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+                
+            <TextView
+                android:id="@+id/widget_week_day_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:paddingTop="2dp" />
+                
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Tasks List for Selected Day -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="8dp">
+
+        <ListView
+            android:id="@+id/widget_week_task_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
+
+        <TextView
+            android:id="@+id/widget_week_empty_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No tasks for this day"
+            android:textColor="#999999"
+            android:textSize="12sp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>
