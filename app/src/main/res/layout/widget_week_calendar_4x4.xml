@@ -14,23 +14,10 @@
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="@drawable/background_calendar"
+        android:background="@drawable/widget_header_zoo_background"
         android:padding="8dp">
 
-        <!-- Previous Week Button -->
-        <TextView
-            android:id="@+id/btn_prev_week"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:text="◀"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Month/Year Display -->
+        <!-- Month/Year Display - Căn phải -->
         <TextView
             android:id="@+id/widget_week_month_year"
             android:layout_width="0dp"
@@ -40,20 +27,43 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:gravity="end"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp" />
 
-        <!-- Next Week Button -->
-        <TextView
-            android:id="@+id/btn_next_week"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:text="▶"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:layout_marginStart="16dp" />
+        <!-- Navigation Buttons Container - Nằm sát nhau -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/rounded_button_group_background"
+            android:padding="2dp">
+
+            <!-- Previous Week Button -->
+            <TextView
+                android:id="@+id/btn_prev_week"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="◀"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true" />
+
+            <!-- Next Week Button -->
+            <TextView
+                android:id="@+id/btn_next_week"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:text="▶"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -277,7 +287,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="@drawable/widget_task_list_background"
         android:padding="8dp">
 
         <ListView
