@@ -3,14 +3,15 @@
     android:layout_width="280dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white"
-    android:fitsSystemWindows="true">
+    android:background="@drawable/nav_body_gradient"
+    android:fitsSystemWindows="false">
 
     <!-- Header with gradient background -->
     <RelativeLayout
         android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:fitsSystemWindows="false"
         android:background="@drawable/nav_header_gradient">
 
         <!-- App Logo Full Size -->
@@ -20,7 +21,8 @@
             android:layout_height="match_parent"
             android:src="@drawable/todolist"
             android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
+            android:fitsSystemWindows="false"
+            android:adjustViewBounds="false"
             android:contentDescription="To-Do List Logo" />
 
     </RelativeLayout>

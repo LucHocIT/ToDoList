@@ -1033,6 +1033,316 @@
 
             </androidx.cardview.widget.CardView>
 
+            <!-- Weekly Calendar Widget 4x4 Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_weekly_calendar_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF">
+
+                    <!-- Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/gradient_teal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_event"
+                            android:background="@drawable/circle_background_white"
+                            android:padding="8dp"
+                            app:tint="#009688"
+                            android:layout_marginEnd="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📆 Lịch Tuần 4x4"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="#FFFFFF" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Kích thước: 4x4 (Vuông hoàn hảo)"
+                                android:textSize="11sp"
+                                android:textColor="#B2DFDB"
+                                android:layout_marginTop="2dp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_right"
+                            app:tint="#FFFFFF" />
+
+                    </LinearLayout>
+
+                    <!-- Preview -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center">
+
+                        <!-- Weekly calendar widget preview -->
+                        <LinearLayout
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:background="@drawable/mini_widget_background"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:elevation="2dp">
+
+                            <!-- Week header -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Tuần này"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#009688" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="T10 2025"
+                                    android:textSize="9sp"
+                                    android:textColor="#666666" />
+
+                            </LinearLayout>
+
+                            <!-- Days of week -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="6dp">
+
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T2" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T3" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T4" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T5" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T6" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="T7" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                    android:layout_weight="1" android:text="CN" android:textSize="8sp"
+                                    android:textColor="#999999" android:gravity="center" />
+
+                            </LinearLayout>
+
+                            <!-- Week dates -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="14" android:textSize="9sp"
+                                    android:textColor="#FFFFFF" android:gravity="center"
+                                    android:background="@drawable/circle_today" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="15" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="16" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="17" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="18" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="19" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+                                <TextView android:layout_width="0dp" android:layout_height="18dp"
+                                    android:layout_weight="1" android:text="20" android:textSize="9sp"
+                                    android:textColor="#333333" android:gravity="center" />
+
+                            </LinearLayout>
+
+                            <!-- Task list -->
+                            <ScrollView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <!-- Task item 1 -->
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:padding="4dp"
+                                        android:background="#F0F9FF"
+                                        android:layout_marginBottom="3dp">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="✓ Họp team"
+                                            android:textSize="8sp"
+                                            android:textColor="#009688" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="9:00"
+                                            android:textSize="7sp"
+                                            android:textColor="#999999" />
+
+                                    </LinearLayout>
+
+                                    <!-- Task item 2 -->
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:padding="4dp"
+                                        android:background="#FFF8E1"
+                                        android:layout_marginBottom="3dp">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="📝 Báo cáo"
+                                            android:textSize="8sp"
+                                            android:textColor="#333333" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="14:00"
+                                            android:textSize="7sp"
+                                            android:textColor="#999999" />
+
+                                    </LinearLayout>
+
+                                    <!-- Task item 3 -->
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:padding="4dp"
+                                        android:background="#FCE4EC">
+
+                                        <TextView
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="🎂 Sinh nhật"
+                                            android:textSize="8sp"
+                                            android:textColor="#333333" />
+
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="19:00"
+                                            android:textSize="7sp"
+                                            android:textColor="#999999" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+                            </ScrollView>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nhấn để xem chi tiết"
+                            android:textSize="11sp"
+                            android:textColor="#009688"
+                            android:textStyle="bold"
+                            android:layout_marginTop="8dp" />
+
+                    </LinearLayout>
+
+                    <!-- Features -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="#F9F9F9"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✨ Tính năng nổi bật:"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#666666"
+                            android:layout_marginBottom="6dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="• Xem toàn bộ tuần với công việc chi tiết\n• Hiển thị giờ và ưu tiên công việc\n• Đánh dấu hoàn thành nhanh\n• Thiết kế gọn gàng, dễ nhìn"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:lineSpacingExtra="2dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <!-- How to Add Widget Section -->
             <TextView
                 android:layout_width="wrap_content"
