@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true"
+    android:interpolator="@android:anim/decelerate_interpolator">
+    
+    <!-- Scale from 0 to 1.1, then to 1 for bounce effect -->
+    <scale
+        android:fromXScale="0.0"
+        android:toXScale="1.15"
+        android:fromYScale="0.0"
+        android:toYScale="1.15"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="600" />
+    
+    <scale
+        android:fromXScale="1.15"
+        android:toXScale="1.0"
+        android:fromYScale="1.15"
+        android:toYScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:startOffset="600"
+        android:duration="200" />
+    
+    <!-- Fade in -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="600" />
+    
+    <!-- Slight rotation for dynamic effect -->
+    <rotate
+        android:fromDegrees="-5"
+        android:toDegrees="0"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="800" />
+    
+</set>

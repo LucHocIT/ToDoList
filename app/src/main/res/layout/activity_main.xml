@@ -371,16 +371,39 @@
 
     </LinearLayout>
 
-    <!-- Floating Action Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
+    <!-- Floating Action Button with Glow Effect - Must be after LinearLayout to render on top -->
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="80dp"
-        android:backgroundTint="#4285F4"
-        android:src="@drawable/ic_add" />
+        android:elevation="16dp"
+        android:translationZ="16dp">
+        
+        <!-- Glow background -->
+        <View
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:background="@drawable/fab_glow_background" />
+        
+        <!-- FAB button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="#64A5F7"
+            android:src="@drawable/ic_add_white"
+            android:tint="@android:color/white"
+            app:elevation="12dp"
+            app:borderWidth="0dp"
+            app:fabSize="normal"
+            app:rippleColor="#80FFFFFF"
+            app:maxImageSize="24dp" />
+        
+    </FrameLayout>
 
     </FrameLayout>
 

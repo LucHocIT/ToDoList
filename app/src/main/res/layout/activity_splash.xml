@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_background">
+
+    <!-- Container for animated elements -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true">
+
+        <!-- Animated circles background -->
+        <View
+            android:id="@+id/circle_outer"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/splash_circle_outer"
+            android:alpha="0" />
+
+        <View
+            android:id="@+id/circle_middle"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/splash_circle_middle"
+            android:alpha="0" />
+
+        <View
+            android:id="@+id/circle_inner"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/splash_circle_inner"
+            android:alpha="0" />
+
+        <!-- App logo/avatar with shadow -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Shadow effect -->
+            <View
+                android:id="@+id/logo_shadow"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="-110dp"
+                android:background="@drawable/splash_logo_shadow"
+                android:alpha="0" />
+
+            <!-- Logo container with circular background and clip -->
+            <FrameLayout
+                android:layout_width="110dp"
+                android:layout_height="110dp">
+
+                <!-- White circular background with border -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/splash_logo_circle"
+                    android:elevation="4dp" />
+
+                <!-- App logo - clipped to circle -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/app_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatarapp"
+                    android:scaleType="centerCrop"
+                    android:padding="5dp"
+                    android:elevation="8dp"
+                    android:alpha="0"
+                    app:shapeAppearanceOverlay="@style/CircleImageStyle" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- App name -->
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="140dp"
+            android:text="@string/app_name"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.05"
+            android:alpha="0" />
+
+        <!-- Tagline -->
+        <TextView
+            android:id="@+id/app_tagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="Quản lý công việc hiệu quả"
+            android:textSize="14sp"
+            android:textColor="#B3FFFFFF"
+            android:fontFamily="sans-serif-light"
+            android:alpha="0" />
+
+        <!-- Modern Loading animation -->
+        <LinearLayout
+            android:id="@+id/loading_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="80dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:alpha="0">
+
+            <!-- Three dots loading animation -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <View
+                    android:id="@+id/loading_dot1"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/loading_dot" />
+
+                <View
+                    android:id="@+id/loading_dot2"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/loading_dot" />
+
+                <View
+                    android:id="@+id/loading_dot3"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/loading_dot" />
+
+            </LinearLayout>
+
+            <!-- Loading text -->
+            <TextView
+                android:id="@+id/loading_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Đang tải..."
+                android:textSize="13sp"
+                android:textColor="#FFFFFF"
+                android:fontFamily="sans-serif-light" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

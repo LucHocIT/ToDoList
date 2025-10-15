@@ -14,6 +14,17 @@
 
     <style name="Theme.ToDoList" parent="Base.Theme.ToDoList" />
     
+    <!-- Splash Screen Theme -->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+    
     <!-- Custom checkbox style -->
     <style name="CustomCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:button">@drawable/subtask_checkbox_selector</item>
