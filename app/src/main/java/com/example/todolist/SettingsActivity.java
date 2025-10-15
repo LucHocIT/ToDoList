@@ -203,26 +203,80 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
     private void showLanguageDialog() {
-        String[] languages = {"Tiếng Việt", "English"};
-        String currentLang = SettingsManager.getLanguage(this);
-        int checkedItem = currentLang.equals("English") ? 1 : 0;
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_language_selection_enhanced, null);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.choose_language));
-        builder.setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
-            String selectedLanguage = languages[which];
-            if (!selectedLanguage.equals(currentLang)) {
-                tvLanguageValue.setText(selectedLanguage);
-                SettingsManager.setLanguage(this, selectedLanguage);
-                applyLanguageChange(selectedLanguage);
-                
-                // Show restart confirmation dialog
-                showRestartDialog();
-            }
-            dialog.dismiss();
-        });
-        builder.setNegativeButton(getString(R.string.cancel), null);
+        builder.setView(dialogView);
+        
         AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Get current language
+        String currentLang = SettingsManager.getLanguage(this);
+        final String[] selectedLanguage = {currentLang};
+        
+        // Setup UI elements
+        ImageView btnClose = dialogView.findViewById(R.id.btn_close_language);
+        LinearLayout optionVi = dialogView.findViewById(R.id.language_option_vi);
+        LinearLayout optionEn = dialogView.findViewById(R.id.language_option_en);
+        ImageView radioVi = dialogView.findViewById(R.id.radio_vi);
+        ImageView radioEn = dialogView.findViewById(R.id.radio_en);
+        TextView btnCancel = dialogView.findViewById(R.id.btn_cancel_language);
+        TextView btnApply = dialogView.findViewById(R.id.btn_apply_language);
+        
+        // Set initial selection
+        if (currentLang.equals("English")) {
+            optionEn.setBackgroundResource(R.drawable.bg_language_item_selected);
+            radioEn.setImageResource(R.drawable.ic_radio_button_checked);
+        } else {
+            optionVi.setBackgroundResource(R.drawable.bg_language_item_selected);
+            radioVi.setImageResource(R.drawable.ic_radio_button_checked);
+        }
+        
+        // Vietnamese option click
+        optionVi.setOnClickListener(v -> {
+            selectedLanguage[0] = "Tiếng Việt";
+            optionVi.setBackgroundResource(R.drawable.bg_language_item_selected);
+            optionEn.setBackgroundResource(R.drawable.bg_language_item);
+            radioVi.setImageResource(R.drawable.ic_radio_button_checked);
+            radioEn.setImageResource(R.drawable.ic_radio_button_unchecked);
+        });
+        
+        // English option click
+        optionEn.setOnClickListener(v -> {
+            selectedLanguage[0] = "English";
+            optionEn.setBackgroundResource(R.drawable.bg_language_item_selected);
+            optionVi.setBackgroundResource(R.drawable.bg_language_item);
+            radioEn.setImageResource(R.drawable.ic_radio_button_checked);
+            radioVi.setImageResource(R.drawable.ic_radio_button_unchecked);
+        });
+        
+        // Close button
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Cancel button
+        if (btnCancel != null) {
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Apply button
+        if (btnApply != null) {
+            btnApply.setOnClickListener(v -> {
+                if (!selectedLanguage[0].equals(currentLang)) {
+                    tvLanguageValue.setText(selectedLanguage[0]);
+                    SettingsManager.setLanguage(this, selectedLanguage[0]);
+                    applyLanguageChange(selectedLanguage[0]);
+                    dialog.dismiss();
+                    // Show restart confirmation dialog
+                    showRestartDialog();
+                } else {
+                    dialog.dismiss();
+                }
+            });
+        }
+        
         dialog.show();
     }
     
@@ -275,37 +329,117 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
     private void showPrivacyPolicy() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_privacy_policy_enhanced, null);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.privacy_policy_title));
-        builder.setMessage(getString(R.string.privacy_policy_message));
-        builder.setPositiveButton(getString(R.string.understood), null);
-        builder.show();
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup close button
+        ImageView btnClose = dialogView.findViewById(R.id.btn_close_privacy);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Setup understand button
+        TextView btnUnderstand = dialogView.findViewById(R.id.btn_understand_privacy);
+        if (btnUnderstand != null) {
+            btnUnderstand.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        dialog.show();
     }
     private void showTermsOfService() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_terms_enhanced, null);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.terms_title));
-        builder.setMessage(getString(R.string.terms_message));
-        builder.setPositiveButton(getString(R.string.agree), null);
-        builder.show();
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup close button
+        ImageView btnClose = dialogView.findViewById(R.id.btn_close_terms);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Setup agree button
+        TextView btnAgree = dialogView.findViewById(R.id.btn_agree_terms);
+        if (btnAgree != null) {
+            btnAgree.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        dialog.show();
     }
     private void showHelpSupport() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_help_support_enhanced, null);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.help_support_title));
-        builder.setMessage(getString(R.string.help_support_message));
-        builder.setPositiveButton(getString(R.string.send_email), (dialog, which) -> {
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("message/rfc822");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"phamluc2304@gmail.com"});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
-            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
-            try {
-                startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_app)));
-            } catch (Exception e) {
-                Toast.makeText(this, getString(R.string.no_email_app), Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton(getString(R.string.close), null);
-        builder.show();
+        builder.setView(dialogView);
+        
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        // Setup close button
+        ImageView btnClose = dialogView.findViewById(R.id.btn_close_help);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        // Setup email card click
+        LinearLayout cardEmail = dialogView.findViewById(R.id.card_email);
+        if (cardEmail != null) {
+            cardEmail.setOnClickListener(v -> {
+                dialog.dismiss();
+                sendEmail();
+            });
+        }
+        
+        // Setup phone card click
+        LinearLayout cardPhone = dialogView.findViewById(R.id.card_phone);
+        if (cardPhone != null) {
+            cardPhone.setOnClickListener(v -> {
+                dialog.dismiss();
+                callPhone();
+            });
+        }
+        
+        // Setup send email button
+        TextView btnSendEmail = dialogView.findViewById(R.id.btn_send_email);
+        if (btnSendEmail != null) {
+            btnSendEmail.setOnClickListener(v -> {
+                dialog.dismiss();
+                sendEmail();
+            });
+        }
+        
+        dialog.show();
+    }
+    
+    private void sendEmail() {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"phamluc2304@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+        emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
+        try {
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_app)));
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.no_email_app), Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void callPhone() {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:0354337494"));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Không thể mở ứng dụng điện thoại", Toast.LENGTH_SHORT).show();
+        }
     }
     private void showResetDataDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_reset_confirm, null);

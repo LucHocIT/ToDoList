@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header with Gradient -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_dialog_header_gradient"
+            android:padding="24dp">
+
+            <!-- Close Button -->
+            <ImageView
+                android:id="@+id/btn_close_help"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_close"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:tint="#FFFFFF"
+                android:contentDescription="Đóng" />
+
+            <!-- Icon -->
+            <ImageView
+                android:id="@+id/icon_help"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_below="@id/btn_close_help"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_help"
+                android:tint="#FFFFFF" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/icon_help"
+                android:layout_marginTop="12dp"
+                android:text="Trợ giúp &amp; Hỗ trợ"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:fontFamily="sans-serif-medium" />
+
+        </RelativeLayout>
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Introduction -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chúng tôi luôn sẵn sàng hỗ trợ bạn! Liên hệ với chúng tôi qua:"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Contact Card - Email -->
+            <LinearLayout
+                android:id="@+id/card_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_contact_card"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_email"
+                    android:tint="#667eea"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textSize="13sp"
+                        android:textColor="#999999"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="phamluc2304@gmail.com"
+                        android:textSize="15sp"
+                        android:textColor="#333333"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="#667eea"
+                    android:layout_gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <!-- Contact Card - Phone -->
+            <LinearLayout
+                android:id="@+id/card_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_contact_card"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_phone"
+                    android:tint="#667eea"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Điện thoại"
+                        android:textSize="13sp"
+                        android:textColor="#999999"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0354337494"
+                        android:textSize="15sp"
+                        android:textColor="#333333"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="#667eea"
+                    android:layout_gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <!-- Quick Help Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hoặc bạn có thể:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Help Item 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/bg_action_button_primary"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Xem hướng dẫn sử dụng trong ứng dụng"
+                    android:textSize="13sp"
+                    android:textColor="#666666" />
+
+            </LinearLayout>
+
+            <!-- Help Item 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/bg_action_button_primary"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gửi phản hồi qua email để cải thiện ứng dụng"
+                    android:textSize="13sp"
+                    android:textColor="#666666" />
+
+            </LinearLayout>
+
+            <!-- Help Item 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/bg_action_button_primary"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Báo cáo lỗi để giúp chúng tôi cải thiện"
+                    android:textSize="13sp"
+                    android:textColor="#666666" />
+
+            </LinearLayout>
+
+            <!-- Action Button -->
+            <TextView
+                android:id="@+id/btn_send_email"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Gửi Email"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/bg_action_button_primary"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

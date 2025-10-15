@@ -38,9 +38,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/avatarapp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/avatarapp"
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoList"
         tools:targetApi="31">        <activity
@@ -94,6 +94,11 @@
             android:name=".SettingsActivity"
             android:theme="@style/Theme.ToDoList"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".WidgetsGuideActivity"
+            android:theme="@style/Theme.ToDoList"
+            android:parentActivityName=".MainActivity"
+            android:label="Hướng dẫn Tiện ích" />
 
         
         <!-- Activity xử lý invite link -->

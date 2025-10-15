@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="#F5F7FA">
 
-    <!-- App Bar with Material Design 3 -->
+    <!-- App Bar with Enhanced Design -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -44,10 +44,11 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/btn_back_settings"
                     android:text="@string/settings_title"
-                    android:textSize="24sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     android:textColor="#1F1F1F"
-                    android:fontFamily="sans-serif-medium" />
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.01" />
 
             </RelativeLayout>
 
@@ -68,35 +69,51 @@
         android:orientation="vertical"
         android:paddingBottom="24dp">
 
-        <!-- Notification Settings Section with Card -->
+        <!-- Notification Settings Section with Enhanced Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            android:translationZ="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:paddingVertical="12dp">
+            android:paddingVertical="16dp">
 
-            <!-- Section Header -->
-            <TextView
+            <!-- Section Header with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_notifications"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#1976D2"
+                android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.03" />
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_notifications"
+                    android:tint="#1976D2"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_notifications"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04" />
+
+            </LinearLayout>
 
             <!-- Enable Notifications -->
             <LinearLayout
@@ -225,35 +242,51 @@
         </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- General Settings Section with Card -->
+        <!-- General Settings Section with Enhanced Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            android:translationZ="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:paddingVertical="12dp">
+            android:paddingVertical="16dp">
 
-            <!-- Section Header -->
-            <TextView
+            <!-- Section Header with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_general"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#1976D2"
+                android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.03" />
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_settings"
+                    android:tint="#1976D2"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_general"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04" />
+
+            </LinearLayout>
 
             <!-- Language -->
             <LinearLayout
@@ -310,35 +343,51 @@
         </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- About & Support Section with Card -->
+        <!-- About & Support Section with Enhanced Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            android:translationZ="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:paddingVertical="12dp">
+            android:paddingVertical="16dp">
 
-            <!-- Section Header -->
-            <TextView
+            <!-- Section Header with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_support"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#1976D2"
+                android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.03" />
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="#1976D2"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_support"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04" />
+
+            </LinearLayout>
 
             <!-- About App -->
             <LinearLayout
@@ -524,35 +573,51 @@
         </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Advanced Settings Section with Card -->
+        <!-- Advanced Settings Section with Enhanced Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            android:translationZ="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:paddingVertical="12dp">
+            android:paddingVertical="16dp">
 
-            <!-- Section Header -->
-            <TextView
+            <!-- Section Header with Icon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_advanced"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="#D32F2F"
+                android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.03" />
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_warning"
+                    android:tint="#D32F2F"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_advanced"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#D32F2F"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.04" />
+
+            </LinearLayout>
 
             <!-- Reset Data -->
             <LinearLayout
@@ -607,42 +672,6 @@
 
         </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <!-- Version 2.0 Badge -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ToDoList"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#1976D2"
-                android:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Version 2.0"
-                android:textSize="14sp"
-                android:textColor="#80868B"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="© 2024 ToDoList Team"
-                android:textSize="12sp"
-                android:textColor="#9AA0A6"
-                android:layout_marginTop="8dp" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

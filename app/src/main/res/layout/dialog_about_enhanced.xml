@@ -30,8 +30,9 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
-            android:src="@mipmap/ic_launcher"
-            android:layout_marginTop="8dp" />
+            android:src="@drawable/avatarapp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop" />
 
         <!-- App Name -->
         <TextView
@@ -50,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Version 2.0"
+            android:text="ver2"
             android:textSize="14sp"
             android:textColor="#666666"
             android:layout_marginTop="4dp" />

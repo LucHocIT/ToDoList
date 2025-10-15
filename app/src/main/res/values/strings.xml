@@ -35,11 +35,11 @@
     <string name="language_changed">Ngôn ngữ đã được thay đổi</string>
     <string name="choose_language">Chọn ngôn ngữ</string>
     <string name="version_format">Phiên bản %s</string>
-    <string name="version_default">Phiên bản 2.0</string>
+    <string name="version_default">ver2</string>
     
     <!-- Dialog strings -->
     <string name="about_app_title">Về ứng dụng To-Do List</string>
-    <string name="about_app_message">To-Do List - Ứng dụng quản lý công việc thông minh\n\nPhiên bản: 2.0\nNhà phát triển: Team Development\nEmail: phamluc2304@gmail.com\n\nỨng dụng giúp bạn quản lý công việc hàng ngày một cách hiệu quả với giao diện đẹp mắt và nhiều tính năng hữu ích.</string>
+    <string name="about_app_message">To-Do List - Ứng dụng quản lý công việc thông minh\n\nPhiên bản: ver2\nNhà phát triển: Team Development\nEmail: phamluc2304@gmail.com\n\nỨng dụng giúp bạn quản lý công việc hàng ngày một cách hiệu quả với giao diện đẹp mắt và nhiều tính năng hữu ích.</string>
     <string name="close">Đóng</string>
     
     <string name="privacy_policy_title">Chính sách bảo mật</string>
